@@ -31,6 +31,7 @@ import { RouterModule } from '@angular/router';
     NavBarComponent,
     FooterComponent,
     SideBarComponent,
+    CardDashboardComponent,
     FiltroSidebarComponent
   ],
   imports: [
