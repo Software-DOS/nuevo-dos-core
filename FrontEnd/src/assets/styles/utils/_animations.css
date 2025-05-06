@@ -1,0 +1,40 @@
+@keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  
+  @keyframes typing {
+    from {
+      width: 0;
+      opacity: 0;
+    }
+    to {
+      width: 100%;
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Uso común */
+  .animation-fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .animation-typewriter {
+    animation: typewriter 1.5s steps(50, end);
+  }
+  
+  .animation-typing {
+    animation: typing 2s ease-in-out forwards;
+  }
+  

@@ -1,0 +1,50 @@
+
+ul, .list-unstyled {
+  padding-left: 30px;
+}
+
+ol, ul {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+ul {
+  display: block;
+  list-style-type: disc;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
+}
+
+ul.amounts li.grand-total {
+  background: #428BCA;
+  color: #fff;
+  font-weight: 700;
+}
+
+ul.amounts li {
+  background: #f5f6f9;
+  margin-bottom: 5px;
+  padding: 10px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  font-weight: 300;
+  font-size: 16px;
+  list-style: none;
+}
+
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 600px; /* Puedes ajustar el tamaño mínimo de la tabla */
+}
+
+th, td {
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+}

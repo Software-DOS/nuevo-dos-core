@@ -1,0 +1,12 @@
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 600px; /* Puedes ajustar el tamaño mínimo de la tabla */
+}
+
+th, td {
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+}

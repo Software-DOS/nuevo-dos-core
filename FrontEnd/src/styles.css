@@ -1,0 +1,17 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/*mat-dialog-content::-webkit-scrollbar{
+    width: 6px !important;
+}
+
+mat-dialog-content::-webkit-scrollbar-thumb{
+    -webkit-box-shodow:inset 0 0 13px !important;
+    border-radius: 15px !important;
+}*/
+
+.cdk-overlay-container{
+    z-index: 2000 !important;
+}

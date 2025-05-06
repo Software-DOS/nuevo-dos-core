@@ -1,0 +1,49 @@
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding: 20px;
+    position: relative;
+  }
+  
+  .timeline::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--color-pale-gray);
+    z-index: 0;
+  }
+  
+  .timeline-step {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    flex: 1;
+  }
+  
+  .timeline-step .circle {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    background-color: var(--color-pale-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+  }
+  
+  .timeline-step.completed .circle {
+    background-color: #28a745; /* Verde para etapas completadas */
+  }
+  
+  .timeline-step .label {
+    font-size: 0.9rem;
+    color: var(--color-near-black);
+  }
+  

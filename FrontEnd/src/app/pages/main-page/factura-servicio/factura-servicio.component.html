@@ -1,0 +1,520 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Factura Servicio</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a [routerLink]="['/']">Home</a></li>
+            <li class="breadcrumb-item active">Factura Servicio</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <!-- Default box -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ titulo }}</h3>
+
+        <div class="card-tools"></div>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="UserForm">
+          <!-- Main content -->
+          <section class="content" [hidden]="!verLista">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <button
+                    class="btn btn-outline-info"
+                    type="button"
+                    title="Nueva Factura"
+                    (click)="IngresarFactura()"
+                  >
+                    Nueva Factura
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Fecha Desde:</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"
+                        ><i class="far fa-calendar-alt"></i
+                      ></span>
+                    </div>
+                    <input
+                      type="date"
+                      class="form-control"
+                      data-inputmask-alias="datetime"
+                      data-inputmask-inputformat="dd/mm/yyyy"
+                      data-mask=""
+                      inputmode="numeric"
+                      formControlName="FechaDesde"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Fecha Hasta:</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"
+                        ><i class="far fa-calendar-alt"></i
+                      ></span>
+                    </div>
+                    <input
+                      type="date"
+                      class="form-control"
+                      data-inputmask-alias="datetime"
+                      data-inputmask-inputformat="dd/mm/yyyy"
+                      data-mask=""
+                      inputmode="numeric"
+                      formControlName="FechaHasta"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-outline-info mr-2"
+                    type="button"
+                    title="Buscar Factura"
+                    (click)="MostrarReporte()"
+                  >
+                    Buscar
+                  </button>
+                  <button
+                    class="btn btn-outline-info"
+                    type="button"
+                    title="Exportar Factura"
+                  >
+                    Exportar
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Codigo</th>
+                    <th scope="col">Num. Documento</th>
+                    <th scope="col">Ruc Cliente</th>
+                    <th scope="col">Razón Social</th>
+                    <th scope="col">Fecha Emisión</th>
+                    <th scope="col">SubTotal</th>
+                    <th scope="col">Iva</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!--<tr *ngFor="let data of contrato
+                  | paginate: {itemsPerPage:5, currentPage: p}
+                  | orderBy:orderHeader: isDescOrder
+                  | filterBy:filterText
+                  ">
+                    <td>{{ data.idContrato }}</td>
+                    <td>{{ data.numContrato }}</td>
+                    <td>{{ data.fechaInicio }}</td>
+                    <td>{{ data.fechaFinal }}</td>
+                    <td>{{ data.valorBruto | currency }}</td>
+                    <td>{{  data.estado == 1 ? 'Activo' : 'Inactivo' }}</td>
+                    <td>
+                      <i (click)="EditarContrato(data.idContrato)" class="fas fa-solid fa-eye text-info mr-2"></i>
+                      <i (click)="Regresar()" class="fas fa fa-reply text-info"></i>
+                    </td>
+                  </tr>-->
+                </tbody>
+              </table>
+              <!-- <pagination-controls (pageChange)="p = $event"></pagination-controls> -->
+            </div>
+          </section>
+          <!-- /.content -->
+          <!-- Main content -->
+          <section class="content" [hidden]="!verFactura">
+            <div class="row">
+              <button
+                type="text"
+                class="btn btn-outline-secondary btn-sm float-right mr-2"
+                (click)="BuscarCliente()"
+              >
+                Buscar Cliente
+              </button>
+              <button
+                type="text"
+                class="btn btn-outline-secondary btn-sm float-right"
+                (click)="ListaFactura()"
+              >
+                Lista Factura
+              </button>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="col-md-4 col-sm-12">
+                <p id="tipoIdentificacionCliente">RUC/CI/Pasaporte:</p>
+                <h5
+                  #identificacionCliente
+                  id="identificacionCliente"
+                  style="color: blue"
+                >
+                  {{ identificacion }}
+                </h5>
+                <p id="etiquetaRazon">Nombre/Razon Social</p>
+                <p id="razonSocialCliente" style="color: blue">
+                  {{ razonSocial }}
+                </p>
+                <p id="etiquetaDireccion">Direccion</p>
+                <p id="Direccion" style="color: blue">{{ direccion }}</p>
+                <p id="etiquetaTelefono">Telefono</p>
+                <p id="Telefono" style="color: blue">{{ telefono }}</p>
+                <p id="etiquetaEmail">Email</p>
+                <p id="Email" style="color: blue">{{ mail }}</p>
+              </div>
+              <div class="col-md-4 col-sm-12">
+                <div class="row">
+                  <div class="col-md-4 col-sm-5 inv-label">Doc. #:</div>
+                  <div class="col-md-8 col-sm-7">
+                    <h4 id="numDocumento">{{ secuencial }}</h4>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4 col-sm-12 inv-label">
+                    Fecha. Emisión:
+                  </div>
+                  <div class="col-md-6 col-sm-12">
+                    <div class="input-group m-bot15">
+                      <input
+                        type="date"
+                        class="form-control"
+                        data-inputmask-alias="datetime"
+                        data-inputmask-inputformat="dd/mm/yyyy"
+                        data-mask=""
+                        inputmode="numeric"
+                        formControlName="FechaEmision"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="row" [hidden]="Ocultar">
+                  <div class="col-md-4 col-sm-12 inv-label">G. Remisión:</div>
+                  <div class="col-md-6 col-sm-12">
+                    <div class="input-group m-bot15">
+                      <input
+                        type="text"
+                        class="form-control input-sm"
+                        autocomplete="off"
+                        name="txtGuiaRemision"
+                        id="txtGuiaRemision"
+                        value=""
+                        placeholder="(Opcional)"
+                      />
+                      <span class="input-group-addon btn-white"
+                        ><i class="fa fa-hand-o-right"></i
+                      ></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" [hidden]="Ocultar">
+                  <div class="col-md-4 col-sm-12 inv-label">
+                    Condición de Pago:
+                  </div>
+                  <div class="col-md-6 col-sm-12">
+                    <div class="input-group m-bot15">
+                      <select
+                        [(ngModel)]="ngDropdown"
+                        id="cboTipoPago"
+                        class="form-control"
+                        formControlName="cboTipoPago"
+                      >
+                        <option value="1">CONTADO</option>
+                        <option value="2">CREDITO</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-12">
+                <div class="row text-center">
+                  <div class="col-md-12 inv-label">
+                    <h4>TOTAL A PAGAR</h4>
+                  </div>
+                  <div class="col-md-12">
+                    <h1 class="amnt-value">
+                      $<span id="totalDue">{{ totalPagar }}</span>
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="col-md-1 col-sm-12">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Cantidad</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Cantidad"
+                    formControlName="Cantidad"
+                  />
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-12">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Detalle</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Detalle"
+                    formControlName="Detalle"
+                  />
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-12">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Precio($)</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Precio"
+                    formControlName="Precio"
+                    (input)="ActualizarCampo()"
+                  />
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-12">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Desc.(%)</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Descuento"
+                    formControlName="Descuento"
+                    (input)="ActualizarCampo()"
+                    text="0"
+                  />
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-12">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Total</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Total"
+                    formControlName="Total"
+                  />
+                </div>
+              </div>
+              <div class="col-md-1 col-sm-12">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Iva</label>
+                  <select
+                    [(ngModel)]="ngDropdown1"
+                    id="Iva"
+                    class="form-control"
+                    formControlName="Iva"
+                  >
+                    <option value="0">0</option>
+                    <option value="12">12</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-1 col-sm-12">
+                <button
+                  type="button"
+                  title="Buscar producto o
+              servicio"
+                  class="btn btn-primary btn-sm"
+                  (click)="AgregarProducto()"
+                >
+                  <i class="fa fa-search margin-right"></i>+
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 padding-1">
+                <!--<button
+                type="button"
+                title="Buscar producto o
+                servicio"
+                class="btn btn-primary btn-sm"
+              >
+                <i class="fa fa-search margin-right"></i>+
+              </button>-->
+                <hr />
+                <div class="panel-body">
+                  <div class="tab-content">
+                    <table class="table table-items">
+                      <thead>
+                        <tr>
+                          <th width="5%" class="text-center">Cantidad</th>
+                          <th width="50%" class="text-center">Detalle</th>
+                          <th width="10%" class="text-center">Precio($)</th>
+                          <th width="10%" class="text-center">Desc.(%)</th>
+                          <th width="10%" class="text-center">Total</th>
+                          <th width="10%" class="text-center">Iva</th>
+                          <th width="5%">Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let data of listData">
+                          <td>{{ data.Cantidad }}</td>
+                          <td>{{ data.Detalle }}</td>
+                          <td>{{ data.Precio | currency }}</td>
+                          <td>{{ data.Descuento | currency }}</td>
+                          <td>{{ data.Total | currency }}</td>
+                          <td>{{ data.Iva }}</td>
+                          <td>
+                            <i
+                              (click)="removeItem(data)"
+                              class="fas fa-trash-alt fa-sm text-danger"
+                            ></i>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="col-md-8 col-sm-12">
+                <div class="panel-body">
+                  <div class="tab-content">
+                    <div id="pago">
+                      <table id="TbFormaPago" class="table table-forma-pago">
+                        <thead>
+                          <tr>
+                            <th>Forma de Pago</th>
+                            <th>Valor</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="tr_clone_field_forma_pago">
+                            <td>
+                              <select
+                                id="pagos"
+                                name="forma_pago[]"
+                                class="form-control m-b"
+                              >
+                                <option value="01" selected="">
+                                  SIN UTILIZACIÓN DEL SISTEMA FINANCIERO
+                                </option>
+                                <option value="15">
+                                  COMPENSACIÓN DE DEUDAS
+                                </option>
+                                <option value="16">TARJETA DE DÉBITO</option>
+                                <option value="17">DINERO ELECTRÓNICO</option>
+                                <option value="18">TARJETA PREPAGO</option>
+                                <option value="19">TARJETA DE CRÉDITO</option>
+                                <option value="20">
+                                  OTROS CON UTILIZACIÓN DEL SISTEMA FINANCIERO
+                                </option>
+                                <option value="21">ENDOSO DE TÍTULOS</option>
+                              </select>
+                            </td>
+                            <td>
+                              <span  class="form-control" id="formaPago">{{ formaPago }}</span>
+                              <!--<input
+                                name="total_forma_pago[]"
+                                type="text"
+                                placeholder="0.00"
+                                class="form-control"
+                                [ngModel]="formaPago"
+                              />-->
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-12">
+                <ul class="unstyled amounts">
+                  <li>
+                    <span class="margin-right"
+                      ><span class="margin-right">Subtotal sin impuestos:</span>
+                      $<span id="subtotalSinImpuestos">{{
+                        subtotalSinImpuestos
+                      }}</span></span
+                    >
+                  </li>
+                  <li>
+                    <span class="margin-right">Subtotal IVA:</span> $<span
+                      id="subtotalIva"
+                      >{{ subtotalIva }}</span
+                    >
+                  </li>
+                  <li>
+                    <span class="margin-right">Subtotal 0%:</span> $<span
+                      id="subtotal0"
+                      >{{ subtotal0 }}</span
+                    >
+                  </li>
+                  <li>
+                    <span class="margin-right">Subtotal no objeto de IVA:</span>
+                    $<span id="subtotalNoIva">{{ subtotalNoIva }}</span>
+                  </li>
+                  <li>
+                    <span class="margin-right">Total descuento:</span> $<span
+                      id="totalDescuento"
+                      >{{ totalDescuento }}</span
+                    >
+                  </li>
+                  <li>
+                    <span class="margin-right">ICE:</span> $<span id="ICE">{{
+                      ice
+                    }}</span>
+                  </li>
+                  <li>
+                    <span class="margin-right">IVA:</span> $<span id="IVA">{{
+                      iva
+                    }}</span>
+                  </li>
+                  <li class="grand-total">
+                    Valor total: $<span id="valorTotal">{{ valortotal }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <button
+                type="submit"
+                class="btn btn-outline-primary btn-sm float-right"
+                (click)="GuardarFactura()"
+              >
+                Guardar
+              </button>
+            </div>
+          </section>
+          <!-- /.content -->
+        </form>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer"></div>
+      <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+  </section>
+  <!-- /.content -->
+</div>

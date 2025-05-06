@@ -1,0 +1,98 @@
+/* === Botón principal de navegación (logout, enviar, etc.) === */
+.nav-button {
+    background-color: var(--color-bright-red);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .nav-button:hover {
+    background-color: var(--color-dark-red);
+    transform: translateY(-3px);
+  }
+  
+  /* === Botón eliminar (ícono de papelera) === */
+  .btn-eliminar {
+    background: transparent;
+    border: none;
+    color: var(--color-light-gray);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .btn-eliminar:hover {
+    color: var(--color-bright-red);
+  }
+  
+  /* === Botón de login con Microsoft === */
+  .login-button {
+    background-color: var(--color-bright-red);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: var(--radius-md);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  
+  .login-button:hover {
+    background-color: var(--color-dark-red);
+    transform: translateY(-3px);
+  }
+  
+  .login-button img {
+    width: 30px;
+    height: 30px;
+  }
+  
+  /* === Botón de tarjetas (dashboard) === */
+  .card-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 25px;
+    border-radius: 25px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+  }
+  
+  .card-button:hover {
+    transform: translateX(5px);
+  }
+  
+/* Específicos según tipo de tarjeta */
+.card-view .card-button {
+  background: linear-gradient(90deg, var(--color-dark-red), var(--color-bright-red));
+}
+
+.card-training .card-button {
+  background: linear-gradient(90deg, var(--color-muted-blue), #099fa3);
+}
+
+.card-eval .card-button {
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+}
+
+.card-selection .card-button {
+  background: linear-gradient(90deg, #6a1b9a, #8e24aa);
+}
+
+.card-clima .card-button {
+  background: linear-gradient(90deg, #f39c12, #f1c40f);
+}
+
+  

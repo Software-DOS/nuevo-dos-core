@@ -1,0 +1,20 @@
+export interface Iempleado {
+    IdEmpleado:number;
+    IdEmpresa:number;
+    IdPerfil:number;
+    NombresApellidos:string;
+    Rucedula:string;
+    Sueldo:number;
+    Ingreso:string;
+    Clase:string;
+    Direccion:string;
+    Telefono:string;
+    Regimen:string;
+    Correo:string;
+    Rol:string;
+    FondoReserva:string;
+    Estado:number;
+    Tipo:number;
+    act_password:boolean;
+    contrasenia:string
+}

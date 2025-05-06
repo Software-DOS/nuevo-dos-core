@@ -1,0 +1,158 @@
+<mat-dialog-content>
+  <div class="card">
+    <div class="card-header">
+      {{ titulo }}
+      <button type="button" class="close" mat-dialog-close>&times;</button>
+    </div>
+    <div class="card-body">
+      <!-- Main content -->
+      <section class="content" [hidden]="!verCliente">
+        <div class="row">
+          <table
+            class="table table-bordered table-hover"
+            id="Proyecto"
+            #asProyecto
+          >
+            <thead>
+              <tr>
+                <th scope="col">Razón Social</th>
+                <th scope="col">Identificación</th>
+                <th scope="col">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of cargaListaCliente" >
+                            <td style="font-size: 13px"><span>{{item.descripcion}}</span></td>
+                            <td style="font-size: 13px"><span>{{item.ruCedula}}</span></td> 
+                            <td>
+                              <i (click)="VerCliente(item.idClienteServicio)" class="fas fa-solid fa-eye fa-sm text-info mr-2"></i>
+                              <i (click)="EditarCliente(item.idClienteServicio)" class="fas fa-edit fa-sm text-info"></i>
+                            </td>                                                 
+                        </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <button
+            type="submit"
+            (click)="NuevoCliente()"
+            class="btn btn-primary btn-sm mr-2"
+          >
+            Nuevo Cliente
+          </button>
+          <button
+            mat-button
+            mat-dialog-close
+            class="btn btn-secondary btn-sm float-left mr-2"
+          >
+            Cerrar
+          </button>
+        </div>
+      </section>
+      <!-- /.content -->
+      <section class="content" [hidden]="!NCliente">
+        <form [formGroup]="UserForm">
+          <div class="row mt-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Identificación</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Identificación"
+                  formControlName="identificacion" 
+                />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Tipo Identificación</label>
+                <select name="ComboTipoIdentificacion" class="form-control" formControlName="idTipoIdentificacion">
+                  <option [value]="OrdenE.idProceso" *ngFor="let OrdenE of comboTipoIdentificacion">{{OrdenE.descripcion}}</option>
+                </select>                
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-12">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Razón social o nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Razón Social"
+                  formControlName="descripcion" 
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-12">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Dirección (Opcional)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Dirección del cliente"
+                  formControlName="direccion" 
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="exampleInputEmail1">E-Mail</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Email del cliente"
+                  formControlName="email" 
+                />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Teléfono</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Teléfonos de cliente"
+                  formControlName="telefono" 
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+        <br />
+        <div class="row mt-2">
+          <button
+            type="text"
+            class="btn btn-outline-secondary btn-sm float-right mr-2"
+            (click)="ListaCliente()"
+          >
+            Lista Cliente
+          </button>
+          <button
+            type="text"
+            class="btn btn-outline-secondary btn-sm float-right"
+            (click)="GuardarCliente()"
+          >
+            Guardar
+          </button>
+        </div>
+      </section>
+      <!-- Main content -->
+
+      <!-- /.content -->
+    </div>
+  </div>
+</mat-dialog-content>
+<!--<mat-dialog-actions align="end">
+  <button type="submit" (click)="NuevoCliente()" class="btn btn-primary mr-2">
+    Nuevo Cliente
+  </button>
+  <button mat-button mat-dialog-close class="btn btn-secondary float-left mr-2">
+    Cerrar
+  </button>
+</mat-dialog-actions>-->
