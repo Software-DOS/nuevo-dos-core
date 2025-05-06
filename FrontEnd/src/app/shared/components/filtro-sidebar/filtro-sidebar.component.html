@@ -1,0 +1,44 @@
+<aside class="filter-sidebar">
+    <h3>FILTROS</h3>
+  
+    <div class="filter-group">
+      <label for="filtroDepartamento">Departamento:</label>
+      <select id="filtroDepartamento" [(ngModel)]="filtros.departamento" (change)="aplicarFiltro()">
+        <option value="">Todos</option>
+        <option *ngFor="let dept of departamentos" [value]="dept">{{ dept }}</option>
+      </select>
+    </div>
+  
+    <div class="filter-group">
+      <label for="filtroCalificado">Calificado:</label>
+      <select id="filtroCalificado" [(ngModel)]="filtros.calificado" (change)="aplicarFiltro()">
+        <option value="">Todos</option>
+        <option *ngFor="let val of calificaciones" [value]="val">{{ val }}</option>
+      </select>
+    </div>
+  
+    <div class="filter-group">
+      <label for="filtroExperiencia">Experiencia Laboral:</label>
+      <select id="filtroExperiencia" [(ngModel)]="filtros.experiencia" (change)="aplicarFiltro()">
+        <option value="">Todos</option>
+        <option *ngFor="let val of experiencias" [value]="val">{{ val }}</option>
+      </select>
+    </div>
+  
+    <div class="filter-group">
+      <label for="filtroUbicacion">Lugar de Residencia:</label>
+      <select id="filtroUbicacion" [(ngModel)]="filtros.ubicacion" (change)="aplicarFiltro()">
+        <option value="">Todos</option>
+        <option *ngFor="let val of ubicaciones" [value]="val">{{ val }}</option>
+      </select>
+    </div>
+  
+    <div class="filter-group">
+      <label for="filtroIdioma">Idiomas:</label>
+      <select id="filtroIdioma" [(ngModel)]="filtros.idioma" (change)="aplicarFiltro()">
+        <option value="">Todos</option>
+        <option *ngFor="let val of idiomas" [value]="val">{{ val }}</option>
+      </select>
+    </div>
+  </aside>
+  

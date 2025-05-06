@@ -1,0 +1,11 @@
+<div class="dashboard-card" [ngClass]="clase">
+    <div class="card-icon">
+      <i class="fas" [ngClass]="icono"></i>
+    </div>
+    <h2>{{ titulo }}</h2>
+    <p>{{ descripcion }}</p>
+    <a [routerLink]="ruta" class="card-button">
+      {{ textoBoton }} <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+  
