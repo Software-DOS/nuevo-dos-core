@@ -8,6 +8,7 @@ namespace WebAppConexion.Models
 {
     public class GTHEmpleadoViewModel
     {
+        public int Tipo { get; set; }
         public long IdEmpleado { get; set; }
         public long? IdPerfil { get; set; }
         public long? IdCelula { get; set; }
@@ -24,7 +25,7 @@ namespace WebAppConexion.Models
         public string Sexo { get; set; }
         public string FotoPerfilUrl { get; set; }
         public string EstadoEmpleado { get; set; }
-        public int? Tipo { get; set; }
+        public int? EmpTipo { get; set; }
         public bool? ActPassword { get; set; }
         public string Password { get; set; }
         public decimal? Sueldo { get; set; }

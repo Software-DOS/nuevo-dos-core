@@ -45,11 +45,11 @@ namespace WebAppConexion.Controllers
                 Sexo = model.Sexo,
                 FotoPerfilUrl = model.FotoPerfilUrl,
                 EstadoEmpleado = model.EstadoEmpleado,
-                Tipo = model.Tipo,
+                EmpTipo = model.Tipo,
                 Sueldo = model.Sueldo
             };
 
-            var responseResul = await _repository.Manage(db);
+            var responseResul = await _repository.Manage(0, db);
 
             // Devolver la respuesta mapeada a Generica
             return responseResul.Select(s => new Generica

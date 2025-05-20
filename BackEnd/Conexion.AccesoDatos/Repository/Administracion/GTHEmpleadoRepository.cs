@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar un empleado.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(GTHEmpleado empleado)
+        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHEmpleado empleado)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_EMPLEADO", sql)
@@ -30,7 +30,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                 CommandType = CommandType.StoredProcedure
             };
 
-            cmd.Parameters.Add(new SqlParameter("@Tipo", empleado.Tipo));
+            cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
             cmd.Parameters.Add(new SqlParameter("@ID_EMPLEADO", empleado.IdEmpleado));
             cmd.Parameters.Add(new SqlParameter("@ID_PERFIL", empleado.IdPerfil ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@ID_CELULA", empleado.IdCelula ?? (object)DBNull.Value));
@@ -47,7 +47,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@EMP_SEXO", empleado.Sexo ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_FOTOPERFILURL", empleado.FotoPerfilUrl ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_ESTADOEMPLEADO", empleado.EstadoEmpleado ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@EMP_TIPO", empleado.Tipo ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_TIPO", empleado.EmpTipo ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_ACT_PASSWORD", empleado.ActPassword ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_PASSWORD", empleado.Password ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_SUELDO", empleado.Sueldo ?? (object)DBNull.Value));
