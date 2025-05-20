@@ -1,0 +1,31 @@
+<!-- navbar.component.html -->
+<nav class="navbar" id="navbar">
+  <div class="logo">
+    <img src="assets/img/logo.png" alt="Logo DOS" class="logo-img">
+  </div>
+  <div class="nav-links">
+    <a [routerLink]="['/']" class="fas fa-bell"></a>
+    <a [routerLink]="['/']" routerLinkActive="active">Inicio</a>
+    <a [routerLink]="['/lista-empleados']">Perfiles</a>
+    <a [routerLink]="['/lista-capacitaciones']">Capacitaciones</a>
+    <a [routerLink]="['/lista-evaluaciones']">Evaluaciones</a>
+    <a [routerLink]="['/empleado-cv']">Ver Mi Perfil</a>
+    <button id="logoutButton" class="nav-button" (click)="logout()">Cerrar Sesión</button>
+
+    <div class="profile-dropdown">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        class="profile-avatar"
+        (click)="toggleDropdown()" />
+      <div
+        class="dropdown-menu"
+        id="profileMenu"
+        [class.show]="dropdownAbierto">
+        <a [routerLink]="['/lista-empleados']"><i class="fas fa-users"></i> Ver Perfiles</a>
+        <a [routerLink]="['/lista-capacitaciones']"><i class="fas fa-chalkboard-teacher"></i> Capacitaciones</a>
+        <a [routerLink]="['/lista-evaluaciones']"><i class="fas fa-clipboard-check"></i> Evaluaciones</a>
+        <a [routerLink]="['/empleado-cv']"><i class="fas fa-user-circle"></i> Ver Mi Perfil</a>
+      </div>
+    </div>
+  </div>
+</nav>

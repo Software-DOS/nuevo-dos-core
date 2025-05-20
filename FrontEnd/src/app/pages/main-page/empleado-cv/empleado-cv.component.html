@@ -1,0 +1,201 @@
+<!-- Tarjeta del Empleado -->
+<div class="employee-card relative">
+  <div class="employee-image-container">
+    <img
+      src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+      alt="Foto del Empleado"
+      class="employee-image"
+      id="employeeImage"
+    />
+    <label for="photoUpload" class="edit-icon-center">
+      <i class="fas fa-pen"></i>
+    </label>
+    <input
+      type="file"
+      id="photoUpload"
+      accept="image/*"
+      class="hidden"
+      onchange="previewImage(event)"
+    />
+  </div>
+
+  <div class="employee-personal-info">
+    <h1>
+      <p class="info-item">
+        <input
+          type="text"
+          value="Juan Carlos Rodríguez Martínez"
+          class="value"
+          disabled
+        />
+      </p>
+    </h1>
+    <div class="info-item">
+      <a href="mailto:juan.rodriguez@empresa.com"
+        >✉️
+        <input
+          type="text"
+          value="juan.rodriguez@empresa.com"
+          class="value"
+          disabled
+      /></a>
+    </div>
+    <p class="info-item">
+      <input type="text" value="Analista de Sistemas" class="value" disabled />
+    </p>
+    <p class="info-item">
+      <input
+        type="text"
+        value="Tecnología de la Información"
+        class="value"
+        disabled
+      />
+    </p>
+    <p class="info-item">
+      <input
+        type="text"
+        value="Desarrollo de Aplicaciones"
+        class="value"
+        disabled
+      />
+    </p>
+  </div>
+  <!-- Botón de editar (con ícono de lápiz) posicionado en la esquina superior derecha -->
+  <div class="edit-section">
+    <button id="editButton" class="edit-toggle-btn" onclick="toggleEdit()">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.0001 1.0001 0 0 0 0-1.41l-2.34-2.34a1.0001 1.0001 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+          fill="currentColor"
+        />
+      </svg>
+    </button>
+  </div>
+</div>
+<!-- Sección Principal -->
+<div class="main-section">
+  <!-- Nueva barra lateral con solo dos categorías -->
+  <div class="category-index">
+    <ul>
+      <li>
+        <div class="category-link" data-target="datos-personales">
+          Datos Personales
+        </div>
+      </li>
+      <li>
+        <div class="category-link" data-target="info-profesional">
+          Información Profesional
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="content-area">
+    <!-- Sección Datos Personales: se agrupan Bibliografía, Info Personal, Contacto, Emergencia, Familiares y Documentos -->
+    <div id="datos-personales" class="content-section">
+      <h2>Datos Personales</h2>
+      <section>
+        <h3>Bibliografía</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Fecha de Nacimiento:</span>
+            <input type="date" class="value" value="1985-03-15" disabled />
+          </div>
+          <div class="info-item">
+            <span class="label">País de Nacimiento:</span>
+            <input type="text" class="value" value="España" disabled />
+          </div>
+          <div class="info-item">
+            <span class="label">Provincia:</span>
+            <input type="text" class="value" value="Madrid" disabled />
+          </div>
+          <div class="info-item">
+            <span class="label">Ciudad:</span>
+            <input type="text" class="value" value="Madrid" disabled />
+          </div>
+        </div>
+      </section>
+      <section>
+        <h3>Información Personal</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Nombres:</span>
+            <input type="text" class="value" value="Juan Carlos" disabled />
+          </div>
+          <div class="info-item">
+            <span class="label">Apellidos:</span>
+            <input
+              type="text"
+              class="value"
+              value="Rodríguez Martínez"
+              disabled
+            />
+          </div>
+          <div class="info-item">
+            <span class="label">Sexo:</span>
+            <input type="text" class="value" value="Masculino" disabled />
+          </div>
+          <div class="info-item">
+            <span class="label">Estado Civil:</span>
+            <input type="text" class="value" value="Casado" disabled />
+          </div>
+          <div class="info-item">
+            <span class="label">Tipo de Sangre:</span>
+            <input type="text" class="value" value="O+" disabled />
+          </div>
+          <div class="info-item">
+            <span class="label">Último Nivel de Estudio:</span>
+            <input type="text" class="value" value="Máster" disabled />
+          </div>
+          <div class="info-item">
+            <span class="label">Cargas Familiares:</span>
+            <input type="number" class="value" value="2" disabled />
+          </div>
+        </div>
+      </section>
+      <section>
+        <h3>Contacto y Dirección</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Correo Institucional:</span>
+            <input type="email" class="value" value="juan.rodriguez@empresa.com" disabled>
+          </div>
+          <div class="info-item">
+            <span class="label">Correo Personal:</span>
+            <input type="email" class="value" value="juanc.rodriguez@gmail.com" disabled>
+          </div>
+          <div class="info-item">
+            <span class="label">Número Celular:</span>
+            <input type="text" class="value" value="+34 612 345 678" disabled>
+          </div>
+          <div class="info-item">
+            <span class="label">Dirección Domiciliaria:</span>
+            <input type="text" class="value" value="Calle Serrano 123, 28006 Madrid" disabled>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h3>Contacto de Emergencia</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Nombre:</span>
+            <input type="text" class="value" value="Ana Martínez López" disabled>
+          </div>
+          <div class="info-item">
+            <span class="label">Relación:</span>
+            <input type="text" class="value" value="Esposa" disabled>
+          </div>
+          <div class="info-item">
+            <span class="label">Teléfono:</span>
+            <input type="text" class="value" value="+34 623 456 789" disabled>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,133 @@
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Perfiles</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a [routerLink]="['/']">Home</a></li>
+              <li class="breadcrumb-item active">Perfiles</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- Default box -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">{{ titulo }}</h3>
+
+          <div class="card-tools">
+          </div>
+        </div>
+        <div class="card-body">
+          <section class="content" [hidden]="!verLista">
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <div class="col-12 col-sm-6 col-xl-1 mr-auto">
+                      <button
+                        class="btn btn-outline-secondary btn-sm float-right"
+                        (click)="IngresarMedio()"
+                      >
+                        Agregar
+                      </button>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3 ml-auto">
+                      <input
+                        clase="form-control"
+                        type="text"
+                        placeholder="Buscar descripcion"
+                        [(ngModel)]="filterText.descripcion"
+                      />
+                    </div>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                      <thead>
+                        <tr>
+                          <th (click)="sort('descripcion')">Descripción</th>
+                          <th (click)="sort('estado')">Estado</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="let data of cargaListaPerfil">
+                          <td>{{ data.descripcion }}</td>
+                          <td>{{ data.estado == 1 ? "Activo" : "Inactivo" }}</td>
+                          <td>
+                            <i
+                              (click)="EditarMedio(data.idPerfil)"
+                              title="Editar el Perfil"
+                              class="fas fa-edit fa-md text-info mr-2"
+                            ></i>
+                            <!--<i
+                              (click)="VerDetalleComision(data.idComision)"
+                              class="fas fa fa-eye fa-md text-info mr-2"
+                            ></i>
+                            <i class="fas fa-trash-alt fa-sm text-danger"></i>-->
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="content" [hidden]="!registroEm">
+            <form autocomplete="off" [formGroup]="UserForm"  (ngSubmit)="GuardarMedio()">
+              <div class="row mt-3">
+                <div class="col-4">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Descripcion</label>
+                    <input type="text"
+                    class="form-control"
+                    formControlName="descripcion"
+                    placeholder="descripcion"
+                    [ngClass]="{'is-invalid': invalidField('descripcion')}">
+                    <div class="invalid-feedback">Debe ingresar la descripcion</div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <button
+                  type="text"
+                  class="btn btn-outline-secondary btn-sm float-right mr-2"
+                  (click)="RegresarLista()"
+                >
+                  Lista Perfiles
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-outline-secondary btn-sm float-right mr-2"
+                >
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+      </div>
+      <!-- /.card -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+

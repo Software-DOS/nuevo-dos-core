@@ -1,0 +1,77 @@
+  <!-- Contenedor Principal -->
+  <div class="dashboard-container container mt-5">
+    <h1 class="dashboard-title text-center">Panel de Control</h1>
+    <div class="row justify-content-center g-4">
+
+      <!-- Ver Perfiles -->
+      <div class="col-md-4 d-flex justify-content-center">
+        <div class="dashboard-card card-view">
+          <div class="card-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <h2>Ver Perfiles</h2>
+          <p>Visualiza los perfiles de los empleados</p>
+          <a [routerLink]="['/lista-empleados']" class="card-button">
+            Ver Ahora <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Capacitaciones -->
+      <div class="col-md-4 d-flex justify-content-center">
+        <div class="dashboard-card card-training">
+          <div class="card-icon">
+            <i class="fas fa-edit"></i>
+          </div>
+          <h2>Capacitaciones</h2>
+          <p>Revisa las capacitaciones solicitadas</p>
+          <a [routerLink]="['/lista-capacitaciones']" class="card-button">
+            Actualizar <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Evaluación -->
+      <div class="col-md-4 d-flex justify-content-center">
+        <div class="dashboard-card card-eval">
+          <div class="card-icon">
+            <i class="fas fa-upload"></i>
+          </div>
+          <h2>Evaluación</h2>
+          <p>Evalúa a los perfiles</p>
+          <a [routerLink]="['/lista-evaluaciones']"  class="card-button">
+            Evaluar <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Selección de Personal -->
+      <div class="col-md-4 d-flex justify-content-center">
+        <div class="dashboard-card card-selection">
+          <div class="card-icon">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <h2>Selección de Personal</h2>
+          <p>Gestiona los procesos de reclutamiento</p>
+          <a [routerLink]="['/']" class="card-button">
+            Ingresar <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Clima Laboral -->
+      <div class="col-md-4 d-flex justify-content-center">
+        <div class="dashboard-card card-clima">
+          <div class="card-icon">
+            <i class="fas fa-smile-beam"></i>
+          </div>
+          <h2>Clima Laboral</h2>
+          <p>Evalúa el ambiente de trabajo en la organización</p>
+          <a href="#" class="card-button">
+            Evaluar <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
