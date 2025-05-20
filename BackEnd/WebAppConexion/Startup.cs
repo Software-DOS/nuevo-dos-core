@@ -49,6 +49,21 @@ namespace WebAppConexion
             services.AddScoped<InventarioRepository>();
             services.AddScoped<PedidoRepository>();
             services.AddScoped<RecoFaceRepository>();
+            services.AddScoped<GTHCapacitacionRepository>();
+            services.AddScoped<GTHCelulaRepository>();
+            services.AddScoped<GTHDepartamentoRepository>();
+            services.AddScoped<GTHEmpleadoRepository>();
+            services.AddScoped<GTHEntidadCapRepository>();
+            services.AddScoped<GTHAsignacionCapacitacionRepository>();
+            services.AddScoped<GTHSolicitudCapacitacionRepository>();
+            services.AddScoped<GTHInformacionProfesionalRepository>();
+            services.AddScoped<GTHFormacionAcademicaRepository>();
+            services.AddScoped<GTHExperienciaLaboralRepository>();
+            services.AddScoped<GTHHabilidadesRepository>();
+            services.AddScoped<GTHHabInfoRepository>();
+            services.AddScoped<GTHIdiomaRepository>();
+            services.AddScoped<GTHIdiomaInfoRepository>();
+            services.AddScoped<GTHLogroRepository>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             //services.AddDbContext<DbContextProyectoColegio>(options =>
             //    options.UseSqlServer(Configuration.GetConnectionString("Conexion")));

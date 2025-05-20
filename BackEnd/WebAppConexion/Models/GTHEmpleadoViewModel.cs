@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Conexion.Entidad.Administracion
+namespace WebAppConexion.Models
 {
-    public class GTHEmpleado
+    public class GTHEmpleadoViewModel
     {
         public long IdEmpleado { get; set; }
         public long? IdPerfil { get; set; }
