@@ -8,6 +8,7 @@ namespace Conexion.Entidad.Administracion
 {
     public class GTHHabilidad
     {
+        public int Tipo { get; set; }
         public long IdHabilidad { get; set; }
         public string Nombre { get; set; }
         public string Categoria { get; set; }

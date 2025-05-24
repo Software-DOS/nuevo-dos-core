@@ -8,10 +8,11 @@ namespace Conexion.Entidad.Administracion
 {
     public class GTHLogro
     {
+        public int Tipo { get; set; }
         public long IdLogro { get; set; }
         public long? IdInfoProf { get; set; }
         public string Titulo { get; set; }
-        public string Tipo { get; set; }
+        public string LogroTipo { get; set; }
         public string Descripcion { get; set; }
         public DateTime? FechaLogro { get; set; }
         public string Evidencia { get; set; }

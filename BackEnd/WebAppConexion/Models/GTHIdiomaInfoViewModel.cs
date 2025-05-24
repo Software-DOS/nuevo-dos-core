@@ -8,6 +8,7 @@ namespace WebAppConexion.Models
 {
     public class GTHIdiomaInfoViewModel
     {
+        public int Tipo { get; set; }
         public long IdInfoProf { get; set; }
         public long IdIdioma { get; set; }
     }

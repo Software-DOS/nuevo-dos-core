@@ -8,6 +8,7 @@ namespace WebAppConexion.Models
 {
     public class GTHInformacionProfesionalViewModel
     {
+        public int Tipo { get; set; }
         public long IdInfoProf { get; set; }
         public long? IdEmpleado { get; set; }
         public string DescripcionProfesional { get; set; }

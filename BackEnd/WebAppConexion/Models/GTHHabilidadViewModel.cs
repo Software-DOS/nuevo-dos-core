@@ -8,6 +8,7 @@ namespace WebAppConexion.Models
 {
     public class GTHHabilidadViewModel
     {
+        public int Tipo { get; set; }
         public long IdHabilidad { get; set; }
         public string Nombre { get; set; }
         public string Categoria { get; set; }

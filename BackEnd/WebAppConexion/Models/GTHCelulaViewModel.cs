@@ -9,6 +9,7 @@ namespace WebAppConexion.Models
 {
     public class GTHCelulaViewModel
     {
+        public int Tipo { get; set; }
         public long IdCelula { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }

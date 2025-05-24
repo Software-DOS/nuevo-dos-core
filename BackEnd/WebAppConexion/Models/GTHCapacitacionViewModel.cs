@@ -8,6 +8,7 @@ namespace WebAppConexion.Models
 {
     public class GTHCapacitacionViewModel
     {
+        public int Tipo { get; set; }
         public long IdCapacitacion { get; set; }
         public long? IdEntidadCap { get; set; }
         public string Nombre { get; set; }

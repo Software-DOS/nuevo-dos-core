@@ -34,7 +34,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@ID_LOGRO", logro.IdLogro));
             cmd.Parameters.Add(new SqlParameter("@ID_INFOPROF", logro.IdInfoProf ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@LOGRO_TITULO", logro.Titulo ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@LOGRO_TIPO", logro.Tipo ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@LOGRO_TIPO", logro.LogroTipo ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@LOGRO_DESCRIPCION", logro.Descripcion ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@LOGRO_FECHALOGRO", logro.FechaLogro ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@LOGRO_EVIDENCIA", logro.Evidencia ?? (object)DBNull.Value));
@@ -81,7 +81,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                 {
                     IdLogro = (long)reader["ID_LOGRO"],
                     IdInfoProf = reader["ID_INFOPROF"] as long?,
-                    Tipo = reader["LOGRO_TIPO"].ToString(),
+                    LogroTipo = reader["LOGRO_TIPO"].ToString(),
                     Descripcion = reader["LOGRO_DESCRIPCION"].ToString(),
                     FechaLogro = reader["LOGRO_FECHALOGRO"] as DateTime?
                 });

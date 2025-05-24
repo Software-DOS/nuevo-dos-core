@@ -8,6 +8,7 @@ namespace Conexion.Entidad.Administracion
 {
     public class GTHExperienciaLaboral
     {
+        public int Tipo { get; set; }
         public long IdExperiencia { get; set; }
         public long? IdInfoProf { get; set; }
         public string Empresa { get; set; }

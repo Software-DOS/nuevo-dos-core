@@ -8,6 +8,7 @@ namespace Conexion.Entidad.Administracion
 {
     public class GTHSolicitudCapacitacion
     {
+        public int Tipo { get; set; }
         public long IdCapacitacion { get; set; }
         public long IdEmpleado { get; set; }
         public string Justificacion { get; set; }

@@ -8,6 +8,7 @@ namespace Conexion.Entidad.Administracion
 {
     public class GTHFormacionAcademica
     {
+        public int Tipo { get; set; }
         public long IdFormacion { get; set; }
         public long? IdInfoProf { get; set; }
         public string Institucion { get; set; }

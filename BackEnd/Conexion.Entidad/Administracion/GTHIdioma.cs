@@ -8,6 +8,7 @@ namespace Conexion.Entidad.Administracion
 {
     public class GTHIdioma
     {
+        public int Tipo { get; set; }
         public long IdIdioma { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }

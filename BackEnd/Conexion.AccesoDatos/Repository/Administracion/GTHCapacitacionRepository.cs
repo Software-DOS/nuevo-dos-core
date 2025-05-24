@@ -1,12 +1,10 @@
-﻿using Conexion.Entidad.Administracion;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Conexion.Entidad.Administracion;
+using Microsoft.Extensions.Configuration;
 
 namespace Conexion.AccesoDatos.Repository.Administracion
 {
@@ -20,12 +18,77 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         }
 
         /// <summary>
+        /// Ejecuta SP para mostrar capacitaciones según filtros.
+        /// 1 = IdCapacitacion, 2 = IdEntidadCap, 3 = Estado, 4 = FechaInicio, 5 = FechaFin.
+        /// </summary>
+        public async Task<IEnumerable<GTHCapacitacion>> Mostrar(
+            int tipo,
+            int? idCapacitacion = null,
+            int? idEntidadCap = null,
+            string estado = null,
+            DateTime? fechaInicio = null,
+            DateTime? fechaFin = null)
+        {
+            using var sql = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("GTH_MostrarCapacitacion", sql)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.Add(new SqlParameter("@ID_Capacitacion", idCapacitacion ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@ID_EntidadCap", idEntidadCap ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_Estado", estado ?? (object)DBNull.Value));
+            // Parámetros de fecha: usar nombres compatibles con SP
+            cmd.Parameters.Add(new SqlParameter("@FechaInicio", fechaInicio ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@FechaFin", fechaFin ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
+
+            await sql.OpenAsync();
+            var response = new List<GTHCapacitacion>();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var capVal = reader["ID_CAPACITACION"];
+                var entVal = reader["ID_ENTIDADCAP"];
+
+                response.Add(new GTHCapacitacion
+                {
+                    IdCapacitacion = capVal != DBNull.Value
+                        ? Convert.ToInt64(capVal)
+                        : 0L,
+                    IdEntidadCap = entVal != DBNull.Value
+                        ? Convert.ToInt64(entVal)
+                        : (long?)null,
+                    Nombre = reader["CAP_NOMBRE"]?.ToString(),
+                    Titulo = reader["CAP_TITULO"]?.ToString(),
+                    Categoria = reader["CAP_CATEGORIA"]?.ToString(),
+                    Descripcion = reader["CAP_DESCRIPCION"]?.ToString(),
+                    Estado = reader["CAP_ESTADO"]?.ToString(),
+                    FechaInicio = reader["CAP_FECHAINICIO"] as DateTime?,
+                    FechaFin = reader["CAP_FECHAFIN"] as DateTime?,
+                    FechaExpiracion = reader["CAP_FECHAEXPIRACION"] as DateTime?,
+                    UrlVerificacion = reader["CAP_URLVERIFICACION"]?.ToString(),
+                    ArchivosAdjuntos = reader["CAP_ARCHIVOSADJUNTOS"]?.ToString(),
+                    Observaciones = reader["CAP_OBSERVACIONES"]?.ToString(),
+                    Duracion = reader["CAP_DURACION"] as int?,
+                    Costo = reader["CAP_COSTO"] as double?,
+                    Modalidad = reader["CAP_MODALIDAD"]?.ToString()
+                });
+            }
+            return response;
+        }
+
+        /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar una capacitación.
+        /// 1 = Insertar, 2 = Editar, 3 = Eliminar.
         /// </summary>
         public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHCapacitacion capacitacion)
         {
             using var sql = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SP_Gestionar_GTH_CAPACITACION", sql) { CommandType = CommandType.StoredProcedure };
+            using var cmd = new SqlCommand("SP_Gestionar_GTH_CAPACITACION", sql)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
 
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
             cmd.Parameters.Add(new SqlParameter("@ID_CAPACITACION", capacitacion.IdCapacitacion));
@@ -46,65 +109,19 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@CAP_MODALIDAD", capacitacion.Modalidad ?? (object)DBNull.Value));
 
             await sql.OpenAsync();
-            var response = new List<Generica>();
+            var result = new List<Generica>();
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                response.Add(new Generica
+                var codeVal = reader["Codigo"];
+                var msgVal = reader["Mensaje"];
+                result.Add(new Generica
                 {
-                    valor1 = Convert.ToInt16(reader["Codigo"]),
-                    valor2 = reader["Mensaje"].ToString()
+                    valor1 = codeVal != DBNull.Value ? Convert.ToInt32(codeVal) : 0,
+                    valor2 = msgVal != DBNull.Value ? msgVal.ToString() : string.Empty
                 });
             }
-            return response;
-        }
-
-        /// <summary>
-        /// Ejecuta SP para mostrar capacitaciones según filtros.
-        /// </summary>
-        public async Task<IEnumerable<GTHCapacitacion>> Mostrar(int tipo,
-            int? idCapacitacion = null,
-            int? idEntidadCap = null,
-            string estado = null,
-            DateTime? fechaInicio = null,
-            DateTime? fechaFin = null)
-        {
-            using var sql = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("GTH_MostrarCapacitacion", sql) { CommandType = CommandType.StoredProcedure };
-
-            cmd.Parameters.Add(new SqlParameter("@ID_Capacitacion", idCapacitacion ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@ID_EntidadCap", idEntidadCap ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@CAP_Estado", estado ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@FechaInicio", fechaInicio ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@FechaFin", fechaFin ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
-
-            await sql.OpenAsync();
-            var response = new List<GTHCapacitacion>();
-            using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                response.Add(new GTHCapacitacion
-                {
-                    IdCapacitacion = (long)reader["ID_CAPACITACION"],
-                    IdEntidadCap = reader["ID_ENTIDADCAP"] as long?,
-                    Nombre = reader["CAP_NOMBRE"].ToString(),
-                    Titulo = reader["CAP_TITULO"].ToString(),
-                    Categoria = reader["CAP_CATEGORIA"].ToString(),
-                    Descripcion = reader["CAP_DESCRIPCION"].ToString(),
-                    Estado = reader["CAP_ESTADO"].ToString(),
-                    FechaInicio = reader["CAP_FECHAINICIO"] as DateTime?,
-                    FechaFin = reader["CAP_FECHAFIN"] as DateTime?,
-                    FechaExpiracion = reader["CAP_FECHAEXPIRACION"] as DateTime?,
-                    UrlVerificacion = reader["CAP_URLVERIFICACION"].ToString(),
-                    ArchivosAdjuntos = reader["CAP_ARCHIVOSADJUNTOS"].ToString(),
-                    Observaciones = reader["CAP_OBSERVACIONES"].ToString(),
-                    Duracion = reader["CAP_DURACION"] as int?,
-                    Costo = reader["CAP_COSTO"] as double?,
-                    Modalidad = reader["CAP_MODALIDAD"].ToString()
-                });
-            }
-            return response;
+            return result;
         }
     }
 }

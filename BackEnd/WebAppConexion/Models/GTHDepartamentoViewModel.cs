@@ -8,6 +8,7 @@ namespace WebAppConexion.Models
 {
     public class GTHDepartamentoViewModel
     {
+        public int Tipo { get; set; }
         public long IdDepartamento { get; set; }
         public long? IdCelula { get; set; }
         public string Nombre { get; set; }

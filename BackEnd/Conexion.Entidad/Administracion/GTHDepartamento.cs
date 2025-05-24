@@ -8,6 +8,7 @@ namespace Conexion.Entidad.Administracion
 {
     public class GTHDepartamento
     {
+        public int Tipo { get; set; }
         public long IdDepartamento { get; set; }
         public long? IdCelula { get; set; }
         public string Nombre { get; set; }

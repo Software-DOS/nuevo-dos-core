@@ -8,6 +8,7 @@ namespace WebAppConexion.Models
 {
     public class GTHHabInfoViewModel
     {
+        public int Tipo { get; set; }
         public long IdHabilidad { get; set; }
         public long IdInfoProf { get; set; }
     }
