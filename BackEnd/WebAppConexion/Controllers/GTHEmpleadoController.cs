@@ -51,7 +51,7 @@ namespace WebAppConexion.Controllers
                 Sueldo = model.Sueldo
             };
 
-            var responseResul = await _repository.Manage(db.Tipo, db);
+            var responseResul = await _repository.Gestionar(db.Tipo, db);
 
             // Devolver la respuesta mapeada a Generica
             return responseResul.Select(s => new Generica
@@ -60,6 +60,43 @@ namespace WebAppConexion.Controllers
                 valor2 = s.valor2
             });
         }
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<GTHEmpleadoViewModel>> Mostrar(
+        [FromQuery] int tipo,
+        [FromQuery] int? idEmpleado = null,
+        [FromQuery] int? idCelula = null,
+        [FromQuery] string estadoEmpleado = null)
+        {
+            // Llamamos al repositorio con los filtros
+            var entidades = await _repository.Mostrar(tipo, idEmpleado, idCelula, estadoEmpleado);
+
+            // Mapear cada GTHEmpleado a tu ViewModel
+            return entidades.Select(e => new GTHEmpleadoViewModel
+            {
+                Tipo = e.Tipo,
+                IdEmpleado = e.IdEmpleado,
+                IdPerfil = e.IdPerfil,
+                IdCelula = e.IdCelula,
+                Cedula = e.Cedula,
+                Nombre = e.Nombre,
+                Apellido = e.Apellido,
+                FechaNacimiento = e.FechaNacimiento,
+                Direccion = e.Direccion,
+                Telefono = e.Telefono,
+                Correo = e.Correo,
+                CorreoCorporativo = e.CorreoCorporativo,
+                FechaContratacion = e.FechaContratacion,
+                EstadoCivil = e.EstadoCivil,
+                Sexo = e.Sexo,
+                FotoPerfilUrl = e.FotoPerfilUrl,
+                EstadoEmpleado = e.EstadoEmpleado,
+                EmpTipo = e.EmpTipo,
+                ActPassword = e.ActPassword,
+                Password = e.Password,
+                Sueldo = e.Sueldo
+            });
+        }
+
 
     }
 }

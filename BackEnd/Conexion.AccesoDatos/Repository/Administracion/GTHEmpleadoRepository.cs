@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar un empleado.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHEmpleado empleado)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHEmpleado empleado)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_EMPLEADO", sql)
@@ -69,7 +69,8 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar empleados según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHEmpleado>> Show(int tipo,
+        public async Task<IEnumerable<GTHEmpleado>> Mostrar(
+            int tipo,
             int? idEmpleado = null,
             int? idCelula = null,
             string estadoEmpleado = null)
@@ -92,25 +93,34 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             {
                 list.Add(new GTHEmpleado
                 {
-                    IdEmpleado = (long)reader["ID_EMPLEADO"],
-                    IdPerfil = reader["ID_PERFIL"] as long?,
-                    IdCelula = reader["ID_CELULA"] as long?,
-                    Cedula = reader["EMP_CEDULA"].ToString(),
-                    Nombre = reader["EMP_NOMBRE"].ToString(),
-                    Apellido = reader["EMP_APELLIDO"].ToString(),
+                    // Convierte Int32 a Int64 de forma segura
+                    IdEmpleado = reader["ID_EMPLEADO"] != DBNull.Value
+                                          ? Convert.ToInt64(reader["ID_EMPLEADO"])
+                                          : 0L,
+                    IdPerfil = reader["ID_PERFIL"] != DBNull.Value
+                                          ? Convert.ToInt64(reader["ID_PERFIL"])
+                                          : (long?)null,
+                    IdCelula = reader["ID_CELULA"] != DBNull.Value
+                                          ? Convert.ToInt64(reader["ID_CELULA"])
+                                          : (long?)null,
+                    Cedula = reader["EMP_CEDULA"]?.ToString(),
+                    Nombre = reader["EMP_NOMBRE"]?.ToString(),
+                    Apellido = reader["EMP_APELLIDO"]?.ToString(),
                     FechaNacimiento = reader["EMP_FECHANACIMIENTO"] as DateTime?,
-                    Direccion = reader["EMP_DIRECCION"].ToString(),
-                    Telefono = reader["EMP_TELEFONO"].ToString(),
-                    Correo = reader["EMP_CORREO"].ToString(),
-                    CorreoCorporativo = reader["EMP_CORREOCORPORATIVO"].ToString(),
+                    Direccion = reader["EMP_DIRECCION"]?.ToString(),
+                    Telefono = reader["EMP_TELEFONO"]?.ToString(),
+                    Correo = reader["EMP_CORREO"]?.ToString(),
+                    CorreoCorporativo = reader["EMP_CORREOCORPORATIVO"]?.ToString(),
                     FechaContratacion = reader["EMP_FECHACONTRATACION"] as DateTime?,
-                    EstadoCivil = reader["EMP_ESTADOCIVIL"].ToString(),
-                    Sexo = reader["EMP_SEXO"].ToString(),
-                    FotoPerfilUrl = reader["EMP_FOTOPERFILURL"].ToString(),
-                    EstadoEmpleado = reader["EMP_ESTADOEMPLEADO"].ToString(),
-                    EmpTipo = reader["EMP_TIPO"] as int?,
+                    EstadoCivil = reader["EMP_ESTADOCIVIL"]?.ToString(),
+                    Sexo = reader["EMP_SEXO"]?.ToString(),
+                    FotoPerfilUrl = reader["EMP_FOTOPERFILURL"]?.ToString(),
+                    EstadoEmpleado = reader["EMP_ESTADOEMPLEADO"]?.ToString(),
+                    EmpTipo = reader["EMP_TIPO"] != DBNull.Value
+                                          ? Convert.ToInt32(reader["EMP_TIPO"])
+                                          : (int?)null,
                     ActPassword = reader["EMP_ACT_PASSWORD"] as bool?,
-                    Password = reader["EMP_PASSWORD"].ToString(),
+                    Password = reader["EMP_PASSWORD"]?.ToString(),
                     Sueldo = reader["EMP_SUELDO"] as decimal?
                 });
             }
