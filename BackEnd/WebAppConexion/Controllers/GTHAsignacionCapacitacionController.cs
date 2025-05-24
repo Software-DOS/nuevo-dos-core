@@ -21,7 +21,7 @@ namespace WebAppConexion.Controllers
 
         /// <summary>
         /// Devuelve la lista de asignaciones de capacitación según los filtros proporcionados.
-        /// 1 = IdCapacitacion, 2 = IdEmpleado.
+        /// 1 = IdCapacitacion, 2 = IdEmpleado, 0 = Todos.
         /// </summary>
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<GTHAsignacionCapacitacionViewModel>>> Mostrar(

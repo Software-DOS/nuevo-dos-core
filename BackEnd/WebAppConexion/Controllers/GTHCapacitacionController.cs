@@ -25,7 +25,7 @@ namespace WebAppConexion.Controllers
 
         /// <summary>
         /// Devuelve la lista de capacitaciones según los filtros proporcionados.
-        /// 1 = IdCapacitacion, 2 = IdEntidadCap, 3 = Estado, 4 = FechaInicio, 5 = FechaFin.
+        /// 1 = IdCapacitacion, 2 = IdEntidadCap, 3 = Estado, 4 = FechaInicio, 5 = FechaFin. 0 = Todos.
         /// </summary>
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<GTHCapacitacionViewModel>>> Mostrar(

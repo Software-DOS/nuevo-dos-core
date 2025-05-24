@@ -19,7 +19,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
         /// <summary>
         /// Ejecuta SP para mostrar asignaciones de capacitación según filtros.
-        /// 1 = IdCapacitacion, 2 = IdEmpleado.
+        /// 1 = IdCapacitacion, 2 = IdEmpleado, 0 = Todos.
         /// </summary>
         public async Task<IEnumerable<GTHAsignacionCapacitacion>> Mostrar(
             int tipo,

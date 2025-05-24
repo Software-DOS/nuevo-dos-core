@@ -26,7 +26,7 @@ namespace WebAppConexion.Controllers
 
         /// <summary>
         /// Devuelve la lista de empleados según los filtros proporcionados.
-        /// 1 = IdEmpleado, 2 = IdCelula, 3 = estadoEmpleado.
+        /// 1 = IdEmpleado, 2 = IdCelula, 3 = estadoEmpleado, 0 = Todos.
         /// </summary>
         [HttpGet("[action]")]
         public async Task<IEnumerable<GTHEmpleadoViewModel>> Mostrar(

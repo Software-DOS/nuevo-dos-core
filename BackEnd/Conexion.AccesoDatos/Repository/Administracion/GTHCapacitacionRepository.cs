@@ -19,7 +19,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
         /// <summary>
         /// Ejecuta SP para mostrar capacitaciones según filtros.
-        /// 1 = IdCapacitacion, 2 = IdEntidadCap, 3 = Estado, 4 = FechaInicio, 5 = FechaFin.
+        /// 1 = IdCapacitacion, 2 = IdEntidadCap, 3 = Estado, 4 = FechaInicio, 5 = FechaFin, 0 = Todos.
         /// </summary>
         public async Task<IEnumerable<GTHCapacitacion>> Mostrar(
             int tipo,

@@ -2,10 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace Conexion.AccesoDatos.Repository.Administracion
@@ -20,13 +18,44 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         }
 
         /// <summary>
+        /// Ejecuta SP para mostrar células según filtros.
+        /// 1 = IdCelula, 2 = Nombre, 0 = Todos.
+        /// </summary>
+        public async Task<IEnumerable<GTHCelula>> Mostrar(int tipo, int? idCelula = null, string nombre = null)
+        {
+            using var sql = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("GTH_MostrarCelula", sql) { CommandType = CommandType.StoredProcedure };
+
+            cmd.Parameters.Add(new SqlParameter("@ID_Celula", idCelula ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@Cel_Nombre", nombre ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
+
+            await sql.OpenAsync();
+            var list = new List<GTHCelula>();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                list.Add(new GTHCelula
+                {
+                    IdCelula = reader["ID_CELULA"] != DBNull.Value
+                        ? Convert.ToInt64(reader["ID_CELULA"])
+                        : 0L,
+                    Nombre = reader["CEL_NOMBRE"]?.ToString(),
+                    Descripcion = reader["CEL_DESCRIPCION"]?.ToString(),
+                    Encargado = reader["CEL_ENCARGADO"]?.ToString()
+                });
+            }
+            return list;
+        }
+
+        /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar una célula.
+        /// 0 = Insertar, 1 = Editar, 2 = Eliminar.
         /// </summary>
         public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHCelula celula)
         {
             using var sql = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SP_Gestionar_GTH_CELULA", sql)
-            { CommandType = CommandType.StoredProcedure };
+            using var cmd = new SqlCommand("SP_Gestionar_GTH_CELULA", sql) { CommandType = CommandType.StoredProcedure };
 
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
             cmd.Parameters.Add(new SqlParameter("@ID_CELULA", celula.IdCelula));
@@ -41,42 +70,11 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             {
                 response.Add(new Generica
                 {
-                    valor1 = Convert.ToInt16(reader["Codigo"]),
-                    valor2 = reader["Mensaje"].ToString()
+                    valor1 = reader["Codigo"] != DBNull.Value ? Convert.ToInt32(reader["Codigo"]) : 0,
+                    valor2 = reader["Mensaje"]?.ToString()
                 });
             }
             return response;
-        }
-
-        /// <summary>
-        /// Ejecuta SP para mostrar células según filtros.
-        /// </summary>
-        public async Task<IEnumerable<GTHCelula>> Mostrar(int tipo,
-            int? idCelula = null,
-            string nombre = null)
-        {
-            using var sql = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("GTH_MostrarCelula", sql)
-            { CommandType = CommandType.StoredProcedure };
-
-            cmd.Parameters.Add(new SqlParameter("@ID_Celula", idCelula ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@Cel_Nombre", nombre ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
-
-            await sql.OpenAsync();
-            var list = new List<GTHCelula>();
-            using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                list.Add(new GTHCelula
-                {
-                    IdCelula = (long)reader["ID_CELULA"],
-                    Nombre = reader["CEL_NOMBRE"].ToString(),
-                    Descripcion = reader["CEL_DESCRIPCION"].ToString(),
-                    Encargado = reader["CEL_ENCARGADO"].ToString()
-                });
-            }
-            return list;
         }
     }
 }
