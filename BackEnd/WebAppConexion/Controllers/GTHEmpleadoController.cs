@@ -24,42 +24,10 @@ namespace WebAppConexion.Controllers
             _config = config;
         }
 
-        [HttpPost("[action]")]
-        public async Task<IEnumerable<Generica>> Gestionar([FromBody] GTHEmpleadoViewModel model)
-        {
-            // Mapear ViewModel a la entidad GTHEmpleado
-            var db = new GTHEmpleado
-            {
-                Tipo = model.Tipo,
-                IdEmpleado = model.IdEmpleado,
-                IdPerfil = model.IdPerfil,
-                IdCelula = model.IdCelula,
-                Cedula = model.Cedula,
-                Nombre = model.Nombre,
-                Apellido = model.Apellido,
-                FechaNacimiento = model.FechaNacimiento,
-                Direccion = model.Direccion,
-                Telefono = model.Telefono,
-                Correo = model.Correo.ToLower(),
-                CorreoCorporativo = model.CorreoCorporativo?.ToLower(),
-                FechaContratacion = model.FechaContratacion,
-                EstadoCivil = model.EstadoCivil,
-                Sexo = model.Sexo,
-                FotoPerfilUrl = model.FotoPerfilUrl,
-                EstadoEmpleado = model.EstadoEmpleado,
-                EmpTipo = model.EmpTipo,
-                Sueldo = model.Sueldo
-            };
-
-            var responseResul = await _repository.Gestionar(db.Tipo, db);
-
-            // Devolver la respuesta mapeada a Generica
-            return responseResul.Select(s => new Generica
-            {
-                valor1 = s.valor1,
-                valor2 = s.valor2
-            });
-        }
+        /// <summary>
+        /// Devuelve la lista de empleados según los filtros proporcionados.
+        /// 1 = IdEmpleado, 2 = IdCelula, 3 = estadoEmpleado.
+        /// </summary>
         [HttpGet("[action]")]
         public async Task<IEnumerable<GTHEmpleadoViewModel>> Mostrar(
         [FromQuery] int tipo,
@@ -97,6 +65,46 @@ namespace WebAppConexion.Controllers
             });
         }
 
+        /// <summary>
+        /// Ejecuta la operación de gestión de empleado:
+        /// 1 = Insertar, 2 = Editar, 3 = Eliminar.
+        /// </summary>
+        [HttpPost("[action]")]
+        public async Task<IEnumerable<Generica>> Gestionar([FromBody] GTHEmpleadoViewModel model)
+        {
+            // Mapear ViewModel a la entidad GTHEmpleado
+            var db = new GTHEmpleado
+            {
+                Tipo = model.Tipo,
+                IdEmpleado = model.IdEmpleado,
+                IdPerfil = model.IdPerfil,
+                IdCelula = model.IdCelula,
+                Cedula = model.Cedula,
+                Nombre = model.Nombre,
+                Apellido = model.Apellido,
+                FechaNacimiento = model.FechaNacimiento,
+                Direccion = model.Direccion,
+                Telefono = model.Telefono,
+                Correo = model.Correo.ToLower(),
+                CorreoCorporativo = model.CorreoCorporativo?.ToLower(),
+                FechaContratacion = model.FechaContratacion,
+                EstadoCivil = model.EstadoCivil,
+                Sexo = model.Sexo,
+                FotoPerfilUrl = model.FotoPerfilUrl,
+                EstadoEmpleado = model.EstadoEmpleado,
+                EmpTipo = model.EmpTipo,
+                Sueldo = model.Sueldo
+            };
+
+            var responseResul = await _repository.Gestionar(db.Tipo, db);
+
+            // Devolver la respuesta mapeada a Generica
+            return responseResul.Select(s => new Generica
+            {
+                valor1 = s.valor1,
+                valor2 = s.valor2
+            });
+        }
 
     }
 }
