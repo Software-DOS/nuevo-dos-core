@@ -95,7 +95,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     IdEmpleado = (long)reader["ID_EMPLEADO"],
                     IdPerfil = reader["ID_PERFIL"] as long?,
                     IdCelula = reader["ID_CELULA"] as long?,
-                    Cedula = reader["EMP_CEDULA"] as int?,
+                    Cedula = reader["EMP_CEDULA"].ToString(),
                     Nombre = reader["EMP_NOMBRE"].ToString(),
                     Apellido = reader["EMP_APELLIDO"].ToString(),
                     FechaNacimiento = reader["EMP_FECHANACIMIENTO"] as DateTime?,

@@ -11,7 +11,7 @@ namespace Conexion.Entidad.Administracion
         public long IdEmpleado { get; set; }
         public long? IdPerfil { get; set; }
         public long? IdCelula { get; set; }
-        public int? Cedula { get; set; }
+        public string Cedula { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         public DateTime? FechaNacimiento { get; set; }
