@@ -8,6 +8,7 @@ namespace Conexion.Entidad.Administracion
 {
     public class GTHEmpleado
     {
+        public int Tipo { get; set; }
         public long IdEmpleado { get; set; }
         public long? IdPerfil { get; set; }
         public long? IdCelula { get; set; }

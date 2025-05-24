@@ -1,5 +1,6 @@
 ﻿using Conexion.AccesoDatos.Repository.Administracion;
 using Conexion.Entidad.Administracion;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -29,6 +30,7 @@ namespace WebAppConexion.Controllers
             // Mapear ViewModel a la entidad GTHEmpleado
             var db = new GTHEmpleado
             {
+                Tipo = model.Tipo,
                 IdEmpleado = model.IdEmpleado,
                 IdPerfil = model.IdPerfil,
                 IdCelula = model.IdCelula,
@@ -49,7 +51,7 @@ namespace WebAppConexion.Controllers
                 Sueldo = model.Sueldo
             };
 
-            var responseResul = await _repository.Manage(0, db);
+            var responseResul = await _repository.Manage(db.Tipo, db);
 
             // Devolver la respuesta mapeada a Generica
             return responseResul.Select(s => new Generica
