@@ -45,7 +45,7 @@ namespace WebAppConexion.Controllers
                 Sexo = model.Sexo,
                 FotoPerfilUrl = model.FotoPerfilUrl,
                 EstadoEmpleado = model.EstadoEmpleado,
-                EmpTipo = model.Tipo,
+                EmpTipo = model.EmpTipo,
                 Sueldo = model.Sueldo
             };
 
