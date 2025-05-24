@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar una asignación de capacitación.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHAsignacionCapacitacion asignacion)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHAsignacionCapacitacion asignacion)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_ASIGNACIONCAPACITACION", sql)
@@ -53,7 +53,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar asignaciones de capacitación según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHAsignacionCapacitacion>> Show(int tipo,
+        public async Task<IEnumerable<GTHAsignacionCapacitacion>> Mostrar(int tipo,
             int? idCapacitacion = null,
             int? idEmpleado = null)
         {

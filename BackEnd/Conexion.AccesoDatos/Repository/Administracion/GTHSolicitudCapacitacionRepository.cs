@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar una solicitud de capacitación.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHSolicitudCapacitacion solicitud)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHSolicitudCapacitacion solicitud)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_SOLICITUDCAPACITACION", sql)
@@ -55,7 +55,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar solicitudes de capacitación según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHSolicitudCapacitacion>> Show(int tipo,
+        public async Task<IEnumerable<GTHSolicitudCapacitacion>> Mostrar(int tipo,
             int? idCapacitacion = null,
             int? idEmpleado = null)
         {

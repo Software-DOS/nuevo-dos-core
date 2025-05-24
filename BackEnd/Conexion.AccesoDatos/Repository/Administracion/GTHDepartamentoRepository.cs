@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar un departamento.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHDepartamento departamento)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHDepartamento departamento)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_DEPARTAMENTO", sql)
@@ -55,7 +55,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar departamentos según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHDepartamento>> Show(int tipo,
+        public async Task<IEnumerable<GTHDepartamento>> Mostar(int tipo,
             int? idDepartamento = null,
             int? idCelula = null,
             string nombre = null)

@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar formación académica.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHFormacionAcademica formacion)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHFormacionAcademica formacion)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_FORMACIONACADEMICA", sql)
@@ -58,7 +58,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar formación académica según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHFormacionAcademica>> Show(int tipo,
+        public async Task<IEnumerable<GTHFormacionAcademica>> Mostar(int tipo,
             int? idFormacion = null,
             int? idInfoProf = null)
         {

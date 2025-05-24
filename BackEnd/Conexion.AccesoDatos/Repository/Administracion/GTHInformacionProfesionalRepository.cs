@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar información profesional.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHInformacionProfesional infoProf)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHInformacionProfesional infoProf)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_INFORMACIONPROFESIONAL", sql)
@@ -54,7 +54,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar información profesional según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHInformacionProfesional>> Show(int tipo,
+        public async Task<IEnumerable<GTHInformacionProfesional>> Mostrar(int tipo,
             int? idInfoProf = null,
             int? idEmpleado = null)
         {

@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar experiencia laboral.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHExperienciaLaboral experiencia)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHExperienciaLaboral experiencia)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_EXPERIENCIALABORAL", sql)
@@ -56,7 +56,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar experiencia laboral según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHExperienciaLaboral>> Show(int tipo,
+        public async Task<IEnumerable<GTHExperienciaLaboral>> Mostar(int tipo,
             int? idExperiencia = null,
             int? idInfoProf = null)
         {

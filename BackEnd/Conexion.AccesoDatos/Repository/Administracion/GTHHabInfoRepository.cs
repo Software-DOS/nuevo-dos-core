@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, eliminar o (no actualizar) relación habilidad ↔ información profesional.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHHabInfo habInfo)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHHabInfo habInfo)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_HABINFO", sql)
@@ -51,7 +51,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar relación habilidades ↔ información profesional.
         /// </summary>
-        public async Task<IEnumerable<GTHHabInfo>> Show(int tipo,
+        public async Task<IEnumerable<GTHHabInfo>> Mostrar(int tipo,
             int? idHabilidad = null,
             int? idInfoProf = null)
         {

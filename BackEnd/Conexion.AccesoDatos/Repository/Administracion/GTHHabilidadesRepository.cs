@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar una habilidad.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHHabilidad habilidad)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHHabilidad habilidad)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_HABILIDADES", sql)
@@ -53,7 +53,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar habilidades según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHHabilidad>> Show(int tipo,
+        public async Task<IEnumerable<GTHHabilidad>> Mostar(int tipo,
             int? idHabilidad = null,
             string nombre = null,
             string categoria = null)

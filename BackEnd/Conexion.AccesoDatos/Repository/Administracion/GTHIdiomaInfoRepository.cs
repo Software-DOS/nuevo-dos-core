@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar o eliminar asociación idioma ↔ información profesional.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHIdiomaInfo idiomaInfo)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHIdiomaInfo idiomaInfo)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_IDIOMAINFO", sql)
@@ -51,7 +51,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar asociaciones idioma ↔ información profesional.
         /// </summary>
-        public async Task<IEnumerable<GTHIdiomaInfo>> Show(int tipo,
+        public async Task<IEnumerable<GTHIdiomaInfo>> Mostrar(int tipo,
             int? idInfoProf = null,
             int? idIdioma = null)
         {

@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar una entidad de capacitación.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHEntidadCapacitacion entidad)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHEntidadCapacitacion entidad)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_ENTIDADCAP", sql)
@@ -54,7 +54,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar entidades de capacitación según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHEntidadCapacitacion>> Show(int tipo,
+        public async Task<IEnumerable<GTHEntidadCapacitacion>> Mostar(int tipo,
             int? idEntidadCap = null,
             string nombre = null)
         {

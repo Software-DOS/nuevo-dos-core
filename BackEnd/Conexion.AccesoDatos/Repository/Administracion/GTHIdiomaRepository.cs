@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar un idioma.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHIdioma idioma)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHIdioma idioma)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_IDIOMA", sql)
@@ -54,7 +54,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar idiomas según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHIdioma>> Show(int tipo,
+        public async Task<IEnumerable<GTHIdioma>> Mostrar(int tipo,
             int? idIdioma = null,
             string nombre = null,
             string nivel = null,

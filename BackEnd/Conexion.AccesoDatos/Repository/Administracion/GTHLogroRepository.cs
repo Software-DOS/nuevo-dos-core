@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar un logro.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHLogro logro)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHLogro logro)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_LOGRO", sql)
@@ -56,7 +56,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar logros según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHLogro>> Show(int tipo,
+        public async Task<IEnumerable<GTHLogro>> Mostrar(int tipo,
             int? idLogro = null,
             int? idInfoProf = null,
             string tipoLogro = null)

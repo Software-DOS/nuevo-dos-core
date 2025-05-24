@@ -22,7 +22,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar una célula.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Manage(int tipo, GTHCelula celula)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHCelula celula)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_CELULA", sql)
@@ -51,7 +51,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// <summary>
         /// Ejecuta SP para mostrar células según filtros.
         /// </summary>
-        public async Task<IEnumerable<GTHCelula>> Show(int tipo,
+        public async Task<IEnumerable<GTHCelula>> Mostrar(int tipo,
             int? idCelula = null,
             string nombre = null)
         {
