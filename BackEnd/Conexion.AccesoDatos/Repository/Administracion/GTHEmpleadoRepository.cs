@@ -108,7 +108,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     Sexo = reader["EMP_SEXO"].ToString(),
                     FotoPerfilUrl = reader["EMP_FOTOPERFILURL"].ToString(),
                     EstadoEmpleado = reader["EMP_ESTADOEMPLEADO"].ToString(),
-                    Tipo = reader["EMP_TIPO"] as int?,
+                    EmpTipo = reader["EMP_TIPO"] as int?,
                     ActPassword = reader["EMP_ACT_PASSWORD"] as bool?,
                     Password = reader["EMP_PASSWORD"].ToString(),
                     Sueldo = reader["EMP_SUELDO"] as decimal?
