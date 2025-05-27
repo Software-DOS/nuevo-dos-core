@@ -1,12 +1,10 @@
-﻿using Conexion.Entidad.Administracion;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Conexion.Entidad.Administracion;
+using Microsoft.Extensions.Configuration;
 
 namespace Conexion.AccesoDatos.Repository.Administracion
 {
@@ -21,6 +19,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
         /// <summary>
         /// Ejecuta SP para insertar o eliminar asociación idioma ↔ información profesional.
+        /// 1 = Insertar, 2 = Eliminar.
         /// </summary>
         public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHIdiomaInfo idiomaInfo)
         {
@@ -39,17 +38,20 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
+                var codeVal = reader["Codigo"];
+                var msgVal = reader["Mensaje"];
                 response.Add(new Generica
                 {
-                    valor1 = Convert.ToInt16(reader["Codigo"]),
-                    valor2 = reader["Mensaje"].ToString()
+                    valor1 = codeVal != DBNull.Value ? Convert.ToInt32(codeVal) : 0,
+                    valor2 = msgVal != DBNull.Value ? msgVal.ToString() : string.Empty
                 });
             }
             return response;
         }
 
         /// <summary>
-        /// Ejecuta SP para mostrar asociaciones idioma ↔ información profesional.
+        /// Ejecuta SP para mostrar asociaciones idioma ↔ información profesional según filtros.
+        /// 1 = IdInfoProf, 2 = IdIdioma.
         /// </summary>
         public async Task<IEnumerable<GTHIdiomaInfo>> Mostrar(int tipo,
             int? idInfoProf = null,
@@ -68,12 +70,30 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             await sql.OpenAsync();
             var list = new List<GTHIdiomaInfo>();
             using var reader = await cmd.ExecuteReaderAsync();
+
+            // Local helpers for safe reading
+            object SafeGet(string col)
+            {
+                try { return reader[col]; }
+                catch (IndexOutOfRangeException) { return DBNull.Value; }
+            }
+            long SafeGetLong(string col)
+            {
+                var val = SafeGet(col);
+                return val != DBNull.Value ? Convert.ToInt64(val) : 0L;
+            }
+            long? SafeGetNullableLong(string col)
+            {
+                var val = SafeGet(col);
+                return val != DBNull.Value ? Convert.ToInt64(val) : (long?)null;
+            }
+
             while (await reader.ReadAsync())
             {
                 list.Add(new GTHIdiomaInfo
                 {
-                    IdInfoProf = (long)reader["ID_INFOPROF"],
-                    IdIdioma = (long)reader["ID_IDIOMA"]
+                    IdInfoProf = SafeGetLong("ID_INFOPROF"),
+                    IdIdioma = SafeGetLong("ID_IDIOMA")
                 });
             }
             return list;
