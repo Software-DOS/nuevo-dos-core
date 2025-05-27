@@ -1,12 +1,10 @@
-﻿using Conexion.Entidad.Administracion;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Conexion.Entidad.Administracion;
+using Microsoft.Extensions.Configuration;
 
 namespace Conexion.AccesoDatos.Repository.Administracion
 {
@@ -20,45 +18,12 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         }
 
         /// <summary>
-        /// Ejecuta SP para insertar, actualizar o eliminar un departamento.
-        /// </summary>
-        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHDepartamento departamento)
-        {
-            using var sql = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SP_Gestionar_GTH_DEPARTAMENTO", sql)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-
-            cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
-            cmd.Parameters.Add(new SqlParameter("@ID_DEPARTAMENTO", departamento.IdDepartamento));
-            cmd.Parameters.Add(new SqlParameter("@ID_CELULA", departamento.IdCelula ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@DEP_NOMBRE", departamento.Nombre ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@DEP_DESCRIPCION", departamento.Descripcion ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@DEP_JEFE", departamento.Jefe ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@DEP_EMPRESA", departamento.Empresa ?? (object)DBNull.Value));
-
-            await sql.OpenAsync();
-            var response = new List<Generica>();
-            using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                response.Add(new Generica
-                {
-                    valor1 = Convert.ToInt16(reader["CodigoEstado"] ?? reader["CodigoEstado"] /* fallback */),
-                    valor2 = reader["Resultado"].ToString()
-                });
-            }
-            return response;
-        }
-
-        /// <summary>
         /// Ejecuta SP para mostrar departamentos según filtros.
+        /// 1 = IdDepartamento, 2 = IdCelula.
         /// </summary>
-        public async Task<IEnumerable<GTHDepartamento>> Mostar(int tipo,
-            int? idDepartamento = null,
-            int? idCelula = null,
-            string nombre = null)
+        public async Task<IEnumerable<GTHDepartamento>> Mostrar(int tipo,
+            long? idDepartamento = null,
+            long? idCelula = null)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("GTH_MostrarDepartamento", sql)
@@ -68,7 +33,6 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
             cmd.Parameters.Add(new SqlParameter("@ID_Departamento", idDepartamento ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@ID_Celula", idCelula ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@Dep_Nombre", nombre ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
 
             await sql.OpenAsync();
@@ -76,17 +40,61 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
+                var depVal = reader["ID_DEPARTAMENTO"];
+                var celVal = reader["ID_CELULA"];
+
                 list.Add(new GTHDepartamento
                 {
-                    IdDepartamento = (long)reader["ID_DEPARTAMENTO"],
-                    IdCelula = reader["ID_CELULA"] as long?,
-                    Nombre = reader["DEP_NOMBRE"].ToString(),
-                    Descripcion = reader["DEP_DESCRIPCION"].ToString(),
-                    Jefe = reader["DEP_JEFE"].ToString(),
-                    Empresa = reader["DEP_EMPRESA"].ToString()
+                    IdDepartamento = depVal != DBNull.Value
+                        ? Convert.ToInt64(depVal)
+                        : 0L,
+                    IdCelula = celVal != DBNull.Value
+                        ? Convert.ToInt64(celVal)
+                        : (long?)null,
+                    Nombre = reader["DEP_NOMBRE"]?.ToString(),
+                    Descripcion = reader["DEP_DESCRIPCION"]?.ToString(),
+                    Jefe = reader["DEP_JEFE"]?.ToString(),
+                    Empresa = reader["DEP_EMPRESA"]?.ToString()
                 });
             }
             return list;
+        }
+
+        /// <summary>
+        /// Ejecuta SP para insertar, actualizar o eliminar un departamento.
+        /// 1 = Insertar, 2 = Editar, 3 = Eliminar.
+        /// </summary>
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHDepartamento departamento)
+        {
+            using var sql = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SP_Gestionar_GTH_Departamento", sql)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
+            cmd.Parameters.Add(new SqlParameter("@ID_Departamento", departamento.IdDepartamento));
+            cmd.Parameters.Add(new SqlParameter("@ID_Celula", departamento.IdCelula ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@DEP_Nombre", departamento.Nombre ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@DEP_Descripcion", departamento.Descripcion ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@DEP_Jefe", departamento.Jefe ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@DEP_Empresa", departamento.Empresa ?? (object)DBNull.Value));
+
+            await sql.OpenAsync();
+            var response = new List<Generica>();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var codeVal = reader["Codigo"];
+                var msgVal = reader["Mensaje"];
+
+                response.Add(new Generica
+                {
+                    valor1 = codeVal != DBNull.Value ? Convert.ToInt32(codeVal) : 0,
+                    valor2 = msgVal != DBNull.Value ? msgVal.ToString() : string.Empty
+                });
+            }
+            return response;
         }
     }
 }

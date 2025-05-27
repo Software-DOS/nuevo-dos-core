@@ -67,7 +67,7 @@ namespace WebAppConexion.Controllers
 
         /// <summary>
         /// Ejecuta la operación de gestión de empleado:
-        /// 1 = Insertar, 2 = Editar, 3 = Eliminar.
+        /// 0 = Insertar, 1 = Editar, 2 = Eliminar.
         /// </summary>
         [HttpPost("[action]")]
         public async Task<IEnumerable<Generica>> Gestionar([FromBody] GTHEmpleadoViewModel model)
