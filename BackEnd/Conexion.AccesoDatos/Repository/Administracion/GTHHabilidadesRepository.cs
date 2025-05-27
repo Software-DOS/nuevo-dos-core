@@ -8,11 +8,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace Conexion.AccesoDatos.Repository.Administracion
 {
-    public class GTHHabilidadRepository
+    public class GTHHabilidadesRepository
     {
         private readonly string _connectionString;
 
-        public GTHHabilidadRepository(IConfiguration configuration)
+        public GTHHabilidadesRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("Conexion");
         }
@@ -21,7 +21,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// Ejecuta SP para insertar, actualizar o eliminar una habilidad.
         /// 1 = Insertar, 2 = Editar, 3 = Eliminar.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHHabilidad habilidad)
+        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHHabilidades habilidad)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_HABILIDADES", sql)
@@ -55,7 +55,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// Ejecuta SP para mostrar habilidades según los filtros proporcionados.
         /// 1 = IdHabilidad, 2 = Nombre, 3 = Categoria.
         /// </summary>
-        public async Task<IEnumerable<GTHHabilidad>> Mostrar(
+        public async Task<IEnumerable<GTHHabilidades>> Mostrar(
             int tipo,
             int? idHabilidad = null,
             string nombre = null,
@@ -73,13 +73,13 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
 
             await sql.OpenAsync();
-            var list = new List<GTHHabilidad>();
+            var list = new List<GTHHabilidades>();
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 var idVal = reader["ID_HABILIDAD"];
 
-                list.Add(new GTHHabilidad
+                list.Add(new GTHHabilidades
                 {
                     IdHabilidad = idVal != DBNull.Value
                         ? Convert.ToInt64(idVal)

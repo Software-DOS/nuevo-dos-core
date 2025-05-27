@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Conexion.Entidad.Administracion
 {
-    public class GTHHabilidad
+    public class GTHHabilidades
     {
         public int Tipo { get; set; }
         public long IdHabilidad { get; set; }

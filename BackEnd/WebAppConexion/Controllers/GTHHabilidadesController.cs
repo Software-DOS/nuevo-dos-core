@@ -10,11 +10,11 @@ namespace WebAppConexion.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class GTHHabilidadController : ControllerBase
+    public class GTHHabilidadesController : ControllerBase
     {
-        private readonly GTHHabilidadRepository _repository;
+        private readonly GTHHabilidadesRepository _repository;
 
-        public GTHHabilidadController(GTHHabilidadRepository repository)
+        public GTHHabilidadesController(GTHHabilidadesRepository repository)
         {
             _repository = repository;
         }
@@ -24,7 +24,7 @@ namespace WebAppConexion.Controllers
         /// 1 = IdHabilidad, 2 = Nombre, 3 = Categoria, 0 = Todos.
         /// </summary>
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<GTHHabilidadViewModel>>> Mostrar(
+        public async Task<ActionResult<IEnumerable<GTHHabilidadesViewModel>>> Mostrar(
             [FromQuery] int tipo,
             [FromQuery] long? idHabilidad = null,
             [FromQuery] string nombre = null,
@@ -37,7 +37,7 @@ namespace WebAppConexion.Controllers
                 nombre,
                 categoria);
 
-            var modelos = entidades.Select(e => new GTHHabilidadViewModel
+            var modelos = entidades.Select(e => new GTHHabilidadesViewModel
             {
                 Tipo = tipo,
                 IdHabilidad = e.IdHabilidad,
@@ -55,9 +55,9 @@ namespace WebAppConexion.Controllers
         /// </summary>
         [HttpPost("[action]")]
         public async Task<ActionResult<IEnumerable<Generica>>> Gestionar(
-            [FromBody] GTHHabilidadViewModel model)
+            [FromBody] GTHHabilidadesViewModel model)
         {
-            var entidad = new GTHHabilidad
+            var entidad = new GTHHabilidades
             {
                 IdHabilidad = model.IdHabilidad,
                 Nombre = model.Nombre,

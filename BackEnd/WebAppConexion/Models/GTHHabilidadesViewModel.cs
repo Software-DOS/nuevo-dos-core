@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebAppConexion.Models
 {
-    public class GTHHabilidadViewModel
+    public class GTHHabilidadesViewModel
     {
         public int Tipo { get; set; }
         public long IdHabilidad { get; set; }
