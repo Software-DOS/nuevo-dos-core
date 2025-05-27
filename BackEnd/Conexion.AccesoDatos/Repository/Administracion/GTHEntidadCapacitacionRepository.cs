@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace Conexion.AccesoDatos.Repository.Administracion
 {
-    public class GTHEntidadCapRepository
+    public class GTHEntidadCapacitacionRepository
     {
         private readonly string _connectionString;
 
-        public GTHEntidadCapRepository(IConfiguration configuration)
+        public GTHEntidadCapacitacionRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("Conexion");
         }

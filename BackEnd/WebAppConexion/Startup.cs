@@ -52,7 +52,7 @@ namespace WebAppConexion
             services.AddScoped<GTHCelulaRepository>();
             services.AddScoped<GTHDepartamentoRepository>();
             services.AddScoped<GTHEmpleadoRepository>();
-            services.AddScoped<GTHEntidadCapRepository>();
+            services.AddScoped<GTHEntidadCapacitacionRepository>();
             services.AddScoped<GTHAsignacionCapacitacionRepository>();
             services.AddScoped<GTHSolicitudCapacitacionRepository>();
             services.AddScoped<GTHInformacionProfesionalRepository>();
