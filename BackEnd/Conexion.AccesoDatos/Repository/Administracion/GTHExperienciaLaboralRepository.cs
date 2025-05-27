@@ -1,12 +1,10 @@
-﻿using Conexion.Entidad.Administracion;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Conexion.Entidad.Administracion;
+using Microsoft.Extensions.Configuration;
 
 namespace Conexion.AccesoDatos.Repository.Administracion
 {
@@ -20,9 +18,57 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         }
 
         /// <summary>
-        /// Ejecuta SP para insertar, actualizar o eliminar experiencia laboral.
+        /// Ejecuta SP para mostrar experiencia laboral según filtros.
+        /// 1 = IdExperiencia, 2 = IdInfoProf.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHExperienciaLaboral experiencia)
+        public async Task<IEnumerable<GTHExperienciaLaboral>> Mostrar(
+            int tipo,
+            int? idExperiencia = null,
+            int? idInfoProf = null)
+        {
+            using var sql = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("GTH_MostrarExperienciaLaboral", sql)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.Add(new SqlParameter("@ID_Experiencia", idExperiencia ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@ID_Infoprof", idInfoProf ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
+
+            await sql.OpenAsync();
+            var list = new List<GTHExperienciaLaboral>();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var expVal = reader["ID_EXPERIENCIA"];
+                var infoVal = reader["ID_INFOPROF"];
+
+                list.Add(new GTHExperienciaLaboral
+                {
+                    IdExperiencia = expVal != DBNull.Value
+                        ? Convert.ToInt64(expVal)
+                        : 0L,
+                    IdInfoProf = infoVal != DBNull.Value
+                        ? Convert.ToInt64(infoVal)
+                        : (long?)null,
+                    Empresa = reader["EXP_EMPRESA"]?.ToString(),
+                    Cargo = reader["EXP_CARGO"]?.ToString(),
+                    FechaInicio = reader["EXP_FECHAINICIO"] as DateTime?,
+                    FechaFin = reader["EXP_FECHAFIN"] as DateTime?,
+                    Descripcion = reader["EXP_DESCRIPCION"]?.ToString()
+                });
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// Ejecuta SP para insertar, actualizar o eliminar experiencia laboral.
+        /// 1 = Insertar, 2 = Editar, 3 = Eliminar.
+        /// </summary>
+        public async Task<IEnumerable<Generica>> Gestionar(
+            int tipo,
+            GTHExperienciaLaboral experiencia)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_EXPERIENCIALABORAL", sql)
@@ -44,49 +90,20 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
+                var codeVal = reader["Codigo"];
+                var msgVal = reader["Mensaje"];
+
                 response.Add(new Generica
                 {
-                    valor1 = Convert.ToInt16(reader["Codigo"]),
-                    valor2 = reader["Mensaje"].ToString()
+                    valor1 = codeVal != DBNull.Value
+                        ? Convert.ToInt32(codeVal)
+                        : 0,
+                    valor2 = msgVal != DBNull.Value
+                        ? msgVal.ToString()
+                        : string.Empty
                 });
             }
             return response;
-        }
-
-        /// <summary>
-        /// Ejecuta SP para mostrar experiencia laboral según filtros.
-        /// </summary>
-        public async Task<IEnumerable<GTHExperienciaLaboral>> Mostar(int tipo,
-            int? idExperiencia = null,
-            int? idInfoProf = null)
-        {
-            using var sql = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("GTH_MostrarExperienciaLaboral", sql)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-
-            cmd.Parameters.Add(new SqlParameter("@ID_Experiencia", idExperiencia ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@ID_Infoprof", idInfoProf ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
-
-            await sql.OpenAsync();
-            var list = new List<GTHExperienciaLaboral>();
-            using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                list.Add(new GTHExperienciaLaboral
-                {
-                    IdExperiencia = (long)reader["ID_EXPERIENCIA"],
-                    IdInfoProf = reader["ID_INFOPROF"] as long?,
-                    Empresa = reader["EXP_EMPRESA"].ToString(),
-                    Cargo = reader["EXP_CARGO"].ToString(),
-                    FechaInicio = reader["EXP_FECHAINICIO"] as DateTime?,
-                    FechaFin = reader["EXP_FECHAFIN"] as DateTime?,
-                    Descripcion = reader["EXP_DESCRIPCION"].ToString()
-                });
-            }
-            return list;
         }
     }
 }

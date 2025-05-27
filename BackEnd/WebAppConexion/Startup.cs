@@ -58,7 +58,7 @@ namespace WebAppConexion
             services.AddScoped<GTHInformacionProfesionalRepository>();
             services.AddScoped<GTHFormacionAcademicaRepository>();
             services.AddScoped<GTHExperienciaLaboralRepository>();
-            services.AddScoped<GTHHabilidadesRepository>();
+            services.AddScoped<GTHHabilidadRepository>();
             services.AddScoped<GTHHabInfoRepository>();
             services.AddScoped<GTHIdiomaRepository>();
             services.AddScoped<GTHIdiomaInfoRepository>();

@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace Conexion.AccesoDatos.Repository.Administracion
 {
-    public class GTHHabilidadesRepository
+    public class GTHHabilidadRepository
     {
         private readonly string _connectionString;
 
-        public GTHHabilidadesRepository(IConfiguration configuration)
+        public GTHHabilidadRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("Conexion");
         }
