@@ -67,7 +67,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHDepartamento departamento)
         {
             using var sql = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SP_Gestionar_GTH_Departamento", sql)
+            using var cmd = new SqlCommand("SP_Gestionar_GTH_DEPARTAMENTO", sql)
             {
                 CommandType = CommandType.StoredProcedure
             };
@@ -85,8 +85,10 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                var codeVal = reader["Codigo"];
-                var msgVal = reader["Mensaje"];
+                // Antes: reader["Codigo"] y reader["Mensaje"]
+                // Ahora: reader["CodigoEstado"] y reader["Resultado"]
+                var codeVal = reader["CodigoEstado"];
+                var msgVal = reader["Resultado"];
 
                 response.Add(new Generica
                 {
