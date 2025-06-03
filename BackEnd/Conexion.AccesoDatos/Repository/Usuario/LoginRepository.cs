@@ -1,10 +1,8 @@
-﻿using Conexion.Entidad.Administracion;
+﻿// LoginRepository.cs (versión adaptada a la BD nueva y a GTHEmpleado)
+using Conexion.Entidad.Administracion; // Aquí GTHEmpleado vive en este namespace
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Conexion.AccesoDatos.Repository.Usuario
@@ -18,7 +16,8 @@ namespace Conexion.AccesoDatos.Repository.Usuario
             _connectionString = configuration.GetConnectionString("Conexion");
         }
 
-        public async Task<Empleado> GetByMostrarLogin(string Correo)
+        // Ahora devolvemos GTHEmpleado en lugar de Empleado
+        public async Task<GTHEmpleado> GetByMostrarLogin(string Correo)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -26,14 +25,14 @@ namespace Conexion.AccesoDatos.Repository.Usuario
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@Correo", Correo));
-                    var response = new Empleado();
+                    var response = new GTHEmpleado();
                     await sql.OpenAsync();
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
-                            response = MapToEmpresa(reader);
+                            response = MapToGTHEmpleado(reader);
                         }
                     }
 
@@ -42,68 +41,29 @@ namespace Conexion.AccesoDatos.Repository.Usuario
             }
         }
 
-        public async Task<IEnumerable<Empleado>> GetByMostrarLoginId(Int64 IdEmpleado)
+        // Mapea las columnas que devuelve el SP de la nueva BD a nuestro POCO GTHEmpleado
+        private GTHEmpleado MapToGTHEmpleado(SqlDataReader reader)
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            return new GTHEmpleado()
             {
-                using (SqlCommand cmd = new SqlCommand("WebMostrarEmpleado", sql))
-                {
-                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@IdEmpleado", IdEmpleado));
-                    var response = new List<Empleado>();
-                    await sql.OpenAsync();
+                // En GTHEmpleado.cs, IdEmpleado está definido como long (o int, según tu modelo)
+                IdEmpleado = Convert.ToInt64(reader["IdEmpleado"]),
 
-                    using (var reader = await cmd.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            response.Add(ConsultarLogin(reader));
-                        }
-                    }
+                // En el SP concatenamos EMP_NOMBRE + ' ' + EMP_APELLIDO
+                Nombre = reader["NombresApellidos"].ToString().Split(' ')[0], // si quieres separarlo
+                Apellido = reader["NombresApellidos"].ToString().Split(' ').Length > 1
+                                ? reader["NombresApellidos"].ToString().Substring(reader["NombresApellidos"].ToString().IndexOf(' ') + 1)
+                                : string.Empty,
 
-                    return response;
-                }
-            }
-        }
+                // También podrías almacenar el full name en alguna propiedad adicional,
+                // pero aquí usamos Nombre y Apellido por separado. Si no quieres separarlo, añade:
+                // // NombreCompleto = reader["NombresApellidos"].ToString(),
 
-        public async Task ActualizarEmpleado(Empleado empleado)
-        {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
-            {
-                using (SqlCommand cmd = new SqlCommand("WebActualizarEmpleado", sql))
-                {
-                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@IdEmpleado", empleado.IdEmpleado));
-                    cmd.Parameters.Add(new SqlParameter("@password_hash", empleado.password_hash));
-                    cmd.Parameters.Add(new SqlParameter("@password_salt", empleado.password_salt));
-                    await sql.OpenAsync();
-                    await cmd.ExecuteNonQueryAsync();
-                    return;
-                }
-            }
-        }
+                IdPerfil = reader["IdPerfil"] as long?,
+                FotoPerfilUrl = reader["RutaImagen"].ToString(),
 
-        private Empleado MapToEmpresa(SqlDataReader reader)
-        {
-            return new Empleado()
-            {
-                IdEmpleado = (Int64)reader["IdEmpleado"],
-                IdEmpresa = (Int64)reader["IdEmpresa"],
-                NombresApellidos = reader["NombresApellidos"].ToString(),
-                password_hash = (byte[])reader["password_hash"],
-                password_salt = (byte[])reader["password_salt"],
-                Rucedula = reader["Perfil"].ToString(),
-                RutaImagen = reader["RutaImagen"].ToString(),
-                ClaveTemporal = reader["ClaveTemporal"].ToString(),
-            };
-        }
-
-        private Empleado ConsultarLogin(SqlDataReader reader)
-        {
-            return new Empleado()
-            {
-                IdEmpleado = (Int64)reader["IdEmpleado"],
-                NombresApellidos = reader["NombresApellidos"].ToString(),
+                // La columna EMP_PASSWORD se mapea a la propiedad Password en GTHEmpleado
+                Password = reader["PasswordHash"].ToString()
             };
         }
     }
