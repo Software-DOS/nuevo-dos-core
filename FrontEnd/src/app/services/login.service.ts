@@ -1,38 +1,49 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Ilogin } from '../interface/ilogin';
-import {HttpClient} from '@angular/common/http';
-import {environment} from 'src/environments/environment'; 
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
+  private readonly tokenKey = 'token';
 
   constructor(private http: HttpClient) { }
   
-  private readonly llaveToken ='token';
-  guardarToken():string{
-    //console.log("valorToken:",this.llaveToken);
-    var dataToken =JSON.parse(atob(this.llaveToken.split('.')[1]));
-    //console.log("dataToken:",dataToken);
-    return dataToken['email'];
-  }
-  
-  login(data:Ilogin){
-    //console.log("Retornamos la data"+ JSON.stringify(data));
-    //return "Retornamos la data"+ JSON.stringify(data);
-    //console.log("environment.urlbackend: ",environment.urlbackend);
-    return this.http.get(environment.urlbackend +"api/Login/Login?email=" + data.email +"&password="+data.password).pipe(
-      map((resp:any)=>{
-        sessionStorage.setItem('token',resp.token);
-      })
+  /**
+   * Realiza el login consumiendo el API y devuelve directamente el token (texto plano).
+   */
+  login(data: Ilogin): Observable<string> {
+    const params = new HttpParams()
+      .set('email', data.email)
+      .set('password', data.password);
+
+    return this.http.get(
+      `${environment.urlbackend}api/Login/Login`,
+      { params, responseType: 'text' }
     );
   }
 
-  ActualizarClaveEmpleado(Correo:string,Titulo:string,TipoDocumento:string,Clave:string,Tipo:number){
-    return this.http.get(environment.urlbackend + "api/EnviarNotificacion/ActualizarClaveEmpleado?Correo=" + Correo + "&Titulo=" + Titulo +"&TipoDocumento=" + TipoDocumento +"&Clave=" + Clave +"&Tipo=" + Tipo +"");
+  /**
+   * Guarda el token en sessionStorage.
+   */
+  saveToken(token: string): void {
+    sessionStorage.setItem(this.tokenKey, token);
   }
 
+  /**
+   * Extrae el correo del payload del JWT almacenado.
+   */
+  getEmailFromToken(): string {
+    const token = sessionStorage.getItem(this.tokenKey);
+    if (!token) return '';
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload['email'] || '';
+    } catch {
+      return '';
+    }
+  }
 }
