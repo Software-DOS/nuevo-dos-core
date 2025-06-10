@@ -62,8 +62,11 @@ export class LoginComponent implements OnInit {
               const valor = sessionStorage.getItem('token');
               if (typeof valor === 'string') {
                 var IdEmpleado =JSON.parse(atob(valor.split('.')[1]));
+                console.log("IdEmpleado: ",IdEmpleado);
                 this.ClaveTemporal=IdEmpleado["ClaveTemporal"];
-                if(this.ClaveTemporal==""){
+                console.log("ClaveTemporal: ",this.ClaveTemporal);
+                this.router.navigateByUrl("/");
+                /*if(this.ClaveTemporal==""){
                   this.router.navigateByUrl("/");  
                 }
                 else if (this.ClaveTemporal==this.f.controls['password'].value){
@@ -73,7 +76,7 @@ export class LoginComponent implements OnInit {
                 }
                 else{
                   alerts.basicAlert("Error","La clave temporal no es correcta..","error"); 
-                }
+                }*/
                 //console.log("IdEmpleado: ",IdEmpleado);
               }     
               this.loading=false;

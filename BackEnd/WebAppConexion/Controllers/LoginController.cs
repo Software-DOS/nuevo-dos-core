@@ -57,7 +57,8 @@ namespace WebAppConexion.Controllers
                                      ? response.IdPerfil.Value.ToString()
                                      : string.Empty),
                 // Si deseas incluir la URL de la foto, úsalo como claim opcional:
-                new Claim("FotoPerfilUrl", response.FotoPerfilUrl ?? string.Empty)
+                new Claim("FotoPerfilUrl", response.FotoPerfilUrl ?? string.Empty),
+                new Claim("ClaveTemporal", "")
             };
 
             // Devolvemos el token generado
