@@ -23,6 +23,7 @@
 @import url('pages/_cv.css');
 @import url('pages/_capacitaciones.css');
 @import url('pages/_evaluaciones.css');
+@import url('pages/_empleado_cv.css');
 
 /* Utility Classes */
 @import url('utils/_helpers.css');
