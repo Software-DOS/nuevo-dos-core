@@ -1,46 +1,148 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    scroll-behavior: smooth;
-  }
-  
-  html {
-    font-size: 16px;
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    font-family: var(--font-base);
-    background-color: var(--color-very-light-gray);
-    color: var(--color-near-black);
-    line-height: 1.6;
-  }
-  
-  img {
-    max-width: 100%;
-    display: block;
-  }
-  
-  ul, ol {
-    list-style: none;
-  }
-  
-  button {
-    font-family: inherit;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-  
-  input, textarea, select {
-    font-family: inherit;
-    font-size: 1rem;
-  }
+/* === TYPOGRAPHY FOUNDATION === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
 
-  .h3-dark {
-    color: var(--color-dark-red);
-    margin-bottom: 20px;
-  }
-  
-  
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  background: var(--color-gray-50);
+}
+
+/* === HEADING HIERARCHY === */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+h1 {
+  font-size: 3rem;        /* 48px */
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  font-size: 2.25rem;     /* 36px */
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.025em;
+}
+
+h3 {
+  font-size: 1.875rem;    /* 30px */
+  font-weight: var(--font-weight-semibold);
+}
+
+h4 {
+  font-size: 1.5rem;      /* 24px */
+  font-weight: var(--font-weight-semibold);
+}
+
+h5 {
+  font-size: 1.25rem;     /* 20px */
+  font-weight: var(--font-weight-medium);
+}
+
+h6 {
+  font-size: 1.125rem;    /* 18px */
+  font-weight: var(--font-weight-medium);
+}
+
+/* === TEXT ELEMENTS === */
+p {
+  margin-bottom: var(--space-4);
+  color: var(--color-text-secondary);
+}
+
+a {
+  color: var(--color-accent-primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-dark-red);
+  text-decoration: underline;
+}
+
+/* === LISTS === */
+ul, ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* === FORM ELEMENTS === */
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* === UTILITY TYPOGRAPHY === */
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-base { font-size: 1rem; line-height: 1.5rem; }
+.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+.text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+
+.font-light { font-weight: var(--font-weight-light); }
+.font-normal { font-weight: var(--font-weight-regular); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted { color: var(--color-text-muted); }
+.text-accent { color: var(--color-accent-primary); }
+
+/* === RESPONSIVE TYPOGRAPHY === */
+@media (max-width: 768px) {
+  h1 { font-size: 2.25rem; }
+  h2 { font-size: 1.875rem; }
+  h3 { font-size: 1.5rem; }
+  h4 { font-size: 1.25rem; }
+}
+
+/* === MODERN SELECTION === */
+::selection {
+  background-color: var(--color-electric-violet);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--color-electric-violet);
+  color: white;
+}
+

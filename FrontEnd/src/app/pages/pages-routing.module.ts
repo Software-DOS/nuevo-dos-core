@@ -16,6 +16,7 @@ const routes: Routes = [
     { path: 'lista-capacitaciones',loadChildren: () => import('./main-page/lista-capacitaciones/lista-capacitaciones.module').then(m=>m.ListaCapacitacionesModule) },
     { path: 'lista-evaluaciones',loadChildren: () => import('./main-page/lista-evaluaciones/lista-evaluaciones.module').then(m=>m.ListaEvaluacionesModule) },
     { path: 'empleado-cv',loadChildren: () => import('./main-page/empleado-cv/empleado-cv.module').then(m=>m.EmpleadoCvModule) },
+    { path: 'clima-laboral',loadChildren: () => import('./main-page/clima-laboral/clima-laboral.module').then(m=>m.ClimaLaboralModule) },
     { path: '**', component: Error404Component }
   ]}
 ];

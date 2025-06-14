@@ -1,33 +1,81 @@
-<main class="container-main">
-  <div class="cap-table">
-    <div class="cap-header">
-      <div class="empleado-row">Nombre</div>
-      <div>Cédula</div>
-      <div>Cargo</div>
-      <div>Área</div>
-      <div>Certificaciones</div>
-    </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lista de Empleados</title>
+  <!-- <link rel="stylesheet" href="styles/main.css"> -->
+  <script src="https://alcdn.msauth.net/browser/2.32.1/js/msal-browser.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- <script src="js/auth.js"></script> -->
+</head>
+<body>
+  <script>
+    window.addEventListener("load", verificarAutenticacion);
+  </script>
 
-    <div class="cap-row" onclick="location.href='admin_cv.html'" style="cursor: pointer;">
-      <div class="empleado-info-column">
-        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Empleado" class="employee-photo">
-        <span>José Casas</span>
-      </div>
-      <div>1234567890</div>
-      <div>Desarrollador Backend</div>
-      <div>Tecnología</div>
-      <div>3</div>
+  <!-- Navbar -->
+  <!-- <nav class="navbar" id="navbar">
+    <div class="logo">
+      <img src="assets/images/logo.png" alt="Logo DOS" class="logo-img">
     </div>
+    <div class="nav-links">
+        <a href="dashboard.html" class="fas fa-bell"></a>
+        <a href="dashboard.html" class="active">Inicio</a>
+        <a href="lista_empleados.html">Perfiles</a>
+        <a href="lista_capacitaciones.html">Capacitaciones</a>
+        <a href="lista_evaluaciones.html">Evaluaciones</a>
+        <a href="empleado_cv.html">Ver Mi Perfil</a>
+        <button id="logoutButton" class="nav-button" onclick="cerrarSesion()">Cerrar Sesión</button>
+        <div class="profile-dropdown">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-avatar" onclick="toggleDropdown()">
+            <div class="dropdown-menu" id="profileMenu">
+                <a href="lista_empleados.html"><i class="fas fa-users"></i> Ver Perfiles</a>
+                <a href="lista_capacitaciones.html"><i class="fas fa-chalkboard-teacher"></i> Capacitaciones</a>
+                <a href="lista_capacitaciones.html"><i class="fas fa-clipboard-check"></i>Evaluaciones</a>
+                <a href="empleado_cv.html"><i class="fas fa-user-circle"></i> Ver Mi Perfil</a>
+            </div>
+        </div>
+    </div>
+  </nav> -->
 
-    <div class="cap-row" onclick="location.href='admin_cv.html'" style="cursor: pointer;">
-      <div class="empleado-info-column">
-        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Empleado" class="employee-photo">
-        <span>Juan Perez</span>
+  <main class="container-main">
+    <div class="cap-table">
+      <div class="cap-header">
+        <div class="empleado-row">Nombre</div>
+        <div>Cédula</div>
+        <div>Cargo</div>
+        <div>Área</div>
+        <div>Certificaciones</div>
       </div>
-      <div>1234567890</div>
-      <div>Desarrollador Backend</div>
-      <div>Tecnología</div>
-      <div>3</div>
+  
+      <div class="cap-row" onclick="location.href='admin_cv.html'" style="cursor: pointer;">
+        <div class="empleado-info-column">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Empleado" class="employee-photo">
+          <span>José Casas</span>
+        </div>
+        <div>1234567890</div>
+        <div>Desarrollador Backend</div>
+        <div>Tecnología</div>
+        <div>3</div>
+      </div>
+  
+      <div class="cap-row" onclick="location.href='admin_cv.html'" style="cursor: pointer;">
+        <div class="empleado-info-column">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Empleado" class="employee-photo">
+          <span>Juan Perez</span>
+        </div>
+        <div>1234567890</div>
+        <div>Desarrollador Backend</div>
+        <div>Tecnología</div>
+        <div>3</div>
+      </div>
     </div>
-  </div>
-</main>
+  </main>
+
+  <script type="module">
+    import { toggleDropdown } from './js/navbar.js';
+    window.toggleDropdown = toggleDropdown;
+  </script>
+</body>
+</html>

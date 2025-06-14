@@ -1,1 +1,158 @@
-<p>lista-evaluaciones works!</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evaluaciones</title>
+  <!-- <link rel="stylesheet" href="styles/main.css"> -->
+  <script src="https://alcdn.msauth.net/browser/2.32.1/js/msal-browser.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- <script src="js/auth.js"></script> -->
+</head>
+<body>
+  <script>
+    window.addEventListener("load", verificarAutenticacion);
+  </script>
+  
+  <!-- Navbar -->
+  <!-- <nav class="navbar" id="navbar">
+    <div class="logo">
+      <img src="assets/images/logo.png" alt="Logo DOS" class="logo-img">
+    </div>
+    <div class="nav-links">
+        <a href="dashboard.html" class="fas fa-bell"></a>
+        <a [routerLink]="['/']" class="active">Inicio</a>
+        <a [routerLink]="['/lista-empleados']">Perfiles</a>
+        <a [routerLink]="['/lista-capacitaciones']">Capacitaciones</a>
+        <a [routerLink]="['/lista-evaluaciones']">Evaluaciones</a>
+        <a href="empleado_cv.html">Ver Mi Perfil</a>
+        <button id="logoutButton" class="nav-button" onclick="cerrarSesion()">Cerrar Sesión</button>
+        <div class="profile-dropdown">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-avatar" onclick="toggleDropdown()">
+            <div class="dropdown-menu" id="profileMenu">
+                <a href="lista_empleados.html"><i class="fas fa-users"></i> Ver Perfiles</a>
+                <a href="lista_capacitaciones.html"><i class="fas fa-chalkboard-teacher"></i> Capacitaciones</a>
+                <a href="lista_capacitaciones.html"><i class="fas fa-clipboard-check"></i>Evaluaciones</a>
+                <a href="empleado_cv.html"><i class="fas fa-user-circle"></i> Ver Mi Perfil</a>
+            </div>
+        </div>
+    </div>
+  </nav> -->
+
+  <main class="main-flex-evaluacion">
+    <!-- Filtros a la izquierda -->
+    <aside class="filter-sidebar">
+      <h3>FILTROS</h3>
+      <div class="filter-group">
+        <label for="filtroDepartamento">Departamento:</label>
+        <select id="filtroDepartamento" onchange="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option value="Desarrollo">Desarrollo</option>
+          <option value="Recursos Humanos">Recursos Humanos</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filtroCalificado">Calificado:</label>
+        <select id="filtroCalificado" onchange="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option value="Si">Sí</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filtroUbicacion">Lugar de Residencia:</label>
+        <select id="filtroUbicacion" onchange="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option value="Quito">Quito</option>
+          <option value="Guayaquil">Guayaquil</option>
+          <option value="Cuenca">Cuenca</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filtroIdioma">Idiomas:</label>
+        <select id="filtroIdioma" onchange="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option value="Inglés">Inglés</option>
+          <option value="Español">Español</option>
+          <option value="Francés">Francés</option>
+        </select>
+      </div>
+    </aside>
+
+    <!-- Contenido principal a la derecha -->
+    <div class="content-wrapper">
+      <div class="subcategory-nav" id="categoriaTabs">
+        <div class="subcategory-link active" data-tab="curso">Empleados</div>
+      </div>
+
+      <!-- EMPLEADOS -->
+      <div id="curso" class="subcategory-section active">
+        <div class="cap-table">
+          <div class="cap-header">
+            <div class="empleado-row">Empleado</div>
+            <div>Departamento</div>
+            <div>Fecha Incorporacion</div>
+            <div>Calificado</div>
+          </div>
+          <div class="cap-row" onclick="window.location.href='evaluacion.html'">
+            <div class="empleado-info-column">
+              <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Empleado" class="employee-photo">
+              <span>José Casas</span>
+            </div>
+            <div>Desarrollo</div>
+            <div>05/04/2025</div>
+            <div>Si</div>
+          </div>
+          <div class="cap-row" onclick="window.location.href='evaluacion.html'">
+            <div class="empleado-info-column">
+              <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Empleado" class="employee-photo">
+              <span>Juan Casas</span>
+            </div>
+            <div>Recursos Humanos</div>
+            <div>01/04/2025</div>
+            <div>No</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { toggleDropdown } from './js/navbar.js';
+    window.toggleDropdown = toggleDropdown;
+
+    const tabs = document.querySelectorAll(".subcategory-link");
+    const sections = document.querySelectorAll(".subcategory-section");
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        sections.forEach(s => s.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+      });
+    });
+
+    window.aplicarFiltros = function() {
+      const depto = document.getElementById("filtroDepartamento").value.toLowerCase();
+      const calif = document.getElementById("filtroCalificado").value.toLowerCase();
+      const experiencia = document.getElementById("filtroExperiencia").value.toLowerCase();
+      const ubicacion = document.getElementById("filtroUbicacion").value.toLowerCase();
+      const idioma = document.getElementById("filtroIdioma").value.toLowerCase();
+
+      ["curso", "solicitadas"].forEach(tabId => {
+        const seccion = document.getElementById(tabId);
+        const filas = seccion.querySelectorAll(".cap-row");
+
+        filas.forEach(fila => {
+          const departamento = fila.children[1]?.textContent.toLowerCase() || "";
+          const calificado = fila.children[3]?.textContent.toLowerCase() || "";
+          const coincideDepto = !depto || departamento === depto;
+          const coincideCalif = !calif || calificado === calif;
+          fila.style.display = (coincideDepto && coincideCalif) ? "" : "none";
+        });
+      });
+    };
+  </script>
+</body>
+</html>

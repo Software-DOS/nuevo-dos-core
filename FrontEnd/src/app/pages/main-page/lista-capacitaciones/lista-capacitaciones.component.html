@@ -1,240 +1,416 @@
-<main class="container-main">
-  <div class="subcategory-nav" id="categoriaTabs">
-    <div class="subcategory-link active" data-tab="curso">En Curso</div>
-    <div class="subcategory-link" data-tab="solicitadas">Solicitadas</div>
-    <div class="subcategory-link" data-tab="disponible">Disponibles</div>
-  </div>
-  <!-- EN CURSO -->
-  <div id="curso" class="subcategory-section active">
-    <div class="cap-table">
-      <div class="cap-header">
-        <div class="empleado-row">Empleado</div>
-        <div>Nombre</div>
-        <div>Duración (h)</div>
-        <div>Fecha Inicio</div>
-        <div>Certificación</div>
-        <div>Progreso</div>
-      </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mis Capacitaciones</title>
+  <!-- <link rel="stylesheet" href="styles/main.css"> -->
+  <script src="https://alcdn.msauth.net/browser/2.32.1/js/msal-browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- <script src="js/auth.js"></script> -->
+</head>
+<body>
+  <script>
+    window.addEventListener("load", verificarAutenticacion);
+  </script>
+  <!-- Navbar -->
+  <!-- <nav class="navbar" id="navbar">
+    <div class="logo">
+      <img src="assets/images/logo.png" alt="Logo DOS" class="logo-img">
+    </div>
+    <div class="nav-links">
+        <a href="dashboard.html" class="fas fa-bell"></a>
+        <a href="dashboard.html" class="active">Inicio</a>
+        <a href="lista_empleados.html">Perfiles</a>
+        <a href="lista_capacitaciones.html">Capacitaciones</a>
+        <a href="lista_evaluaciones.html">Evaluaciones</a>
+        <a href="empleado_cv.html">Ver Mi Perfil</a>
+        <button id="logoutButton" class="nav-button" onclick="cerrarSesion()">Cerrar Sesión</button>
+        <div class="profile-dropdown">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-avatar" onclick="toggleDropdown()">
+            <div class="dropdown-menu" id="profileMenu">
+                <a href="lista_empleados.html"><i class="fas fa-users"></i> Ver Perfiles</a>
+                <a href="lista_capacitaciones.html"><i class="fas fa-chalkboard-teacher"></i> Capacitaciones</a>
+                <a href="lista_capacitaciones.html"><i class="fas fa-clipboard-check"></i>Evaluaciones</a>
+                <a href="empleado_cv.html"><i class="fas fa-user-circle"></i> Ver Mi Perfil</a>
+            </div>
+        </div>
+    </div>
+  </nav> -->
 
-      <div class="cap-row">
-        <div class="empleado-info-column">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            alt="Empleado"
-            class="employee-photo"
-          />
-          <span>José Casas</span>
-        </div>
-        <div>Curso de Liderazgo Ágil</div>
-        <div>20</div>
-        <div>05/04/2025</div>
-        <div>Scrum Foundation</div>
-        <div>
-          <svg width="80" height="50" viewBox="0 0 100 50">
-            <defs>
-              <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" class="base" />
-                <stop offset="100%" class="progreso" />
-              </linearGradient>
-            </defs>
-            <!-- Fondo del gauge -->
-            <path
-              d="M10 50 A40 40 0 0 1 90 50"
-              fill="none"
-              stroke="#eee"
-              stroke-width="10"
-            />
-            <!-- Progreso 70% -->
-            <path
-              d="M10 50 A40 40 0 0 1 75 21"
-              fill="none"
-              stroke="url(#grad)"
-              stroke-width="10"
-            />
-            <!-- Texto encima del centro -->
-            <text
-              x="50"
-              y="35"
-              text-anchor="middle"
-              fill="#000"
-              font-size="10"
-              font-weight="bold"
-            >
-              70%
-            </text>
-          </svg>
-        </div>
-      </div>
+  <main class="container-main">
+    <div class="subcategory-nav" id="categoriaTabs">
+      <div class="subcategory-link active" data-tab="curso">En Curso</div>
+      <div class="subcategory-link" data-tab="solicitadas">Solicitadas</div>
+      <div class="subcategory-link" data-tab="disponible">Disponibles</div>
+    </div>
 
-      <div class="cap-row">
-        <div class="empleado-info-column">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            alt="Empleado"
-            class="employee-photo"
-          />
-          <span>José Casas</span>
+    <!-- EN CURSO -->
+    <div id="curso" class="subcategory-section active">
+      <div class="cap-table">
+        <div class="cap-header">
+          <div class="empleado-row">Empleado</div>
+          <div>Nombre</div>
+          <div>Duración (h)</div>
+          <div>Fecha Inicio</div>
+          <div>Certificación</div>
+          <div>Progreso</div>
         </div>
-        <div>Gestión del Tiempo</div>
-        <div>10</div>
-        <div>01/04/2025</div>
-        <div>Productividad Personal</div>
-        <div>
-          <svg width="80" height="50" viewBox="0 0 100 50">
-            <defs>
-              <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" class="base" />
-                <stop offset="100%" class="progreso" />
-              </linearGradient>
-            </defs>
-            <!-- Fondo del gauge -->
-            <path
-              d="M10 50 A40 40 0 0 1 90 50"
-              fill="none"
-              stroke="#eee"
-              stroke-width="10"
-            />
-            <!-- Progreso 70% -->
-            <path
-              d="M10 50 A40 40 0 0 1 75 21"
-              fill="none"
-              stroke="url(#grad)"
-              stroke-width="10"
-            />
-            <!-- Texto encima del centro -->
-            <text
-              x="50"
-              y="35"
-              text-anchor="middle"
-              fill="#000"
-              font-size="10"
-              font-weight="bold"
-            >
-              70%
-            </text>
-          </svg>
+        
+        <div class="cap-row">
+          <div class="empleado-info-column">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                 alt="Empleado"
+                 class="employee-photo">
+            <span>José Casas</span>
+          </div>          
+          <div>Curso de Liderazgo Ágil</div>
+          <div>20</div>
+          <div>05/04/2025</div>
+          <div>Scrum Foundation</div>
+          <div>
+            <svg width="80" height="50" viewBox="0 0 100 50">
+              <defs>
+                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" class="base" />
+                  <stop offset="100%" class="progreso" />
+                </linearGradient>
+              </defs>
+              <!-- Fondo del gauge -->
+              <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="#eee" stroke-width="10"/>
+              <!-- Progreso 70% -->
+              <path d="M10 50 A40 40 0 0 1 75 21" fill="none" stroke="url(#grad)" stroke-width="10"/>
+              <!-- Texto encima del centro -->
+              <text x="50" y="35" text-anchor="middle" fill="#000" font-size="10" font-weight="bold">70%</text>
+            </svg>
+          </div>          
+        </div>
+
+        <div class="cap-row">
+          <div class="empleado-info-column">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                 alt="Empleado"
+                 class="employee-photo">
+            <span>José Casas</span>
+          </div>  
+          <div>Gestión del Tiempo</div>
+          <div>10</div>
+          <div>01/04/2025</div>
+          <div>Productividad Personal</div>
+          <div>
+            <svg width="80" height="50" viewBox="0 0 100 50">
+              <defs>
+                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" class="base" />
+                  <stop offset="100%" class="progreso" />
+                </linearGradient>
+              </defs>
+              <!-- Fondo del gauge -->
+              <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="#eee" stroke-width="10"/>
+              <!-- Progreso 70% -->
+              <path d="M10 50 A40 40 0 0 1 75 21" fill="none" stroke="url(#grad)" stroke-width="10"/>
+              <!-- Texto encima del centro -->
+              <text x="50" y="35" text-anchor="middle" fill="#000" font-size="10" font-weight="bold">70%</text>
+            </svg>
+          </div>
+          
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- DISPONIBLES -->
-  <div id="disponible" class="subcategory-section">
-    <div class="cap-table">
-      <div class="cap-header">
-        <div>Nombre</div>
-        <div>Duración (h)</div>
-        <div>Certificación</div>
-        <div></div>
+    <!-- DISPONIBLES -->
+    <div id="disponible" class="subcategory-section">
+      <div class="cap-table">
+        <div class="cap-header">
+          <div>Nombre</div>
+          <div>Duración (h)</div>
+          <div>Certificación</div>
+          <div></div>
+        </div>
+
+        <div class="cap-row">
+          <div>Comunicación Efectiva</div>
+          <div>15</div>
+          <div>Soft Skills Essentials</div>
+          <div class="text-right">
+            <button class="btn-eliminar" onclick="confirmarEliminacion(this)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="cap-row">
+          <div>Excel para Análisis</div>
+          <div>25</div>
+          <div>Certificación Excel Avanzado</div>
+          <div class="text-right">
+            <button class="btn-eliminar" onclick="confirmarEliminacion(this)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Botón para mostrar formulario -->
+      <div class="text-right mb-2">
+        <button id="mostrarFormularioBtn" class="nav-button">Añadir Capacitación</button>
       </div>
 
-      <div class="cap-row">
-        <div>Comunicación Efectiva</div>
-        <div>15</div>
-        <div>Soft Skills Essentials</div>
-        <div class="text-right">
-          <button class="btn-eliminar" onclick="confirmarEliminacion(this)">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="cap-row">
-        <div>Excel para Análisis</div>
-        <div>25</div>
-        <div>Certificación Excel Avanzado</div>
-        <div class="text-right">
-          <button class="btn-eliminar" onclick="confirmarEliminacion(this)">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- Botón para mostrar formulario -->
-    <div class="text-right mb-2">
-      <button id="mostrarFormularioBtn" class="nav-button">
-        Añadir Capacitación
-      </button>
-    </div>
-
-    <!-- Formulario emergente oculto inicialmente -->
-    <div id="formularioSolicitud" class="popup-form" style="display: none">
-      <h3 class="h3-dark mb-2">Formulario de Solicitud</h3>
-      <form id="solicitudForm" class="cv-form">
-        <div class="form-group">
-          <label for="nombre">Nombre de la Capacitación</label>
-          <input type="text" id="nombre" required />
-        </div>
-        <div class="form-group">
-          <label for="duracion">Duración Estimada (horas)</label>
-          <input type="number" id="duracion" min="1" required />
-        </div>
-        <div class="form-group">
-          <label for="certificacion">Certificación Esperada</label>
-          <input type="text" id="certificacion" />
-        </div>
-        <div class="form-group">
-          <label for="justificacion">Justificación</label>
-          <textarea id="justificacion" rows="4"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="enlace">Enlace a la Certificación</label>
-          <input type="text" id="enlace" />
-        </div>
-        <div class="edit-controls">
-          <button type="submit" class="nav-button">Añadir</button>
-          <button
-            type="button"
-            id="cancelarFormularioBtn"
-            class="nav-button gray"
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Solicitadas -->
-  <div id="solicitadas" class="subcategory-section">
-    <div class="cap-table">
-      <div class="cap-header">
-        <div class="empleado-row">Empleado</div>
-        <div>Departamento</div>
-        <div>Nombre</div>
-        <div>Duración (h)</div>
-        <div>Certificación</div>
-      </div>
-
-      <div class="cap-row">
-        <div class="empleado-info-column">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            alt="Empleado"
-            class="employee-photo"
-          />
-          <span>José Casas</span>
-        </div>
-        <div>Desarrollo</div>
-        <div>Gestión de Proyectos</div>
-        <div>30</div>
-        <div>PMI Fundamentals</div>
-      </div>
-
-      <div class="cap-row">
-        <div class="empleado-info-column">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            alt="Empleado"
-            class="employee-photo"
-          />
-          <span>José Casas</span>
-        </div>
-        <div>Desarrollo</div>
-        <div>Introducción a Python</div>
-        <div>25</div>
-        <div>Python Básico</div>
+      <!-- Formulario emergente oculto inicialmente -->
+      <div id="formularioSolicitud" class="popup-form" style="display: none;">
+        <h3 class="h3-dark mb-2">Formulario de Solicitud</h3>
+        <form id="solicitudForm" class="cv-form">
+          <div class="form-group">
+            <label for="nombre">Nombre de la Capacitación</label>
+            <input type="text" id="nombre" required>
+          </div>
+          <div class="form-group">
+            <label for="duracion">Duración Estimada (horas)</label>
+            <input type="number" id="duracion" min="1" required>
+          </div>
+          <div class="form-group">
+            <label for="certificacion">Certificación Esperada</label>
+            <input type="text" id="certificacion">
+          </div>
+          <div class="form-group">
+            <label for="justificacion">Justificación</label>
+            <textarea id="justificacion" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="enlace">Enlace a la Certificación</label>
+            <input type="text" id="enlace">
+          </div>
+          <div class="edit-controls">
+            <button type="submit" class="nav-button">Añadir</button>
+            <button type="button" id="cancelarFormularioBtn" class="nav-button gray">Cancelar</button>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
-</main>
+
+      <!-- Solicitadas -->
+      <div id="solicitadas" class="subcategory-section">
+        <div class="cap-table">
+          <div class="cap-header">
+            <div class="empleado-row">Empleado</div>
+            <div>Departamento</div>
+            <div>Nombre</div>
+            <div>Duración (h)</div>
+            <div>Certificación</div>
+          </div>
+
+          <div class="cap-row">
+            <div class="empleado-info-column">
+              <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                   alt="Empleado"
+                   class="employee-photo">
+              <span>José Casas</span>
+            </div>  
+            <div>Desarrollo</div>
+            <div>Gestión de Proyectos</div>
+            <div>30</div>
+            <div>PMI Fundamentals</div>
+          </div>
+
+          <div class="cap-row">
+            <div class="empleado-info-column">
+              <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                   alt="Empleado"
+                   class="employee-photo">
+              <span>José Casas</span>
+            </div>  
+            <div>Desarrollo</div>
+            <div>Introducción a Python</div>
+            <div>25</div>
+            <div>Python Básico</div>
+          </div>
+        </div>
+      </div>
+
+  </main>
+
+  <script type="module">
+    import { toggleDropdown } from './js/navbar.js';
+    window.toggleDropdown = toggleDropdown;
+
+    // Lógica de mostrar/ocultar el formulario
+    const btnMostrar = document.getElementById("mostrarFormularioBtn");
+    const btnCancelar = document.getElementById("cancelarFormularioBtn");
+    const formulario = document.getElementById("formularioSolicitud");
+
+    btnMostrar.addEventListener("click", () => {
+      formulario.style.display = "block";
+      btnMostrar.style.display = "none";
+    });
+
+    btnCancelar.addEventListener("click", () => {
+      Swal.fire({
+        title: '¿Cancelar solicitud?',
+        text: 'Se cancelará el proceso de solicitud de capacitación.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'No, continuar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          formulario.style.display = "none"; // Aquí sí cierras correctamente el formulario
+          btnMostrar.style.display = "inline-block"; 
+          Swal.fire('Cancelado', 'La solicitud ha sido cancelada.', 'info');
+        }
+      });
+    });
+
+    // Validación y envío del formulario
+    const formularioSolicitud = document.getElementById('solicitudForm');
+
+    formularioSolicitud.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById('nombre').value.trim();
+      const duracion = document.getElementById('duracion').value.trim();
+      const certificacion = document.getElementById('certificacion').value.trim();
+      const justificacion = document.getElementById('justificacion').value.trim();
+      const enlace = document.getElementById('enlace').value.trim();
+
+      // Si todo está correcto, muestra mensaje de éxito y cierra el formulario
+      Swal.fire({
+          title: 'Capacitación añadida',
+          text: 'La capacitación ha sido registrada exitosamente.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        }).then(() => {
+          formularioSolicitud.reset();                     // Limpia los campos del formulario
+          formulario.style.display = "none";                // Oculta el formulario emergente
+          btnMostrar.style.display = "inline-block";        // Vuelve a mostrar el botón de "Añadir Capacitación"
+        });
+      });
+
+    const tabs = document.querySelectorAll(".subcategory-link");
+    const sections = document.querySelectorAll(".subcategory-section");
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        sections.forEach(s => s.classList.remove("active"));
+
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+      });
+    });
+    window.confirmarEliminacion = function (button) {
+      const fila = button.closest(".cap-row");
+      const nombre = fila.children[0].textContent;
+
+      Swal.fire({
+        title: `¿Eliminar la capacitación "${nombre}"?`,
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'No, cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fila.remove();
+          Swal.fire({
+            title: 'Eliminado',
+            text: `La capacitación "${nombre}" ha sido eliminada correctamente.`,
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      });
+    };
+
+  </script>
+  <script>
+    // Función para obtener capacitaciones desde LocalStorage
+    function obtenerCapacitacionesGuardadas() {
+      return JSON.parse(localStorage.getItem('capacitacionesDisponibles')) || [];
+    }
+    
+    // Función para guardar capacitaciones en LocalStorage
+    function guardarCapacitaciones(capacitaciones) {
+      localStorage.setItem('capacitacionesDisponibles', JSON.stringify(capacitaciones));
+    }
+    
+    // Función para renderizar SOLO capacitaciones añadidas dinámicamente
+    function renderizarCapacitaciones() {
+      const contenedor = document.querySelector('#disponible .cap-table');
+      
+      // Eliminar solo las filas que tengan el atributo data-dinamico
+      contenedor.querySelectorAll('.cap-row[data-dinamico="true"]').forEach(row => row.remove());
+    
+      const capacitaciones = obtenerCapacitacionesGuardadas();
+      capacitaciones.forEach(cap => {
+        const fila = document.createElement('div');
+        fila.classList.add('cap-row');
+        fila.setAttribute('data-dinamico', 'true'); // Marcar como dinámica
+        fila.innerHTML = `
+          <div>${cap.nombre}</div>
+          <div>${cap.duracion}</div>
+          <div>${cap.certificacion}</div>
+          <div class="text-right">
+            <button class="btn-eliminar" onclick="eliminarCapacitacion('${cap.id}')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>`;
+        contenedor.appendChild(fila);
+      });
+    }
+    
+    // Función para añadir nueva capacitación
+    document.querySelector('#solicitudForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+    
+      const nuevaCapacitacion = {
+        id: Date.now().toString(), // ID único basado en timestamp
+        nombre: document.getElementById('nombre').value.trim(),
+        duracion: document.getElementById('duracion').value.trim(),
+        certificacion: document.getElementById('certificacion').value.trim()
+      };
+    
+      const capacitaciones = obtenerCapacitacionesGuardadas();
+      capacitaciones.push(nuevaCapacitacion);
+      guardarCapacitaciones(capacitaciones);
+      renderizarCapacitaciones();
+    
+      // Resetear formulario y cerrar modal
+      this.reset();
+      document.getElementById('formularioSolicitud').style.display = 'none';
+      document.getElementById('mostrarFormularioBtn').style.display = 'inline-block';
+    
+      Swal.fire({
+        title: 'Capacitación añadida',
+        text: 'La capacitación ha sido registrada exitosamente.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      });
+    });
+    
+    // Función para eliminar capacitación añadida dinámicamente
+    function eliminarCapacitacion(id) {
+      Swal.fire({
+        title: '¿Eliminar esta capacitación?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'No, cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let capacitaciones = obtenerCapacitacionesGuardadas();
+          capacitaciones = capacitaciones.filter(cap => cap.id !== id);
+          guardarCapacitaciones(capacitaciones);
+          renderizarCapacitaciones();
+    
+          Swal.fire('Eliminado', 'La capacitación ha sido eliminada.', 'success');
+        }
+      });
+    }
+    
+    // Cuando cargue la página, renderizar capacitaciones añadidas dinámicamente
+    document.addEventListener('DOMContentLoaded', renderizarCapacitaciones);
+    </script>
+    
+</body>
+</html>

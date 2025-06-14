@@ -6,6 +6,22 @@
     background-repeat: no-repeat; /* Evita que la imagen se repita */
     width: 100%; /* Asegura que ocupe el 100% del ancho */
     height: 100vh; /* Puedes ajustar la altura según lo necesites */
+    position: fixed; /* Ensure login page doesn't interfere with navigation */
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+/* Ensure form submission doesn't get blocked */
+.login-card-body form {
+    position: relative;
+    z-index: 1001;
+}
+
+/* Make sure buttons are clickable */
+.btn {
+    position: relative;
+    z-index: 1002;
 }
 
 
