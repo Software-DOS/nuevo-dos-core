@@ -54,4 +54,31 @@
     flex: 1;
   }
   
-  
+  .main-flex-evaluacion {
+  display: flex;
+  gap: 20px; /* Reduce gap between filter and content */
+  padding: 20px;
+  align-items: flex-start;
+}
+
+.filter-sidebar {
+  min-width: 250px;
+  max-width: 280px;
+  flex-shrink: 0;
+}
+
+.content-wrapper-tight {
+  flex: 1;
+  margin-left: 0; /* Remove any left margin */
+  padding-left: 0; /* Remove any left padding */
+}
+
+/* Ensure subcategory nav is aligned properly */
+.subcategory-nav {
+  margin-bottom: 20px;
+}
+
+/* Make sure the table starts immediately after the nav */
+.cap-table {
+  margin-top: 0;
+}
