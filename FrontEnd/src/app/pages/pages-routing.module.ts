@@ -14,8 +14,8 @@ const routes: Routes = [
     { path: '',loadChildren: () => import('./main-page/home/home.module').then(m=>m.HomeModule) },
     { path: 'lista-empleados',loadChildren: () => import('./main-page/lista-empleados/lista-empleados.module').then(m=>m.ListaEmpleadosModule) },
     { path: 'lista-capacitaciones',loadChildren: () => import('./main-page/lista-capacitaciones/lista-capacitaciones.module').then(m=>m.ListaCapacitacionesModule) },
-    { path: 'lista-evaluaciones',loadChildren: () => import('./main-page/lista-evaluaciones/lista-evaluaciones.module').then(m=>m.ListaEvaluacionesModule) },    { path: 'empleado-cv',loadChildren: () => import('./main-page/empleado-cv/empleado-cv.module').then(m=>m.EmpleadoCvModule) },    { path: 'admin-cv',loadChildren: () => import('./main-page/admin-cv/admin-cv.module').then(m=>m.AdminCvModule) },
-    { path: 'evaluacion',loadChildren: () => import('./main-page/evaluacion/evaluacion.module').then(m=>m.EvaluacionModule) },
+    { path: 'lista-evaluaciones',loadChildren: () => import('./main-page/lista-evaluaciones/lista-evaluaciones.module').then(m=>m.ListaEvaluacionesModule) },    { path: 'empleado-cv',loadChildren: () => import('./main-page/empleado-cv/empleado-cv.module').then(m=>m.EmpleadoCvModule) },    { path: 'admin-cv',loadChildren: () => import('./main-page/admin-cv/admin-cv.module').then(m=>m.AdminCvModule) },    { path: 'evaluacion',loadChildren: () => import('./main-page/evaluacion/evaluacion.module').then(m=>m.EvaluacionModule) },
+    { path: 'lista-aplicantes',loadChildren: () => import('./main-page/lista-aplicantes/lista-aplicantes.module').then(m=>m.ListaAplicantesModule) },
     { path: 'clima-laboral',loadChildren: () => import('./main-page/clima-laboral/clima-laboral.module').then(m=>m.ClimaLaboralModule) },
     { path: '**', component: Error404Component }
   ]}

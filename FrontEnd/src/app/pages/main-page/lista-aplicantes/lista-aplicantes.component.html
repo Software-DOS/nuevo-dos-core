@@ -1,0 +1,131 @@
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+  <div class="logo">
+    <img src="assets/img/logo.png" alt="Logo DOS" class="logo-img">
+  </div>
+  <div class="nav-links">
+      <a href="dashboard.html" class="fas fa-bell"></a>
+      <a href="dashboard.html">Inicio</a>
+      <a href="lista_empleados.html">Perfiles</a>
+      <a href="lista_capacitaciones.html">Capacitaciones</a>
+      <a href="lista_evaluaciones.html">Evaluaciones</a>
+      <a href="empleado_cv.html">Ver Mi Perfil</a>
+      <button id="logoutButton" class="nav-button" (click)="logout()">Cerrar Sesión</button>
+      <div class="profile-dropdown">
+          <img [src]="employee.avatar" class="profile-avatar" (click)="toggleDropdown()">
+          <div class="dropdown-menu" id="profileMenu">
+              <a href="lista_empleados.html"><i class="fas fa-users"></i> Ver Perfiles</a>
+              <a href="lista_capacitaciones.html"><i class="fas fa-chalkboard-teacher"></i> Capacitaciones</a>
+              <a href="lista_evaluaciones.html"><i class="fas fa-clipboard-check"></i> Evaluaciones</a>
+              <a href="empleado_cv.html"><i class="fas fa-user-circle"></i> Ver Mi Perfil</a>
+          </div>
+      </div>
+  </div>
+</nav>
+
+<main class="main-flex-evaluacion">
+  <!-- Filtros a la izquierda -->
+  <aside class="filter-sidebar">
+    <h3>FILTROS</h3>
+    
+    <div class="filter-group">
+      <label for="filtroDepartamento">Departamento:</label>
+      <select 
+        id="filtroDepartamento" 
+        [(ngModel)]="filters.department" 
+        (change)="onFilterChange()">
+        <option value="">Todos</option>
+        <option *ngFor="let dept of departmentOptions.slice(1)" [value]="dept">{{ dept }}</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="filtroCalificado">Calificado:</label>
+      <select 
+        id="filtroCalificado" 
+        [(ngModel)]="filters.qualified" 
+        (change)="onFilterChange()">
+        <option value="">Todos</option>
+        <option *ngFor="let qual of qualifiedOptions.slice(1)" [value]="qual">{{ qual }}</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="filtroExperiencia">Experiencia Laboral:</label>
+      <select 
+        id="filtroExperiencia" 
+        [(ngModel)]="filters.experience" 
+        (change)="onFilterChange()">
+        <option value="">Todos</option>
+        <option *ngFor="let exp of experienceOptions.slice(1)" [value]="exp">{{ exp }}</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="filtroUbicacion">Lugar de Residencia:</label>
+      <select 
+        id="filtroUbicacion" 
+        [(ngModel)]="filters.location" 
+        (change)="onFilterChange()">
+        <option value="">Todos</option>
+        <option *ngFor="let loc of locationOptions.slice(1)" [value]="loc">{{ loc }}</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="filtroIdioma">Idiomas:</label>
+      <select 
+        id="filtroIdioma" 
+        [(ngModel)]="filters.language" 
+        (change)="onFilterChange()">
+        <option value="">Todos</option>
+        <option *ngFor="let lang of languageOptions.slice(1)" [value]="lang">{{ lang }}</option>
+      </select>
+    </div>
+  </aside>
+
+  <!-- Contenido principal a la derecha -->
+  <div class="content-wrapper">
+    <div class="subcategory-nav" id="categoriaTabs">
+      <div 
+        class="subcategory-link" 
+        [class.active]="activeTab === 'curso'"
+        (click)="switchTab('curso')">
+        Aplicantes
+      </div>
+    </div>
+
+    <!-- APLICANTES -->
+    <div id="curso" class="subcategory-section" [class.active]="activeTab === 'curso'">
+      <div class="cap-table">
+        <div class="cap-header">
+          <div class="empleado-row">Aplicante</div>
+          <div>Departamento</div>
+          <div>Fecha Aplicacion</div>
+          <div>Calificado</div>
+        </div>
+        
+        <div 
+          *ngFor="let applicant of filteredApplicants" 
+          class="cap-row" 
+          (click)="viewApplicant(applicant.id)"
+          style="cursor: pointer;">
+          <div class="empleado-info-column">
+            <img [src]="applicant.avatar" alt="Empleado" class="employee-photo">
+            <span>{{ applicant.name }}</span>
+          </div>
+          <div>{{ applicant.department }}</div>
+          <div>{{ applicant.applicationDate }}</div>
+          <div>{{ applicant.qualified }}</div>
+        </div>
+        
+        <!-- Message when no results -->
+        <div *ngIf="filteredApplicants.length === 0" class="cap-row">
+          <div colspan="4" style="text-align: center; padding: 20px; color: #666;">
+            No se encontraron aplicantes que coincidan con los filtros seleccionados.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
