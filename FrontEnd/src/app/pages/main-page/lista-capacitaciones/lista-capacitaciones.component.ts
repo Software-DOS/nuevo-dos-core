@@ -40,16 +40,30 @@ interface NuevaCapacitacion {
   enlace: string;
 }
 
+interface EmpleadoCapacitaciones {
+  empleado: Empleado;
+  capacitaciones: {
+    nombre: string;
+    duracion: number;
+    certificacion: string;
+    estado: 'En Curso' | 'Completada' | 'Solicitada';
+    progreso?: number;
+    fechaInicio?: string;
+    fechaCompletado?: string;
+  }[];
+}
+
 @Component({
   selector: 'app-lista-capacitaciones',
   templateUrl: './lista-capacitaciones.component.html',
   styleUrls: ['./lista-capacitaciones.component.css']
 })
 export class ListaCapacitacionesComponent implements OnInit {
-
   activeTab: string = 'curso';
   showForm: boolean = false;
   showFormButton: boolean = true;
+  showModal: boolean = false;
+  selectedEmployeeTrainings: EmpleadoCapacitaciones | null = null;
 
   nuevaCapacitacion: NuevaCapacitacion = {
     nombre: '',
@@ -97,6 +111,57 @@ export class ListaCapacitacionesComponent implements OnInit {
       nombre: 'Introducción a Python',
       duracion: 25,
       certificacion: 'Python Básico'
+    }
+  ];
+
+  // Data for modal - Employee training details
+  employeeTrainingsData: EmpleadoCapacitaciones[] = [
+    {
+      empleado: { nombre: 'José Casas', photo: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' },
+      capacitaciones: [
+        {
+          nombre: 'Curso de Liderazgo Ágil',
+          duracion: 20,
+          certificacion: 'Scrum Foundation',
+          estado: 'En Curso',
+          progreso: 70,
+          fechaInicio: '05/04/2025'
+        },
+        {
+          nombre: 'Gestión del Tiempo',
+          duracion: 10,
+          certificacion: 'Productividad Personal',
+          estado: 'En Curso',
+          progreso: 70,
+          fechaInicio: '01/04/2025'
+        },
+        {
+          nombre: 'Excel Avanzado',
+          duracion: 15,
+          certificacion: 'Microsoft Excel Expert',
+          estado: 'Completada',
+          fechaCompletado: '15/03/2025'
+        }
+      ]
+    },
+    {
+      empleado: { nombre: 'María González', photo: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' },
+      capacitaciones: [
+        {
+          nombre: 'Introducción a Python',
+          duracion: 25,
+          certificacion: 'Python Básico',
+          estado: 'En Curso',
+          progreso: 45,
+          fechaInicio: '10/04/2025'
+        },
+        {
+          nombre: 'Gestión de Proyectos',
+          duracion: 30,
+          certificacion: 'PMI Fundamentals',
+          estado: 'Solicitada'
+        }
+      ]
     }
   ];
 
@@ -211,6 +276,38 @@ export class ListaCapacitacionesComponent implements OnInit {
         ...this.capacitacionesDisponibles,
         ...capacitacionesDinamicas.map((cap: any) => ({ ...cap, isStatic: false }))
       ];
+    }
+  }
+
+  openEmployeeTrainingsModal(empleado: Empleado): void {
+    // Find employee training data
+    this.selectedEmployeeTrainings = this.employeeTrainingsData.find(
+      emp => emp.empleado.nombre === empleado.nombre
+    ) || null;
+    
+    if (this.selectedEmployeeTrainings) {
+      this.showModal = true;
+    }
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+    this.selectedEmployeeTrainings = null;
+  }
+
+  getProgressColor(progreso?: number): string {
+    if (!progreso) return '#gray-400';
+    if (progreso < 30) return '#ef4444'; // red
+    if (progreso < 70) return '#f59e0b'; // amber
+    return '#10b981'; // emerald
+  }
+
+  getEstadoClass(estado: string): string {
+    switch (estado) {
+      case 'En Curso': return 'estado-en-curso';
+      case 'Completada': return 'estado-completada';
+      case 'Solicitada': return 'estado-solicitada';
+      default: return '';
     }
   }
 

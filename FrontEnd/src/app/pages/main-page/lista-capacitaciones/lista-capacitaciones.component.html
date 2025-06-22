@@ -17,7 +17,7 @@
         <div>Progreso</div>
       </div>
       
-      <div class="cap-row" *ngFor="let capacitacion of capacitacionesEnCurso">
+      <div class="cap-row" *ngFor="let capacitacion of capacitacionesEnCurso" (click)="openEmployeeTrainingsModal(capacitacion.empleado)">
         <div class="empleado-info-column">
           <img [src]="capacitacion.empleado.photo" [alt]="capacitacion.empleado.nombre" class="employee-photo">
           <span>{{ capacitacion.empleado.nombre }}</span>
@@ -25,9 +25,8 @@
         <div>{{ capacitacion.nombre }}</div>
         <div>{{ capacitacion.duracion }}</div>
         <div>{{ capacitacion.fechaInicio }}</div>
-        <div>{{ capacitacion.certificacion }}</div>
-        <div>
-          <svg width="80" height="50" viewBox="0 0 100 50">
+        <div>{{ capacitacion.certificacion }}</div>        <div class="progress-container">
+          <svg width="70" height="40" viewBox="0 0 100 50">
             <defs>
               <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" class="base" />
@@ -35,13 +34,13 @@
               </linearGradient>
             </defs>
             <!-- Fondo del gauge -->
-            <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="#eee" stroke-width="10"/>
+            <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="#eee" stroke-width="8"/>
             <!-- Progreso 70% - using exact same path as original -->
-            <path d="M10 50 A40 40 0 0 1 75 21" fill="none" stroke="url(#grad)" stroke-width="10"/>
+            <path d="M10 50 A40 40 0 0 1 75 21" fill="none" stroke="url(#grad)" stroke-width="8"/>
             <!-- Texto encima del centro -->
-            <text x="50" y="35" text-anchor="middle" fill="#000" font-size="10" font-weight="bold">{{ capacitacion.progreso }}%</text>
+            <text x="50" y="35" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">{{ capacitacion.progreso }}%</text>
           </svg>
-        </div>          
+        </div>
       </div>
     </div>
   </div>
@@ -108,16 +107,15 @@
 
   <!-- Solicitadas -->
   <div id="solicitadas" class="subcategory-section" [class.active]="activeTab === 'solicitadas'">
-    <div class="cap-table">
-      <div class="cap-header">
-        <div class="empleado-row">Empleado</div>
+    <div class="cap-table">      <div class="cap-header">
+        <div>Empleado</div>
         <div>Departamento</div>
         <div>Nombre</div>
         <div>Duración (h)</div>
         <div>Certificación</div>
       </div>
 
-      <div class="cap-row" *ngFor="let capacitacion of capacitacionesSolicitadas">
+      <div class="cap-row" *ngFor="let capacitacion of capacitacionesSolicitadas" (click)="openEmployeeTrainingsModal(capacitacion.empleado)">
         <div class="empleado-info-column">
           <img [src]="capacitacion.empleado.photo" [alt]="capacitacion.empleado.nombre" class="employee-photo">
           <span>{{ capacitacion.empleado.nombre }}</span>
@@ -130,3 +128,73 @@
     </div>
   </div>
 </main>
+
+<!-- Employee Trainings Modal -->
+<div class="modal-overlay" [class.active]="showModal" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Capacitaciones de {{ selectedEmployeeTrainings?.empleado?.nombre || 'Empleado' }}</h3>
+      <button class="modal-close" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" *ngIf="selectedEmployeeTrainings">
+      <div class="employee-info-modal">
+        <img [src]="selectedEmployeeTrainings?.empleado?.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" 
+             [alt]="selectedEmployeeTrainings?.empleado?.nombre || 'Empleado'" 
+             class="employee-photo-modal">
+        <div class="employee-details">
+          <h4>{{ selectedEmployeeTrainings?.empleado?.nombre || 'Empleado' }}</h4>
+          <p>Total de capacitaciones: {{ selectedEmployeeTrainings?.capacitaciones?.length || 0 }}</p>
+        </div>
+      </div>
+      
+      <div class="trainings-list">
+        <div class="training-item" 
+             *ngFor="let training of selectedEmployeeTrainings?.capacitaciones"
+             [class]="getEstadoClass(training.estado)">
+          <div class="training-header">
+            <h5>{{ training.nombre }}</h5>
+            <span class="training-status" [class]="getEstadoClass(training.estado)">
+              {{ training.estado }}
+            </span>
+          </div>
+          
+          <div class="training-details">
+            <div class="training-detail">
+              <strong>Duración:</strong> {{ training.duracion }} horas
+            </div>
+            <div class="training-detail">
+              <strong>Certificación:</strong> {{ training.certificacion }}
+            </div>
+            
+            <!-- Progress for ongoing trainings -->
+            <div class="training-detail" *ngIf="training.estado === 'En Curso' && training.progreso">
+              <strong>Progreso:</strong>
+              <div class="progress-bar-container">
+                <div class="progress-bar" 
+                     [style.width.%]="training.progreso"
+                     [style.background-color]="getProgressColor(training.progreso)">
+                </div>
+                <span class="progress-text">{{ training.progreso }}%</span>
+              </div>
+            </div>
+            
+            <!-- Dates -->
+            <div class="training-detail" *ngIf="training.fechaInicio">
+              <strong>Fecha de inicio:</strong> {{ training.fechaInicio }}
+            </div>
+            <div class="training-detail" *ngIf="training.fechaCompletado">
+              <strong>Fecha de completado:</strong> {{ training.fechaCompletado }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="nav-button gray" (click)="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
