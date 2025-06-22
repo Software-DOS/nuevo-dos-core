@@ -170,9 +170,14 @@ body[data-page="cv"] .nav-links a.active {
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-xl);
   min-width: 240px;
+  max-width: 280px;
   padding: var(--space-2) 0;
   z-index: var(--z-dropdown);
   overflow: hidden;
+  /* Prevent dropdown from going off-screen */
+  transform: translateX(0);
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .dropdown-menu::before {
@@ -240,6 +245,47 @@ body[data-page="cv"] .nav-links a.active {
   text-align: center;
 }
 
+/* === LOGOUT MENU ITEM STYLING === */
+.dropdown-menu a[href="#"] {
+  color: var(--color-coral);
+  border-top: 1px solid var(--color-gray-100);
+  margin-top: var(--space-1);
+  padding-top: calc(var(--space-3) + var(--space-1));
+}
+
+.dropdown-menu a[href="#"]:hover {
+  background: rgba(244, 63, 94, 0.05);
+  color: var(--color-coral);
+}
+
+.dropdown-menu a[href="#"]:hover::before {
+  background: var(--color-coral);
+}
+
+/* === DROPDOWN DIVIDER === */
+.dropdown-divider {
+  height: 1px;
+  margin: var(--space-2) 0;
+  background: var(--color-gray-200);
+  border: none;
+}
+
+/* === DROPDOWN POSITIONING IMPROVEMENTS === */
+.dropdown-menu.dropdown-right {
+  right: auto;
+  left: 0;
+}
+
+.dropdown-menu.dropdown-left {
+  right: 0;
+  left: auto;
+}
+
+.dropdown-menu.dropdown-up {
+  top: auto;
+  bottom: calc(100% + var(--space-2));
+}
+
 /* === NAV BUTTON === */
 .nav-button {
   background: var(--gradient-brand);
@@ -279,6 +325,19 @@ body[data-page="cv"] .nav-links a.active {
   
   .dropdown-menu {
     min-width: 200px;
+    max-width: calc(100vw - 40px);
+    right: 20px;
+    left: auto;
+  }
+  
+  .dropdown-menu.dropdown-left {
+    right: 20px;
+    left: auto;
+  }
+  
+  .dropdown-menu.dropdown-right {
+    right: auto;
+    left: 20px;
   }
 }
 

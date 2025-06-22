@@ -79,9 +79,9 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
   findSubMenu(submenuFinal: any[],id:number): any[] {
     return submenuFinal.filter(p => p.Imenu=id);
   }
-
   //cerrar sesion
   logout(){
+      this.dropdownAbierto = false; // Close dropdown when logging out
       localStorage.removeItem('token');
       sessionStorage.removeItem('token');
       this.router.navigateByUrl("/login");
@@ -99,7 +99,6 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
       }, 10);
     }
   }
-
   private adjustDropdownPosition(): void {
     const dropdown = document.getElementById('profileMenu');
     const profileDropdown = dropdown?.parentElement;
@@ -109,25 +108,46 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
     // Reset positioning classes
     dropdown.classList.remove('dropdown-right', 'dropdown-left', 'dropdown-up');
     
+    // Force a reflow to get accurate measurements
+    dropdown.offsetHeight;
+    
     const dropdownRect = dropdown.getBoundingClientRect();
     const profileRect = profileDropdown.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
+    
+    const MARGIN = 10; // Safety margin from viewport edges
 
     // Check horizontal overflow (dropdown going off right edge)
-    if (dropdownRect.right > viewportWidth - 10) {
+    if (dropdownRect.right > viewportWidth - MARGIN) {
       dropdown.classList.add('dropdown-left');
     }
+    
+    // Check if we need to position dropdown to the right instead
+    if (dropdownRect.left < MARGIN && !dropdown.classList.contains('dropdown-left')) {
+      dropdown.classList.add('dropdown-right');
+    }
 
-    // Check if dropdown goes below viewport
-    if (dropdownRect.bottom > viewportHeight - 10) {
+    // Recheck vertical position after horizontal adjustments
+    const updatedDropdownRect = dropdown.getBoundingClientRect();
+    
+    // Check if dropdown goes below viewport (position above if needed)
+    if (updatedDropdownRect.bottom > viewportHeight - MARGIN) {
       dropdown.classList.add('dropdown-up');
+    }
+    
+    // If positioning up would cause it to go above viewport, keep it down but adjust
+    const finalRect = dropdown.getBoundingClientRect();
+    if (finalRect.top < MARGIN && dropdown.classList.contains('dropdown-up')) {
+      dropdown.classList.remove('dropdown-up');
+      // Reduce max-height to fit within remaining viewport height
+      const availableHeight = viewportHeight - profileRect.bottom - MARGIN;
+      dropdown.style.maxHeight = `${Math.max(200, availableHeight)}px`;
     }
 
     console.log('Dropdown positioned:', {
-      dropdownRight: dropdownRect.right,
+      dropdownRect: updatedDropdownRect,
       viewportWidth: viewportWidth,
-      dropdownBottom: dropdownRect.bottom,
       viewportHeight: viewportHeight,
       classes: dropdown.className
     });
