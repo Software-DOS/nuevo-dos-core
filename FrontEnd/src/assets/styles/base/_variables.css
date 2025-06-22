@@ -127,4 +127,51 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
+
+  /* === PAGE-SPECIFIC THEME COLORS === */
+  /* Dynamic variables that change based on data-page attribute */
+  --page-primary: var(--color-electric-violet);
+  --page-primary-light: rgba(99, 102, 241, 0.1);
+  --page-primary-hover: rgba(99, 102, 241, 0.2);
+  --page-gradient: var(--gradient-electric);
+}
+
+/* === DASHBOARD THEME === */
+body[data-page="dashboard"] {
+  --page-primary: var(--color-electric-violet);
+  --page-primary-light: rgba(99, 102, 241, 0.1);
+  --page-primary-hover: rgba(99, 102, 241, 0.2);
+  --page-gradient: var(--gradient-electric);
+}
+
+/* === PROFILES THEME === */
+body[data-page="profiles"] {
+  --page-primary: var(--color-emerald);
+  --page-primary-light: rgba(16, 185, 129, 0.1);
+  --page-primary-hover: rgba(16, 185, 129, 0.2);
+  --page-gradient: var(--gradient-emerald);
+}
+
+/* === TRAINING THEME === */
+body[data-page="training"] {
+  --page-primary: var(--color-ocean-blue);
+  --page-primary-light: rgba(14, 165, 233, 0.1);
+  --page-primary-hover: rgba(14, 165, 233, 0.2);
+  --page-gradient: var(--gradient-ocean);
+}
+
+/* === EVALUATION THEME === */
+body[data-page="evaluation"] {
+  --page-primary: var(--color-coral);
+  --page-primary-light: rgba(244, 63, 94, 0.1);
+  --page-primary-hover: rgba(244, 63, 94, 0.2);
+  --page-gradient: var(--gradient-coral);
+}
+
+/* === CV THEME === */
+body[data-page="cv"] {
+  --page-primary: var(--color-amber);
+  --page-primary-light: rgba(245, 158, 11, 0.1);
+  --page-primary-hover: rgba(245, 158, 11, 0.2);
+  --page-gradient: var(--gradient-amber);
 }

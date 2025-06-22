@@ -4,13 +4,12 @@
     max-width: 1200px;
     margin: 120px auto 50px;
   }
-  
-  .employee-header {
+    .employee-header {
     display: grid;
     grid-template-columns: 100px 1.5fr 1fr 1fr 1fr 1fr;
     align-items: center;
     padding: 20px;
-    background-color: var(--color-bright-red);
+    background: var(--page-gradient);
     color: white;
     font-weight: bold;
     font-size: 1rem;
@@ -70,9 +69,8 @@
     overflow: hidden;
     margin-bottom: 40px;
   }
-  
-  .cap-header {
-    background-color: var(--color-bright-red);
+    .cap-header {
+    background: var(--page-gradient);
     color: white;
     font-weight: bold;
     font-size: 1rem;
@@ -131,5 +129,43 @@
   .cap-row {
     cursor: pointer;
   }
-  
-  
+
+  /* === PAGE-SPECIFIC TABLE ACTION ICONS === */
+  .table-action-edit {
+    color: var(--page-primary);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    margin-right: var(--space-2);
+  }
+
+  .table-action-edit:hover {
+    color: var(--page-primary);
+    filter: brightness(0.8);
+    transform: scale(1.1);
+  }
+
+  .table-action-delete {
+    color: var(--color-coral);
+    cursor: pointer;
+    transition: var(--transition-normal);
+  }
+
+  .table-action-delete:hover {
+    color: var(--color-coral);
+    filter: brightness(0.8);
+    transform: scale(1.1);
+  }
+
+  .table-action-view {
+    color: var(--color-ocean-blue);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    margin-right: var(--space-2);
+  }
+
+  .table-action-view:hover {
+    color: var(--color-ocean-blue);
+    filter: brightness(0.8);
+    transform: scale(1.1);
+  }
+

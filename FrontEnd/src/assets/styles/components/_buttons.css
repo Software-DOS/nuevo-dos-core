@@ -1,6 +1,6 @@
 /* === Botón principal de navegación (logout, enviar, etc.) === */
 .nav-button {
-    background-color: var(--color-bright-red);
+    background: var(--page-gradient);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -11,8 +11,8 @@
   }
   
   .nav-button:hover {
-    background-color: var(--color-dark-red);
     transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
   }
   
   /* === Botón eliminar (ícono de papelera) === */
@@ -95,4 +95,82 @@
   background: linear-gradient(90deg, #f39c12, #f1c40f);
 }
 
-  
+/* === PAGE-SPECIFIC BUTTON STYLES === */
+.btn-primary {
+  background: var(--page-gradient);
+  color: white;
+  border: none;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-medium);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--page-primary);
+  border: 2px solid var(--page-primary);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-medium);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.btn-secondary:hover {
+  background: var(--page-primary-light);
+  transform: translateY(-1px);
+}
+
+.btn-small {
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.875rem;
+}
+
+.btn-submit {
+  background: var(--page-gradient);
+  color: white;
+  border: none;
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-semibold);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  width: 100%;
+  margin-top: var(--space-4);
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Action buttons in tables/cards */
+.btn-action {
+  background: var(--page-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.btn-action:hover {
+  background: var(--page-primary);
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+}
+

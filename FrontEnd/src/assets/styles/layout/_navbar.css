@@ -352,3 +352,40 @@ body[data-page="cv"] .nav-links a.active {
     width: 100%;
   }
 }
+
+/* === UTILITY CLASSES FOR QUICK THEMING === */
+.text-page-primary {
+  color: var(--page-primary) !important;
+}
+
+.bg-page-primary {
+  background-color: var(--page-primary) !important;
+}
+
+.bg-page-primary-light {
+  background-color: var(--page-primary-light) !important;
+}
+
+.border-page-primary {
+  border-color: var(--page-primary) !important;
+}
+
+.text-page-gradient {
+  background: var(--page-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hover utilities */
+.hover-page-primary:hover {
+  color: var(--page-primary) !important;
+}
+
+.hover-bg-page-primary:hover {
+  background-color: var(--page-primary) !important;
+}
+
+.hover-bg-page-light:hover {
+  background-color: var(--page-primary-light) !important;
+}

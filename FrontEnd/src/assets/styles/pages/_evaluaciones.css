@@ -8,10 +8,9 @@
     height: fit-content;
     box-shadow: var(--shadow-sm);
   }
-  
-  .filter-sidebar h3 {
+    .filter-sidebar h3 {
     margin-bottom: 20px;
-    color: var(--color-dark-red);
+    color: var(--page-primary);
   }
   
   .filter-group {
