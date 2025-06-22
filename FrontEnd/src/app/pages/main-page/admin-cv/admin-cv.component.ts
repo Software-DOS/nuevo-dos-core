@@ -220,11 +220,11 @@ export class AdminCvComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     // Component initialization
   }
-
   ngAfterViewInit(): void {
     this.initializeAnimations();
     this.showSection('bibliografia');
     this.showSubcategory('info-organizacional');
+    this.initializeStickyNavigation();
   }
 
   showSection(targetId: string): void {
@@ -379,5 +379,32 @@ export class AdminCvComponent implements OnInit, AfterViewInit {
         }
       });
     });
+  }
+
+  private initializeStickyNavigation(): void {
+    const categoryIndex = document.querySelector('.category-index');
+    
+    if (categoryIndex) {
+      // Crear un Intersection Observer para detectar cuando el elemento está sticky
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.intersectionRatio < 1) {
+              // El elemento está sticky
+              categoryIndex.classList.add('is-sticky');
+            } else {
+              // El elemento no está sticky
+              categoryIndex.classList.remove('is-sticky');
+            }
+          });
+        },
+        {
+          threshold: [1],
+          rootMargin: '-80px 0px 0px 0px' // Ajustar según la posición top del sticky
+        }
+      );
+
+      observer.observe(categoryIndex);
+    }
   }
 }
