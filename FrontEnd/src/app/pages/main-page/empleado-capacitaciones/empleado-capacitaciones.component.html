@@ -1,27 +1,4 @@
-<!-- Navbar -->
-<nav class="navbar" id="navbar">
-  <div class="logo">
-    <img src="assets/img/logo.png" alt="Logo DOS" class="logo-img">
-  </div>
-  <div class="nav-links">
-      <a href="dashboard.html" class="fas fa-bell"></a>
-      <a href="dashboard.html">Inicio</a>
-      <a href="lista_empleados.html">Perfiles</a>
-      <a href="lista_capacitaciones.html" class="active">Capacitaciones</a>
-      <a href="lista_evaluaciones.html">Evaluaciones</a>
-      <a href="empleado_cv.html">Ver Mi Perfil</a>
-      <button id="logoutButton" class="nav-button" (click)="logout()">Cerrar Sesión</button>
-      <div class="profile-dropdown">
-          <img [src]="employee.avatar" class="profile-avatar" (click)="toggleDropdown()">
-          <div class="dropdown-menu" id="profileMenu">
-              <a href="lista_empleados.html"><i class="fas fa-users"></i> Ver Perfiles</a>
-              <a href="lista_capacitaciones.html"><i class="fas fa-chalkboard-teacher"></i> Capacitaciones</a>
-              <a href="lista_evaluaciones.html"><i class="fas fa-clipboard-check"></i> Evaluaciones</a>
-              <a href="empleado_cv.html"><i class="fas fa-user-circle"></i> Ver Mi Perfil</a>
-          </div>
-      </div>
-  </div>
-</nav>
+
 
 <main class="main-flex-evaluacion">
   <!-- Sidebar de filtros -->
@@ -46,7 +23,7 @@
   </aside>
 
   <!-- Contenido principal -->
-  <div class="content-wrapper w-full">
+  <div class="content-wrapper-tight">
     <div class="subcategory-nav" id="categoriaTabs">
       <div class="subcategory-link" [class.active]="activeTab === 'curso'" (click)="switchTab('curso')">En Curso</div>
       <div class="subcategory-link" [class.active]="activeTab === 'disponible'" (click)="switchTab('disponible')">Disponibles</div>
