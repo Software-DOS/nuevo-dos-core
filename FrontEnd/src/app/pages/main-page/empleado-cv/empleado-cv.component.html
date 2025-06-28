@@ -152,23 +152,23 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Estado:</span>
-              <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value" [(ngModel)]="estadoConyugal" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div class="info-item">
               <span class="label">Nombre del Cónyuge:</span>
-              <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value" [(ngModel)]="nombreConyuge" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div class="info-item">
               <span class="label">Fecha de Matrimonio:</span>
-              <input type="date" class="value" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="date" class="value" [(ngModel)]="fechaMatrimonio" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div class="info-item">
               <span class="label">Discapacidad:</span>
-              <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value" [(ngModel)]="discapacidadConyuge" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div class="info-item">
               <span class="label">Documentos:</span>
-              <input type="text" class="value document-placeholder" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value document-placeholder" [(ngModel)]="documentosConyuge" [disabled]="!sectionEditStates['datos-personales']">
             </div>
           </div>
         </div>
@@ -228,11 +228,11 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Número de Cédula:</span>
-              <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value" [(ngModel)]="numeroCedula" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div class="info-item">
               <span class="label">Documento:</span>
-              <input type="text" class="value document-placeholder" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value document-placeholder" [(ngModel)]="documentoIdentidad" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div id="documentUpload" class="info-item hidden">
               <span class="label">Adjuntar PDF:</span>
@@ -266,23 +266,23 @@
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">Cargo:</span>
-                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [(ngModel)]="cargoActual" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Fecha de Inicio:</span>
-                <input type="date" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="date" class="value" [(ngModel)]="fechaInicio" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Empresa:</span>
-                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [(ngModel)]="empresa" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Área:</span>
-                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [(ngModel)]="areaLaboral" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Subárea:</span>
-                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [(ngModel)]="subareaLaboral" [disabled]="!sectionEditStates['info-profesional']">
               </div>
             </div>
           </div>
@@ -290,15 +290,15 @@
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">Jefe Directo:</span>
-                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [(ngModel)]="jefeDirecto" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Tipo de Contrato:</span>
-                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [(ngModel)]="tipoContrato" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Ubicación:</span>
-                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [(ngModel)]="ubicacion" [disabled]="!sectionEditStates['info-profesional']">
               </div>
             </div>
           </div>
@@ -369,11 +369,11 @@
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Carrera:</span>
-                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [(ngModel)]="carreraTercerNivel" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
                 <div class="info-item">
                   <span class="label">Institución:</span>
-                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [(ngModel)]="institucionTercerNivel" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
               </div>
             </div>
@@ -382,11 +382,11 @@
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Master:</span>
-                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [(ngModel)]="masterCuartoNivel" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
                 <div class="info-item">
                   <span class="label">Institución:</span>
-                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [(ngModel)]="institucionCuartoNivel" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
               </div>
             </div>
@@ -417,19 +417,19 @@
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Título:</span>
-                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [(ngModel)]="tituloEspecialidad" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
                 <div class="info-item">
                   <span class="label">Institución:</span>
-                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [(ngModel)]="institucionEspecialidad" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
                 <div class="info-item">
                   <span class="label">Fecha:</span>
-                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [(ngModel)]="fechaEspecialidad" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
                 <div class="info-item">
                   <span class="label">Certificado:</span>
-                  <input type="text" class="value document-placeholder" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value document-placeholder" [(ngModel)]="certificadoEspecialidad" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
               </div>
             </div>
@@ -464,15 +464,15 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Idioma:</span>
-              <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value" [(ngModel)]="idioma" [disabled]="!sectionEditStates['info-profesional']">
             </div>
             <div class="info-item">
               <span class="label">Nivel:</span>
-              <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value" [(ngModel)]="nivelIdioma" [disabled]="!sectionEditStates['info-profesional']">
             </div>
             <div class="info-item">
               <span class="label">Certificación:</span>
-              <input type="text" class="value document-placeholder" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value document-placeholder" [(ngModel)]="certificacionIdioma" [disabled]="!sectionEditStates['info-profesional']">
             </div>
           </div>
         </div>
@@ -505,15 +505,15 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Título:</span>
-              <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value" [(ngModel)]="tituloProyecto" [disabled]="!sectionEditStates['info-profesional']">
             </div>
             <div class="info-item">
               <span class="label">Especialidad:</span>
-              <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value" [(ngModel)]="especialidadProyecto" [disabled]="!sectionEditStates['info-profesional']">
             </div>
             <div class="info-item">
               <span class="label">Año:</span>
-              <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value" [(ngModel)]="anoProyecto" [disabled]="!sectionEditStates['info-profesional']">
             </div>
           </div>
         </div>

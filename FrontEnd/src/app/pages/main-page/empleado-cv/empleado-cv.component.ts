@@ -72,6 +72,49 @@ export class EmpleadoCvComponent implements OnInit {
   public nuevoProyectoEspecialidad: string = '';
   public nuevoProyectoAno: string = '';
 
+  // Additional missing properties for spouse information
+  public estadoConyugal: string = '';
+  public nombreConyuge: string = '';
+  public fechaMatrimonio: string = '';
+  public discapacidadConyuge: string = '';
+  public documentosConyuge: string = '';
+
+  // Additional missing properties for identity documents
+  public numeroCedula: string = '';
+  public documentoIdentidad: string = '';
+
+  // Additional missing properties for professional information
+  public cargoActual: string = '';
+  public fechaInicio: string = '';
+  public empresa: string = '';
+  public areaLaboral: string = '';
+  public subareaLaboral: string = '';
+  public jefeDirecto: string = '';
+  public tipoContrato: string = '';
+  public ubicacion: string = '';
+
+  // Additional missing properties for education
+  public carreraTercerNivel: string = '';
+  public institucionTercerNivel: string = '';
+  public masterCuartoNivel: string = '';
+  public institucionCuartoNivel: string = '';
+
+  // Additional missing properties for certifications
+  public tituloEspecialidad: string = '';
+  public institucionEspecialidad: string = '';
+  public fechaEspecialidad: string = '';
+  public certificadoEspecialidad: string = '';
+
+  // Additional missing properties for languages
+  public idioma: string = '';
+  public nivelIdioma: string = '';
+  public certificacionIdioma: string = '';
+
+  // Additional missing properties for projects
+  public tituloProyecto: string = '';
+  public especialidadProyecto: string = '';
+  public anoProyecto: string = '';
+
   // Form visibility states
   showAddDependentForm: boolean = false;
   showAddEducationForm: boolean = false;
