@@ -27,6 +27,21 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   showRequestButton: boolean = true;
   contractAccepted: boolean = false;
 
+  // NgModel properties for filters
+  filtroEmpresa: string = '';
+  filtroRoadmap: string = '';
+  
+  // NgModel properties for contract
+  aceptarContrato: boolean = false;
+  
+  // NgModel properties for training request form
+  nombreCapacitacion: string = '';
+  duracionCapacitacion: number = 0;
+  certificacionCapacitacion: string = '';
+  precioCapacitacion: string = '';
+  justificacionCapacitacion: string = '';
+  enlaceCapacitacion: string = '';
+
   // Employee Information for navbar
   employee = {
     name: 'Juan Carlos Rodríguez',

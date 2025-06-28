@@ -3,11 +3,14 @@
 <main class="main-flex-evaluacion">
   <!-- Sidebar de filtros -->
   <aside class="filter-sidebar">
-    <h3>FILTROS</h3>
-
-    <div class="filter-group">
+    <h3>FILTROS</h3>      <div class="form-group">
+        <label class="flex-gap">
+          <input type="checkbox" [(ngModel)]="aceptarContrato" (change)="onContractAcceptedChange()">
+          He leído y acepto los términos del acuerdo.
+        </label>
+      </div>  <div class="filter-group">
       <label for="filtroEmpresa">Empresa:</label>
-      <select id="filtroEmpresa" [(ngModel)]="filters.company" (change)="onFilterChange()">
+      <select id="filtroEmpresa" [(ngModel)]="filtroEmpresa" (change)="onFilterChange()">
         <option value="">Todas</option>
         <option *ngFor="let company of companyOptions.slice(1)" [value]="company">{{ company }}</option>
       </select>
@@ -15,7 +18,7 @@
 
     <div class="filter-group">
       <label for="filtroRoadmap">Roadmap de Certificación:</label>
-      <select id="filtroRoadmap" [(ngModel)]="filters.roadmap" (change)="onFilterChange()">
+      <select id="filtroRoadmap" [(ngModel)]="filtroRoadmap" (change)="onFilterChange()">
         <option value="">Todos</option>
         <option *ngFor="let roadmap of roadmapOptions.slice(1)" [value]="roadmap">{{ roadmap }}</option>
       </select>
@@ -131,7 +134,7 @@
         </label>
       </div>
       <div class="edit-controls">
-        <button class="nav-button" [disabled]="!contractAccepted" (click)="signContract()">Firmar</button>
+        <button class="nav-button" [disabled]="!aceptarContrato" (click)="signContract()">Firmar</button>
         <button class="nav-button gray" (click)="cancelContract()">Cancelar</button>
       </div>
     </div>
@@ -145,7 +148,7 @@
           <input 
             type="text" 
             id="nombre" 
-            [(ngModel)]="newTrainingRequest.name"
+            [(ngModel)]="nombreCapacitacion"
             name="nombre"
             required>
         </div>
@@ -154,7 +157,7 @@
           <input 
             type="number" 
             id="duracion" 
-            [(ngModel)]="newTrainingRequest.duration"
+            [(ngModel)]="duracionCapacitacion"
             name="duracion"
             min="1" 
             required>
@@ -164,7 +167,7 @@
           <input 
             type="text" 
             id="certificacion"
-            [(ngModel)]="newTrainingRequest.certification"
+            [(ngModel)]="certificacionCapacitacion"
             name="certificacion"
             required>
         </div>
@@ -173,7 +176,7 @@
           <input 
             type="text" 
             id="precio"
-            [(ngModel)]="newTrainingRequest.price"
+            [(ngModel)]="precioCapacitacion"
             name="precio"
             required>
         </div>
@@ -181,7 +184,7 @@
           <label for="justificacion">Justificación</label>
           <textarea 
             id="justificacion" 
-            [(ngModel)]="newTrainingRequest.justification"
+            [(ngModel)]="justificacionCapacitacion"
             name="justificacion"
             rows="4"
             required></textarea>
@@ -191,7 +194,7 @@
           <input 
             type="url" 
             id="enlace"
-            [(ngModel)]="newTrainingRequest.link"
+            [(ngModel)]="enlaceCapacitacion"
             name="enlace"
             required>
         </div>

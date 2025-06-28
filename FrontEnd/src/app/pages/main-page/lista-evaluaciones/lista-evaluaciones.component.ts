@@ -26,6 +26,12 @@ interface Filtros {
 })
 export class ListaEvaluacionesComponent implements OnInit {
 
+  // NgModel properties for filters
+  filtroDepartamento: string = '';
+  filtroCalificado: string = '';
+  filtroUbicacion: string = '';
+  filtroIdioma: string = '';
+
   filtros: Filtros = {
     departamento: '',
     calificado: '',

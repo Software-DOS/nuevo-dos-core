@@ -79,23 +79,23 @@
       <form id="solicitudForm" class="cv-form" (ngSubmit)="onSubmitForm($event)">
         <div class="form-group">
           <label for="nombre">Nombre de la Capacitación</label>
-          <input type="text" [value]="nuevaCapacitacion.nombre" (input)="nuevaCapacitacion.nombre = $any($event.target).value" required>
+          <input type="text" [(ngModel)]="nombreCapacitacion" name="nombre" required>
         </div>
         <div class="form-group">
           <label for="duracion">Duración Estimada (horas)</label>
-          <input type="number" [value]="nuevaCapacitacion.duracion" (input)="nuevaCapacitacion.duracion = +$any($event.target).value" min="1" required>
+          <input type="number" [(ngModel)]="duracionCapacitacion" name="duracion" min="1" required>
         </div>
         <div class="form-group">
           <label for="certificacion">Certificación Esperada</label>
-          <input type="text" [value]="nuevaCapacitacion.certificacion" (input)="nuevaCapacitacion.certificacion = $any($event.target).value">
+          <input type="text" [(ngModel)]="certificacionCapacitacion" name="certificacion">
         </div>
         <div class="form-group">
           <label for="justificacion">Justificación</label>
-          <textarea [value]="nuevaCapacitacion.justificacion" (input)="nuevaCapacitacion.justificacion = $any($event.target).value" rows="4"></textarea>
+          <textarea [(ngModel)]="justificacionCapacitacion" name="justificacion" rows="4"></textarea>
         </div>
         <div class="form-group">
           <label for="enlace">Enlace a la Certificación</label>
-          <input type="text" [value]="nuevaCapacitacion.enlace" (input)="nuevaCapacitacion.enlace = $any($event.target).value">
+          <input type="text" [(ngModel)]="enlaceCapacitacion" name="enlace">
         </div>
         <div class="edit-controls">
           <button type="submit" class="nav-button">Añadir</button>

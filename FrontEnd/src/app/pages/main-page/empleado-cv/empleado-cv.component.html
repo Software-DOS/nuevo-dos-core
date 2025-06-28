@@ -10,13 +10,13 @@
   </div>
   
   <div class="employee-personal-info">
-    <h1 class="employee-name-editable"><input type="text" value="Juan Carlos Rodríguez Martínez" class="value employee-cv-name-input" [disabled]="!isEditing"></h1>
+    <h1 class="employee-name-editable"><input type="text" [(ngModel)]="nombreCompleto" class="value employee-cv-name-input" [disabled]="!isEditing"></h1>
     <div class="info-item">
-      <a href="mailto:juan.rodriguez@empresa.com">✉️ <input type="text" value="juan.rodriguez@empresa.com" class="value" [disabled]="!isEditing"></a>
+      <a href="mailto:juan.rodriguez@empresa.com">✉️ <input type="text" [(ngModel)]="correoElectronico" class="value" [disabled]="!isEditing"></a>
     </div>
-    <p class="info-item"><input type="text" value="Analista de Sistemas" class="value" [disabled]="!isEditing"></p>
-    <p class="info-item"><input type="text" value="Tecnología de la Información" class="value" [disabled]="!isEditing"></p>
-    <p class="info-item"><input type="text" value="Desarrollo de Aplicaciones" class="value" [disabled]="!isEditing"></p>
+    <p class="info-item"><input type="text" [(ngModel)]="posicion" class="value" [disabled]="!isEditing"></p>
+    <p class="info-item"><input type="text" [(ngModel)]="area" class="value" [disabled]="!isEditing"></p>
+    <p class="info-item"><input type="text" [(ngModel)]="subarea" class="value" [disabled]="!isEditing"></p>
   </div>
   <!-- Botón de editar (con ícono de lápiz) posicionado en la esquina superior derecha -->
   <div class="edit-section">
@@ -54,19 +54,19 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Fecha de Nacimiento:</span>
-            <input type="date" class="value" value="1985-03-15" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="date" class="value" [(ngModel)]="fechaNacimiento" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">País de Nacimiento:</span>
-            <input type="text" class="value" value="España" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="paisNacimiento" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Provincia:</span>
-            <input type="text" class="value" value="Madrid" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="provinciaNacimiento" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Ciudad:</span>
-            <input type="text" class="value" value="Madrid" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="ciudadNacimiento" [disabled]="!sectionEditStates['datos-personales']">
           </div>
         </div>
       </section>
@@ -76,31 +76,31 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Nombres:</span>
-            <input type="text" class="value" value="Juan Carlos" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="nombres" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Apellidos:</span>
-            <input type="text" class="value" value="Rodríguez Martínez" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="apellidos" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Sexo:</span>
-            <input type="text" class="value" value="Masculino" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="sexo" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Estado Civil:</span>
-            <input type="text" class="value" value="Casado" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="estadoCivil" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Tipo de Sangre:</span>
-            <input type="text" class="value" value="O+" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="tipoSangre" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Último Nivel de Estudio:</span>
-            <input type="text" class="value" value="Máster" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="nivelEstudio" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Cargas Familiares:</span>
-            <input type="number" class="value" value="2" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="number" class="value" [(ngModel)]="cargasFamiliares" [disabled]="!sectionEditStates['datos-personales']">
           </div>
         </div>
       </section>
@@ -110,19 +110,19 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Correo Institucional:</span>
-            <input type="email" class="value" value="juan.rodriguez@empresa.com" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="email" class="value" [(ngModel)]="correoInstitucional" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Correo Personal:</span>
-            <input type="email" class="value" value="juanc.rodriguez@gmail.com" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="email" class="value" [(ngModel)]="correoPersonal" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Número Celular:</span>
-            <input type="text" class="value" value="+34 612 345 678" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="numeroCelular" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Dirección Domiciliaria:</span>
-            <input type="text" class="value" value="Calle Serrano 123, 28006 Madrid" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="direccion" [disabled]="!sectionEditStates['datos-personales']">
           </div>
         </div>
       </section>
@@ -132,15 +132,15 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Nombre:</span>
-            <input type="text" class="value" value="Ana Martínez López" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="nombreEmergencia" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Relación:</span>
-            <input type="text" class="value" value="Esposa" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="relacionEmergencia" [disabled]="!sectionEditStates['datos-personales']">
           </div>
           <div class="info-item">
             <span class="label">Teléfono:</span>
-            <input type="text" class="value" value="+34 623 456 789" [disabled]="!sectionEditStates['datos-personales']">
+            <input type="text" class="value" [(ngModel)]="telefonoEmergencia" [disabled]="!sectionEditStates['datos-personales']">
           </div>
         </div>
       </section>
@@ -204,15 +204,15 @@
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">Nombre:</span>
-                <input type="text" [value]="newDependent.name" (input)="newDependent.name = $any($event.target).value" class="value">
+                <input type="text" [(ngModel)]="nuevoDependienteNombre" class="value">
               </div>
               <div class="info-item">
                 <span class="label">Fecha de Nacimiento:</span>
-                <input type="date" [value]="newDependent.birthdate" (input)="newDependent.birthdate = $any($event.target).value" class="value">
+                <input type="date" [(ngModel)]="nuevoDependienteFechaNacimiento" class="value">
               </div>
               <div class="info-item">
                 <span class="label">Discapacidad:</span>
-                <input type="text" [value]="newDependent.disability" (input)="newDependent.disability = $any($event.target).value" class="value">
+                <input type="text" [(ngModel)]="nuevoDependienteDiscapacidad" class="value">
               </div>
               <div class="info-item">
                 <span class="label">Adjuntar PDF:</span>
@@ -398,15 +398,15 @@
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Nivel del titulo:</span>
-                  <input type="text" [value]="newEducation.career" (input)="newEducation.career = $any($event.target).value" class="value">
+                  <input type="text" [(ngModel)]="nuevaEducacionNivel" class="value">
                 </div>
                 <div class="info-item">
                   <span class="label">Carrera:</span>
-                  <input type="text" [value]="newEducation.career" (input)="newEducation.career = $any($event.target).value" class="value">
+                  <input type="text" [(ngModel)]="nuevaEducacionCarrera" class="value">
                 </div>
                 <div class="info-item">
                   <span class="label">Institución:</span>
-                  <input type="text" [value]="newEducation.institution" (input)="newEducation.institution = $any($event.target).value" class="value">
+                  <input type="text" [(ngModel)]="nuevaEducacionInstitucion" class="value">
                 </div>
               </div>
               <button class="nav-button" (click)="addEducation()">Guardar Estudio</button>
@@ -441,15 +441,15 @@
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Título:</span>
-                  <input type="text" [value]="newCertification.title" (input)="newCertification.title = $any($event.target).value" class="value">
+                  <input type="text" [(ngModel)]="nuevaCertificacionTitulo" class="value">
                 </div>
                 <div class="info-item">
                   <span class="label">Institución:</span>
-                  <input type="text" [value]="newCertification.institution" (input)="newCertification.institution = $any($event.target).value" class="value">
+                  <input type="text" [(ngModel)]="nuevaCertificacionInstitucion" class="value">
                 </div>
                 <div class="info-item">
                   <span class="label">Fecha:</span>
-                  <input type="text" [value]="newCertification.date" (input)="newCertification.date = $any($event.target).value" class="value">
+                  <input type="text" [(ngModel)]="nuevaCertificacionFecha" class="value">
                 </div>
               </div>
               <button class="nav-button" (click)="addCertification()">Guardar Certificación</button>
@@ -484,15 +484,15 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Idioma:</span>
-              <input type="text" [value]="newLanguage.language" (input)="newLanguage.language = $any($event.target).value" class="value">
+              <input type="text" [(ngModel)]="nuevoIdiomaIdioma" class="value">
             </div>
             <div class="info-item">
               <span class="label">Nivel:</span>
-              <input type="text" [value]="newLanguage.level" (input)="newLanguage.level = $any($event.target).value" class="value">
+              <input type="text" [(ngModel)]="nuevoIdiomaNivel" class="value">
             </div>
             <div class="info-item">
               <span class="label">Certificación:</span>
-              <input type="text" [value]="newLanguage.certification" (input)="newLanguage.certification = $any($event.target).value" class="value">
+              <input type="text" [(ngModel)]="nuevoIdiomaCertificacion" class="value">
             </div>
           </div>
           <button class="nav-button" (click)="addLanguage()">Guardar Idioma</button>
@@ -525,15 +525,15 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Título:</span>
-              <input type="text" [value]="newProject.title" (input)="newProject.title = $any($event.target).value" class="value">
+              <input type="text" [(ngModel)]="nuevoProyectoTitulo" class="value">
             </div>
             <div class="info-item">
               <span class="label">Especialidad:</span>
-              <input type="text" [value]="newProject.specialty" (input)="newProject.specialty = $any($event.target).value" class="value">
+              <input type="text" [(ngModel)]="nuevoProyectoEspecialidad" class="value">
             </div>
             <div class="info-item">
               <span class="label">Año:</span>
-              <input type="text" [value]="newProject.year" (input)="newProject.year = $any($event.target).value" class="value">
+              <input type="text" [(ngModel)]="nuevoProyectoAno" class="value">
             </div>
           </div>
           <button class="nav-button" (click)="addProject()">Guardar Proyecto</button>

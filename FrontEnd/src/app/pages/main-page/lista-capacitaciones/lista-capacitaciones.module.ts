@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 //componentes
 import { ListaCapacitacionesComponent } from './lista-capacitaciones.component';
@@ -10,6 +11,7 @@ import { ListaCapacitacionesRoutingModule } from './lista-capacitaciones-routing
   declarations: [ListaCapacitacionesComponent],
   imports: [
     CommonModule,
+    FormsModule,
     ListaCapacitacionesRoutingModule
   ]
 })

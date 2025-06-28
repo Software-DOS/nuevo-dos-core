@@ -65,6 +65,13 @@ export class ListaCapacitacionesComponent implements OnInit {
   showModal: boolean = false;
   selectedEmployeeTrainings: EmpleadoCapacitaciones | null = null;
 
+  // NgModel properties for form
+  nombreCapacitacion: string = '';
+  duracionCapacitacion: number = 0;
+  certificacionCapacitacion: string = '';
+  justificacionCapacitacion: string = '';
+  enlaceCapacitacion: string = '';
+
   nuevaCapacitacion: NuevaCapacitacion = {
     nombre: '',
     duracion: 0,

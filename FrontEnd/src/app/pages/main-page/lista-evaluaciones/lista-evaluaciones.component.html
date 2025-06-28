@@ -4,7 +4,7 @@
     <h3>FILTROS</h3>
     <div class="filter-group">
       <label for="filtroDepartamento">Departamento:</label>
-      <select id="filtroDepartamento" [value]="filtros.departamento" (change)="filtros.departamento = $any($event.target).value; aplicarFiltros()">
+      <select id="filtroDepartamento" [(ngModel)]="filtroDepartamento" (change)="aplicarFiltros()">
         <option value="">Todos</option>
         <option value="Desarrollo">Desarrollo</option>
         <option value="Recursos Humanos">Recursos Humanos</option>
@@ -12,7 +12,7 @@
     </div>
     <div class="filter-group">
       <label for="filtroCalificado">Calificado:</label>
-      <select id="filtroCalificado" [value]="filtros.calificado" (change)="filtros.calificado = $any($event.target).value; aplicarFiltros()">
+      <select id="filtroCalificado" [(ngModel)]="filtroCalificado" (change)="aplicarFiltros()">
         <option value="">Todos</option>
         <option value="Si">Sí</option>
         <option value="No">No</option>
@@ -20,7 +20,7 @@
     </div>
     <div class="filter-group">
       <label for="filtroUbicacion">Lugar de Residencia:</label>
-      <select id="filtroUbicacion" [value]="filtros.ubicacion" (change)="filtros.ubicacion = $any($event.target).value; aplicarFiltros()">
+      <select id="filtroUbicacion" [(ngModel)]="filtroUbicacion" (change)="aplicarFiltros()">
         <option value="">Todos</option>
         <option value="Quito">Quito</option>
         <option value="Guayaquil">Guayaquil</option>
@@ -29,7 +29,7 @@
     </div>
     <div class="filter-group">
       <label for="filtroIdioma">Idiomas:</label>
-      <select id="filtroIdioma" [value]="filtros.idioma" (change)="filtros.idioma = $any($event.target).value; aplicarFiltros()">
+      <select id="filtroIdioma" [(ngModel)]="filtroIdioma" (change)="aplicarFiltros()">
         <option value="">Todos</option>
         <option value="Inglés">Inglés</option>
         <option value="Español">Español</option>

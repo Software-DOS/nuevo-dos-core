@@ -18,6 +18,60 @@ export class EmpleadoCvComponent implements OnInit {
     'info-profesional': false
   };
 
+  // NgModel properties for employee personal info
+  nombreCompleto: string = 'Juan Carlos Rodríguez Martínez';
+  correoElectronico: string = 'juan.rodriguez@empresa.com';
+  posicion: string = 'Analista de Sistemas';
+  area: string = 'Tecnología de la Información';
+  subarea: string = 'Desarrollo de Aplicaciones';
+
+  // NgModel properties for bibliography
+  fechaNacimiento: string = '1985-03-15';
+  paisNacimiento: string = 'España';
+  provinciaNacimiento: string = 'Madrid';
+  ciudadNacimiento: string = 'Madrid';
+
+  // NgModel properties for personal details
+  nombres: string = 'Juan Carlos';
+  apellidos: string = 'Rodríguez Martínez';
+  sexo: string = 'Masculino';
+  estadoCivil: string = 'Casado';
+  tipoSangre: string = 'O+';
+  nivelEstudio: string = 'Máster';
+  cargasFamiliares: number = 2;
+
+  // NgModel properties for contact
+  correoInstitucional: string = 'juan.rodriguez@empresa.com';
+  correoPersonal: string = 'juanc.rodriguez@gmail.com';
+  numeroCelular: string = '+34 612 345 678';
+  direccion: string = 'Calle Serrano 123, 28006 Madrid';
+
+  // NgModel properties for emergency contact
+  nombreEmergencia: string = 'Ana Martínez López';
+  relacionEmergencia: string = 'Esposa';
+  telefonoEmergencia: string = '+34 623 456 789';
+
+  // NgModel properties for new forms
+  nuevoDependienteNombre: string = '';
+  nuevoDependienteFechaNacimiento: string = '';
+  nuevoDependienteDiscapacidad: string = '';
+
+  nuevaEducacionNivel: string = '';
+  nuevaEducacionCarrera: string = '';
+  nuevaEducacionInstitucion: string = '';
+
+  nuevaCertificacionTitulo: string = '';
+  nuevaCertificacionInstitucion: string = '';
+  nuevaCertificacionFecha: string = '';
+
+  nuevoIdiomaIdioma: string = '';
+  nuevoIdiomaNivel: string = '';
+  nuevoIdiomaCertificacion: string = '';
+
+  nuevoProyectoTitulo: string = '';
+  nuevoProyectoEspecialidad: string = '';
+  nuevoProyectoAno: string = '';
+
   // Form visibility states
   showAddDependentForm: boolean = false;
   showAddEducationForm: boolean = false;
