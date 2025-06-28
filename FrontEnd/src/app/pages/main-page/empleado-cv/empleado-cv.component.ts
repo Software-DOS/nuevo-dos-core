@@ -19,58 +19,58 @@ export class EmpleadoCvComponent implements OnInit {
   };
 
   // NgModel properties for employee personal info
-  nombreCompleto: string = 'Juan Carlos Rodríguez Martínez';
-  correoElectronico: string = 'juan.rodriguez@empresa.com';
-  posicion: string = 'Analista de Sistemas';
-  area: string = 'Tecnología de la Información';
-  subarea: string = 'Desarrollo de Aplicaciones';
+  public nombreCompleto: string = '';
+  public correoElectronico: string = '';
+  public posicion: string = '';
+  public area: string = '';
+  public subarea: string = '';
 
   // NgModel properties for bibliography
-  fechaNacimiento: string = '1985-03-15';
-  paisNacimiento: string = 'España';
-  provinciaNacimiento: string = 'Madrid';
-  ciudadNacimiento: string = 'Madrid';
+  public fechaNacimiento: string = '';
+  public paisNacimiento: string = '';
+  public provinciaNacimiento: string = '';
+  public ciudadNacimiento: string = '';
 
   // NgModel properties for personal details
-  nombres: string = 'Juan Carlos';
-  apellidos: string = 'Rodríguez Martínez';
-  sexo: string = 'Masculino';
-  estadoCivil: string = 'Casado';
-  tipoSangre: string = 'O+';
-  nivelEstudio: string = 'Máster';
-  cargasFamiliares: number = 2;
+  public nombres: string = '';
+  public apellidos: string = '';
+  public sexo: string = '';
+  public estadoCivil: string = '';
+  public tipoSangre: string = '';
+  public nivelEstudio: string = '';
+  public cargasFamiliares: number = 0;
 
   // NgModel properties for contact
-  correoInstitucional: string = 'juan.rodriguez@empresa.com';
-  correoPersonal: string = 'juanc.rodriguez@gmail.com';
-  numeroCelular: string = '+34 612 345 678';
-  direccion: string = 'Calle Serrano 123, 28006 Madrid';
+  public correoInstitucional: string = '';
+  public correoPersonal: string = '';
+  public numeroCelular: string = '';
+  public direccion: string = '';
 
   // NgModel properties for emergency contact
-  nombreEmergencia: string = 'Ana Martínez López';
-  relacionEmergencia: string = 'Esposa';
-  telefonoEmergencia: string = '+34 623 456 789';
+  public nombreEmergencia: string = '';
+  public relacionEmergencia: string = '';
+  public telefonoEmergencia: string = '';
 
   // NgModel properties for new forms
-  nuevoDependienteNombre: string = '';
-  nuevoDependienteFechaNacimiento: string = '';
-  nuevoDependienteDiscapacidad: string = '';
+  public nuevoDependienteNombre: string = '';
+  public nuevoDependienteFechaNacimiento: string = '';
+  public nuevoDependienteDiscapacidad: string = '';
 
-  nuevaEducacionNivel: string = '';
-  nuevaEducacionCarrera: string = '';
-  nuevaEducacionInstitucion: string = '';
+  public nuevaEducacionNivel: string = '';
+  public nuevaEducacionCarrera: string = '';
+  public nuevaEducacionInstitucion: string = '';
 
-  nuevaCertificacionTitulo: string = '';
-  nuevaCertificacionInstitucion: string = '';
-  nuevaCertificacionFecha: string = '';
+  public nuevaCertificacionTitulo: string = '';
+  public nuevaCertificacionInstitucion: string = '';
+  public nuevaCertificacionFecha: string = '';
 
-  nuevoIdiomaIdioma: string = '';
-  nuevoIdiomaNivel: string = '';
-  nuevoIdiomaCertificacion: string = '';
+  public nuevoIdiomaIdioma: string = '';
+  public nuevoIdiomaNivel: string = '';
+  public nuevoIdiomaCertificacion: string = '';
 
-  nuevoProyectoTitulo: string = '';
-  nuevoProyectoEspecialidad: string = '';
-  nuevoProyectoAno: string = '';
+  public nuevoProyectoTitulo: string = '';
+  public nuevoProyectoEspecialidad: string = '';
+  public nuevoProyectoAno: string = '';
 
   // Form visibility states
   showAddDependentForm: boolean = false;

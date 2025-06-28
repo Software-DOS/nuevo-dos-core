@@ -12,7 +12,7 @@
   <div class="employee-personal-info">
     <h1 class="employee-name-editable"><input type="text" [(ngModel)]="nombreCompleto" class="value employee-cv-name-input" [disabled]="!isEditing"></h1>
     <div class="info-item">
-      <a href="mailto:juan.rodriguez@empresa.com">✉️ <input type="text" [(ngModel)]="correoElectronico" class="value" [disabled]="!isEditing"></a>
+      <a href="mailto:">✉️ <input type="text" [(ngModel)]="correoElectronico" class="value" [disabled]="!isEditing"></a>
     </div>
     <p class="info-item"><input type="text" [(ngModel)]="posicion" class="value" [disabled]="!isEditing"></p>
     <p class="info-item"><input type="text" [(ngModel)]="area" class="value" [disabled]="!isEditing"></p>
@@ -152,23 +152,23 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Estado:</span>
-              <input type="text" class="value" value="Casado" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div class="info-item">
               <span class="label">Nombre del Cónyuge:</span>
-              <input type="text" class="value" value="Ana Martínez López" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div class="info-item">
               <span class="label">Fecha de Matrimonio:</span>
-              <input type="date" class="value" value="2015-06-10" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="date" class="value" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div class="info-item">
               <span class="label">Discapacidad:</span>
-              <input type="text" class="value" value="No" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div class="info-item">
               <span class="label">Documentos:</span>
-              <input type="text" class="value document-placeholder" value="Archivos Adjuntos" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value document-placeholder" [disabled]="!sectionEditStates['datos-personales']">
             </div>
           </div>
         </div>
@@ -179,19 +179,19 @@
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Nombre:</span>
-                  <input type="text" class="value" value="Carlos Rodríguez Martínez" [disabled]="!sectionEditStates['datos-personales']">
+                  <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
                 </div>
                 <div class="info-item">
                   <span class="label">Fecha de Nacimiento:</span>
-                  <input type="date" class="value" value="2016-05-05" [disabled]="!sectionEditStates['datos-personales']">
+                  <input type="date" class="value" [disabled]="!sectionEditStates['datos-personales']">
                 </div>
                 <div class="info-item">
                   <span class="label">Discapacidad:</span>
-                  <input type="text" class="value" value="No" [disabled]="!sectionEditStates['datos-personales']">
+                  <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
                 </div>
                 <div class="info-item">
                   <span class="label">Documentos:</span>
-                  <input type="text" class="value document-placeholder" value="Archivos Adjuntos" [disabled]="!sectionEditStates['datos-personales']">
+                  <input type="text" class="value document-placeholder" [disabled]="!sectionEditStates['datos-personales']">
                 </div>
               </div>
             </div>
@@ -228,11 +228,11 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Número de Cédula:</span>
-              <input type="text" class="value" value="12345678A" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div class="info-item">
               <span class="label">Documento:</span>
-              <input type="text" class="value document-placeholder" value="Archivos Adjuntos" [disabled]="!sectionEditStates['datos-personales']">
+              <input type="text" class="value document-placeholder" [disabled]="!sectionEditStates['datos-personales']">
             </div>
             <div id="documentUpload" class="info-item hidden">
               <span class="label">Adjuntar PDF:</span>
@@ -266,23 +266,23 @@
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">Cargo:</span>
-                <input type="text" class="value" value="Analista de Sistemas" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Fecha de Inicio:</span>
-                <input type="date" class="value" value="2020-01-01" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="date" class="value" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Empresa:</span>
-                <input type="text" class="value" value="Tecnología Innovadora S.A." [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Área:</span>
-                <input type="text" class="value" value="Tecnología de la Información" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Subárea:</span>
-                <input type="text" class="value" value="Desarrollo de Aplicaciones" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
               </div>
             </div>
           </div>
@@ -290,15 +290,15 @@
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">Jefe Directo:</span>
-                <input type="text" class="value" value="María Sánchez" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Tipo de Contrato:</span>
-                <input type="text" class="value" value="Indefinido" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
               </div>
               <div class="info-item">
                 <span class="label">Ubicación:</span>
-                <input type="text" class="value" value="Sede Central Madrid" [disabled]="!sectionEditStates['info-profesional']">
+                <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
               </div>
             </div>
           </div>
@@ -308,8 +308,8 @@
                 <div class="org-box jefe">
                   <div class="org-avatar">MS</div>
                   <div class="org-info">
-                    <h4><input type="text" value="María Sánchez" class="value" disabled></h4>
-                    <p><input type="text" value="Gerente de Desarrollo" class="value" disabled></p>
+                    <h4><input type="text" class="value" disabled></h4>
+                    <p><input type="text" class="value" disabled></p>
                   </div>
                 </div>
               </div>
@@ -320,8 +320,8 @@
                 <div class="org-box empleado">
                   <div class="org-avatar">JR</div>
                   <div class="org-info">
-                    <h4><input type="text" value="Juan C. Rodríguez" class="value" disabled></h4>
-                    <p><input type="text" value="Analista de Sistemas" class="value" disabled></p>
+                    <h4><input type="text" class="value" disabled></h4>
+                    <p><input type="text" class="value" disabled></p>
                   </div>
                 </div>
               </div>
@@ -335,22 +335,22 @@
           <h3>Historia Laboral</h3>
           <div class="info-grid">
           <div class="info-item">
-              <h3><input type="text" value="Desarrollador Senior" class="value" disabled></h3>
-              <p class="company"><input type="text" value="Software Solutions Inc." class="value" disabled></p>
-              <p class="dates"><input type="text" value="2018 - 2019" class="value" disabled></p>
-              <p class="functions"><input type="text" value="Desarrollo de aplicaciones web empresariales, liderazgo de equipo técnico" class="value" disabled></p>
+              <h3><input type="text" class="value" disabled></h3>
+              <p class="company"><input type="text" class="value" disabled></p>
+              <p class="dates"><input type="text" class="value" disabled></p>
+              <p class="functions"><input type="text" class="value" disabled></p>
           </div>
           <div class="info-item">
-              <h3><input type="text" value="Desarrollador Full Stack" class="value" disabled></h3>
-              <p class="company"><input type="text" value="Tech Innovations Ltd." class="value" disabled></p>
-              <p class="dates"><input type="text" value="2016 - 2018" class="value" disabled></p>
-              <p class="functions"><input type="text" value="Desarrollo full stack, implementación de APIs RESTful" class="value" disabled></p>
+              <h3><input type="text" class="value" disabled></h3>
+              <p class="company"><input type="text" class="value" disabled></p>
+              <p class="dates"><input type="text" class="value" disabled></p>
+              <p class="functions"><input type="text" class="value" disabled></p>
           </div>
           <div class="info-item">
-              <h3><input type="text" value="Desarrollador Junior" class="value" disabled></h3>
-              <p class="company"><input type="text" value="Digital Systems Corp." class="value" disabled></p>
-              <p class="dates"><input type="text" value="2014 - 2016" class="value" disabled></p>
-              <p class="functions"><input type="text" value="Mantenimiento de aplicaciones web, desarrollo frontend" class="value" disabled></p>
+              <h3><input type="text" class="value" disabled></h3>
+              <p class="company"><input type="text" class="value" disabled></p>
+              <p class="dates"><input type="text" class="value" disabled></p>
+              <p class="functions"><input type="text" class="value" disabled></p>
           </div>
           </div>
       </section>
@@ -369,11 +369,11 @@
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Carrera:</span>
-                  <input type="text" value="Ingeniería en Sistemas Informáticos" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
                 <div class="info-item">
                   <span class="label">Institución:</span>
-                  <input type="text" value="Universidad Politécnica de Madrid" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
               </div>
             </div>
@@ -382,11 +382,11 @@
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Master:</span>
-                  <input type="text" value="Máster en Desarrollo de Software" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
                 <div class="info-item">
                   <span class="label">Institución:</span>
-                  <input type="text" value="ESIC Business School" class="value" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
               </div>
             </div>
@@ -417,19 +417,19 @@
               <div class="info-grid">
                 <div class="info-item">
                   <span class="label">Título:</span>
-                  <input type="text" class="value" value="Certificación AWS Solutions Architect" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
                 <div class="info-item">
                   <span class="label">Institución:</span>
-                  <input type="text" class="value" value="Amazon Web Services" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
                 <div class="info-item">
                   <span class="label">Fecha:</span>
-                  <input type="text" class="value" value="2022" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
                 <div class="info-item">
                   <span class="label">Certificado:</span>
-                  <input type="text" class="value document-placeholder" value="Archivos Adjuntos" [disabled]="!sectionEditStates['info-profesional']">
+                  <input type="text" class="value document-placeholder" [disabled]="!sectionEditStates['info-profesional']">
                 </div>
               </div>
             </div>
@@ -464,15 +464,15 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Idioma:</span>
-              <input type="text" class="value" value="Inglés" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
             </div>
             <div class="info-item">
               <span class="label">Nivel:</span>
-              <input type="text" class="value" value="Avanzado" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
             </div>
             <div class="info-item">
               <span class="label">Certificación:</span>
-              <input type="text" class="value document-placeholder" value="Archivos Adjuntos" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value document-placeholder" [disabled]="!sectionEditStates['info-profesional']">
             </div>
           </div>
         </div>
@@ -505,15 +505,15 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">Título:</span>
-              <input type="text" class="value" value="Sistema de Gestión Empresarial" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
             </div>
             <div class="info-item">
               <span class="label">Especialidad:</span>
-              <input type="text" class="value" value="Desarrollo Full Stack" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
             </div>
             <div class="info-item">
               <span class="label">Año:</span>
-              <input type="text" class="value" value="2022" [disabled]="!sectionEditStates['info-profesional']">
+              <input type="text" class="value" [disabled]="!sectionEditStates['info-profesional']">
             </div>
           </div>
         </div>
