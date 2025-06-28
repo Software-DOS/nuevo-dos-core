@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { iGTHEmpleado } from 'src/app/interface/igth-empleado';
+import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
+import { alerts } from 'src/app/helpers/alerts';
 
 declare var Swal: any;
 
@@ -115,6 +118,95 @@ export class EmpleadoCvComponent implements OnInit {
   public especialidadProyecto: string = '';
   public anoProyecto: string = '';
 
+  //
+  public generica: any = [];
+  public cargaInicial: any = [];
+ 
+  constructor(
+    private  gthEmpleadoService:GthEmpleadoService,
+  ) { }
+ 
+  ngOnInit(): void {
+    const valor = sessionStorage.getItem('token');
+    if (typeof valor === 'string') {
+      var IdEmpleado = JSON.parse(atob(valor.split('.')[1]));
+      console.log('Empresa: ', IdEmpleado);
+     /* this.strPerfil=IdEmpleado["Perfil"];
+      this.IdEmpresa=IdEmpleado["IdEmpresa"];
+      if(this.strPerfil!="ADMINISTRADOR"){
+        this.Idtipo=1;
+        this.OcultarEmpresa=false;
+      }*/
+    }
+  }
+ 
+  guardarEmpleado(){
+ 
+    console.log("Ingreso");
+ 
+    const data: iGTHEmpleado = {
+      tipo:0,
+      idEmpleado:0,
+      idPerfil:0,
+      idCelula:1,
+      cedula: "123456789",
+      nombre: "Isaac",
+      apellido: "Friedman",
+      fechaNacimiento: "",
+      direccion: "",
+      telefono: "",
+      correo: "",
+      correoCorporativo: "",
+      fechaContratacion: "",
+      estadoCivil: "",
+      sexo: "",
+      fotoPerfilUrl: "",
+      estadoEmpleado: "",
+      empTipo: 0,
+      actPassword: false,
+      password: "",
+      sueldo: 0,
+    }
+ 
+     console.log("data: ",data);
+ 
+         this.gthEmpleadoService.GuardarGthEmpleado(data).subscribe(
+           (resp: any) => {
+            console.log("resp",resp['$values']);
+             this.cargaInicial = resp['$values'];
+             console.log("this.cargaInicial",this.cargaInicial);
+             this.generica = this.cargaInicial[0];
+             console.log("this.generica",this.generica);
+             let valor1;
+             let valor2;
+             valor1 = this.generica.valor1;
+             valor2 = this.generica.valor2;
+             //console.log("valor1",valor1);
+             //console.log("valor2",valor2);
+   
+             //guardar un nuevo empleado
+             if (valor1 == 1) {
+               alerts.basicAlert('Excelente', valor2, 'success');
+ 
+             }
+             //actualizar un empleado
+             else if (valor1 == 2) {
+               //this.loading = false;
+               alerts.basicAlert('Excelente', valor2, 'success');
+             }
+             //existe el empleado
+             else if (valor1 == 4) {
+               //this.loading = false;
+               //alerts.basicAlert('Advertencia', valor2, 'warning');
+             }
+           },
+           (err) => {
+             console.log('err', err);
+             //this.loading = false;
+           }
+         );
+  }
+
   // Form visibility states
   showAddDependentForm: boolean = false;
   showAddEducationForm: boolean = false;
@@ -128,12 +220,6 @@ export class EmpleadoCvComponent implements OnInit {
   newCertification = { title: '', institution: '', date: '' };
   newLanguage = { language: '', level: '', certification: '' };
   newProject = { title: '', specialty: '', year: '' };
-
-  constructor() { }
-
-  ngOnInit(): void {
-    this.showSection('datos-personales');
-  }
 
   showSection(targetId: string): void {
     this.activeSection = targetId;
