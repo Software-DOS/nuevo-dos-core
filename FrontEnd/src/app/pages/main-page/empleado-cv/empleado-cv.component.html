@@ -64,48 +64,49 @@
 
       <section class="form-section">
         <h3 class="section-title">Bibliografía</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <input type="date" class="form-input" [(ngModel)]="fechaNacimiento" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Fecha de Nacimiento</label>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Fecha de Nacimiento:</span>
+            <input type="date" class="value" [(ngModel)]="fechaNacimiento" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <input type="text" class="form-input" [(ngModel)]="paisNacimiento" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">País de Nacimiento</label>
+          <div class="info-item">
+            <span class="label">País de Nacimiento:</span>
+            <input type="text" class="value" [(ngModel)]="paisNacimiento" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <input type="text" class="form-input" [(ngModel)]="provinciaNacimiento" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Provincia</label>
+          <div class="info-item">
+            <span class="label">Provincia:</span>
+            <input type="text" class="value" [(ngModel)]="provinciaNacimiento" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <input type="text" class="form-input" [(ngModel)]="ciudadNacimiento" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Ciudad</label>
+          <div class="info-item">
+            <span class="label">Ciudad:</span>
+            <input type="text" class="value" [(ngModel)]="ciudadNacimiento" [disabled]="!sectionEditStates['datos-personales']">
           </div>
         </div>
       </section>
 
       <section class="form-section">
         <h3 class="section-title">Información Personal</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <input type="text" class="form-input" [(ngModel)]="nombres" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Nombres</label>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Nombres:</span>
+            <input type="text" class="value" [(ngModel)]="nombres" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <input type="text" class="form-input" [(ngModel)]="apellidos" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Apellidos</label>
+          <div class="info-item">
+            <span class="label">Apellidos:</span>
+            <input type="text" class="value" [(ngModel)]="apellidos" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <select class="form-input" [(ngModel)]="sexo" [disabled]="!sectionEditStates['datos-personales']">
+          <div class="info-item">
+            <span class="label">Sexo:</span>
+            <select class="value" [(ngModel)]="sexo" [disabled]="!sectionEditStates['datos-personales']">
               <option value="">Seleccionar</option>
               <option value="Masculino">Masculino</option>
               <option value="Femenino">Femenino</option>
               <option value="Otro">Otro</option>
             </select>
-            <label class="form-label">Sexo</label>
           </div>
-          <div class="form-group">
-            <select class="form-input" [(ngModel)]="estadoCivil" [disabled]="!sectionEditStates['datos-personales']">
+          <div class="info-item">
+            <span class="label">Estado Civil:</span>
+            <select class="value" [(ngModel)]="estadoCivil" [disabled]="!sectionEditStates['datos-personales']">
               <option value="">Seleccionar</option>
               <option value="Soltero">Soltero</option>
               <option value="Casado">Casado</option>
@@ -113,10 +114,10 @@
               <option value="Viudo">Viudo</option>
               <option value="Unión libre">Unión libre</option>
             </select>
-            <label class="form-label">Estado Civil</label>
           </div>
-          <div class="form-group">
-            <select class="form-input" [(ngModel)]="tipoSangre" [disabled]="!sectionEditStates['datos-personales']">
+          <div class="info-item">
+            <span class="label">Tipo de Sangre:</span>
+            <select class="value" [(ngModel)]="tipoSangre" [disabled]="!sectionEditStates['datos-personales']">
               <option value="">Seleccionar</option>
               <option value="A+">A+</option>
               <option value="A-">A-</option>
@@ -127,55 +128,54 @@
               <option value="O+">O+</option>
               <option value="O-">O-</option>
             </select>
-            <label class="form-label">Tipo de Sangre</label>
           </div>
-          <div class="form-group">
-            <input type="text" class="form-input" [(ngModel)]="nivelEstudio" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Último Nivel de Estudio</label>
+          <div class="info-item">
+            <span class="label">Último Nivel de Estudio:</span>
+            <input type="text" class="value" [(ngModel)]="nivelEstudio" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <input type="number" class="form-input" [(ngModel)]="cargasFamiliares" [disabled]="!sectionEditStates['datos-personales']" placeholder=" " min="0">
-            <label class="form-label">Cargas Familiares</label>
+          <div class="info-item">
+            <span class="label">Cargas Familiares:</span>
+            <input type="number" class="value" [(ngModel)]="cargasFamiliares" [disabled]="!sectionEditStates['datos-personales']" min="0">
           </div>
         </div>
       </section>
 
       <section class="form-section">
         <h3 class="section-title">Contacto y Dirección</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <input type="email" class="form-input" [(ngModel)]="correoInstitucional" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Correo Institucional</label>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Correo Institucional:</span>
+            <input type="email" class="value" [(ngModel)]="correoInstitucional" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <input type="email" class="form-input" [(ngModel)]="correoPersonal" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Correo Personal</label>
+          <div class="info-item">
+            <span class="label">Correo Personal:</span>
+            <input type="email" class="value" [(ngModel)]="correoPersonal" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <input type="tel" class="form-input" [(ngModel)]="numeroCelular" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Número Celular</label>
+          <div class="info-item">
+            <span class="label">Número Celular:</span>
+            <input type="tel" class="value" [(ngModel)]="numeroCelular" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <input type="text" class="form-input" [(ngModel)]="direccion" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Dirección Domiciliaria</label>
+          <div class="info-item">
+            <span class="label">Dirección Domiciliaria:</span>
+            <input type="text" class="value" [(ngModel)]="direccion" [disabled]="!sectionEditStates['datos-personales']">
           </div>
         </div>
       </section>
 
       <section class="form-section">
         <h3 class="section-title">Contacto de Emergencia</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <input type="text" class="form-input" [(ngModel)]="nombreEmergencia" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Nombre</label>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Nombre:</span>
+            <input type="text" class="value" [(ngModel)]="nombreEmergencia" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <input type="text" class="form-input" [(ngModel)]="relacionEmergencia" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Relación</label>
+          <div class="info-item">
+            <span class="label">Relación:</span>
+            <input type="text" class="value" [(ngModel)]="relacionEmergencia" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group">
-            <input type="tel" class="form-input" [(ngModel)]="telefonoEmergencia" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Teléfono</label>
+          <div class="info-item">
+            <span class="label">Teléfono:</span>
+            <input type="tel" class="value" [(ngModel)]="telefonoEmergencia" [disabled]="!sectionEditStates['datos-personales']">
           </div>
         </div>
       </section>
@@ -184,9 +184,10 @@
         <h3 class="section-title">Familiares</h3>
         <div class="subsection-card">
           <h4 class="subsection-title">Información Conyugal</h4>
-          <div class="form-grid">
-            <div class="form-group">
-              <select class="form-input" [(ngModel)]="estadoConyugal" [disabled]="!sectionEditStates['datos-personales']">
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Estado:</span>
+              <select class="value" [(ngModel)]="estadoConyugal" [disabled]="!sectionEditStates['datos-personales']">
                 <option value="">Seleccionar</option>
                 <option value="Soltero">Soltero</option>
                 <option value="Casado">Casado</option>
@@ -194,23 +195,22 @@
                 <option value="Viudo">Viudo</option>
                 <option value="Unión libre">Unión libre</option>
               </select>
-              <label class="form-label">Estado</label>
             </div>
-            <div class="form-group">
-              <input type="text" class="form-input" [(ngModel)]="nombreConyuge" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-              <label class="form-label">Nombre del Cónyuge</label>
+            <div class="info-item">
+              <span class="label">Nombre del Cónyuge:</span>
+              <input type="text" class="value" [(ngModel)]="nombreConyuge" [disabled]="!sectionEditStates['datos-personales']">
             </div>
-            <div class="form-group">
-              <input type="date" class="form-input" [(ngModel)]="fechaMatrimonio" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-              <label class="form-label">Fecha de Matrimonio</label>
+            <div class="info-item">
+              <span class="label">Fecha de Matrimonio:</span>
+              <input type="date" class="value" [(ngModel)]="fechaMatrimonio" [disabled]="!sectionEditStates['datos-personales']">
             </div>
-            <div class="form-group">
-              <input type="text" class="form-input" [(ngModel)]="discapacidadConyuge" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-              <label class="form-label">Discapacidad</label>
+            <div class="info-item">
+              <span class="label">Discapacidad:</span>
+              <input type="text" class="value" [(ngModel)]="discapacidadConyuge" [disabled]="!sectionEditStates['datos-personales']">
             </div>
-            <div class="form-group file-upload-group">
-              <input type="file" class="form-input file-input" [(ngModel)]="documentosConyuge" [disabled]="!sectionEditStates['datos-personales']" accept=".pdf">
-              <label class="form-label">Documentos</label>
+            <div class="info-item">
+              <span class="label">Documentos:</span>
+              <input type="file" class="value file-input" [(ngModel)]="documentosConyuge" [disabled]="!sectionEditStates['datos-personales']" accept=".pdf">
             </div>
           </div>
         </div>
@@ -218,22 +218,22 @@
         <div class="subsection-card">
           <h4 class="subsection-title">Dependientes</h4>
           <div class="dependent-card">
-            <div class="form-grid">
-              <div class="form-group">
-                <input type="text" class="form-input" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-                <label class="form-label">Nombre</label>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Nombre:</span>
+                <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
               </div>
-              <div class="form-group">
-                <input type="date" class="form-input" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-                <label class="form-label">Fecha de Nacimiento</label>
+              <div class="info-item">
+                <span class="label">Fecha de Nacimiento:</span>
+                <input type="date" class="value" [disabled]="!sectionEditStates['datos-personales']">
               </div>
-              <div class="form-group">
-                <input type="text" class="form-input" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-                <label class="form-label">Discapacidad</label>
+              <div class="info-item">
+                <span class="label">Discapacidad:</span>
+                <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
               </div>
-              <div class="form-group file-upload-group">
-                <input type="file" class="form-input file-input" [disabled]="!sectionEditStates['datos-personales']" accept=".pdf">
-                <label class="form-label">Documentos</label>
+              <div class="info-item">
+                <span class="label">Documentos:</span>
+                <input type="file" class="value file-input" [disabled]="!sectionEditStates['datos-personales']" accept=".pdf">
               </div>
             </div>
           </div>
@@ -247,22 +247,22 @@
           
           <div class="add-form-card" [class.hidden]="!showAddDependentForm">
             <h4 class="form-card-title">Nuevo Dependiente</h4>
-            <div class="form-grid">
-              <div class="form-group">
-                <input type="text" [(ngModel)]="nuevoDependienteNombre" class="form-input" placeholder=" ">
-                <label class="form-label">Nombre</label>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Nombre:</span>
+                <input type="text" [(ngModel)]="nuevoDependienteNombre" class="value">
               </div>
-              <div class="form-group">
-                <input type="date" [(ngModel)]="nuevoDependienteFechaNacimiento" class="form-input" placeholder=" ">
-                <label class="form-label">Fecha de Nacimiento</label>
+              <div class="info-item">
+                <span class="label">Fecha de Nacimiento:</span>
+                <input type="date" [(ngModel)]="nuevoDependienteFechaNacimiento" class="value">
               </div>
-              <div class="form-group">
-                <input type="text" [(ngModel)]="nuevoDependienteDiscapacidad" class="form-input" placeholder=" ">
-                <label class="form-label">Discapacidad</label>
+              <div class="info-item">
+                <span class="label">Discapacidad:</span>
+                <input type="text" [(ngModel)]="nuevoDependienteDiscapacidad" class="value">
               </div>
-              <div class="form-group file-upload-group">
-                <input type="file" accept="application/pdf" class="form-input file-input">
-                <label class="form-label">Adjuntar PDF</label>
+              <div class="info-item">
+                <span class="label">Adjuntar PDF:</span>
+                <input type="file" accept="application/pdf" class="value file-input">
               </div>
             </div>
             <div class="form-actions">
@@ -275,14 +275,14 @@
 
       <section class="form-section">
         <h3 class="section-title">Documentos de Identidad</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <input type="text" class="form-input" [(ngModel)]="numeroCedula" [disabled]="!sectionEditStates['datos-personales']" placeholder=" ">
-            <label class="form-label">Número de Cédula</label>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Número de Cédula:</span>
+            <input type="text" class="value" [(ngModel)]="numeroCedula" [disabled]="!sectionEditStates['datos-personales']">
           </div>
-          <div class="form-group file-upload-group">
-            <input type="file" accept="application/pdf" class="form-input file-input" [(ngModel)]="documentoIdentidad" [disabled]="!sectionEditStates['datos-personales']">
-            <label class="form-label">Documento de Identidad</label>
+          <div class="info-item">
+            <span class="label">Documento de Identidad:</span>
+            <input type="file" accept="application/pdf" class="value file-input" [(ngModel)]="documentoIdentidad" [disabled]="!sectionEditStates['datos-personales']">
           </div>
         </div>
       </section>
