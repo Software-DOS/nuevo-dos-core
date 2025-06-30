@@ -31,9 +31,6 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   filtroEmpresa: string = '';
   filtroRoadmap: string = '';
   
-  // NgModel properties for contract
-  aceptarContrato: boolean = false;
-  
   // NgModel properties for training request form
   nombreCapacitacion: string = '';
   duracionCapacitacion: number = 0;

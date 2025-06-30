@@ -3,12 +3,8 @@
 <main class="main-flex-evaluacion">
   <!-- Sidebar de filtros -->
   <aside class="filter-sidebar">
-    <h3>FILTROS</h3>      <div class="form-group">
-        <label class="flex-gap">
-          <input type="checkbox" [(ngModel)]="aceptarContrato" (change)="onContractAcceptedChange()">
-          He leído y acepto los términos del acuerdo.
-        </label>
-      </div>  <div class="filter-group">
+    <h3>FILTROS</h3>
+    <div class="filter-group">
       <label for="filtroEmpresa">Empresa:</label>
       <select id="filtroEmpresa" [(ngModel)]="filtroEmpresa" (change)="onFilterChange()">
         <option value="">Todas</option>
@@ -134,7 +130,7 @@
         </label>
       </div>
       <div class="edit-controls">
-        <button class="nav-button" [disabled]="!aceptarContrato" (click)="signContract()">Firmar</button>
+        <button class="nav-button" [disabled]="!contractAccepted" (click)="signContract()">Firmar</button>
         <button class="nav-button gray" (click)="cancelContract()">Cancelar</button>
       </div>
     </div>
