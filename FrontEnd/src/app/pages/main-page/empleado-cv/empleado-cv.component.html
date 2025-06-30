@@ -10,13 +10,26 @@
   </div>
   
   <div class="employee-personal-info">
-    <h1 class="employee-name-editable"><input type="text" [(ngModel)]="nombreCompleto" class="value employee-cv-name-input" [disabled]="!isEditing"></h1>
     <div class="info-item">
-      <a href="mailto:">✉️ <input type="text" [(ngModel)]="correoElectronico" class="value" [disabled]="!isEditing"></a>
+      <label class="info-label">Nombre Completo:</label>
+      <h1 class="employee-name-editable"><input type="text" [(ngModel)]="nombreCompleto" class="value employee-cv-name-input" placeholder="Ingrese nombre completo" [disabled]="!isEditing"></h1>
     </div>
-    <p class="info-item"><input type="text" [(ngModel)]="posicion" class="value" [disabled]="!isEditing"></p>
-    <p class="info-item"><input type="text" [(ngModel)]="area" class="value" [disabled]="!isEditing"></p>
-    <p class="info-item"><input type="text" [(ngModel)]="subarea" class="value" [disabled]="!isEditing"></p>
+    <div class="info-item">
+      <label class="info-label">Correo Electrónico:</label>
+      <a href="mailto:">✉️ <input type="text" [(ngModel)]="correoElectronico" class="value" placeholder="correo@ejemplo.com" [disabled]="!isEditing"></a>
+    </div>
+    <div class="info-item">
+      <label class="info-label">Posición:</label>
+      <p class="info-item"><input type="text" [(ngModel)]="posicion" class="value" placeholder="Cargo o posición" [disabled]="!isEditing"></p>
+    </div>
+    <div class="info-item">
+      <label class="info-label">Área:</label>
+      <p class="info-item"><input type="text" [(ngModel)]="area" class="value" placeholder="Área de trabajo" [disabled]="!isEditing"></p>
+    </div>
+    <div class="info-item">
+      <label class="info-label">Subárea:</label>
+      <p class="info-item"><input type="text" [(ngModel)]="subarea" class="value" placeholder="Subárea específica" [disabled]="!isEditing"></p>
+    </div>
   </div>
   <!-- Botón de editar (con ícono de lápiz) posicionado en la esquina superior derecha -->
   <div class="edit-section">
