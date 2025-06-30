@@ -11,29 +11,29 @@
   
   <div class="employee-personal-info">
     <div class="form-group">
-      <input type="text" [(ngModel)]="nombreCompleto" class="form-input employee-name-input" placeholder=" " [disabled]="!isEditing">
+      <input type="text" [(ngModel)]="nombreCompleto" class="form-input employee-name-input" placeholder=" " [disabled]="!sectionEditStates['datos-personales']">
       <label class="form-label">Nombre Completo</label>
     </div>
     <div class="form-group">
-      <input type="email" [(ngModel)]="correoElectronico" class="form-input" placeholder=" " [disabled]="!isEditing">
+      <input type="email" [(ngModel)]="correoElectronico" class="form-input" placeholder=" " [disabled]="!sectionEditStates['datos-personales']">
       <label class="form-label">Correo Electrónico</label>
     </div>
     <div class="form-group">
-      <input type="text" [(ngModel)]="posicion" class="form-input" placeholder=" " [disabled]="!isEditing">
+      <input type="text" [(ngModel)]="posicion" class="form-input" placeholder=" " [disabled]="!sectionEditStates['datos-personales']">
       <label class="form-label">Posición</label>
     </div>
     <div class="form-group">
-      <input type="text" [(ngModel)]="area" class="form-input" placeholder=" " [disabled]="!isEditing">
+      <input type="text" [(ngModel)]="area" class="form-input" placeholder=" " [disabled]="!sectionEditStates['datos-personales']">
       <label class="form-label">Área</label>
     </div>
     <div class="form-group">
-      <input type="text" [(ngModel)]="subarea" class="form-input" placeholder=" " [disabled]="!isEditing">
+      <input type="text" [(ngModel)]="subarea" class="form-input" placeholder=" " [disabled]="!sectionEditStates['datos-personales']">
       <label class="form-label">Subárea</label>
     </div>
   </div>
   <!-- Botón de editar (con ícono de lápiz) posicionado en la esquina superior derecha -->
   <div class="edit-section">
-    <button id="editButton" class="edit-toggle-btn" (click)="toggleEdit()">
+    <button id="editButton" class="edit-toggle-btn" (click)="toggleSectionEdit('datos-personales')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.0001 1.0001 0 0 0 0-1.41l-2.34-2.34a1.0001 1.0001 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
       </svg>
@@ -299,8 +299,8 @@
         </button>
       </div>
 
-      <section>
-        <h3>Información de Empleo</h3>
+      <section class="form-section">
+        <h3 class="section-title">Información de Empleo</h3>
         <div class="subcategory-nav">
           <div class="subcategory-link" [class.active]="activeSubcategory === 'info-organizacional'" (click)="showSubcategory('info-organizacional')">Información Organizacional</div>
           <div class="subcategory-link" [class.active]="activeSubcategory === 'info-plaza'" (click)="showSubcategory('info-plaza')">Información de Plaza</div>
@@ -376,21 +376,63 @@
       </section>
 
       <!-- Sección Historia Laboral -->
-      <section class="job-history-section">
-          <h3>Historia Laboral</h3>
-          <div class="info-grid">
+      <section class="form-section">
+        <h3 class="section-title">Historia Laboral</h3>
+        <div class="info-grid">
           <div class="info-item">
-              <h3><input type="text" class="value" disabled></h3>
-              <p class="company"><input type="text" class="value" disabled></p>
-              <p class="dates"><input type="text" class="value" disabled></p>
-              <p class="functions"><input type="text" class="value" disabled></p>
+            <span class="label">Cargo:</span>
+            <input type="text" class="value" [(ngModel)]="cargoHistorial" [disabled]="!sectionEditStates['info-profesional']">
           </div>
+          <div class="info-item">
+            <span class="label">Empresa:</span>
+            <input type="text" class="value" [(ngModel)]="empresaHistorial" [disabled]="!sectionEditStates['info-profesional']">
           </div>
+          <div class="info-item">
+            <span class="label">Fechas:</span>
+            <input type="text" class="value" [(ngModel)]="fechasHistorial" [disabled]="!sectionEditStates['info-profesional']">
+          </div>
+          <div class="info-item">
+            <span class="label">Funciones:</span>
+            <input type="text" class="value" [(ngModel)]="funcionesHistorial" [disabled]="!sectionEditStates['info-profesional']">
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="nav-button secondary" (click)="toggleAddJobHistoryForm()">
+            <span class="button-icon">+</span>
+            Añadir Experiencia Laboral
+          </button>
+        </div>
+        
+        <div class="add-form-card" [class.hidden]="!showAddJobHistoryForm">
+          <h4 class="form-card-title">Nueva Experiencia Laboral</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Cargo:</span>
+              <input type="text" [(ngModel)]="nuevoHistorialCargo" class="value">
+            </div>
+            <div class="info-item">
+              <span class="label">Empresa:</span>
+              <input type="text" [(ngModel)]="nuevoHistorialEmpresa" class="value">
+            </div>
+            <div class="info-item">
+              <span class="label">Fechas:</span>
+              <input type="text" [(ngModel)]="nuevoHistorialFechas" class="value">
+            </div>
+            <div class="info-item">
+              <span class="label">Funciones:</span>
+              <input type="text" [(ngModel)]="nuevoHistorialFunciones" class="value">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="nav-button secondary" (click)="toggleAddJobHistoryForm()">Cancelar</button>
+            <button class="nav-button" (click)="addJobHistory()">Guardar Experiencia</button>
+          </div>
+        </div>
       </section>
     
       <!-- Formación académica -->
-      <section>
-        <h3>Formación Académica</h3>
+      <section class="form-section">
+        <h3 class="section-title">Formación Académica</h3>
         <div class="subcategory-nav">
           <div class="subcategory-link" [class.active]="activeSubcategory === 'estudios'" (click)="showSubcategory('estudios')">Estudios</div>
           <div class="subcategory-link" [class.active]="activeSubcategory === 'certificaciones'" (click)="showSubcategory('certificaciones')">Especialidades y Certificaciones</div>
@@ -497,8 +539,8 @@
         </div>
       </section>
 
-      <section>
-        <h3>Idiomas</h3>
+      <section class="form-section">
+        <h3 class="section-title">Idiomas</h3>
         <div class="language-item">
           <div class="info-grid">
             <div class="info-item">
@@ -541,8 +583,8 @@
         </div>
       </section>
 
-      <section>
-        <h3>Proyectos</h3>
+      <section class="form-section">
+        <h3 class="section-title">Proyectos</h3>
         <div class="project-item">
           <div class="info-grid">
             <div class="info-item">

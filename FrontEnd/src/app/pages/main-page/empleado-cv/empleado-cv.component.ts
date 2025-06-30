@@ -118,6 +118,18 @@ export class EmpleadoCvComponent implements OnInit {
   public especialidadProyecto: string = '';
   public anoProyecto: string = '';
 
+  // Properties for job history
+  public cargoHistorial: string = '';
+  public empresaHistorial: string = '';
+  public fechasHistorial: string = '';
+  public funcionesHistorial: string = '';
+
+  // Properties for new job history form
+  public nuevoHistorialCargo: string = '';
+  public nuevoHistorialEmpresa: string = '';
+  public nuevoHistorialFechas: string = '';
+  public nuevoHistorialFunciones: string = '';
+
   //
   public generica: any = [];
   public cargaInicial: any = [];
@@ -213,6 +225,7 @@ export class EmpleadoCvComponent implements OnInit {
   showAddCertificationForm: boolean = false;
   showAddLanguageForm: boolean = false;
   showAddProjectForm: boolean = false;
+  showAddJobHistoryForm: boolean = false;
 
   // New item models
   newDependent = { name: '', birthdate: '', disability: '' };
@@ -299,6 +312,17 @@ export class EmpleadoCvComponent implements OnInit {
       this.nuevoProyectoTitulo = '';
       this.nuevoProyectoEspecialidad = '';
       this.nuevoProyectoAno = '';
+    }
+  }
+
+  toggleAddJobHistoryForm(): void {
+    this.showAddJobHistoryForm = !this.showAddJobHistoryForm;
+    if (!this.showAddJobHistoryForm) {
+      // Limpiar campos cuando se cierra el formulario
+      this.nuevoHistorialCargo = '';
+      this.nuevoHistorialEmpresa = '';
+      this.nuevoHistorialFechas = '';
+      this.nuevoHistorialFunciones = '';
     }
   }
 
@@ -411,6 +435,32 @@ export class EmpleadoCvComponent implements OnInit {
 
     this.newProject = { title: '', specialty: '', year: '' };
     this.toggleAddProjectForm();
+  }
+
+  addJobHistory(): void {
+    if (!this.nuevoHistorialCargo || !this.nuevoHistorialEmpresa || !this.nuevoHistorialFechas || !this.nuevoHistorialFunciones) {
+      Swal.fire({
+        title: 'Campos incompletos',
+        text: 'Por favor completa todos los campos de la experiencia laboral antes de guardar.',
+        icon: 'warning',
+        confirmButtonText: 'Ok'
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Experiencia laboral añadida',
+      html: `<strong>${this.nuevoHistorialCargo}</strong><br>Empresa: ${this.nuevoHistorialEmpresa}<br>Fechas: ${this.nuevoHistorialFechas}<br>Funciones: ${this.nuevoHistorialFunciones}`,
+      icon: 'success',
+      confirmButtonText: 'Aceptar'
+    });
+
+    // Limpiar campos después de guardar
+    this.nuevoHistorialCargo = '';
+    this.nuevoHistorialEmpresa = '';
+    this.nuevoHistorialFechas = '';
+    this.nuevoHistorialFunciones = '';
+    this.toggleAddJobHistoryForm();
   }
 
   printCV(): void {
