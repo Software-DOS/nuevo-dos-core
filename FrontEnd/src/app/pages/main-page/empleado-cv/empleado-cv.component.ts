@@ -254,22 +254,52 @@ export class EmpleadoCvComponent implements OnInit {
   // Form toggle methods
   toggleAddDependentForm(): void {
     this.showAddDependentForm = !this.showAddDependentForm;
+    if (!this.showAddDependentForm) {
+      // Limpiar campos cuando se cierra el formulario
+      this.nuevoDependienteNombre = '';
+      this.nuevoDependienteFechaNacimiento = '';
+      this.nuevoDependienteDiscapacidad = '';
+    }
   }
 
   toggleAddEducationForm(): void {
     this.showAddEducationForm = !this.showAddEducationForm;
+    if (!this.showAddEducationForm) {
+      // Limpiar campos cuando se cierra el formulario
+      this.nuevaEducacionNivel = '';
+      this.nuevaEducacionCarrera = '';
+      this.nuevaEducacionInstitucion = '';
+    }
   }
 
   toggleAddCertificationForm(): void {
     this.showAddCertificationForm = !this.showAddCertificationForm;
+    if (!this.showAddCertificationForm) {
+      // Limpiar campos cuando se cierra el formulario
+      this.nuevaCertificacionTitulo = '';
+      this.nuevaCertificacionInstitucion = '';
+      this.nuevaCertificacionFecha = '';
+    }
   }
 
   toggleAddLanguageForm(): void {
     this.showAddLanguageForm = !this.showAddLanguageForm;
+    if (!this.showAddLanguageForm) {
+      // Limpiar campos cuando se cierra el formulario
+      this.nuevoIdiomaIdioma = '';
+      this.nuevoIdiomaNivel = '';
+      this.nuevoIdiomaCertificacion = '';
+    }
   }
 
   toggleAddProjectForm(): void {
     this.showAddProjectForm = !this.showAddProjectForm;
+    if (!this.showAddProjectForm) {
+      // Limpiar campos cuando se cierra el formulario
+      this.nuevoProyectoTitulo = '';
+      this.nuevoProyectoEspecialidad = '';
+      this.nuevoProyectoAno = '';
+    }
   }
 
   // Add methods

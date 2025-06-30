@@ -53,7 +53,15 @@ function toggleSectionEdit(sectionId) {
 
 function toggleAddProjectForm() {
   const form = document.getElementById('addProjectForm');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  const isShowing = form.style.display !== 'none';
+  form.style.display = isShowing ? 'none' : 'block';
+  
+  // Limpiar campos cuando se cierra el formulario
+  if (isShowing) {
+    document.getElementById('newProjectTitle').value = '';
+    document.getElementById('newProjectSpecialty').value = '';
+    document.getElementById('newProjectYear').value = '';
+  }
 }
 
 // Proyecto
@@ -88,7 +96,15 @@ function addProject() {
 
 function toggleAddLanguageForm() {
   const form = document.getElementById('addLanguageForm');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  const isShowing = form.style.display !== 'none';
+  form.style.display = isShowing ? 'none' : 'block';
+  
+  // Limpiar campos cuando se cierra el formulario
+  if (isShowing) {
+    document.getElementById('newLanguage').value = '';
+    document.getElementById('newLanguageLevel').value = '';
+    document.getElementById('newLanguageCertification').value = '';
+  }
 }
 
 // Idioma
@@ -122,7 +138,15 @@ function addLanguage() {
 
 function toggleAddEducationForm() {
   const form = document.getElementById('addEducationForm');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  const isShowing = form.style.display !== 'none';
+  form.style.display = isShowing ? 'none' : 'block';
+  
+  // Limpiar campos cuando se cierra el formulario
+  if (isShowing) {
+    document.getElementById('newEducationLevel').value = '';
+    document.getElementById('newEducationCareer').value = '';
+    document.getElementById('newEducationInstitution').value = '';
+  }
 }
 
 // Educación
@@ -154,7 +178,15 @@ function addEducation() {
 
 function toggleAddCertificationForm() {
   const form = document.getElementById('addCertificationForm');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  const isShowing = form.style.display !== 'none';
+  form.style.display = isShowing ? 'none' : 'block';
+  
+  // Limpiar campos cuando se cierra el formulario
+  if (isShowing) {
+    document.getElementById('newCertificationTitle').value = '';
+    document.getElementById('newCertificationInstitution').value = '';
+    document.getElementById('newCertificationDate').value = '';
+  }
 }
 
 // Certificación
@@ -188,7 +220,15 @@ function addCertification() {
 
 function toggleAddDependentForm() {
   const form = document.getElementById('addDependentForm');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  const isShowing = form.style.display !== 'none';
+  form.style.display = isShowing ? 'none' : 'block';
+  
+  // Limpiar campos cuando se cierra el formulario
+  if (isShowing) {
+    document.getElementById('newDependentName').value = '';
+    document.getElementById('newDependentBirthdate').value = '';
+    document.getElementById('newDependentDisability').value = '';
+  }
 }
 
 // Dependiente

@@ -266,8 +266,8 @@
               </div>
             </div>
             <div class="form-actions">
-              <button class="nav-button" (click)="addDependent()">Guardar Dependiente</button>
               <button class="nav-button secondary" (click)="toggleAddDependentForm()">Cancelar</button>
+              <button class="nav-button" (click)="addDependent()">Guardar Dependiente</button>
             </div>
           </div>
         </div>
@@ -442,7 +442,10 @@
                   <input type="text" [(ngModel)]="nuevaEducacionInstitucion" class="value">
                 </div>
               </div>
-              <button class="nav-button" (click)="addEducation()">Guardar Estudio</button>
+              <div class="form-actions">
+                <button class="nav-button secondary" (click)="toggleAddEducationForm()">Cancelar</button>
+                <button class="nav-button" (click)="addEducation()">Guardar Estudio</button>
+              </div>
             </div>
           </div>
           <div id="certificaciones" class="subcategory-section" [class.active]="activeSubcategory === 'certificaciones'">
@@ -485,7 +488,10 @@
                   <input type="text" [(ngModel)]="nuevaCertificacionFecha" class="value">
                 </div>
               </div>
-              <button class="nav-button" (click)="addCertification()">Guardar Certificación</button>
+              <div class="form-actions">
+                <button class="nav-button secondary" (click)="toggleAddCertificationForm()">Cancelar</button>
+                <button class="nav-button" (click)="addCertification()">Guardar Certificación</button>
+              </div>
             </div>
           </div>
         </div>
@@ -528,7 +534,10 @@
               <input type="text" [(ngModel)]="nuevoIdiomaCertificacion" class="value">
             </div>
           </div>
-          <button class="nav-button" (click)="addLanguage()">Guardar Idioma</button>
+          <div class="form-actions">
+            <button class="nav-button secondary" (click)="toggleAddLanguageForm()">Cancelar</button>
+            <button class="nav-button" (click)="addLanguage()">Guardar Idioma</button>
+          </div>
         </div>
       </section>
 
@@ -569,7 +578,10 @@
               <input type="text" [(ngModel)]="nuevoProyectoAno" class="value">
             </div>
           </div>
-          <button class="nav-button" (click)="addProject()">Guardar Proyecto</button>
+          <div class="form-actions">
+            <button class="nav-button secondary" (click)="toggleAddProjectForm()">Cancelar</button>
+            <button class="nav-button" (click)="addProject()">Guardar Proyecto</button>
+          </div>
         </div>
       </section>
 
