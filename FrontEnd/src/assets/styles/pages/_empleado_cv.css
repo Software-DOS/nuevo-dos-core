@@ -117,8 +117,8 @@
     transform: translateX(5px);
 }
 
-.category-link.active {
-    background-color: #007bff;
+.category-link.selected {
+    background-color: var(--page-primary, #f59e0b);
     color: white;
 }
 
