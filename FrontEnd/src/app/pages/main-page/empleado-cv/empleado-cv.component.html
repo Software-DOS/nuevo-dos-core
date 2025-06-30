@@ -541,12 +541,23 @@
 
       <section class="form-section">
         <h3 class="section-title">Idiomas</h3>
-        <div class="language-item">
+        <div class="filter-group">
           <div class="info-grid">
-            <div class="info-item">
+           <div class="info-item">
               <span class="label">Idioma:</span>
-              <input type="text" class="value" [(ngModel)]="idioma" [disabled]="!sectionEditStates['info-profesional']">
+              <select class="value" style="margin-left: 1rem;" id="filtroCalificado" [(ngModel)]="idioma" [disabled]="!sectionEditStates['info-profesional']">
+                <option value="">Selecciona un idioma</option>
+                <option value="Español">Español</option>
+                <option value="Inglés">Inglés</option>
+                <option value="Francés">Francés</option>
+                <option value="Alemán">Alemán</option>
+                <option value="Italiano">Italiano</option>
+                <option value="Portugués">Portugués</option>
+                <option value="Chino">Chino</option>
+                <option value="Japonés">Japonés</option>
+              </select>
             </div>
+
             <div class="info-item">
               <span class="label">Nivel:</span>
               <input type="text" class="value" [(ngModel)]="nivelIdioma" [disabled]="!sectionEditStates['info-profesional']">

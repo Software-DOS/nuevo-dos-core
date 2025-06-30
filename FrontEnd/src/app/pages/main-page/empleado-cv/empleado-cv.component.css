@@ -168,20 +168,14 @@
 }
 
 /* ===== INDICADORES VISUALES ===== */
-.form-input:valid {
-  border-color: #10b981;
+.form-input:disabled {
+  background-color: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
 }
 
-.form-input:invalid:not(:placeholder-shown) {
-  border-color: #ef4444;
-}
-
-.form-input:valid + .form-label {
-  color: #10b981;
-}
-
-.form-input:invalid:not(:placeholder-shown) + .form-label {
-  color: #ef4444;
+.form-input:not(:disabled) {
+  background-color: white;
 }
 
 /* ===== ESTILOS PARA ELEMENTOS DESHABILITADOS ===== */
