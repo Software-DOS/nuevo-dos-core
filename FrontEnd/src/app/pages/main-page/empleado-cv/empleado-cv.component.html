@@ -123,6 +123,21 @@
               </select>
             </div>
           </div>
+          <div class="info-item">
+            <span class="label">Etnia:</span>
+            <div class="filter-group">
+              <select class="value" style="margin-left: 1rem;" [(ngModel)]="etnia" [disabled]="!sectionEditStates['datos-personales']">
+                <option value="">Seleccionar</option>
+                <option value="Mestizo">Mestizo</option>
+                <option value="Indígena">Indígena</option>
+                <option value="Blanco">Blanco</option>
+                <option value="Afroecuatoriano">Afroecuatoriano</option>
+                <option value="Montubio">Montubio</option>
+                <option value="Mulato">Mulato</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
         </div>
       </section>
 

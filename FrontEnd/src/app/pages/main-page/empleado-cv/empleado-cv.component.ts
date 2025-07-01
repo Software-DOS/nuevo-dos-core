@@ -40,6 +40,7 @@ export class EmpleadoCvComponent implements OnInit {
   public sexo: string = '';
   public estadoCivil: string = '';
   public tipoSangre: string = '';
+  public etnia: string = '';
   public nivelEstudio: string = '';
   public cargasFamiliares: number = 0;
 
