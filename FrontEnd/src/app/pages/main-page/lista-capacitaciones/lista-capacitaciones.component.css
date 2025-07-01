@@ -229,66 +229,71 @@
   max-height: 65px;
 }
 
-/* Responsive Design */
+/* Estilos para la columna de acciones */
+.acciones-column {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  text-align: right;
+}
+
+.btn-accion {
+  background: none;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.btn-editar {
+  color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.btn-editar:hover {
+  background-color: rgba(59, 130, 246, 0.2);
+  transform: scale(1.05);
+}
+
+.btn-eliminar {
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.btn-eliminar:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+  transform: scale(1.05);
+}
+
+.btn-accion:active {
+  transform: scale(0.95);
+}
+
+/* Alinear el header de acciones a la derecha */
+.cap-header div:last-child {
+  text-align: right;
+  justify-content: flex-end;
+}
+
+/* Responsive para botones de acción */
 @media (max-width: 768px) {
-  .modal-container {
-    width: 95%;
-    margin: 10px;
-  }
-  
-  .modal-header,
-  .modal-body,
-  .modal-footer {
-    padding: 16px;
-  }
-  
-  .employee-info-modal {
-    flex-direction: column;
-    text-align: center;
-    gap: 12px;
-  }
-  
-  .training-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .training-detail {
-    flex-direction: column;
-    align-items: flex-start;
+  .acciones-column {
     gap: 4px;
   }
   
-  .training-detail strong {
-    min-width: auto;
+  .btn-accion {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    padding: 6px;
   }
-  
-  .progress-bar-container {
-    width: 100%;
-  }
-}
-
-/* Ensure modal appears above other elements */
-.modal-overlay {
-  z-index: 9999;
-}
-
-/* Smooth scrollbar for modal body */
-.modal-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.modal-body::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-.modal-body::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-.modal-body::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
 }

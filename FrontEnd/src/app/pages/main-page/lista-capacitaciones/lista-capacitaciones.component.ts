@@ -64,13 +64,7 @@ export class ListaCapacitacionesComponent implements OnInit {
   showFormButton: boolean = true;
   showModal: boolean = false;
   selectedEmployeeTrainings: EmpleadoCapacitaciones | null = null;
-
-  // NgModel properties for form
-  nombreCapacitacion: string = '';
-  duracionCapacitacion: number = 0;
-  certificacionCapacitacion: string = '';
-  justificacionCapacitacion: string = '';
-  enlaceCapacitacion: string = '';
+  capacitacionEditandoId: string | null = null;
 
   nuevaCapacitacion: NuevaCapacitacion = {
     nombre: '',
@@ -100,8 +94,8 @@ export class ListaCapacitacionesComponent implements OnInit {
   ];
 
   capacitacionesDisponibles: CapacitacionDisponible[] = [
-    { nombre: 'Comunicación Efectiva', duracion: 15, certificacion: 'Soft Skills Essentials', isStatic: true },
-    { nombre: 'Excel para Análisis', duracion: 25, certificacion: 'Certificación Excel Avanzado', isStatic: true }
+    { id: 'demo-1', nombre: 'Gestión de Proyectos', duracion: 30, certificacion: 'PMI Básico', isStatic: false },
+    { id: 'demo-2', nombre: 'Desarrollo Web', duracion: 40, certificacion: 'Web Developer', isStatic: false }
   ];
 
   capacitacionesSolicitadas: CapacitacionSolicitada[] = [
@@ -199,6 +193,15 @@ export class ListaCapacitacionesComponent implements OnInit {
       if (result.isConfirmed) {
         this.showForm = false;
         this.showFormButton = true;
+        this.capacitacionEditandoId = null;
+        // Resetear formulario
+        this.nuevaCapacitacion = {
+          nombre: '',
+          duracion: 0,
+          certificacion: '',
+          justificacion: '',
+          enlace: ''
+        };
         Swal.fire('Cancelado', 'La solicitud ha sido cancelada.', 'info');
       }
     });
@@ -217,15 +220,43 @@ export class ListaCapacitacionesComponent implements OnInit {
       return;
     }
 
-    const nuevaCapacitacion: CapacitacionDisponible = {
-      id: Date.now().toString(),
-      nombre: this.nuevaCapacitacion.nombre,
-      duracion: this.nuevaCapacitacion.duracion,
-      certificacion: this.nuevaCapacitacion.certificacion,
-      isStatic: false
-    };
+    if (this.capacitacionEditandoId) {
+      // Modo edición
+      const index = this.capacitacionesDisponibles.findIndex(cap => cap.id === this.capacitacionEditandoId);
+      if (index !== -1) {
+        this.capacitacionesDisponibles[index] = {
+          ...this.capacitacionesDisponibles[index],
+          nombre: this.nuevaCapacitacion.nombre,
+          duracion: this.nuevaCapacitacion.duracion,
+          certificacion: this.nuevaCapacitacion.certificacion
+        };
+      }
+      this.capacitacionEditandoId = null;
+      Swal.fire({
+        title: 'Capacitación actualizada',
+        text: 'La capacitación ha sido actualizada exitosamente.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      });
+    } else {
+      // Modo creación
+      const nuevaCapacitacion: CapacitacionDisponible = {
+        id: Date.now().toString(),
+        nombre: this.nuevaCapacitacion.nombre,
+        duracion: this.nuevaCapacitacion.duracion,
+        certificacion: this.nuevaCapacitacion.certificacion,
+        isStatic: false
+      };
 
-    this.capacitacionesDisponibles.push(nuevaCapacitacion);
+      this.capacitacionesDisponibles.push(nuevaCapacitacion);
+      Swal.fire({
+        title: 'Capacitación añadida',
+        text: 'La capacitación ha sido registrada exitosamente.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      });
+    }
+
     this.guardarCapacitaciones();
 
     // Resetear formulario
@@ -239,13 +270,25 @@ export class ListaCapacitacionesComponent implements OnInit {
 
     this.showForm = false;
     this.showFormButton = true;
+  }
 
-    Swal.fire({
-      title: 'Capacitación añadida',
-      text: 'La capacitación ha sido registrada exitosamente.',
-      icon: 'success',
-      confirmButtonText: 'Aceptar'
-    });
+  editarCapacitacion(capacitacion: CapacitacionDisponible): void {
+    // Llenar el formulario con los datos de la capacitación a editar
+    this.nuevaCapacitacion = {
+      nombre: capacitacion.nombre,
+      duracion: capacitacion.duracion,
+      certificacion: capacitacion.certificacion,
+      justificacion: '',
+      enlace: ''
+    };
+    
+    // Guardar el ID de la capacitación que se está editando (si no es estática)
+    // Para capacitaciones estáticas, se creará una nueva entrada dinámica
+    this.capacitacionEditandoId = capacitacion.isStatic ? null : (capacitacion.id || null);
+    
+    // Mostrar el formulario
+    this.showForm = true;
+    this.showFormButton = false;
   }
 
   confirmarEliminacion(capacitacion: CapacitacionDisponible): void {
