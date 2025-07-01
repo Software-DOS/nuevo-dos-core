@@ -265,10 +265,61 @@ export class EmpleadoCvComponent implements OnInit {
   }
 
   // Form toggle methods
+  // Método centralizado para cerrar todos los formularios emergentes
+  private closeAllForms(): void {
+    this.showAddDependentForm = false;
+    this.showAddEducationForm = false;
+    this.showAddCertificationForm = false;
+    this.showAddLanguageForm = false;
+    this.showAddProjectForm = false;
+    this.showAddJobHistoryForm = false;
+    
+    // Limpiar todos los campos cuando se cierran los formularios
+    this.clearAllFormFields();
+  }
+
+  // Método para limpiar todos los campos de los formularios
+  private clearAllFormFields(): void {
+    // Limpiar campos del formulario de dependientes
+    this.nuevoDependienteNombre = '';
+    this.nuevoDependienteFechaNacimiento = '';
+    this.nuevoDependienteDiscapacidad = '';
+    
+    // Limpiar campos del formulario de educación
+    this.nuevaEducacionNivel = '';
+    this.nuevaEducacionCarrera = '';
+    this.nuevaEducacionInstitucion = '';
+    
+    // Limpiar campos del formulario de certificaciones
+    this.nuevaCertificacionTitulo = '';
+    this.nuevaCertificacionInstitucion = '';
+    this.nuevaCertificacionFecha = '';
+    
+    // Limpiar campos del formulario de idiomas
+    this.nuevoIdiomaIdioma = '';
+    this.nuevoIdiomaNivel = '';
+    this.nuevoIdiomaCertificacion = '';
+    
+    // Limpiar campos del formulario de proyectos
+    this.nuevoProyectoTitulo = '';
+    this.nuevoProyectoEspecialidad = '';
+    this.nuevoProyectoAno = '';
+    
+    // Limpiar campos del formulario de historial laboral
+    this.nuevoHistorialCargo = '';
+    this.nuevoHistorialEmpresa = '';
+    this.nuevoHistorialFechas = '';
+    this.nuevoHistorialFunciones = '';
+  }
+
   toggleAddDependentForm(): void {
-    this.showAddDependentForm = !this.showAddDependentForm;
+    // Si el formulario está cerrado, cerrar todos los demás primero
     if (!this.showAddDependentForm) {
-      // Limpiar campos cuando se cierra el formulario
+      this.closeAllForms();
+      this.showAddDependentForm = true;
+    } else {
+      // Si ya está abierto, solo cerrarlo
+      this.showAddDependentForm = false;
       this.nuevoDependienteNombre = '';
       this.nuevoDependienteFechaNacimiento = '';
       this.nuevoDependienteDiscapacidad = '';
@@ -276,9 +327,13 @@ export class EmpleadoCvComponent implements OnInit {
   }
 
   toggleAddEducationForm(): void {
-    this.showAddEducationForm = !this.showAddEducationForm;
+    // Si el formulario está cerrado, cerrar todos los demás primero
     if (!this.showAddEducationForm) {
-      // Limpiar campos cuando se cierra el formulario
+      this.closeAllForms();
+      this.showAddEducationForm = true;
+    } else {
+      // Si ya está abierto, solo cerrarlo
+      this.showAddEducationForm = false;
       this.nuevaEducacionNivel = '';
       this.nuevaEducacionCarrera = '';
       this.nuevaEducacionInstitucion = '';
@@ -286,9 +341,13 @@ export class EmpleadoCvComponent implements OnInit {
   }
 
   toggleAddCertificationForm(): void {
-    this.showAddCertificationForm = !this.showAddCertificationForm;
+    // Si el formulario está cerrado, cerrar todos los demás primero
     if (!this.showAddCertificationForm) {
-      // Limpiar campos cuando se cierra el formulario
+      this.closeAllForms();
+      this.showAddCertificationForm = true;
+    } else {
+      // Si ya está abierto, solo cerrarlo
+      this.showAddCertificationForm = false;
       this.nuevaCertificacionTitulo = '';
       this.nuevaCertificacionInstitucion = '';
       this.nuevaCertificacionFecha = '';
@@ -296,9 +355,13 @@ export class EmpleadoCvComponent implements OnInit {
   }
 
   toggleAddLanguageForm(): void {
-    this.showAddLanguageForm = !this.showAddLanguageForm;
+    // Si el formulario está cerrado, cerrar todos los demás primero
     if (!this.showAddLanguageForm) {
-      // Limpiar campos cuando se cierra el formulario
+      this.closeAllForms();
+      this.showAddLanguageForm = true;
+    } else {
+      // Si ya está abierto, solo cerrarlo
+      this.showAddLanguageForm = false;
       this.nuevoIdiomaIdioma = '';
       this.nuevoIdiomaNivel = '';
       this.nuevoIdiomaCertificacion = '';
@@ -306,9 +369,13 @@ export class EmpleadoCvComponent implements OnInit {
   }
 
   toggleAddProjectForm(): void {
-    this.showAddProjectForm = !this.showAddProjectForm;
+    // Si el formulario está cerrado, cerrar todos los demás primero
     if (!this.showAddProjectForm) {
-      // Limpiar campos cuando se cierra el formulario
+      this.closeAllForms();
+      this.showAddProjectForm = true;
+    } else {
+      // Si ya está abierto, solo cerrarlo
+      this.showAddProjectForm = false;
       this.nuevoProyectoTitulo = '';
       this.nuevoProyectoEspecialidad = '';
       this.nuevoProyectoAno = '';
@@ -316,9 +383,13 @@ export class EmpleadoCvComponent implements OnInit {
   }
 
   toggleAddJobHistoryForm(): void {
-    this.showAddJobHistoryForm = !this.showAddJobHistoryForm;
+    // Si el formulario está cerrado, cerrar todos los demás primero
     if (!this.showAddJobHistoryForm) {
-      // Limpiar campos cuando se cierra el formulario
+      this.closeAllForms();
+      this.showAddJobHistoryForm = true;
+    } else {
+      // Si ya está abierto, solo cerrarlo
+      this.showAddJobHistoryForm = false;
       this.nuevoHistorialCargo = '';
       this.nuevoHistorialEmpresa = '';
       this.nuevoHistorialFechas = '';
