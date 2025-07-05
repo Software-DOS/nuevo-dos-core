@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Conexion.Entidad.Administracion
 {
-    internal class GTHCertificacion
+    public class GTHCertificacion
     {
+        public int Tipo { get; set; }
+        public int IdCertificacion { get; set; }
+        public string CedulaEmpleado { get; set; }
+        public string CerTitulo { get; set; }
+        public string CerInstitucion { get; set; }
+        public DateTime? CerFecha { get; set; }
+        public string CerCertificadoUrl { get; set; }
     }
 }

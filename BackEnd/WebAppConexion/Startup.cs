@@ -50,7 +50,9 @@ namespace WebAppConexion
             services.AddScoped<RecoFaceRepository>();
             services.AddScoped<GTHCapacitacionRepository>();
             services.AddScoped<GTHCelulaRepository>();
+            services.AddScoped<GTHCertificacionRepository>();
             services.AddScoped<GTHDepartamentoRepository>();
+            services.AddScoped<GTHDependienteRepository>();
             services.AddScoped<GTHEmpleadoRepository>();
             services.AddScoped<GTHEntidadCapacitacionRepository>();
             services.AddScoped<GTHAsignacionCapacitacionRepository>();
@@ -63,6 +65,7 @@ namespace WebAppConexion
             services.AddScoped<GTHIdiomaRepository>();
             services.AddScoped<GTHIdiomaInfoRepository>();
             services.AddScoped<GTHLogroRepository>();
+            services.AddScoped<GTHProyectoRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 

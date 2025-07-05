@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Conexion.Entidad.Administracion
 {
-    internal class GTHDependiente
+    public class GTHDependiente
     {
+        public int Tipo { get; set; }
+        public int IdDependiente { get; set; }
+        public string CedulaEmpleado { get; set; }
+        public string DepNombre { get; set; }
+        public DateTime? DepFechaNacimiento { get; set; }
+        public bool? DepDiscapacidad { get; set; }
+        public string DepDocumentoUrl { get; set; }
     }
 }
