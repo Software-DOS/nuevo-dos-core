@@ -61,7 +61,31 @@ namespace WebAppConexion.Controllers
                 EmpTipo = e.EmpTipo,
                 ActPassword = e.ActPassword,
                 Password = e.Password,
-                Sueldo = e.Sueldo
+                Sueldo = e.Sueldo,
+                
+                // Nuevos campos añadidos
+                TipoSangre = e.TipoSangre,
+                Etnia = e.Etnia,
+                PaisNacimiento = e.PaisNacimiento,
+                ProvinciaNacimiento = e.ProvinciaNacimiento,
+                CiudadNacimiento = e.CiudadNacimiento,
+                NivelEstudio = e.NivelEstudio,
+                CargasFamiliares = e.CargasFamiliares,
+                DocumentoIdentidad = e.DocumentoIdentidad,
+                NombreEmergencia = e.NombreEmergencia,
+                RelacionEmergencia = e.RelacionEmergencia,
+                TelefonoEmergencia = e.TelefonoEmergencia,
+                NombreConyuge = e.NombreConyuge,
+                FechaMatrimonio = e.FechaMatrimonio,
+                DiscapacidadConyuge = e.DiscapacidadConyuge,
+                DocumentosConyuge = e.DocumentosConyuge,
+                CargoActual = e.CargoActual,
+                Area = e.Area,
+                SubArea = e.SubArea,
+                Empresa = e.Empresa,
+                JefeDirecto = e.JefeDirecto,
+                TipoContrato = e.TipoContrato,
+                Ubicacion = e.Ubicacion
             });
         }
 
@@ -85,7 +109,7 @@ namespace WebAppConexion.Controllers
                 FechaNacimiento = model.FechaNacimiento,
                 Direccion = model.Direccion,
                 Telefono = model.Telefono,
-                Correo = model.Correo.ToLower(),
+                Correo = model.Correo?.ToLower(),
                 CorreoCorporativo = model.CorreoCorporativo?.ToLower(),
                 FechaContratacion = model.FechaContratacion,
                 EstadoCivil = model.EstadoCivil,
@@ -93,7 +117,31 @@ namespace WebAppConexion.Controllers
                 FotoPerfilUrl = model.FotoPerfilUrl,
                 EstadoEmpleado = model.EstadoEmpleado,
                 EmpTipo = model.EmpTipo,
-                Sueldo = model.Sueldo
+                Sueldo = model.Sueldo,
+                
+                // Nuevos campos añadidos
+                TipoSangre = model.TipoSangre,
+                Etnia = model.Etnia,
+                PaisNacimiento = model.PaisNacimiento,
+                ProvinciaNacimiento = model.ProvinciaNacimiento,
+                CiudadNacimiento = model.CiudadNacimiento,
+                NivelEstudio = model.NivelEstudio,
+                CargasFamiliares = model.CargasFamiliares,
+                DocumentoIdentidad = model.DocumentoIdentidad,
+                NombreEmergencia = model.NombreEmergencia,
+                RelacionEmergencia = model.RelacionEmergencia,
+                TelefonoEmergencia = model.TelefonoEmergencia,
+                NombreConyuge = model.NombreConyuge,
+                FechaMatrimonio = model.FechaMatrimonio,
+                DiscapacidadConyuge = model.DiscapacidadConyuge,
+                DocumentosConyuge = model.DocumentosConyuge,
+                CargoActual = model.CargoActual,
+                Area = model.Area,
+                SubArea = model.SubArea,
+                Empresa = model.Empresa,
+                JefeDirecto = model.JefeDirecto,
+                TipoContrato = model.TipoContrato,
+                Ubicacion = model.Ubicacion
             };
 
             var responseResul = await _repository.Gestionar(db.Tipo, db);

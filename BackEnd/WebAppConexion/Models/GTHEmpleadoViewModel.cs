@@ -29,5 +29,29 @@ namespace WebAppConexion.Models
         public bool? ActPassword { get; set; }
         public string Password { get; set; }
         public decimal? Sueldo { get; set; }
+        
+        // Nuevos campos añadidos
+        public string TipoSangre { get; set; }
+        public string Etnia { get; set; }
+        public string PaisNacimiento { get; set; }
+        public string ProvinciaNacimiento { get; set; }
+        public string CiudadNacimiento { get; set; }
+        public string NivelEstudio { get; set; }
+        public int? CargasFamiliares { get; set; }
+        public string DocumentoIdentidad { get; set; }
+        public string NombreEmergencia { get; set; }
+        public string RelacionEmergencia { get; set; }
+        public string TelefonoEmergencia { get; set; }
+        public string NombreConyuge { get; set; }
+        public string FechaMatrimonio { get; set; }
+        public bool? DiscapacidadConyuge { get; set; }
+        public string DocumentosConyuge { get; set; }
+        public string CargoActual { get; set; }
+        public string Area { get; set; }
+        public string SubArea { get; set; }
+        public string Empresa { get; set; }
+        public string JefeDirecto { get; set; }
+        public string TipoContrato { get; set; }
+        public string Ubicacion { get; set; }
     }
 }

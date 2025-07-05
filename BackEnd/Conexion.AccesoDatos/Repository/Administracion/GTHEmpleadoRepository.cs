@@ -51,6 +51,30 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@EMP_ACT_PASSWORD", empleado.ActPassword ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_PASSWORD", empleado.Password ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_SUELDO", empleado.Sueldo ?? (object)DBNull.Value));
+            
+            // Nuevos parámetros añadidos
+            cmd.Parameters.Add(new SqlParameter("@EMP_TIPOSANGRE", empleado.TipoSangre ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_ETNIA", empleado.Etnia ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_PAISNACIMIENTO", empleado.PaisNacimiento ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_PROVINCIA_NACIMIENTO", empleado.ProvinciaNacimiento ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_CIUDAD_NACIMIENTO", empleado.CiudadNacimiento ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_NIVELESTUDIO", empleado.NivelEstudio ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_CARGASFAMILIARES", empleado.CargasFamiliares ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_DOCUMENTOIDENTIDAD", empleado.DocumentoIdentidad ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_NOMBREEMERGENCIA", empleado.NombreEmergencia ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_RELACIONEMERGENCIA", empleado.RelacionEmergencia ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_TELEFONOEMERGENCIA", empleado.TelefonoEmergencia ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_NOMBRECONYUGE", empleado.NombreConyuge ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_FECHAMATRIMONIO", empleado.FechaMatrimonio ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_DISCAPACIDADCONYUGE", empleado.DiscapacidadConyuge ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_DOCUMENTOSCONYUGE", empleado.DocumentosConyuge ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_CARGOACTUAL", empleado.CargoActual ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_AREA", empleado.Area ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_SUBAREA", empleado.SubArea ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_EMPRESA", empleado.Empresa ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_JEFEDIRECTO", empleado.JefeDirecto ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_TIPOCONTRATO", empleado.TipoContrato ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_UBICACION", empleado.Ubicacion ?? (object)DBNull.Value));
 
             await sql.OpenAsync();
             var response = new List<Generica>();
@@ -121,7 +145,33 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                                           : (int?)null,
                     ActPassword = reader["EMP_ACT_PASSWORD"] as bool?,
                     Password = reader["EMP_PASSWORD"]?.ToString(),
-                    Sueldo = reader["EMP_SUELDO"] as decimal?
+                    Sueldo = reader["EMP_SUELDO"] as decimal?,
+                    
+                    // Nuevos campos añadidos
+                    TipoSangre = reader["EMP_TIPOSANGRE"]?.ToString(),
+                    Etnia = reader["EMP_ETNIA"]?.ToString(),
+                    PaisNacimiento = reader["EMP_PAISNACIMIENTO"]?.ToString(),
+                    ProvinciaNacimiento = reader["EMP_PROVINCIA_NACIMIENTO"]?.ToString(),
+                    CiudadNacimiento = reader["EMP_CIUDAD_NACIMIENTO"]?.ToString(),
+                    NivelEstudio = reader["EMP_NIVELESTUDIO"]?.ToString(),
+                    CargasFamiliares = reader["EMP_CARGASFAMILIARES"] != DBNull.Value
+                                                ? Convert.ToInt32(reader["EMP_CARGASFAMILIARES"])
+                                                : (int?)null,
+                    DocumentoIdentidad = reader["EMP_DOCUMENTOIDENTIDAD"]?.ToString(),
+                    NombreEmergencia = reader["EMP_NOMBREEMERGENCIA"]?.ToString(),
+                    RelacionEmergencia = reader["EMP_RELACIONEMERGENCIA"]?.ToString(),
+                    TelefonoEmergencia = reader["EMP_TELEFONOEMERGENCIA"]?.ToString(),
+                    NombreConyuge = reader["EMP_NOMBRECONYUGE"]?.ToString(),
+                    FechaMatrimonio = reader["EMP_FECHAMATRIMONIO"]?.ToString(),
+                    DiscapacidadConyuge = reader["EMP_DISCAPACIDADCONYUGE"] as bool?,
+                    DocumentosConyuge = reader["EMP_DOCUMENTOSCONYUGE"]?.ToString(),
+                    CargoActual = reader["EMP_CARGOACTUAL"]?.ToString(),
+                    Area = reader["EMP_AREA"]?.ToString(),
+                    SubArea = reader["EMP_SUBAREA"]?.ToString(),
+                    Empresa = reader["EMP_EMPRESA"]?.ToString(),
+                    JefeDirecto = reader["EMP_JEFEDIRECTO"]?.ToString(),
+                    TipoContrato = reader["EMP_TIPOCONTRATO"]?.ToString(),
+                    Ubicacion = reader["EMP_UBICACION"]?.ToString()
                 });
             }
             return list;
