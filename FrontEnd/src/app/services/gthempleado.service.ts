@@ -24,5 +24,12 @@ export class GthEmpleadoService {
   GuardarGthEmpleado(data:iGTHEmpleado){
       return this.http.post(environment.urlbackend +"api/GTHEmpleado/Gestionar",data);
   }
+
+  /**
+   * Gestionar empleado GTH (alias para GuardarGthEmpleado)
+   */
+  gestionarEmpleado(data:iGTHEmpleado){
+      return this.GuardarGthEmpleado(data);
+  }
  
 }

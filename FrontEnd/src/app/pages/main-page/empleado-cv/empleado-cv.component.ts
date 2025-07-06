@@ -170,20 +170,50 @@ export class EmpleadoCvComponent implements OnInit {
       telefono: this.numeroCelular,
       correo: this.correoPersonal,
       correoCorporativo: this.correoInstitucional,
-      fechaContratacion: "",
+      fechaContratacion: this.fechaInicio || "",
       estadoCivil: this.estadoCivil,
       sexo: this.sexo,
       fotoPerfilUrl: "",
-      estadoEmpleado: "",
+      estadoEmpleado: "ACTIVO",
       empTipo: 0,
       actPassword: false,
       password: "",
       sueldo: 0,
+      
+      // Información Personal
+      tipoSangre: this.tipoSangre,
+      etnia: this.etnia,
+      paisNacimiento: this.paisNacimiento,
+      provinciaNacimiento: this.provinciaNacimiento,
+      ciudadNacimiento: this.ciudadNacimiento,
+      nivelEstudio: this.nivelEstudio,
+      cargasFamiliares: this.cargasFamiliares,
+      documentoIdentidad: this.documentoIdentidad,
+      
+      // Contacto de Emergencia
+      nombreEmergencia: this.nombreEmergencia,
+      relacionEmergencia: this.relacionEmergencia,
+      telefonoEmergencia: this.telefonoEmergencia,
+      
+      // Información Conyugal
+      nombreConyuge: this.nombreConyuge,
+      fechaMatrimonio: this.fechaMatrimonio,
+      discapacidadConyuge: this.discapacidadConyuge === 'true' || this.discapacidadConyuge === 'Si',
+      documentosConyuge: this.documentosConyuge,
+      
+      // Información Laboral
+      cargoActual: this.cargoActual,
+      area: this.areaLaboral || this.area,
+      subArea: this.subareaLaboral || this.subarea,
+      empresa: this.empresa,
+      jefeDirecto: this.jefeDirecto,
+      tipoContrato: this.tipoContrato,
+      ubicacion: this.ubicacion
     }
  
      console.log("data: ",data);
  
-         this.gthEmpleadoService.GuardarGthEmpleado(data).subscribe(
+         this.gthEmpleadoService.gestionarEmpleado(data).subscribe(
            (resp: any) => {
             console.log("resp",resp['$values']);
              this.cargaInicial = resp['$values'];
