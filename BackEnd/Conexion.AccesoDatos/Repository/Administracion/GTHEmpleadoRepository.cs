@@ -37,12 +37,16 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@EMP_CEDULA", empleado.Cedula ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_NOMBRE", empleado.Nombre ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_APELLIDO", empleado.Apellido ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@EMP_FECHANACIMIENTO", empleado.FechaNacimiento ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_FECHANACIMIENTO", 
+                string.IsNullOrEmpty(empleado.FechaNacimiento) ? (object)DBNull.Value : 
+                DateTime.TryParse(empleado.FechaNacimiento, out DateTime fechaNac) ? fechaNac : (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_DIRECCION", empleado.Direccion ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_TELEFONO", empleado.Telefono ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_CORREO", empleado.Correo ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_CORREOCORPORATIVO", empleado.CorreoCorporativo ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@EMP_FECHACONTRATACION", empleado.FechaContratacion ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_FECHACONTRATACION", 
+                string.IsNullOrEmpty(empleado.FechaContratacion) ? (object)DBNull.Value : 
+                DateTime.TryParse(empleado.FechaContratacion, out DateTime fechaCont) ? fechaCont : (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_ESTADOCIVIL", empleado.EstadoCivil ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_SEXO", empleado.Sexo ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_FOTOPERFILURL", empleado.FotoPerfilUrl ?? (object)DBNull.Value));
@@ -65,7 +69,9 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@EMP_RELACIONEMERGENCIA", empleado.RelacionEmergencia ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_TELEFONOEMERGENCIA", empleado.TelefonoEmergencia ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_NOMBRECONYUGE", empleado.NombreConyuge ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@EMP_FECHAMATRIMONIO", empleado.FechaMatrimonio ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@EMP_FECHAMATRIMONIO", 
+                string.IsNullOrEmpty(empleado.FechaMatrimonio) ? (object)DBNull.Value : 
+                DateTime.TryParse(empleado.FechaMatrimonio, out DateTime fechaMat) ? fechaMat : (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_DISCAPACIDADCONYUGE", empleado.DiscapacidadConyuge ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_DOCUMENTOSCONYUGE", empleado.DocumentosConyuge ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_CARGOACTUAL", empleado.CargoActual ?? (object)DBNull.Value));
@@ -130,12 +136,14 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     Cedula = reader["EMP_CEDULA"]?.ToString(),
                     Nombre = reader["EMP_NOMBRE"]?.ToString(),
                     Apellido = reader["EMP_APELLIDO"]?.ToString(),
-                    FechaNacimiento = reader["EMP_FECHANACIMIENTO"]?.ToString(),
+                    FechaNacimiento = reader["EMP_FECHANACIMIENTO"] != DBNull.Value ? 
+                        Convert.ToDateTime(reader["EMP_FECHANACIMIENTO"]).ToString("yyyy-MM-dd") : null,
                     Direccion = reader["EMP_DIRECCION"]?.ToString(),
                     Telefono = reader["EMP_TELEFONO"]?.ToString(),
                     Correo = reader["EMP_CORREO"]?.ToString(),
                     CorreoCorporativo = reader["EMP_CORREOCORPORATIVO"]?.ToString(),
-                    FechaContratacion = reader["EMP_FECHACONTRATACION"].ToString(),
+                    FechaContratacion = reader["EMP_FECHACONTRATACION"] != DBNull.Value ? 
+                        Convert.ToDateTime(reader["EMP_FECHACONTRATACION"]).ToString("yyyy-MM-dd") : null,
                     EstadoCivil = reader["EMP_ESTADOCIVIL"]?.ToString(),
                     Sexo = reader["EMP_SEXO"]?.ToString(),
                     FotoPerfilUrl = reader["EMP_FOTOPERFILURL"]?.ToString(),
@@ -162,7 +170,8 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     RelacionEmergencia = reader["EMP_RELACIONEMERGENCIA"]?.ToString(),
                     TelefonoEmergencia = reader["EMP_TELEFONOEMERGENCIA"]?.ToString(),
                     NombreConyuge = reader["EMP_NOMBRECONYUGE"]?.ToString(),
-                    FechaMatrimonio = reader["EMP_FECHAMATRIMONIO"]?.ToString(),
+                    FechaMatrimonio = reader["EMP_FECHAMATRIMONIO"] != DBNull.Value ? 
+                        Convert.ToDateTime(reader["EMP_FECHAMATRIMONIO"]).ToString("yyyy-MM-dd") : null,
                     DiscapacidadConyuge = reader["EMP_DISCAPACIDADCONYUGE"] as bool?,
                     DocumentosConyuge = reader["EMP_DOCUMENTOSCONYUGE"]?.ToString(),
                     CargoActual = reader["EMP_CARGOACTUAL"]?.ToString(),
