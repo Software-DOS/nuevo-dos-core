@@ -11,6 +11,16 @@ export class GthEmpleadoService {
  
   constructor(private http: HttpClient) { }
  
+  /**
+   * Obtener todos los empleados GTH
+   */
+  Mostrar(){
+    return this.http.get(environment.urlbackend + "api/GTHEmpleado/Mostrar");
+  }
+
+  /**
+   * Guardar o actualizar empleado GTH
+   */
   GuardarGthEmpleado(data:iGTHEmpleado){
       return this.http.post(environment.urlbackend +"api/GTHEmpleado/Gestionar",data);
   }
