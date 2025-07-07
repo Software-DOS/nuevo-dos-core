@@ -40,7 +40,7 @@
   background: white;
   border-radius: 10px;
   box-shadow: var(--shadow-xl);
-  padding: 2rem;
+  padding: 1.5rem;
   margin: 0 0 1rem 2rem;
   max-width: 1200px;
   width: 95%;
@@ -82,6 +82,7 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   overflow: hidden;
+  padding: 0;
 }
 
 .content-section {
@@ -502,19 +503,4 @@
   .btn {
     justify-content: center;
   }
-}
-
-.content-area {
-  padding: 0;
-}
-.contenido-forms {
-  /* background-color: var(--color-very-light-gray); */
-    border-radius: var(--radius-lg);
-    padding: 35px;
-    margin-bottom: 35px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--color-pale-gray);
-    scroll-margin-top: 100px;
-    display: none;
-    overflow: hidden;
 }

@@ -57,7 +57,7 @@
         </div>
         <div class="content-area">
           <!-- Sección Datos Personales -->
-          <div id="datos-personales" class="contenido-forms" [class.active]="activeSection === 'datos-personales'">
+          <div id="datos-personales" class="content-section" [class.active]="activeSection === 'datos-personales'" style="margin-left: 1.5rem;">
             <div class="section-header">
               <h2>Datos Personales</h2>
               <button id="editButtonPersonal" class="edit-toggle-btn" (click)="toggleSectionEdit('datos-personales')">
@@ -362,7 +362,7 @@
           </div>
 
           <!-- Sección Información Profesional -->
-          <div id="info-profesional" class="content-section" [class.active]="activeSection === 'info-profesional'">
+          <div id="info-profesional" class="content-section" [class.active]="activeSection === 'info-profesional'" style="margin-left: 1.5rem;">
             <div class="section-header">
               <h2>Información Profesional</h2>
               <button id="editButtonProfessional" class="edit-toggle-btn" (click)="toggleSectionEdit('info-profesional')">
