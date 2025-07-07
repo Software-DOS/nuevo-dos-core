@@ -1,0 +1,96 @@
+<!-- Tarjeta del Empleado -->
+<div class="employee-card">
+  <img [src]="employee.avatar" alt="Foto del Empleado" class="employee-image">
+  <div class="employee-personal-info">
+    <h1>{{ employee.name }}</h1>
+    <div class="employee-contact">
+      <a [href]="'mailto:' + employee.email">✉️ {{ employee.email }}</a>
+    </div>
+    <p class="employee-position">{{ employee.position }}</p>
+    <p class="employee-area">{{ employee.area }}</p>
+    <p class="employee-subarea">{{ employee.subarea }}</p>
+  </div>
+</div>
+
+<div class="main-section">
+  <div class="category-index">
+    <ul>
+      <li><div class="category-link" [class.selected]="activeSection === 'hoja-ruta'" (click)="showSection('hoja-ruta')">Hoja de Ruta</div></li>
+      <li><div class="category-link" [class.selected]="activeSection === 'info-colaborador'" (click)="showSection('info-colaborador')">Información del Colaborador</div></li>
+      <li><div class="category-link" [class.selected]="activeSection === 'fechas-revision'" (click)="showSection('fechas-revision')">Fechas de Revisión</div></li>
+      <li><div class="category-link" [class.selected]="activeSection === 'objetivos'" (click)="showSection('objetivos')">Objetivos</div></li>
+      <li><div class="category-link" [class.selected]="activeSection === 'competencias'" (click)="showSection('competencias')">Competencias</div></li>
+    </ul>
+  </div>
+
+  <div class="content-area">
+    <!-- Hoja de Ruta -->
+    <div id="hoja-ruta" class="content-section" [class.active]="activeSection === 'hoja-ruta'">
+        <h2>Hoja de Ruta de Formulario</h2>
+        <div class="timeline">
+          <div *ngFor="let step of timelineSteps" class="timeline-step" [class.completed]="step.completed">
+            <div class="circle">
+              <i *ngIf="step.completed && step.icon" [class]="step.icon"></i>
+              <span *ngIf="!step.completed">{{ step.number }}</span>
+            </div>
+            <div class="label">{{ step.label }}</div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Información del Colaborador -->
+    <div id="info-colaborador" class="content-section" [class.active]="activeSection === 'info-colaborador'">
+      <h2>Información del Colaborador</h2>
+      <div class="info-grid">
+        <div class="info-item"><span class="label">Nombres:</span> {{ collaboratorInfo.firstName }}</div>
+        <div class="info-item"><span class="label">Apellidos:</span> {{ collaboratorInfo.lastName }}</div>
+        <div class="info-item"><span class="label">Cargo:</span> {{ collaboratorInfo.position }}</div>
+        <div class="info-item"><span class="label">Supervisor:</span> {{ collaboratorInfo.supervisor }}</div>
+        <div class="info-item"><span class="label">Fecha de Ingreso:</span> {{ collaboratorInfo.startDate }}</div>
+        <div class="info-item"><span class="label">Departamento:</span> {{ collaboratorInfo.department }}</div>
+      </div>
+    </div>
+
+    <!-- Fechas de Revisión -->
+    <div id="fechas-revision" class="content-section" [class.active]="activeSection === 'fechas-revision'">
+      <h2>Fechas de Revisión</h2>
+      <div class="info-grid">
+        <div class="info-item"><span class="label">Evaluador:</span> {{ reviewDates.evaluator }}</div>
+        <div class="info-item"><span class="label">Periodo:</span> {{ reviewDates.period }}</div>  
+        <div class="info-item"><span class="label">Fecha Límite:</span> {{ reviewDates.deadline }}</div>
+      </div>
+    </div>
+
+    <!-- Objetivos -->
+    <div id="objetivos" class="content-section" [class.active]="activeSection === 'objetivos'">
+      <h2>Objetivos (KPIs)</h2>
+      <div class="cap-table">
+        <div class="cap-header">
+          <div>Nombre</div><div>Peso (%)</div><div>Inicio</div><div>Fin</div><div>Descripción</div>
+        </div>
+        <div *ngFor="let objective of objectives" class="cap-row">
+          <div>{{ objective.name }}</div>
+          <div style="align-items: center;">{{ objective.weight }}</div>
+          <div>{{ objective.startDate }}</div>
+          <div>{{ objective.endDate }}</div>
+          <div>{{ objective.description }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Competencias -->
+    <div id="competencias" class="content-section" [class.active]="activeSection === 'competencias'">
+      <h2>Competencias</h2>
+      <div class="cap-table">
+        <div class="cap-header">
+          <div>Competencia</div><div>Descripción</div><div>Calificación</div>
+        </div>
+        <div *ngFor="let competency of competencies" class="cap-row">
+          <div>{{ competency.name }}</div>
+          <div>{{ competency.description }}</div>
+          <div>{{ competency.rating }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

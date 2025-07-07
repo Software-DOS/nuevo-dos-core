@@ -8,26 +8,15 @@
       <div>Certificaciones</div>
     </div>
 
-    <div class="cap-row" onclick="location.href='admin_cv.html'" style="cursor: pointer;">
+    <div class="cap-row" *ngFor="let empleado of empleados" (click)="navigateToEmployeeCV(empleado.id)" style="cursor: pointer;">
       <div class="empleado-info-column">
-        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Empleado" class="employee-photo">
-        <span>José Casas</span>
+        <img [src]="empleado.photo" [alt]="empleado.nombre" class="employee-photo">
+        <span>{{ empleado.nombre }}</span>
       </div>
-      <div>1234567890</div>
-      <div>Desarrollador Backend</div>
-      <div>Tecnología</div>
-      <div>3</div>
-    </div>
-
-    <div class="cap-row" onclick="location.href='admin_cv.html'" style="cursor: pointer;">
-      <div class="empleado-info-column">
-        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Empleado" class="employee-photo">
-        <span>Juan Perez</span>
-      </div>
-      <div>1234567890</div>
-      <div>Desarrollador Backend</div>
-      <div>Tecnología</div>
-      <div>3</div>
+      <div>{{ empleado.cedula }}</div>
+      <div>{{ empleado.cargo }}</div>
+      <div>{{ empleado.area }}</div>
+      <div>{{ empleado.certificaciones }}</div>
     </div>
   </div>
 </main>

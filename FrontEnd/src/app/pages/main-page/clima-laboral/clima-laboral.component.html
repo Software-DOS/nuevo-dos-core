@@ -1,0 +1,132 @@
+<p>clima-laboral works!</p>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Clima Laboral Empresarial</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="clima-laboral.component.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Dashboard de Clima Laboral</h1>
+            <p>Monitoreo en tiempo real del bienestar organizacional</p>
+        </div>
+
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-number" style="color: #27ae60;">8.4</div>
+                <div class="stat-label">Satisfacción General</div>
+                <div class="stat-change positive">+0.3 vs mes anterior</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #3498db;">92%</div>
+                <div class="stat-label">Participación</div>
+                <div class="stat-change positive">+5% vs mes anterior</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #e67e22;">7.8</div>
+                <div class="stat-label">Ambiente de Trabajo</div>
+                <div class="stat-change negative">-0.1 vs mes anterior</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #9b59b6;">8.1</div>
+                <div class="stat-label">Liderazgo</div>
+                <div class="stat-change positive">+0.4 vs mes anterior</div>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-container">
+                <div class="chart-title">📊 Evolución del Clima Laboral</div>
+                <canvas id="trendChart" width="400" height="200"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">🎯 Distribución por Departamentos</div>
+                <canvas id="departmentChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="detailed-metrics">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">📈 Métricas Detalladas</h2>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-header">
+                        <span class="metric-title">💼 Satisfacción con el Puesto</span>
+                        <span class="metric-score" style="color: #27ae60;">8.6</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill excellent" style="width: 86%;"></div>
+                    </div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-header">
+                        <span class="metric-title">👥 Relaciones Interpersonales</span>
+                        <span class="metric-score" style="color: #27ae60;">8.2</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill excellent" style="width: 82%;"></div>
+                    </div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-header">
+                        <span class="metric-title">💰 Compensación y Beneficios</span>
+                        <span class="metric-score" style="color: #f39c12;">7.4</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill good" style="width: 74%;"></div>
+                    </div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-header">
+                        <span class="metric-title">📚 Desarrollo Profesional</span>
+                        <span class="metric-score" style="color: #e74c3c;">6.8</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill average" style="width: 68%;"></div>
+                    </div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-header">
+                        <span class="metric-title">⚖️ Balance Vida-Trabajo</span>
+                        <span class="metric-score" style="color: #f39c12;">7.6</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill good" style="width: 76%;"></div>
+                    </div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-header">
+                        <span class="metric-title">🎯 Claridad de Objetivos</span>
+                        <span class="metric-score" style="color: #27ae60;">8.0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill excellent" style="width: 80%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendations">
+            <h2>💡 Recomendaciones de Mejora</h2>
+            <div class="recommendation-item">
+                <strong>Desarrollo Profesional:</strong> Implementar un programa de capacitación continua y mentorías para mejorar las oportunidades de crecimiento profesional.
+            </div>
+            <div class="recommendation-item">
+                <strong>Compensación y Beneficios:</strong> Revisar la estructura salarial y considerar beneficios adicionales como días de bienestar y programas de salud.
+            </div>
+            <div class="recommendation-item">
+                <strong>Comunicación Interna:</strong> Establecer canales de comunicación más efectivos entre departamentos para mejorar la colaboración.
+            </div>
+            <div class="recommendation-item">
+                <strong>Reconocimiento:</strong> Crear un programa de reconocimiento formal para destacar los logros y contribuciones del personal.
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js" defer></script>
+</body>
+</html>

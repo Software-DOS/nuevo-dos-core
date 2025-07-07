@@ -1,11 +1,12 @@
 <main class="container-main">
   <div class="subcategory-nav" id="categoriaTabs">
-    <div class="subcategory-link active" data-tab="curso">En Curso</div>
-    <div class="subcategory-link" data-tab="solicitadas">Solicitadas</div>
-    <div class="subcategory-link" data-tab="disponible">Disponibles</div>
+    <div class="subcategory-link" [class.active]="activeTab === 'curso'" (click)="setActiveTab('curso')">En Curso</div>
+    <div class="subcategory-link" [class.active]="activeTab === 'solicitadas'" (click)="setActiveTab('solicitadas')">Solicitadas</div>
+    <div class="subcategory-link" [class.active]="activeTab === 'disponible'" (click)="setActiveTab('disponible')">Disponibles</div>
   </div>
+
   <!-- EN CURSO -->
-  <div id="curso" class="subcategory-section active">
+  <div id="curso" class="subcategory-section" [class.active]="activeTab === 'curso'">
     <div class="cap-table">
       <div class="cap-header">
         <div class="empleado-row">Empleado</div>
@@ -15,22 +16,17 @@
         <div>Certificación</div>
         <div>Progreso</div>
       </div>
-
-      <div class="cap-row">
+      
+      <div class="cap-row" *ngFor="let capacitacion of capacitacionesEnCurso" (click)="openEmployeeTrainingsModal(capacitacion.empleado)">
         <div class="empleado-info-column">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            alt="Empleado"
-            class="employee-photo"
-          />
-          <span>José Casas</span>
-        </div>
-        <div>Curso de Liderazgo Ágil</div>
-        <div>20</div>
-        <div>05/04/2025</div>
-        <div>Scrum Foundation</div>
-        <div>
-          <svg width="80" height="50" viewBox="0 0 100 50">
+          <img [src]="capacitacion.empleado.photo" [alt]="capacitacion.empleado.nombre" class="employee-photo">
+          <span>{{ capacitacion.empleado.nombre }}</span>
+        </div>          
+        <div>{{ capacitacion.nombre }}</div>
+        <div>{{ capacitacion.duracion }}</div>
+        <div>{{ capacitacion.fechaInicio }}</div>
+        <div>{{ capacitacion.certificacion }}</div>        <div class="progress-container">
+          <svg width="70" height="40" viewBox="0 0 100 50">
             <defs>
               <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" class="base" />
@@ -38,80 +34,11 @@
               </linearGradient>
             </defs>
             <!-- Fondo del gauge -->
-            <path
-              d="M10 50 A40 40 0 0 1 90 50"
-              fill="none"
-              stroke="#eee"
-              stroke-width="10"
-            />
-            <!-- Progreso 70% -->
-            <path
-              d="M10 50 A40 40 0 0 1 75 21"
-              fill="none"
-              stroke="url(#grad)"
-              stroke-width="10"
-            />
+            <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="#eee" stroke-width="8"/>
+            <!-- Progreso 70% - using exact same path as original -->
+            <path d="M10 50 A40 40 0 0 1 75 21" fill="none" stroke="url(#grad)" stroke-width="8"/>
             <!-- Texto encima del centro -->
-            <text
-              x="50"
-              y="35"
-              text-anchor="middle"
-              fill="#000"
-              font-size="10"
-              font-weight="bold"
-            >
-              70%
-            </text>
-          </svg>
-        </div>
-      </div>
-
-      <div class="cap-row">
-        <div class="empleado-info-column">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            alt="Empleado"
-            class="employee-photo"
-          />
-          <span>José Casas</span>
-        </div>
-        <div>Gestión del Tiempo</div>
-        <div>10</div>
-        <div>01/04/2025</div>
-        <div>Productividad Personal</div>
-        <div>
-          <svg width="80" height="50" viewBox="0 0 100 50">
-            <defs>
-              <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" class="base" />
-                <stop offset="100%" class="progreso" />
-              </linearGradient>
-            </defs>
-            <!-- Fondo del gauge -->
-            <path
-              d="M10 50 A40 40 0 0 1 90 50"
-              fill="none"
-              stroke="#eee"
-              stroke-width="10"
-            />
-            <!-- Progreso 70% -->
-            <path
-              d="M10 50 A40 40 0 0 1 75 21"
-              fill="none"
-              stroke="url(#grad)"
-              stroke-width="10"
-            />
-            <!-- Texto encima del centro -->
-            <text
-              x="50"
-              y="35"
-              text-anchor="middle"
-              fill="#000"
-              font-size="10"
-              font-weight="bold"
-            >
-              70%
-            </text>
+            <text x="50" y="35" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">{{ capacitacion.progreso }}%</text>
           </svg>
         </div>
       </div>
@@ -119,122 +46,158 @@
   </div>
 
   <!-- DISPONIBLES -->
-  <div id="disponible" class="subcategory-section">
+  <div id="disponible" class="subcategory-section" [class.active]="activeTab === 'disponible'">
     <div class="cap-table">
       <div class="cap-header">
         <div>Nombre</div>
         <div>Duración (h)</div>
         <div>Certificación</div>
-        <div></div>
+        <div>Acciones</div>
       </div>
 
-      <div class="cap-row">
-        <div>Comunicación Efectiva</div>
-        <div>15</div>
-        <div>Soft Skills Essentials</div>
-        <div class="text-right">
-          <button class="btn-eliminar" onclick="confirmarEliminacion(this)">
-            <i class="fas fa-trash"></i>
+      <!-- Capacitaciones estáticas -->
+      <div class="cap-row" *ngFor="let capacitacion of capacitacionesDisponibles">
+        <div>{{ capacitacion.nombre }}</div>
+        <div>{{ capacitacion.duracion }}</div>
+        <div>{{ capacitacion.certificacion }}</div>
+        <div class="acciones-column">
+          <button class="btn-accion btn-editar" (click)="editarCapacitacion(capacitacion)" title="Editar">
+            <i class="fas fa-edit"></i>
           </button>
-        </div>
-      </div>
-
-      <div class="cap-row">
-        <div>Excel para Análisis</div>
-        <div>25</div>
-        <div>Certificación Excel Avanzado</div>
-        <div class="text-right">
-          <button class="btn-eliminar" onclick="confirmarEliminacion(this)">
+          <button class="btn-accion btn-eliminar" (click)="confirmarEliminacion(capacitacion)" *ngIf="!capacitacion.isStatic" title="Eliminar">
             <i class="fas fa-trash"></i>
           </button>
         </div>
       </div>
     </div>
+    
     <!-- Botón para mostrar formulario -->
     <div class="text-right mb-2">
-      <button id="mostrarFormularioBtn" class="nav-button">
-        Añadir Capacitación
-      </button>
+      <button id="mostrarFormularioBtn" class="nav-button" (click)="mostrarFormulario()" [style.display]="showFormButton ? 'inline-block' : 'none'">Añadir Capacitación</button>
     </div>
 
     <!-- Formulario emergente oculto inicialmente -->
-    <div id="formularioSolicitud" class="popup-form" style="display: none">
-      <h3 class="h3-dark mb-2">Formulario de Solicitud</h3>
-      <form id="solicitudForm" class="cv-form">
+    <div id="formularioSolicitud" class="popup-form" [style.display]="showForm ? 'block' : 'none'">
+      <h3 class="h3-dark mb-2">{{ capacitacionEditandoId ? 'Editar Capacitación' : 'Formulario de Solicitud' }}</h3>
+      <form id="solicitudForm" class="cv-form" (ngSubmit)="onSubmitForm($event)">
         <div class="form-group">
           <label for="nombre">Nombre de la Capacitación</label>
-          <input type="text" id="nombre" required />
+          <input type="text" [(ngModel)]="nuevaCapacitacion.nombre" name="nombre" required>
         </div>
         <div class="form-group">
           <label for="duracion">Duración Estimada (horas)</label>
-          <input type="number" id="duracion" min="1" required />
+          <input type="number" [(ngModel)]="nuevaCapacitacion.duracion" name="duracion" min="1" required>
         </div>
         <div class="form-group">
           <label for="certificacion">Certificación Esperada</label>
-          <input type="text" id="certificacion" />
+          <input type="text" [(ngModel)]="nuevaCapacitacion.certificacion" name="certificacion">
         </div>
         <div class="form-group">
           <label for="justificacion">Justificación</label>
-          <textarea id="justificacion" rows="4"></textarea>
+          <textarea [(ngModel)]="nuevaCapacitacion.justificacion" name="justificacion" rows="4"></textarea>
         </div>
         <div class="form-group">
           <label for="enlace">Enlace a la Certificación</label>
-          <input type="text" id="enlace" />
+          <input type="text" [(ngModel)]="nuevaCapacitacion.enlace" name="enlace">
         </div>
         <div class="edit-controls">
-          <button type="submit" class="nav-button">Añadir</button>
-          <button
-            type="button"
-            id="cancelarFormularioBtn"
-            class="nav-button gray"
-          >
-            Cancelar
-          </button>
+          <button type="submit" class="nav-button">{{ capacitacionEditandoId ? 'Actualizar' : 'Añadir' }}</button>
+          <button type="button" class="nav-button gray" (click)="cancelarFormulario()">Cancelar</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Solicitadas -->
-  <div id="solicitadas" class="subcategory-section">
-    <div class="cap-table">
-      <div class="cap-header">
-        <div class="empleado-row">Empleado</div>
+  <div id="solicitadas" class="subcategory-section" [class.active]="activeTab === 'solicitadas'">
+    <div class="cap-table">      <div class="cap-header">
+        <div>Empleado</div>
         <div>Departamento</div>
         <div>Nombre</div>
         <div>Duración (h)</div>
         <div>Certificación</div>
       </div>
 
-      <div class="cap-row">
+      <div class="cap-row" *ngFor="let capacitacion of capacitacionesSolicitadas" (click)="openEmployeeTrainingsModal(capacitacion.empleado)">
         <div class="empleado-info-column">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            alt="Empleado"
-            class="employee-photo"
-          />
-          <span>José Casas</span>
-        </div>
-        <div>Desarrollo</div>
-        <div>Gestión de Proyectos</div>
-        <div>30</div>
-        <div>PMI Fundamentals</div>
-      </div>
-
-      <div class="cap-row">
-        <div class="empleado-info-column">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            alt="Empleado"
-            class="employee-photo"
-          />
-          <span>José Casas</span>
-        </div>
-        <div>Desarrollo</div>
-        <div>Introducción a Python</div>
-        <div>25</div>
-        <div>Python Básico</div>
+          <img [src]="capacitacion.empleado.photo" [alt]="capacitacion.empleado.nombre" class="employee-photo">
+          <span>{{ capacitacion.empleado.nombre }}</span>
+        </div>  
+        <div>{{ capacitacion.departamento }}</div>
+        <div>{{ capacitacion.nombre }}</div>
+        <div>{{ capacitacion.duracion }}</div>
+        <div>{{ capacitacion.certificacion }}</div>
       </div>
     </div>
   </div>
 </main>
+
+<!-- Employee Trainings Modal -->
+<div class="modal-overlay" [class.active]="showModal" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Capacitaciones de {{ selectedEmployeeTrainings?.empleado?.nombre || 'Empleado' }}</h3>
+      <button class="modal-close" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" *ngIf="selectedEmployeeTrainings">
+      <div class="employee-info-modal">
+        <img [src]="selectedEmployeeTrainings?.empleado?.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" 
+             [alt]="selectedEmployeeTrainings?.empleado?.nombre || 'Empleado'" 
+             class="employee-photo-modal">
+        <div class="employee-details">
+          <h4>{{ selectedEmployeeTrainings?.empleado?.nombre || 'Empleado' }}</h4>
+          <p>Total de capacitaciones: {{ selectedEmployeeTrainings?.capacitaciones?.length || 0 }}</p>
+        </div>
+      </div>
+      
+      <div class="trainings-list">
+        <div class="training-item" 
+             *ngFor="let training of selectedEmployeeTrainings?.capacitaciones"
+             [class]="getEstadoClass(training.estado)">
+          <div class="training-header">
+            <h5>{{ training.nombre }}</h5>
+            <span class="training-status" [class]="getEstadoClass(training.estado)">
+              {{ training.estado }}
+            </span>
+          </div>
+          
+          <div class="training-details">
+            <div class="training-detail">
+              <strong>Duración:</strong> {{ training.duracion }} horas
+            </div>
+            <div class="training-detail">
+              <strong>Certificación:</strong> {{ training.certificacion }}
+            </div>
+            
+            <!-- Progress for ongoing trainings -->
+            <div class="training-detail" *ngIf="training.estado === 'En Curso' && training.progreso">
+              <strong>Progreso:</strong>
+              <div class="progress-bar-container">
+                <div class="progress-bar" 
+                     [style.width.%]="training.progreso"
+                     [style.background-color]="getProgressColor(training.progreso)">
+                </div>
+                <span class="progress-text">{{ training.progreso }}%</span>
+              </div>
+            </div>
+            
+            <!-- Dates -->
+            <div class="training-detail" *ngIf="training.fechaInicio">
+              <strong>Fecha de inicio:</strong> {{ training.fechaInicio }}
+            </div>
+            <div class="training-detail" *ngIf="training.fechaCompletado">
+              <strong>Fecha de completado:</strong> {{ training.fechaCompletado }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="nav-button gray" (click)="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>

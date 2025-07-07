@@ -1,1 +1,68 @@
-<p>lista-evaluaciones works!</p>
+<main class="main-flex-evaluacion">
+  <!-- Filtros a la izquierda -->
+  <aside class="filter-sidebar">
+    <h3>FILTROS</h3>
+    <div class="filter-group">
+      <label for="filtroDepartamento">Departamento:</label>
+      <select id="filtroDepartamento" [(ngModel)]="filtroDepartamento" (change)="aplicarFiltros()">
+        <option value="">Todos</option>
+        <option value="Desarrollo">Desarrollo</option>
+        <option value="Recursos Humanos">Recursos Humanos</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filtroCalificado">Calificado:</label>
+      <select id="filtroCalificado" [(ngModel)]="filtroCalificado" (change)="aplicarFiltros()">
+        <option value="">Todos</option>
+        <option value="Si">Sí</option>
+        <option value="No">No</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filtroUbicacion">Lugar de Residencia:</label>
+      <select id="filtroUbicacion" [(ngModel)]="filtroUbicacion" (change)="aplicarFiltros()">
+        <option value="">Todos</option>
+        <option value="Quito">Quito</option>
+        <option value="Guayaquil">Guayaquil</option>
+        <option value="Cuenca">Cuenca</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filtroIdioma">Idiomas:</label>
+      <select id="filtroIdioma" [(ngModel)]="filtroIdioma" (change)="aplicarFiltros()">
+        <option value="">Todos</option>
+        <option value="Inglés">Inglés</option>
+        <option value="Español">Español</option>
+        <option value="Francés">Francés</option>
+      </select>
+    </div>
+  </aside>
+
+  <!-- Contenido principal a la derecha -->
+  <div class="content-wrapper-tight">
+    <div class="subcategory-nav" id="categoriaTabs">
+      <div class="subcategory-link active" data-tab="curso">Empleados</div>
+    </div>
+
+    <!-- EMPLEADOS -->
+    <div id="curso" class="subcategory-section active">
+      <div class="cap-table">
+        <div class="cap-header">
+          <div class="empleado-row">Empleado</div>
+          <div>Departamento</div>
+          <div>Fecha Incorporacion</div>
+          <div>Calificado</div>
+        </div>
+        <div class="cap-row" *ngFor="let empleado of empleadosFiltrados" (click)="navigateToEvaluacion(empleado.id)">
+          <div class="empleado-info-column">
+            <img [src]="empleado.photo" [alt]="empleado.nombre" class="employee-photo">
+            <span>{{ empleado.nombre }}</span>
+          </div>
+          <div>{{ empleado.departamento }}</div>
+          <div>{{ empleado.fechaIncorporacion }}</div>
+          <div>{{ empleado.calificado }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

@@ -20,8 +20,6 @@ import { EmpleadoComponent } from './empleado.component';
     EmpleadoRoutingModule,
     ReactiveFormsModule,
     NgxPaginationModule,
-    OrderModule,
-    FilterPipeModule,
     FormsModule
   ]
 })

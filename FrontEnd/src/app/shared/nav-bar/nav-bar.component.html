@@ -4,27 +4,27 @@
     <img src="assets/img/logo.png" alt="Logo DOS" class="logo-img">
   </div>
   <div class="nav-links">
-    <a [routerLink]="['/']" class="fas fa-bell"></a>
-    <a [routerLink]="['/']" routerLinkActive="active">Inicio</a>
-    <a [routerLink]="['/lista-empleados']">Perfiles</a>
-    <a [routerLink]="['/lista-capacitaciones']">Capacitaciones</a>
-    <a [routerLink]="['/lista-evaluaciones']">Evaluaciones</a>
-    <a [routerLink]="['/empleado-cv']">Ver Mi Perfil</a>
-    <button id="logoutButton" class="nav-button" (click)="logout()">Cerrar Sesión</button>
+    <a href="#" class="fas fa-bell"></a>
+    <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+    <a [routerLink]="['/lista-empleados']" routerLinkActive="active">Perfiles</a>
+    <a [routerLink]="['/lista-capacitaciones']" routerLinkActive="active">Capacitaciones</a>
+    <a [routerLink]="['/lista-evaluaciones']" routerLinkActive="active">Evaluaciones</a>
+    <a [routerLink]="['/empleado-cv']" routerLinkActive="active">Ver Mi Perfil</a>
 
-    <div class="profile-dropdown">
+    <div class="profile-dropdown" [class.show]="dropdownAbierto">
       <img
-        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        [src]="Imagen || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"
         class="profile-avatar"
         (click)="toggleDropdown()" />
       <div
         class="dropdown-menu"
-        id="profileMenu"
-        [class.show]="dropdownAbierto">
+        id="profileMenu">
         <a [routerLink]="['/lista-empleados']"><i class="fas fa-users"></i> Ver Perfiles</a>
         <a [routerLink]="['/lista-capacitaciones']"><i class="fas fa-chalkboard-teacher"></i> Capacitaciones</a>
         <a [routerLink]="['/lista-evaluaciones']"><i class="fas fa-clipboard-check"></i> Evaluaciones</a>
         <a [routerLink]="['/empleado-cv']"><i class="fas fa-user-circle"></i> Ver Mi Perfil</a>
+        <div class="dropdown-divider"></div>
+        <a href="#" (click)="logout(); $event.preventDefault()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
       </div>
     </div>
   </div>

@@ -1,0 +1,205 @@
+
+
+<main class="main-flex-evaluacion">
+  <!-- Sidebar de filtros -->
+  <aside class="filter-sidebar">
+    <h3>FILTROS</h3>
+    <div class="filter-group">
+      <label for="filtroEmpresa">Empresa:</label>
+      <select id="filtroEmpresa" [(ngModel)]="filtroEmpresa" (change)="onFilterChange()">
+        <option value="">Todas</option>
+        <option *ngFor="let company of companyOptions.slice(1)" [value]="company">{{ company }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="filtroRoadmap">Roadmap de Certificación:</label>
+      <select id="filtroRoadmap" [(ngModel)]="filtroRoadmap" (change)="onFilterChange()">
+        <option value="">Todos</option>
+        <option *ngFor="let roadmap of roadmapOptions.slice(1)" [value]="roadmap">{{ roadmap }}</option>
+      </select>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <div class="content-wrapper-tight">
+    <div class="subcategory-nav" id="categoriaTabs">
+      <div class="subcategory-link" [class.active]="activeTab === 'curso'" (click)="switchTab('curso')">En Curso</div>
+      <div class="subcategory-link" [class.active]="activeTab === 'disponible'" (click)="switchTab('disponible')">Disponibles</div>
+      <div class="subcategory-link" [class.active]="activeTab === 'completado'" (click)="switchTab('completado')">Completadas</div>
+      <div class="subcategory-link" [class.active]="activeTab === 'solicitadas'" (click)="switchTab('solicitadas')">Solicitadas</div>
+    </div>
+
+    <!-- EN CURSO -->
+    <div id="curso" class="subcategory-section" [class.active]="activeTab === 'curso'">
+      <div class="cap-table">
+        <div class="cap-header">
+          <div>Nombre</div>
+          <div>Duración (h)</div>
+          <div>Fecha Inicio</div>
+          <div>Certificación</div>
+          <div>Empresa</div>
+        </div>
+        
+        <div *ngFor="let training of inProgressTrainings" class="cap-row">
+          <div>{{ training.name }}</div>
+          <div>{{ training.duration }}</div>
+          <div>{{ training.startDate }}</div>
+          <div>{{ training.certification }}</div>
+          <div>{{ training.company }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DISPONIBLES -->
+    <div id="disponible" class="subcategory-section" [class.active]="activeTab === 'disponible'">
+      <div class="cap-table">
+        <div class="cap-header">
+          <div>Nombre</div>
+          <div>Duración (h)</div>
+          <div>Certificación</div>
+          <div>Empresa</div>
+        </div>
+
+        <div *ngFor="let training of availableTrainings" class="cap-row">
+          <div>{{ training.name }}</div>
+          <div>{{ training.duration }}</div>
+          <div>{{ training.certification }}</div>
+          <div>{{ training.company }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLETADAS -->
+    <div id="completado" class="subcategory-section" [class.active]="activeTab === 'completado'">
+      <div class="cap-table">
+        <div class="cap-header">
+          <div>Nombre</div>
+          <div>Duración (h)</div>
+          <div>Fecha Completado</div>
+          <div>Certificación</div>
+          <div>Empresa</div>
+        </div>
+
+        <div *ngFor="let training of completedTrainings" class="cap-row">
+          <div>{{ training.name }}</div>
+          <div>{{ training.duration }}</div>
+          <div>{{ training.completionDate }}</div>
+          <div>{{ training.certification }}</div>
+          <div>{{ training.company }}</div>
+        </div>
+      </div>
+    </div>
+
+  <!-- SOLICITADAS -->
+  <div id="solicitadas" class="subcategory-section" [class.active]="activeTab === 'solicitadas'">
+    <div class="cap-table">
+      <div class="cap-header">
+        <div>Nombre</div>
+        <div>Duración (h)</div>
+        <div>Fecha Completado</div>
+        <div>Certificación</div>
+        <div>Estado</div>
+      </div>
+
+      <div *ngFor="let training of requestedTrainings" class="cap-row">
+        <div>{{ training.name }}</div>
+        <div>{{ training.duration }}</div>
+        <div>{{ training.completionDate }}</div>
+        <div>{{ training.certification }}</div>
+        <div>{{ training.status }}</div>
+      </div>
+    </div>
+
+    <!-- Botón para mostrar el contrato -->
+    <div class="text-right mb-2" *ngIf="showRequestButton">
+      <button class="nav-button" (click)="showRequestForm()">Solicitar Capacitación</button>
+    </div>
+
+    <!-- Contrato de Términos -->
+    <div id="contratoTerminos" class="popup-form" [style.display]="showContract ? 'block' : 'none'">
+      <h3 class="h3-dark">Términos de la Solicitud</h3>
+      <p class="mb-2">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel tincidunt facilisis, nunc nisl
+        aliquam nunc, eget aliquam nisl nunc eget nunc.
+      </p>
+      <div class="form-group mt-2">
+        <label class="flex-gap">
+          <input type="checkbox" [(ngModel)]="contractAccepted" (change)="onContractAcceptedChange()">
+          He leído y acepto los términos del acuerdo.
+        </label>
+      </div>
+      <div class="edit-controls">
+        <button class="nav-button" [disabled]="!contractAccepted" (click)="signContract()">Firmar</button>
+        <button class="nav-button gray" (click)="cancelContract()">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Formulario emergente -->
+    <div id="formularioSolicitud" class="popup-form" [style.display]="showForm ? 'block' : 'none'">
+      <h3 class="h3-dark">Formulario de Solicitud</h3>
+      <form class="cv-form" (ngSubmit)="submitTrainingRequest()" #trainingForm="ngForm">
+        <div class="form-group">
+          <label for="nombre">Nombre de la Capacitación</label>
+          <input 
+            type="text" 
+            id="nombre" 
+            [(ngModel)]="nombreCapacitacion"
+            name="nombre"
+            required>
+        </div>
+        <div class="form-group">
+          <label for="duracion">Duración Estimada (horas)</label>
+          <input 
+            type="number" 
+            id="duracion" 
+            [(ngModel)]="duracionCapacitacion"
+            name="duracion"
+            min="1" 
+            required>
+        </div>
+        <div class="form-group">
+          <label for="certificacion">Certificación Esperada</label>
+          <input 
+            type="text" 
+            id="certificacion"
+            [(ngModel)]="certificacionCapacitacion"
+            name="certificacion"
+            required>
+        </div>
+        <div class="form-group">
+          <label for="precio">Precio</label>
+          <input 
+            type="text" 
+            id="precio"
+            [(ngModel)]="precioCapacitacion"
+            name="precio"
+            required>
+        </div>
+        <div class="form-group">
+          <label for="justificacion">Justificación</label>
+          <textarea 
+            id="justificacion" 
+            [(ngModel)]="justificacionCapacitacion"
+            name="justificacion"
+            rows="4"
+            required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="enlace">Enlace a la Certificación</label>
+          <input 
+            type="url" 
+            id="enlace"
+            [(ngModel)]="enlaceCapacitacion"
+            name="enlace"
+            required>
+        </div>
+        <div class="edit-controls">
+          <button type="submit" class="nav-button">Enviar Solicitud</button>
+          <button type="button" class="nav-button gray" (click)="cancelForm()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</main>

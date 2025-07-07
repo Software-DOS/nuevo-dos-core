@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 //componentes
 import { ListaEvaluacionesComponent } from './lista-evaluaciones.component';
 //modulo
-import { ListaCapacitacionesRoutingModule } from '../lista-capacitaciones/lista-capacitaciones-routing.module';
+import { ListaEvaluacionesRoutingModule } from './lista-evaluaciones-routing.module';
 
 @NgModule({
   declarations: [ListaEvaluacionesComponent],
   imports: [
     CommonModule,
-    ListaCapacitacionesRoutingModule
+    FormsModule,
+    ListaEvaluacionesRoutingModule
   ]
 })
 export class ListaEvaluacionesModule { }

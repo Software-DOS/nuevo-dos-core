@@ -1,201 +1,860 @@
-<!-- Tarjeta del Empleado -->
-<div class="employee-card relative">
-  <div class="employee-image-container">
-    <img
-      src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-      alt="Foto del Empleado"
-      class="employee-image"
-      id="employeeImage"
-    />
-    <label for="photoUpload" class="edit-icon-center">
-      <i class="fas fa-pen"></i>
-    </label>
-    <input
-      type="file"
-      id="photoUpload"
-      accept="image/*"
-      class="hidden"
-      onchange="previewImage(event)"
-    />
-  </div>
 
-  <div class="employee-personal-info">
-    <h1>
-      <p class="info-item">
-        <input
-          type="text"
-          value="Juan Carlos Rodríguez Martínez"
-          class="value"
-          disabled
-        />
-      </p>
-    </h1>
-    <div class="info-item">
-      <a href="mailto:juan.rodriguez@empresa.com"
-        >✉️
-        <input
-          type="text"
-          value="juan.rodriguez@empresa.com"
-          class="value"
-          disabled
-      /></a>
+<div class="contenedor-flex">
+    <!-- Columna izquierda -->
+    <div class="columna-izquierda">
+
+      <!-- Tarjeta del Empleado -->
+      <div class="employee-card relative">
+        <div class="employee-image-container">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Foto del Empleado" class="employee-image" id="employeeImage">
+        </div>
+        
+        <div class="employee-personal-info">
+          <div class="info-field">
+            <h4 class="info-label">Nombre Completo</h4>
+            <!-- <p class="info-value name-value">{{nombreCompleto || 'Nombre del empleado'}}</p> -->
+          </div>
+          
+          <div class="info-field">
+            <!-- <label class="info-label">Correo Electrónico</label> -->
+            <p class="info-value">{{correoElectronico || 'Correo Electrónico'}}</p>
+          </div>
+          
+          <div class="info-field">
+            <!-- <label class="info-label">Posición</label> -->
+            <p class="info-value">{{posicion || 'Posición'}}</p>
+          </div>
+          
+          <div class="info-field">
+            <!-- <label class="info-label">Área</label> -->
+            <p class="info-value">{{area || 'Área'}}</p>
+          </div>
+          
+          <div class="info-field">
+            <!-- <label class="info-label">Subárea</label> -->
+            <p class="info-value">{{subarea || 'Subárea'}}</p>
+          </div>
+        </div>
+        
+        <!-- Botón de editar -->
+        <div class="edit-section">
+          <button id="editButton" class="edit-toggle-btn" (click)="openEditModal()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.0001 1.0001 0 0 0 0-1.41l-2.34-2.34a1.0001 1.0001 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sección Principal -->
+      <div class="main-section">
+        <!-- Nueva barra lateral con solo dos categorías -->
+        <div class="category-index">
+          <ul>
+            <li><div class="category-link" [class.selected]="activeSection === 'datos-personales'" (click)="showSection('datos-personales')">Datos Personales</div></li>
+            <li><div class="category-link" [class.selected]="activeSection === 'info-profesional'" (click)="showSection('info-profesional')">Información Profesional</div></li>
+          </ul>
+        </div>
+        <div class="content-area">
+          <!-- Sección Datos Personales -->
+          <div id="datos-personales" class="contenido-forms" [class.active]="activeSection === 'datos-personales'">
+            <div class="section-header">
+              <h2>Datos Personales</h2>
+              <button id="editButtonPersonal" class="edit-toggle-btn" (click)="toggleSectionEdit('datos-personales')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.0001 1.0001 0 0 0 0-1.41l-2.34-2.34a1.0001 1.0001 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Información Básica -->
+            <section class="form-section">
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Nombres:</span>
+                  <input type="text" class="value" [(ngModel)]="nombres" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Apellidos:</span>
+                  <input type="text" class="value" [(ngModel)]="apellidos" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+              
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Fecha de Nacimiento:</span>
+                  <input type="date" class="value" [(ngModel)]="fechaNacimiento" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Sexo:</span>
+                  <div class="filter-group">
+                    <select class="value" style="margin-left: 1rem;" [(ngModel)]="sexo" [disabled]="!sectionEditStates['datos-personales']">
+                      <option value="">Seleccionar</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Femenino">Femenino</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Estado Civil:</span>
+                  <div class="filter-group">
+                    <select class="value" style="margin-left: 1rem;" [(ngModel)]="estadoCivil" [disabled]="!sectionEditStates['datos-personales']">
+                      <option value="">Seleccionar</option>
+                      <option value="Soltero">Soltero</option>
+                      <option value="Casado">Casado</option>
+                      <option value="Divorciado">Divorciado</option>
+                      <option value="Viudo">Viudo</option>
+                      <option value="Unión libre">Unión libre</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <span class="label">Tipo de Sangre:</span>
+                  <div class="filter-group">
+                    <select class="value" style="margin-left: 1rem;" [(ngModel)]="tipoSangre" [disabled]="!sectionEditStates['datos-personales']">
+                      <option value="">Seleccionar</option>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <span class="label">Etnia:</span>
+                  <div class="filter-group">
+                    <select class="value" style="margin-left: 1rem;" [(ngModel)]="etnia" [disabled]="!sectionEditStates['datos-personales']">
+                      <option value="">Seleccionar</option>
+                      <option value="Mestizo">Mestizo</option>
+                      <option value="Indígena">Indígena</option>
+                      <option value="Blanco">Blanco</option>
+                      <option value="Afroecuatoriano">Afroecuatoriano</option>
+                      <option value="Montubio">Montubio</option>
+                      <option value="Mulato">Mulato</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Lugar de Nacimiento -->
+            <section class="form-section">
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">País de Nacimiento:</span>
+                  <input type="text" class="value" [(ngModel)]="paisNacimiento" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Provincia:</span>
+                  <input type="text" class="value" [(ngModel)]="provinciaNacimiento" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+              
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Ciudad:</span>
+                  <input type="text" class="value" [(ngModel)]="ciudadNacimiento" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Número de Cédula:</span>
+                  <input type="text" class="value" [(ngModel)]="numeroCedula" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+            </section>
+
+            <!-- Contacto -->
+            <section class="form-section">
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Correo Institucional:</span>
+                  <input type="email" class="value" [(ngModel)]="correoInstitucional" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Correo Personal:</span>
+                  <input type="email" class="value" [(ngModel)]="correoPersonal" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+              
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Número Celular:</span>
+                  <input type="tel" class="value" [(ngModel)]="numeroCelular" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Dirección Domiciliaria:</span>
+                  <input type="text" class="value" [(ngModel)]="direccion" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+            </section>
+
+            <!-- Información Adicional -->
+            <section class="form-section">
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Último Nivel de Estudio:</span>
+                  <input type="text" class="value" [(ngModel)]="nivelEstudio" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Cargas Familiares:</span>
+                  <input type="number" class="value" [(ngModel)]="cargasFamiliares" [disabled]="!sectionEditStates['datos-personales']" min="0">
+                </div>
+              </div>
+              
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Documento de Identidad:</span>
+                  <input type="file" accept="application/pdf" class="value file-input" [(ngModel)]="documentoIdentidad" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+            </section>
+
+            <!-- Contacto de Emergencia -->
+            <section class="form-section">
+              <h3 class="section-title">Contacto de Emergencia</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Nombre:</span>
+                  <input type="text" class="value" [(ngModel)]="nombreEmergencia" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Relación:</span>
+                  <input type="text" class="value" [(ngModel)]="relacionEmergencia" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+              
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Teléfono:</span>
+                  <input type="tel" class="value" [(ngModel)]="telefonoEmergencia" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+            </section>
+
+            <!-- Información Familiar -->
+            <section class="form-section">
+              <h3 class="section-title">Información Conyugal</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Estado:</span>
+                  <div class="filter-group">
+                    <select class="value" style="margin-left: 1rem;" [(ngModel)]="estadoConyugal" [disabled]="!sectionEditStates['datos-personales']">
+                      <option value="">Seleccionar</option>
+                      <option value="Soltero">Soltero</option>
+                      <option value="Casado">Casado</option>
+                      <option value="Divorciado">Divorciado</option>
+                      <option value="Viudo">Viudo</option>
+                      <option value="Unión libre">Unión libre</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <span class="label">Nombre del Cónyuge:</span>
+                  <input type="text" class="value" [(ngModel)]="nombreConyuge" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+              
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Fecha de Matrimonio:</span>
+                  <input type="date" class="value" [(ngModel)]="fechaMatrimonio" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Discapacidad:</span>
+                  <input type="text" class="value" [(ngModel)]="discapacidadConyuge" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+              
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Documentos:</span>
+                  <input type="file" class="value file-input" [(ngModel)]="documentosConyuge" [disabled]="!sectionEditStates['datos-personales']" accept=".pdf">
+                </div>
+              </div>
+            </section>
+
+            <!-- Dependientes -->
+            <section class="form-section">
+              <h3 class="section-title">Dependientes</h3>
+              <div class="dependent-card">
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Nombre:</span>
+                    <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Fecha de Nacimiento:</span>
+                    <input type="date" class="value" [disabled]="!sectionEditStates['datos-personales']">
+                  </div>
+                </div>
+                
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Discapacidad:</span>
+                    <input type="text" class="value" [disabled]="!sectionEditStates['datos-personales']">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Documentos:</span>
+                    <input type="file" class="value file-input" [disabled]="!sectionEditStates['datos-personales']" accept=".pdf">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="action-buttons">
+                <button class="nav-button secondary" (click)="toggleAddDependentForm()">
+                  <span class="button-icon">+</span>
+                  Añadir Dependiente
+                </button>
+              </div>
+              
+              <div class="add-form-card" [class.hidden]="!showAddDependentForm">
+                <h4 class="form-card-title">Nuevo Dependiente</h4>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Nombre:</span>
+                    <input type="text" [(ngModel)]="nuevoDependienteNombre" class="value">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Fecha de Nacimiento:</span>
+                    <input type="date" [(ngModel)]="nuevoDependienteFechaNacimiento" class="value">
+                  </div>
+                </div>
+                
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Discapacidad:</span>
+                    <input type="text" [(ngModel)]="nuevoDependienteDiscapacidad" class="value">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Adjuntar PDF:</span>
+                    <input type="file" accept="application/pdf" class="value file-input">
+                  </div>
+                </div>
+                
+                <div class="form-actions">
+                  <button class="nav-button secondary" (click)="toggleAddDependentForm()">Cancelar</button>
+                  <button class="nav-button" (click)="addDependent()">Guardar Dependiente</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="form-section">
+              <h3 class="section-title">Documentos de Identidad</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Número de Cédula:</span>
+                  <input type="text" class="value" [(ngModel)]="numeroCedula" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Documento de Identidad:</span>
+                  <input type="file" accept="application/pdf" class="value file-input" [(ngModel)]="documentoIdentidad" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Sección Información Profesional -->
+          <div id="info-profesional" class="content-section" [class.active]="activeSection === 'info-profesional'">
+            <div class="section-header">
+              <h2>Información Profesional</h2>
+              <button id="editButtonProfessional" class="edit-toggle-btn" (click)="toggleSectionEdit('info-profesional')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.0001 1.0001 0 0 0 0-1.41l-2.34-2.34a1.0001 1.0001 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+
+            <section class="form-section">
+              <h3 class="section-title">Información de Empleo</h3>
+              <div class="subcategory-nav">
+                <div class="subcategory-link" [class.active]="activeSubcategory === 'info-organizacional'" (click)="showSubcategory('info-organizacional')">Información Organizacional</div>
+                <div class="subcategory-link" [class.active]="activeSubcategory === 'info-plaza'" (click)="showSubcategory('info-plaza')">Información de Plaza</div>
+                <div class="subcategory-link" [class.active]="activeSubcategory === 'organigrama'" (click)="showSubcategory('organigrama')">Organigrama</div>
+              </div>
+              <div class="subcategory-content">
+                <div id="info-organizacional" class="subcategory-section" [class.active]="activeSubcategory === 'info-organizacional'">
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <span class="label">Cargo:</span>
+                      <input type="text" class="value" [(ngModel)]="cargoActual" [disabled]="!sectionEditStates['info-profesional']">
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Fecha de Inicio:</span>
+                      <input type="date" class="value" [(ngModel)]="fechaInicio" [disabled]="!sectionEditStates['info-profesional']">
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Empresa:</span>
+                      <input type="text" class="value" [(ngModel)]="empresa" [disabled]="!sectionEditStates['info-profesional']">
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Área:</span>
+                      <input type="text" class="value" [(ngModel)]="areaLaboral" [disabled]="!sectionEditStates['info-profesional']">
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Subárea:</span>
+                      <input type="text" class="value" [(ngModel)]="subareaLaboral" [disabled]="!sectionEditStates['info-profesional']">
+                    </div>
+                  </div>
+                </div>
+                <div id="info-plaza" class="subcategory-section" [class.active]="activeSubcategory === 'info-plaza'">
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <span class="label">Jefe Directo:</span>
+                      <input type="text" class="value" [(ngModel)]="jefeDirecto" [disabled]="!sectionEditStates['info-profesional']">
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Tipo de Contrato:</span>
+                      <input type="text" class="value" [(ngModel)]="tipoContrato" [disabled]="!sectionEditStates['info-profesional']">
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Ubicación:</span>
+                      <input type="text" class="value" [(ngModel)]="ubicacion" [disabled]="!sectionEditStates['info-profesional']">
+                    </div>
+                  </div>
+                </div>
+                <div id="organigrama" class="subcategory-section" [class.active]="activeSubcategory === 'organigrama'">
+                  <div class="organigrama-visual">
+                    <div class="org-nivel">
+                      <div class="org-box jefe">
+                        <div class="org-avatar">MS</div>
+                        <div class="org-info">
+                          <h4><input type="text" class="value" disabled></h4>
+                          <p><input type="text" class="value" disabled></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="org-conector">
+                      <div class="org-linea-vertical"></div>
+                    </div>
+                    <div class="org-nivel">
+                      <div class="org-box empleado">
+                        <div class="org-avatar">JR</div>
+                        <div class="org-info">
+                          <h4><input type="text" class="value" disabled></h4>
+                          <p><input type="text" class="value" disabled></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Sección Historia Laboral -->
+            <section class="form-section">
+              <h3 class="section-title">Historia Laboral</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Cargo:</span>
+                  <input type="text" class="value" [(ngModel)]="cargoHistorial" [disabled]="!sectionEditStates['info-profesional']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Empresa:</span>
+                  <input type="text" class="value" [(ngModel)]="empresaHistorial" [disabled]="!sectionEditStates['info-profesional']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Fechas:</span>
+                  <input type="text" class="value" [(ngModel)]="fechasHistorial" [disabled]="!sectionEditStates['info-profesional']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Funciones:</span>
+                  <input type="text" class="value" [(ngModel)]="funcionesHistorial" [disabled]="!sectionEditStates['info-profesional']">
+                </div>
+              </div>
+              <div class="action-buttons">
+                <button class="nav-button secondary" (click)="toggleAddJobHistoryForm()">
+                  <span class="button-icon">+</span>
+                  Añadir Experiencia Laboral
+                </button>
+              </div>
+              
+              <div class="add-form-card" [class.hidden]="!showAddJobHistoryForm">
+                <h4 class="form-card-title">Nueva Experiencia Laboral</h4>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Cargo:</span>
+                    <input type="text" [(ngModel)]="nuevoHistorialCargo" class="value">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Empresa:</span>
+                    <input type="text" [(ngModel)]="nuevoHistorialEmpresa" class="value">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Fechas:</span>
+                    <input type="text" [(ngModel)]="nuevoHistorialFechas" class="value">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Funciones:</span>
+                    <input type="text" [(ngModel)]="nuevoHistorialFunciones" class="value">
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="nav-button secondary" (click)="toggleAddJobHistoryForm()">Cancelar</button>
+                  <button class="nav-button" (click)="addJobHistory()">Guardar Experiencia</button>
+                </div>
+              </div>
+            </section>
+          
+            <!-- Formación académica -->
+            <section class="form-section">
+              <h3 class="section-title">Formación Académica</h3>
+              <div class="subcategory-nav">
+                <div class="subcategory-link" [class.active]="activeSubcategory === 'estudios'" (click)="showSubcategory('estudios')">Estudios</div>
+                <div class="subcategory-link" [class.active]="activeSubcategory === 'certificaciones'" (click)="showSubcategory('certificaciones')">Especialidades y Certificaciones</div>
+              </div>
+              <div class="subcategory-content">
+                <div id="estudios" class="subcategory-section" [class.active]="activeSubcategory === 'estudios'">
+                  <div class="education-item">
+                    <h4>Título de Tercer Nivel</h4>
+                    <div class="info-grid">
+                      <div class="info-item">
+                        <span class="label">Carrera:</span>
+                        <input type="text" class="value" [(ngModel)]="carreraTercerNivel" [disabled]="!sectionEditStates['info-profesional']">
+                      </div>
+                      <div class="info-item">
+                        <span class="label">Institución:</span>
+                        <input type="text" class="value" [(ngModel)]="institucionTercerNivel" [disabled]="!sectionEditStates['info-profesional']">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="education-item">
+                    <h4>Títulos de Cuarto Nivel</h4>
+                    <div class="info-grid">
+                      <div class="info-item">
+                        <span class="label">Master:</span>
+                        <input type="text" class="value" [(ngModel)]="masterCuartoNivel" [disabled]="!sectionEditStates['info-profesional']">
+                      </div>
+                      <div class="info-item">
+                        <span class="label">Institución:</span>
+                        <input type="text" class="value" [(ngModel)]="institucionCuartoNivel" [disabled]="!sectionEditStates['info-profesional']">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="add-education mt-2">
+                    <button id="addEducationButton" class="nav-button" (click)="toggleAddEducationForm()">Añadir Estudio</button>
+                  </div>
+                  <div id="addEducationForm" class="mt-2" [class.hidden]="!showAddEducationForm">
+                    <h3>Nuevo Estudio</h3>
+                    <div class="info-grid">
+                      <div class="info-item">
+                        <span class="label">Nivel del titulo:</span>
+                        <input type="text" [(ngModel)]="nuevaEducacionNivel" class="value">
+                      </div>
+                      <div class="info-item">
+                        <span class="label">Carrera:</span>
+                        <input type="text" [(ngModel)]="nuevaEducacionCarrera" class="value">
+                      </div>
+                      <div class="info-item">
+                        <span class="label">Institución:</span>
+                        <input type="text" [(ngModel)]="nuevaEducacionInstitucion" class="value">
+                      </div>
+                    </div>
+                    <div class="form-actions">
+                      <button class="nav-button secondary" (click)="toggleAddEducationForm()">Cancelar</button>
+                      <button class="nav-button" (click)="addEducation()">Guardar Estudio</button>
+                    </div>
+                  </div>
+                </div>
+                <div id="certificaciones" class="subcategory-section" [class.active]="activeSubcategory === 'certificaciones'">
+                  <div class="certification-item">
+                    <div class="info-grid">
+                      <div class="info-item">
+                        <span class="label">Título:</span>
+                        <input type="text" class="value" [(ngModel)]="tituloEspecialidad" [disabled]="!sectionEditStates['info-profesional']">
+                      </div>
+                      <div class="info-item">
+                        <span class="label">Institución:</span>
+                        <input type="text" class="value" [(ngModel)]="institucionEspecialidad" [disabled]="!sectionEditStates['info-profesional']">
+                      </div>
+                      <div class="info-item">
+                        <span class="label">Fecha:</span>
+                        <input type="text" class="value" [(ngModel)]="fechaEspecialidad" [disabled]="!sectionEditStates['info-profesional']">
+                      </div>
+                      <div class="info-item">
+                        <span class="label">Certificado:</span>
+                        <input type="text" class="value document-placeholder" [(ngModel)]="certificadoEspecialidad" [disabled]="!sectionEditStates['info-profesional']">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="add-certification mt-2">
+                    <button id="addCertificationButton" class="nav-button" (click)="toggleAddCertificationForm()">Añadir Certificación</button>
+                  </div>
+                  <div id="addCertificationForm" class="mt-2" [class.hidden]="!showAddCertificationForm">
+                    <h3>Nueva Certificación</h3>
+                    <div class="info-grid">
+                      <div class="info-item">
+                        <span class="label">Título:</span>
+                        <input type="text" [(ngModel)]="nuevaCertificacionTitulo" class="value">
+                      </div>
+                      <div class="info-item">
+                        <span class="label">Institución:</span>
+                        <input type="text" [(ngModel)]="nuevaCertificacionInstitucion" class="value">
+                      </div>
+                      <div class="info-item">
+                        <span class="label">Fecha:</span>
+                        <input type="text" [(ngModel)]="nuevaCertificacionFecha" class="value">
+                      </div>
+                    </div>
+                    <div class="form-actions">
+                      <button class="nav-button secondary" (click)="toggleAddCertificationForm()">Cancelar</button>
+                      <button class="nav-button" (click)="addCertification()">Guardar Certificación</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="form-section">
+              <h3 class="section-title">Idiomas</h3>
+              <div class="filter-group">
+                <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Idioma:</span>
+                    <select class="value" style="margin-left: 1rem;" id="filtroCalificado" [(ngModel)]="idioma" [disabled]="!sectionEditStates['info-profesional']">
+                      <option value="">Selecciona un idioma</option>
+                      <option value="Español">Español</option>
+                      <option value="Inglés">Inglés</option>
+                      <option value="Francés">Francés</option>
+                      <option value="Alemán">Alemán</option>
+                      <option value="Italiano">Italiano</option>
+                      <option value="Portugués">Portugués</option>
+                      <option value="Chino">Chino</option>
+                      <option value="Japonés">Japonés</option>
+                    </select>
+                  </div>
+
+                  <div class="info-item">
+                    <span class="label">Nivel:</span>
+                    <input type="text" class="value" [(ngModel)]="nivelIdioma" [disabled]="!sectionEditStates['info-profesional']">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Certificación:</span>
+                    <input type="text" class="value document-placeholder" [(ngModel)]="certificacionIdioma" [disabled]="!sectionEditStates['info-profesional']">
+                  </div>
+                </div>
+              </div>
+              <div class="add-language mt-2">
+                <button id="addLanguageButton" class="nav-button" (click)="toggleAddLanguageForm()">Añadir Idioma</button>
+              </div>
+              <div id="addLanguageForm" class="mt-2" [class.hidden]="!showAddLanguageForm">
+                <h3>Nuevo Idioma</h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Idioma:</span>
+                    <input type="text" [(ngModel)]="nuevoIdiomaIdioma" class="value">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Nivel:</span>
+                    <input type="text" [(ngModel)]="nuevoIdiomaNivel" class="value">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Certificación:</span>
+                    <input type="text" [(ngModel)]="nuevoIdiomaCertificacion" class="value">
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="nav-button secondary" (click)="toggleAddLanguageForm()">Cancelar</button>
+                  <button class="nav-button" (click)="addLanguage()">Guardar Idioma</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="form-section">
+              <h3 class="section-title">Proyectos</h3>
+              <div class="project-item">
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Título:</span>
+                    <input type="text" class="value" [(ngModel)]="tituloProyecto" [disabled]="!sectionEditStates['info-profesional']">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Especialidad:</span>
+                    <input type="text" class="value" [(ngModel)]="especialidadProyecto" [disabled]="!sectionEditStates['info-profesional']">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Año:</span>
+                    <input type="text" class="value" [(ngModel)]="anoProyecto" [disabled]="!sectionEditStates['info-profesional']">
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <button id="addProjectButton" class="nav-button" (click)="toggleAddProjectForm()">Añadir Proyecto</button>
+              </div>
+              <div id="addProjectForm" class="mt-2" [class.hidden]="!showAddProjectForm">
+                <h3>Nuevo Proyecto</h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Título:</span>
+                    <input type="text" [(ngModel)]="nuevoProyectoTitulo" class="value">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Especialidad:</span>
+                    <input type="text" [(ngModel)]="nuevoProyectoEspecialidad" class="value">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Año:</span>
+                    <input type="text" [(ngModel)]="nuevoProyectoAno" class="value">
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="nav-button secondary" (click)="toggleAddProjectForm()">Cancelar</button>
+                  <button class="nav-button" (click)="addProject()">Guardar Proyecto</button>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </div>
     </div>
-    <p class="info-item">
-      <input type="text" value="Analista de Sistemas" class="value" disabled />
-    </p>
-    <p class="info-item">
-      <input
-        type="text"
-        value="Tecnología de la Información"
-        class="value"
-        disabled
-      />
-    </p>
-    <p class="info-item">
-      <input
-        type="text"
-        value="Desarrollo de Aplicaciones"
-        class="value"
-        disabled
-      />
-    </p>
-  </div>
-  <!-- Botón de editar (con ícono de lápiz) posicionado en la esquina superior derecha -->
-  <div class="edit-section">
-    <button id="editButton" class="edit-toggle-btn" onclick="toggleEdit()">
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.0001 1.0001 0 0 0 0-1.41l-2.34-2.34a1.0001 1.0001 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
-          fill="currentColor"
-        />
-      </svg>
-    </button>
+    <!-- Columna derecha -->
+    <div class="columna-derecha">
+        <!-- Aquí va el nuevo contenido a la derecha -->
+        <div class="side-panel">
+          <div class="panel-header">
+              <h3 class="panel-title">Diseño de CV</h3>
+              <span class="nuevo-badge">Nuevo</span>
+          </div>
+          <p class="panel-description">
+              Genera tu currículum profesional con los datos ingresados. Podrás obtener una vista previa antes de descargarlo como PDF.
+          </p>
+          <button class="diseña-cv-btn" (click)="printCV()">Genera tu CV</button>
+      </div>
+
+      <div class="side-panel">
+          <div class="panel-header">
+              <h3 class="panel-title">Mejorar mi CV</h3>
+              <span class="nuevo-badge">Nuevo</span>
+          </div>
+          <p class="panel-description">
+            Comparte tu currículum actual para identificar competencias, logros o experiencias que puedan agregarse y complementar tu perfil interno.
+          </p>
+          <button class="diseña-cv-btn" (click)="printCV()">Sube tu CV</button>
+      </div>
+
+    </div>
+</div>
+
+<!-- Modal para Editar Datos Personales -->
+<div id="datosPersonalesModal" class="modal-overlay" [class.show]="showEditModal" (click)="closeModalOnOverlay($event)">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="modal-icon">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+        </svg>
+        Editar Datos Personales
+      </h2>
+      <button type="button" class="modal-close" (click)="closeEditModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Sección de Foto -->
+      <div class="photo-section">
+        <div class="photo-container">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Foto del Empleado" class="modal-employee-image" id="modalEmployeeImage">
+          <div class="photo-overlay">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2v11z" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span>Cambiar foto</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario de Datos -->
+      <div class="modal-form">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label class="form-label">Nombre Completo *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="nombreCompleto" 
+              class="form-input" 
+              placeholder="Ingresa el nombre completo">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label class="form-label">Correo Electrónico *</label>
+            <input 
+              type="email" 
+              [(ngModel)]="correoElectronico" 
+              class="form-input" 
+              placeholder="nombre@empresa.com">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Posición *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="posicion" 
+              class="form-input" 
+              placeholder="Cargo o puesto">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Área *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="area" 
+              class="form-input" 
+              placeholder="Departamento">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label class="form-label">Subárea</label>
+            <input 
+              type="text" 
+              [(ngModel)]="subarea" 
+              class="form-input" 
+              placeholder="Subdepartamento (opcional)">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeEditModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Guardar Cambios
+      </button>
+    </div>
   </div>
 </div>
-<!-- Sección Principal -->
-<div class="main-section">
-  <!-- Nueva barra lateral con solo dos categorías -->
-  <div class="category-index">
-    <ul>
-      <li>
-        <div class="category-link" data-target="datos-personales">
-          Datos Personales
-        </div>
-      </li>
-      <li>
-        <div class="category-link" data-target="info-profesional">
-          Información Profesional
-        </div>
-      </li>
-    </ul>
-  </div>
-  <div class="content-area">
-    <!-- Sección Datos Personales: se agrupan Bibliografía, Info Personal, Contacto, Emergencia, Familiares y Documentos -->
-    <div id="datos-personales" class="content-section">
-      <h2>Datos Personales</h2>
-      <section>
-        <h3>Bibliografía</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">Fecha de Nacimiento:</span>
-            <input type="date" class="value" value="1985-03-15" disabled />
-          </div>
-          <div class="info-item">
-            <span class="label">País de Nacimiento:</span>
-            <input type="text" class="value" value="España" disabled />
-          </div>
-          <div class="info-item">
-            <span class="label">Provincia:</span>
-            <input type="text" class="value" value="Madrid" disabled />
-          </div>
-          <div class="info-item">
-            <span class="label">Ciudad:</span>
-            <input type="text" class="value" value="Madrid" disabled />
-          </div>
-        </div>
-      </section>
-      <section>
-        <h3>Información Personal</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">Nombres:</span>
-            <input type="text" class="value" value="Juan Carlos" disabled />
-          </div>
-          <div class="info-item">
-            <span class="label">Apellidos:</span>
-            <input
-              type="text"
-              class="value"
-              value="Rodríguez Martínez"
-              disabled
-            />
-          </div>
-          <div class="info-item">
-            <span class="label">Sexo:</span>
-            <input type="text" class="value" value="Masculino" disabled />
-          </div>
-          <div class="info-item">
-            <span class="label">Estado Civil:</span>
-            <input type="text" class="value" value="Casado" disabled />
-          </div>
-          <div class="info-item">
-            <span class="label">Tipo de Sangre:</span>
-            <input type="text" class="value" value="O+" disabled />
-          </div>
-          <div class="info-item">
-            <span class="label">Último Nivel de Estudio:</span>
-            <input type="text" class="value" value="Máster" disabled />
-          </div>
-          <div class="info-item">
-            <span class="label">Cargas Familiares:</span>
-            <input type="number" class="value" value="2" disabled />
-          </div>
-        </div>
-      </section>
-      <section>
-        <h3>Contacto y Dirección</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">Correo Institucional:</span>
-            <input type="email" class="value" value="juan.rodriguez@empresa.com" disabled>
-          </div>
-          <div class="info-item">
-            <span class="label">Correo Personal:</span>
-            <input type="email" class="value" value="juanc.rodriguez@gmail.com" disabled>
-          </div>
-          <div class="info-item">
-            <span class="label">Número Celular:</span>
-            <input type="text" class="value" value="+34 612 345 678" disabled>
-          </div>
-          <div class="info-item">
-            <span class="label">Dirección Domiciliaria:</span>
-            <input type="text" class="value" value="Calle Serrano 123, 28006 Madrid" disabled>
-          </div>
-        </div>
-      </section>
-      <section>
-        <h3>Contacto de Emergencia</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">Nombre:</span>
-            <input type="text" class="value" value="Ana Martínez López" disabled>
-          </div>
-          <div class="info-item">
-            <span class="label">Relación:</span>
-            <input type="text" class="value" value="Esposa" disabled>
-          </div>
-          <div class="info-item">
-            <span class="label">Teléfono:</span>
-            <input type="text" class="value" value="+34 623 456 789" disabled>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
-</div>
+
+
+
+
+<a href="#" class="back-to-top">↑</a>
+
+<footer class="page-footer">
+  <button id="attachCVButton" class="nav-button">Adjuntar Hoja de Vida</button>
+  <button id="saveChangesButton" class="nav-button" (click)="guardarEmpleado()" >Guardar Cambios</button>
+  <button id="printCVButton" class="nav-button" (click)="printCV()">Imprimir CV</button>
+</footer>

@@ -6,12 +6,22 @@
     border-radius: var(--radius-md);
     padding: 25px;
     height: fit-content;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
     box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 90px;
+    z-index: var(--z-sticky);
+    transition: box-shadow var(--transition-normal);
   }
-  
-  .filter-sidebar h3 {
+
+  /* Mejorar la sombra cuando está sticky */
+  .filter-sidebar:hover {
+    box-shadow: var(--shadow-md);
+  }
+    .filter-sidebar h3 {
     margin-bottom: 20px;
-    color: var(--color-dark-red);
+    color: var(--page-primary);
   }
   
   .filter-group {

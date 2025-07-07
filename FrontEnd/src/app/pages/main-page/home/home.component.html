@@ -1,77 +1,106 @@
-  <!-- Contenedor Principal -->
-  <div class="dashboard-container container mt-5">
-    <h1 class="dashboard-title text-center">Panel de Control</h1>
-    <div class="row justify-content-center g-4">
-
-      <!-- Ver Perfiles -->
-      <div class="col-md-4 d-flex justify-content-center">
-        <div class="dashboard-card card-view">
-          <div class="card-icon">
-            <i class="fas fa-file-alt"></i>
-          </div>
-          <h2>Ver Perfiles</h2>
-          <p>Visualiza los perfiles de los empleados</p>
-          <a [routerLink]="['/lista-empleados']" class="card-button">
-            Ver Ahora <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-
-      <!-- Capacitaciones -->
-      <div class="col-md-4 d-flex justify-content-center">
-        <div class="dashboard-card card-training">
-          <div class="card-icon">
-            <i class="fas fa-edit"></i>
-          </div>
-          <h2>Capacitaciones</h2>
-          <p>Revisa las capacitaciones solicitadas</p>
-          <a [routerLink]="['/lista-capacitaciones']" class="card-button">
-            Actualizar <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-
-      <!-- Evaluación -->
-      <div class="col-md-4 d-flex justify-content-center">
-        <div class="dashboard-card card-eval">
-          <div class="card-icon">
-            <i class="fas fa-upload"></i>
-          </div>
-          <h2>Evaluación</h2>
-          <p>Evalúa a los perfiles</p>
-          <a [routerLink]="['/lista-evaluaciones']"  class="card-button">
-            Evaluar <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-
-      <!-- Selección de Personal -->
-      <div class="col-md-4 d-flex justify-content-center">
-        <div class="dashboard-card card-selection">
-          <div class="card-icon">
-            <i class="fas fa-user-check"></i>
-          </div>
-          <h2>Selección de Personal</h2>
-          <p>Gestiona los procesos de reclutamiento</p>
-          <a [routerLink]="['/']" class="card-button">
-            Ingresar <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-
-      <!-- Clima Laboral -->
-      <div class="col-md-4 d-flex justify-content-center">
-        <div class="dashboard-card card-clima">
-          <div class="card-icon">
-            <i class="fas fa-smile-beam"></i>
-          </div>
-          <h2>Clima Laboral</h2>
-          <p>Evalúa el ambiente de trabajo en la organización</p>
-          <a href="#" class="card-button">
-            Evaluar <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-
+<!-- Dashboard Content -->
+<div class="dashboard-container">
+  <h1 class="dashboard-title">Panel de Control</h1>
+  <p class="dashboard-subtitle">Gestiona todos los aspectos de recursos humanos desde un solo lugar</p>
+  
+  <!-- Stats Cards -->
+  <div class="dashboard-stats">
+    <div class="stat-card">
+      <div class="stat-number">127</div>
+      <div class="stat-label">Empleados Activos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">23</div>
+      <div class="stat-label">Evaluaciones Pendientes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">45</div>
+      <div class="stat-label">Capacitaciones en Curso</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">8</div>
+      <div class="stat-label">Nuevos Aplicantes</div>
     </div>
   </div>
+
+  <!-- Main Dashboard Cards -->
+  <div class="dashboard-cards">
+    <div class="dashboard-card card-view">
+      <div class="card-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <h2>Ver Perfiles</h2>
+      <p>Explora y gestiona los perfiles completos de todos los empleados de la organización con herramientas avanzadas de búsqueda y filtrado</p>
+      <a [routerLink]="['/lista-empleados']" class="card-button">
+        Explorar Perfiles <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="dashboard-card card-training">
+      <div class="card-icon">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
+      <h2>Capacitaciones</h2>
+      <p>Gestiona el programa completo de desarrollo profesional, desde solicitudes hasta certificaciones completadas</p>
+      <a [routerLink]="['/lista-capacitaciones']" class="card-button">
+        Gestionar <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="dashboard-card card-eval">
+      <div class="card-icon">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <h2>Evaluación</h2>
+      <p>Sistema integral de evaluación de desempeño con métricas personalizables y reportes detallados</p>
+      <a [routerLink]="['/lista-evaluaciones']" class="card-button">
+        Evaluar <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="dashboard-card card-selection">
+      <div class="card-icon">
+        <i class="fas fa-user-check"></i>
+      </div>
+      <h2>Selección de Personal</h2>
+      <p>Optimiza tu proceso de reclutamiento con herramientas inteligentes de filtrado y evaluación de candidatos</p>
+      <a href="#" class="card-button">
+        Ingresar <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="dashboard-card card-clima">
+      <div class="card-icon">
+        <i class="fas fa-smile-beam"></i>
+      </div>
+      <h2>Clima Laboral</h2>
+      <p>Mide y mejora la satisfacción del equipo con encuestas avanzadas y análisis de tendencias</p>
+      <a [routerLink]="['/clima-laboral']" class="card-button">
+        Evaluar <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h2>Acciones Rápidas</h2>
+    <div class="action-buttons">
+      <a href="#" class="action-btn">
+        <i class="fas fa-plus"></i>
+        <span>Añadir Empleado</span>
+      </a>
+      <a [routerLink]="['/lista-capacitaciones']" class="action-btn">
+        <i class="fas fa-calendar-plus"></i>
+        <span>Nueva Capacitación</span>
+      </a>
+      <a [routerLink]="['/lista-evaluaciones']" class="action-btn">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Crear Evaluación</span>
+      </a>
+      <a href="#" class="action-btn">
+        <i class="fas fa-download"></i>
+        <span>Generar Reporte</span>
+      </a>
+    </div>
+  </div>
+</div>

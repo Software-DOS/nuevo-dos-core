@@ -1,11 +1,92 @@
 .login-page{
-    /*background:#a7dbf5;*/
-    background-image: url('/src/assets/img/Pantalla.png');
-    background-size: cover; /* Hace que la imagen cubra todo el contenedor */
+    background:#f4f4f7;
+    /*background-image: url('/src/assets/img/Pantalla.png');
+    background-size: cover;*/ /* Hace que la imagen cubra todo el contenedor */
     background-position: center; /* Centra la imagen en el contenedor */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
     width: 100%; /* Asegura que ocupe el 100% del ancho */
     height: 100vh; /* Puedes ajustar la altura según lo necesites */
+    position: fixed; /* Ensure login page doesn't interfere with navigation */
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+/* Ensure form submission doesn't get blocked */
+.login-card-body form {
+    position: relative;
+    z-index: 1001;
+}
+.card-frst {
+    box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+    margin-bottom: 1rem;
+    border-radius: 12px;
+}
+
+/* Make sure buttons are clickable */
+.btn {
+    position: relative;
+    z-index: 1002;
 }
 
 
+.login-title {
+    font-size: 1.4rem;
+}
+
+.btn-dark {
+    width: 100%;
+    padding: 8px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    /* Gradiente rojo oscuro */
+    background: linear-gradient(135deg, #810000 0%, #4a0000 100%);
+    color: white;
+    
+    /* Sombra roja */
+    box-shadow: 0 4px 15px rgba(139, 0, 0, 0.3);
+}
+
+.btn-dark:hover {
+    background: linear-gradient(135deg, #a30000 0%, #660000 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 0, 0, 0.4);
+}
+
+.btn-dark:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(139, 0, 0, 0.3);
+}
+
+.btn-dark:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.2);
+}
+
+/* Efecto de ondas al hacer clic */
+.btn-dark::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.btn-dark:active::before {
+    width: 300px;
+    height: 300px;
+}

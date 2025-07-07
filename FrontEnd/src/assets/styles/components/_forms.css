@@ -11,11 +11,10 @@
     flex-direction: column;
     margin-bottom: 15px;
   }
-  
-  .form-group label {
+    .form-group label {
     font-weight: bold;
     margin-bottom: 5px;
-    color: var(--color-dark-red);
+    color: var(--page-primary);
   }
   
   /* === Campos de entrada comunes === */
@@ -28,12 +27,12 @@
     font-size: 1rem;
     transition: border-color 0.3s ease;
   }
-  
-  .form-group input:focus,
+    .form-group input:focus,
   .form-group select:focus,
   .form-group textarea:focus {
-    border-color: var(--color-bright-red);
+    border-color: var(--page-primary);
     outline: none;
+    box-shadow: 0 0 0 3px var(--page-primary-light);
   }
   
   /* === Botones del formulario (Firmar / Cancelar, etc.) === */

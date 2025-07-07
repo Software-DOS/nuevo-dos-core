@@ -1,0 +1,75 @@
+<button class="print-button" (click)="printCV()">
+  <i class="fas fa-print"></i> Imprimir CV
+</button>
+
+<div class="container">
+  <div class="sidebar">
+    <img [src]="personalInfo.avatar" [alt]="'Foto de ' + personalInfo.name">
+    <h2>{{ personalInfo.name }}</h2>
+    
+    <div class="section">
+      <div class="job">
+        <p><strong>💼</strong> Cargo actual: {{ personalInfo.position }}</p>
+        <p><strong>🏢</strong> Área: {{ personalInfo.area }}</p>
+        <p><strong>🧩</strong> Subárea: {{ personalInfo.subarea }}</p>
+        <p><strong>👤</strong> Jefe directo: {{ personalInfo.supervisor }}</p>
+      </div>
+      
+      <div class="job">
+        <p><strong>📞</strong> {{ personalInfo.phone }}</p>
+        <p><strong>✉️</strong> {{ personalInfo.email }}</p>
+        <p><strong>🏡</strong> Ciudad: {{ personalInfo.city }}</p>
+      </div>
+      
+      <div class="job">
+        <p><strong>📍</strong> {{ personalInfo.address }}</p>
+        <p><strong>🗓️</strong> {{ personalInfo.birthdate }}</p>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h3>Idiomas</h3>
+      <p *ngFor="let lang of languages">
+        {{ lang.language }} - {{ lang.level }}
+      </p>
+    </div>
+  </div>
+
+  <div class="main">
+    <h2>EXPERIENCIA LABORAL</h2>
+    <div *ngFor="let job of workExperience" class="job">
+      <h3>{{ job.position }} <span class="fecha">{{ job.period }}</span></h3>
+      <h4>{{ job.company }}</h4>
+      <ul>
+        <li *ngFor="let responsibility of job.responsibilities">
+          {{ responsibility }}
+        </li>
+      </ul>
+    </div>
+
+    <h2>FORMACIÓN ACADÉMICA</h2>
+    <div *ngFor="let edu of education" class="job">
+      <h3>{{ edu.degree }}</h3>
+      <h4>{{ edu.institution }}</h4>
+      <p *ngIf="edu.year">Año: {{ edu.year }}</p>
+    </div>
+
+    <h2>PROYECTOS</h2>
+    <div *ngFor="let project of projects" class="job">
+      <h3>{{ project.name }}</h3>
+      <ul>
+        <li>Especialidad: {{ project.specialty }}</li>
+        <li>Año: {{ project.year }}</li>
+      </ul>
+    </div>
+
+    <h2>ESPECIALIDADES Y CERTIFICACIONES</h2>
+    <div *ngFor="let cert of certifications" class="job">
+      <h3>{{ cert.name }}</h3>
+      <ul>
+        <li>Institución: {{ cert.institution }}</li>
+        <li>Año: {{ cert.year }}</li>
+      </ul>
+    </div>
+  </div>
+</div>

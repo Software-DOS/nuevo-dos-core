@@ -1,13 +1,13 @@
 <div class="login-page">
-  <div class="login-box">
-    <div class="card">
-      <div class="card-body login-card-body">
+  <div class="login-box" >
+    <div class="card-frst" >
+      <div class="card-body login-card-body" style="border-radius: 12px;">
         <div class="login-logo">
-          <img src="assets/img/logo.png" width="auto" height="120rem" />
+          <img src="assets/img/logo.png" width="auto" height="100rem" />
           </div>
-        <p class="login-box-msg" [hidden]="!verLogin">
-          Sistema de gestión de talento humano
-        </p>
+        <h4 class="login-title" [hidden]="!verLogin">
+          Ingresar
+        </h4>
 
         <form autocomplete="off" [formGroup]="f" (ngSubmit)="login()">
           <section class="content" [hidden]="!verLogin">
@@ -54,13 +54,14 @@
                 Please fill out this field correctly.
               </div>
             </div>
-            <div class="row">
+            <div class="row" style="margin-top: 2rem;">
               <!-- /.col -->
               <div class="col-12">
-                <button type="submit" class="btn btn-danger btn-block">
-                  Iniciar sesión
+                <button type="submit" class="btn-dark">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Iniciar sesión
                 </button>
-              </div>
+            </div>
               <!-- /.col -->
             </div>
           </section>

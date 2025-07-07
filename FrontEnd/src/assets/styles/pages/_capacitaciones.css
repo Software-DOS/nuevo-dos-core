@@ -14,14 +14,13 @@
     color: var(--color-light-gray);
     transition: all 0.3s ease;
   }
-  
-  .subcategory-link:hover {
-    color: var(--color-bright-red);
-    background-color: var(--color-very-light-gray);
+    .subcategory-link:hover {
+    color: var(--page-primary);
+    background-color: var(--page-primary-light);
   }
   
   .subcategory-link.active {
-    background-color: var(--color-bright-red);
+    background: var(--page-gradient);
     color: white;
   }
   
