@@ -23,6 +23,7 @@ interface EmployeeData {
     bloodType: string;
     educationLevel: string;
     dependents: number;
+    ethnic: string;
   };
   contact: {
     institutionalEmail: string;
@@ -114,7 +115,8 @@ export class AdminCvComponent implements OnInit, AfterViewInit {
       maritalStatus: 'Casado',
       bloodType: 'O+',
       educationLevel: 'Máster',
-      dependents: 2
+      dependents: 2,
+      ethnic: 'Hispano'
     },
     contact: {
       institutionalEmail: 'juan.rodriguez@empresa.com',
