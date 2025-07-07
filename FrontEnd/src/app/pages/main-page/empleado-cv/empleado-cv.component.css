@@ -1,3 +1,52 @@
+.contenedor-flex {
+    display: flex;
+    align-items: flex-start;
+}
+
+/* Columna izquierda con 2 divs apilados */
+.columna-izquierda {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Ocupa más espacio */
+    /* gap: 1rem; */
+}
+
+/* Columna derecha con panel */
+.columna-derecha {
+  display: inline;
+  background: white;
+  border-radius: 10px;
+  box-shadow: var(--shadow-xl);
+  padding: 1rem;
+  margin: calc(50px + var(--space-12)) 1rem var(--space-12) 0;
+  max-width: 400px;
+  width: 100%;
+  /* display: flex; */
+  align-items: center;
+  /* gap: var(--space-12); */
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-slow);
+}
+
+/* Opcional: estilo al panel derecho */
+/* .side-panel {*/
+    /*background-color: #f4f6f9;*/
+    /* border-radius: 8px; */
+    /*box-shadow: 0 0 10px rgba(0,0,0,0.1);
+} */
+
+.main-section { 
+  background: white;
+  border-radius: 10px;
+  box-shadow: var(--shadow-xl);
+  padding: 2rem;
+  margin: 0 0 1rem 2rem;
+  max-width: 1200px;
+  width: 95%;
+} 
+
+
 /* ===== BOTÓN DE EDICIÓN ===== */
 .edit-section {
   position: absolute;
@@ -90,7 +139,7 @@
 @media (max-width: 1024px) {
   .main-section {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    /* gap: 1rem; */
   }
   
   .category-index {
@@ -195,4 +244,277 @@
 
 .content-area:hover {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ================================================
+            Estilos para el modal
+===================================================*/
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: hidden;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.show .modal-container {
+  transform: translateY(0) scale(1);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.modal-icon {
+  opacity: 0.9;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+
+.modal-body {
+  padding: 32px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.photo-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.photo-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #f3f4f6;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.photo-container:hover {
+  border-color: #667eea;
+  transform: scale(1.05);
+}
+
+.modal-employee-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 12px;
+  text-align: center;
+}
+
+.photo-container:hover .photo-overlay {
+  opacity: 1;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  width: 100%;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.form-input {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input::placeholder {
+  color: #9ca3af;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 24px 32px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-container {
+    width: 95%;
+    margin: 16px;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 20px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+  }
+  
+  .btn {
+    justify-content: center;
+  }
+}
+
+.content-area {
+  padding: 0;
+}
+.contenido-forms {
+  /* background-color: var(--color-very-light-gray); */
+    border-radius: var(--radius-lg);
+    padding: 35px;
+    margin-bottom: 35px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-pale-gray);
+    scroll-margin-top: 100px;
+    display: none;
+    overflow: hidden;
 }

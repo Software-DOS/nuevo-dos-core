@@ -5,7 +5,8 @@
   left: 0;
   right: 0;
   z-index: var(--z-fixed);
-  background: var(--glass-bg);
+  /*background: var(--glass-bg);*/
+  background: white;
   backdrop-filter: var(--glass-backdrop);
   -webkit-backdrop-filter: var(--glass-backdrop);
   border-bottom: 1px solid var(--glass-border);

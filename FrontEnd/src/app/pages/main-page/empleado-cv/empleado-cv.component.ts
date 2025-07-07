@@ -580,4 +580,26 @@ export class EmpleadoCvComponent implements OnInit {
       }, 3000);
     };
   }
+
+  // Variable para controlar el modal
+showEditModal: boolean = false;
+
+// Función para abrir el modal
+openEditModal(): void {
+  this.showEditModal = true;
+}
+
+// Función para cerrar el modal
+closeEditModal(): void {
+  this.showEditModal = false;
+}
+
+// Función para cerrar el modal al hacer clic en el overlay
+closeModalOnOverlay(event: Event): void {
+  if (event.target === event.currentTarget) {
+    this.closeEditModal();
+  }
+}
+
+
 }

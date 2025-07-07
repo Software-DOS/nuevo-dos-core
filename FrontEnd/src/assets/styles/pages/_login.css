@@ -11,7 +11,7 @@ body.login-page {
   
   .login-container {
     background-color: white;
-    border-radius: var(--radius-lg);
+    border-radius: 10px;
     box-shadow: var(--shadow-lg);
     padding: 50px;
     text-align: center;
@@ -20,6 +20,8 @@ body.login-page {
   }
   
   .login-logo {
+    display: flex;
+    justify-content: center;
     color: var(--color-dark-red);
     font-size: 2.5rem;
     margin-bottom: 30px;

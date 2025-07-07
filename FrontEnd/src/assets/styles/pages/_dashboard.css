@@ -19,13 +19,12 @@ body[data-page="dashboard"] {
   margin-bottom: var(--space-4);
   background: var(--gradient-electric);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: #6702b6cf;
   background-clip: text;
   position: relative;
 }
 
-.dashboard-title::after {
-  content: '';
+.dashboard-title::after {  
   position: absolute;
   bottom: -var(--space-3);
   left: 50%;
