@@ -1,4 +1,8 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
+import { iGTHEmpleado } from 'src/app/interface/igth-empleado';
+
+declare var Swal: any;
 
 interface EmployeeData {
   personalInfo: {
@@ -93,6 +97,26 @@ interface EmployeeData {
   styleUrls: ['./admin-cv.component.css']
 })
 export class AdminCvComponent implements OnInit, AfterViewInit {
+  
+  // NgModel properties para filtros y búsqueda
+  public empleadoSeleccionado: string = '5'; // Por defecto cargar empleado ID 1
+  public filtroArea: string = '';
+  public filtroDepartamento: string = '';
+  public filtroEstado: string = '';
+  public busquedaTexto: string = '';
+
+  // Listas para dropdowns
+  public listaEmpleados: any[] = [];
+  public listaAreas: any[] = [];
+  public listaDepartamentos: any[] = [];
+
+  // Control de carga
+  public cargando: boolean = false;
+  public empleadoActual: any = null;
+
+  // Datos del empleado desde el backend
+  public empleadoBackend: iGTHEmpleado | null = null;
+
   employeeData: EmployeeData = {
     personalInfo: {
       fullName: 'Juan Carlos Rodríguez Martínez',
@@ -217,16 +241,27 @@ export class AdminCvComponent implements OnInit, AfterViewInit {
   currentSection: string = 'bibliografia';
   currentSubSection: string = 'info-organizacional';
 
-  constructor() { }
+  constructor(private gthEmpleadoService: GthEmpleadoService) { }
 
   ngOnInit(): void {
-    // Component initialization
+    // Asegurar que bibliografía sea la sección activa por defecto
+    this.currentSection = 'bibliografia';
+    this.currentSubSection = 'info-organizacional';
+    
+    // Cargar empleado por defecto (ID 1)
+    this.cargarEmpleadoPorId(5);
+    this.cargarListasIniciales();
   }
   ngAfterViewInit(): void {
     this.initializeAnimations();
     this.showSection('bibliografia');
     this.showSubcategory('info-organizacional');
     this.initializeStickyNavigation();
+    
+    // Asegurar que bibliografía esté seleccionada al cargar
+    setTimeout(() => {
+      this.marcarCategoriaSeleccionada('bibliografia');
+    }, 100);
   }
 
   showSection(targetId: string): void {
@@ -261,6 +296,25 @@ export class AdminCvComponent implements OnInit, AfterViewInit {
     }
 
     this.currentSection = targetId;
+  }
+
+  marcarCategoriaSeleccionada(targetId: string): void {
+    // Asegurar que la categoría esté marcada como seleccionada
+    const links = document.querySelectorAll('.category-link');
+    links.forEach(link => {
+      link.classList.remove('selected');
+    });
+
+    const selectedLink = document.querySelector(`.category-link[data-target="${targetId}"]`);
+    if (selectedLink) {
+      selectedLink.classList.add('selected');
+    }
+
+    // También asegurar que la sección esté activa
+    const targetSection = document.getElementById(targetId);
+    if (targetSection) {
+      targetSection.classList.add('active');
+    }
   }
 
   showSubcategory(targetId: string): void {
@@ -407,6 +461,209 @@ export class AdminCvComponent implements OnInit, AfterViewInit {
       );
 
       observer.observe(categoryIndex);
+    }
+  }
+
+  // Métodos para cargar datos del backend
+  cargarEmpleadoPorId(idEmpleado: number): void {
+    this.cargando = true;
+    
+    // Usar el método con parámetros para cargar un empleado específico
+    this.gthEmpleadoService.MostrarConParametros(1, idEmpleado).subscribe({
+      next: (response: any) => {
+        console.log('Respuesta del backend:', response);
+        
+        // Buscar el empleado específico en la respuesta
+        let empleados = response.$values || response;
+        if (Array.isArray(empleados) && empleados.length > 0) {
+          this.empleadoActual = empleados[0]; // Tomar el primer resultado
+        } else if (!Array.isArray(empleados) && empleados) {
+          this.empleadoActual = empleados;
+        } else {
+          this.empleadoActual = null;
+        }
+        
+        if (this.empleadoActual) {
+          this.actualizarDatosEmpleado();
+          // this.mostrarMensajeExito(`Empleado ${this.empleadoActual.nombre} ${this.empleadoActual.apellido} cargado correctamente`);
+          console.log(`Empleado ${this.empleadoActual.nombre} ${this.empleadoActual.apellido} cargado correctamente`);
+        } else {
+          // this.mostrarMensajeError('Empleado no encontrado');
+          console.warn('Empleado no encontrado');
+        }
+        
+        this.cargando = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar empleado:', error);
+        // this.mostrarMensajeError('Error al cargar los datos del empleado');
+        console.warn('Error al cargar los datos del empleado');
+        this.cargando = false;
+      }
+    });
+  }
+
+  cargarListasIniciales(): void {
+    // Cargar lista de empleados desde el backend
+    this.gthEmpleadoService.MostrarConParametros(0).subscribe({
+      next: (response: any) => {
+        console.log('Lista de empleados:', response);
+        let empleados = response.$values || response;
+        
+        if (Array.isArray(empleados)) {
+          this.listaEmpleados = empleados.map(emp => ({
+            id: emp.idEmpleado,
+            nombre: `${emp.nombre || ''} ${emp.apellido || ''}`.trim() || `Empleado ${emp.idEmpleado}`
+          }));
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar lista de empleados:', error);
+        // Fallback a datos estáticos
+        this.listaEmpleados = [
+          { id: 1, nombre: 'Empleado 1' },
+          { id: 2, nombre: 'Empleado 2' }
+        ];
+      }
+    });
+    
+    // Listas estáticas por ahora (se pueden cargar del backend después)
+    this.listaAreas = [
+      { id: 1, nombre: 'Tecnología de la Información' },
+      { id: 2, nombre: 'Recursos Humanos' },
+      { id: 3, nombre: 'Marketing' },
+      { id: 4, nombre: 'Ventas' },
+      { id: 5, nombre: 'Administración' },
+      { id: 6, nombre: 'Finanzas' }
+    ];
+    
+    this.listaDepartamentos = [
+      { id: 1, nombre: 'Desarrollo de Aplicaciones' },
+      { id: 2, nombre: 'Gestión Humana' },
+      { id: 3, nombre: 'Ventas Digitales' },
+      { id: 4, nombre: 'Soporte Técnico' },
+      { id: 5, nombre: 'Marketing Digital' },
+      { id: 6, nombre: 'Contabilidad' }
+    ];
+  }
+
+  actualizarDatosEmpleado(): void {
+    if (!this.empleadoActual) return;
+    
+    // Actualizar employeeData con los datos del backend
+    this.employeeData = {
+      personalInfo: {
+        fullName: `${this.empleadoActual.nombre || ''} ${this.empleadoActual.apellido || ''}`.trim() || 'Nombre no disponible',
+        email: this.empleadoActual.correo || this.empleadoActual.correoCorporativo || 'Email no disponible',
+        position: this.empleadoActual.cargoActual || 'Cargo no disponible',
+        area: this.empleadoActual.area || 'Área no disponible',
+        subArea: this.empleadoActual.subArea || 'Sub-área no disponible',
+        photo: this.empleadoActual.fotoPerfilUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+      },
+      bibliography: {
+        birthDate: this.empleadoActual.fechaNacimiento || 'Fecha no disponible',
+        birthCountry: this.empleadoActual.paisNacimiento || 'País no disponible',
+        birthProvince: this.empleadoActual.provinciaNacimiento || 'Provincia no disponible',
+        birthCity: this.empleadoActual.ciudadNacimiento || 'Ciudad no disponible'
+      },
+      personalDetails: {
+        firstName: this.empleadoActual.nombre || 'Nombre no disponible',
+        lastName: this.empleadoActual.apellido || 'Apellido no disponible',
+        gender: this.empleadoActual.sexo || 'No especificado',
+        maritalStatus: this.empleadoActual.estadoCivil || 'No especificado',
+        bloodType: this.empleadoActual.tipoSangre || 'No especificado',
+        educationLevel: this.empleadoActual.nivelEstudio || 'No especificado',
+        dependents: this.empleadoActual.cargasFamiliares || 0,
+        ethnic: this.empleadoActual.etnia || 'No especificado'
+      },
+      contact: {
+        institutionalEmail: this.empleadoActual.correoCorporativo || 'Email no disponible',
+        personalEmail: this.empleadoActual.correo || 'Email no disponible',
+        cellPhone: this.empleadoActual.telefono || 'Teléfono no disponible',
+        address: this.empleadoActual.direccion || 'Dirección no disponible'
+      },
+      emergency: {
+        name: this.empleadoActual.nombreEmergencia || 'No especificado',
+        relationship: this.empleadoActual.relacionEmergencia || 'No especificado',
+        phone: this.empleadoActual.telefonoEmergencia || 'No especificado'
+      },
+      family: {
+        spouse: {
+          name: this.empleadoActual.nombreConyuge || 'No especificado',
+          marriageDate: this.empleadoActual.fechaMatrimonio || 'No especificado',
+          disability: this.empleadoActual.discapacidadConyuge ? 'Sí' : 'No'
+        },
+        children: [] // Esto se cargaría de otra tabla/endpoint
+      },
+      employment: {
+        position: this.empleadoActual.cargoActual || 'Cargo no disponible',
+        startDate: this.empleadoActual.fechaContratacion || 'Fecha no disponible',
+        company: this.empleadoActual.empresa || 'Empresa no disponible',
+        area: this.empleadoActual.area || 'Área no disponible',
+        subArea: this.empleadoActual.subArea || 'Sub-área no disponible',
+        directManager: this.empleadoActual.jefeDirecto || 'No especificado',
+        contractType: this.empleadoActual.tipoContrato || 'No especificado',
+        location: this.empleadoActual.ubicacion || 'No especificado'
+      },
+      workHistory: [], // Esto se cargaría de otra tabla/endpoint
+      education: {
+        degrees: [], // Esto se cargaría de otra tabla/endpoint
+        certifications: [] // Esto se cargaría de otra tabla/endpoint
+      },
+      languages: [], // Esto se cargaría de otra tabla/endpoint
+      projects: [] // Esto se cargaría de otra tabla/endpoint
+    };
+    
+    console.log('Datos actualizados del empleado:', this.employeeData);
+  }
+
+  onEmpleadoSeleccionadoChange(): void {
+    if (this.empleadoSeleccionado) {
+      const idEmpleado = parseInt(this.empleadoSeleccionado);
+      if (!isNaN(idEmpleado)) {
+        this.cargarEmpleadoPorId(idEmpleado);
+      }
+    }
+  }
+
+  aplicarFiltros(): void {
+    // Implementar lógica de filtros si es necesario
+    console.log('Aplicando filtros:', {
+      area: this.filtroArea,
+      departamento: this.filtroDepartamento,
+      estado: this.filtroEstado,
+      busqueda: this.busquedaTexto
+    });
+  }
+
+  buscarEmpleados(): void {
+    // Implementar búsqueda si es necesario
+    console.log('Buscando empleados con:', this.busquedaTexto);
+  }
+
+  mostrarMensajeError(mensaje: string): void {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: 'Error',
+        text: mensaje,
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    } else {
+      alert(mensaje);
+    }
+  }
+
+  mostrarMensajeExito(mensaje: string): void {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: 'Éxito',
+        text: mensaje,
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      });
+    } else {
+      alert(mensaje);
     }
   }
 }

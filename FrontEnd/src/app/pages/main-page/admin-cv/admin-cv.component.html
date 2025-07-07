@@ -1,3 +1,5 @@
+<!-- Contenido principal del CV (solo se muestra si hay empleado seleccionado) -->
+<div *ngIf="empleadoActual || !cargando">
 <!-- Tarjeta del Empleado -->
 <div class="employee-card">
     <img [src]="employeeData.personalInfo.photo" alt="Foto del Empleado" class="employee-image">
@@ -15,7 +17,7 @@
 <!-- Sección Principal -->
 <div class="main-section">    <div class="category-index">
         <ul>
-            <li><div class="category-link" data-target="bibliografia" (click)="onCategoryClick($event, 'bibliografia')">Bibliografía</div></li>
+            <li><div class="category-link selected" data-target="bibliografia" (click)="onCategoryClick($event, 'bibliografia')">Bibliografía</div></li>
             <li><div class="category-link" data-target="info-personal" (click)="onCategoryClick($event, 'info-personal')">Información Personal</div></li>
             <li><div class="category-link" data-target="contacto" (click)="onCategoryClick($event, 'contacto')">Contacto y Dirección</div></li>
             <li><div class="category-link" data-target="emergencia" (click)="onCategoryClick($event, 'emergencia')">Contacto de Emergencia</div></li>
@@ -28,7 +30,7 @@
             <li><div class="category-link" data-target="proyectos" (click)="onCategoryClick($event, 'proyectos')">Proyectos</div></li>
         </ul>
     </div>
-    <div class="content-area">            <div id="bibliografia" class="content-section">
+    <div class="content-area">            <div id="bibliografia" class="content-section active">
                 <h2>Bibliografía</h2>
                 <div class="info-grid">
                     <div class="info-item">
@@ -353,6 +355,7 @@
             </div>
     </div>
 </div>
+</div> <!-- Cierre del contenido principal -->
 
 <footer class="page-footer">
     <button id="printCVButton" class="nav-button" (click)="onPrintCV()">Imprimir CV</button>
