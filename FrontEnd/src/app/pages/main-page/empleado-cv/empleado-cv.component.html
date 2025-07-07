@@ -100,19 +100,6 @@
 
               <div class="info-grid">
                 <div class="info-item">
-                  <span class="label">Estado Civil:</span>
-                  <div class="filter-group">
-                    <select class="value" style="margin-left: 1rem;" [(ngModel)]="estadoCivil" [disabled]="!sectionEditStates['datos-personales']">
-                      <option value="">Seleccionar</option>
-                      <option value="Soltero">Soltero</option>
-                      <option value="Casado">Casado</option>
-                      <option value="Divorciado">Divorciado</option>
-                      <option value="Viudo">Viudo</option>
-                      <option value="Unión libre">Unión libre</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="info-item">
                   <span class="label">Tipo de Sangre:</span>
                   <div class="filter-group">
                     <select class="value" style="margin-left: 1rem;" [(ngModel)]="tipoSangre" [disabled]="!sectionEditStates['datos-personales']">
@@ -143,6 +130,16 @@
                     </select>
                   </div>
                 </div>
+                              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Número de Cédula:</span>
+                  <input type="text" class="value" [(ngModel)]="numeroCedula" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+                <div class="info-item">
+                  <span class="label">Documento de Identidad:</span>
+                  <input type="file" accept="application/pdf" class="value file-input" [(ngModel)]="documentoIdentidad" [disabled]="!sectionEditStates['datos-personales']">
+                </div>
+              </div>
               </div>
             </section>
 
@@ -163,10 +160,6 @@
                 <div class="info-item">
                   <span class="label">Ciudad:</span>
                   <input type="text" class="value" [(ngModel)]="ciudadNacimiento" [disabled]="!sectionEditStates['datos-personales']">
-                </div>
-                <div class="info-item">
-                  <span class="label">Número de Cédula:</span>
-                  <input type="text" class="value" [(ngModel)]="numeroCedula" [disabled]="!sectionEditStates['datos-personales']">
                 </div>
               </div>
             </section>
@@ -206,13 +199,6 @@
                 <div class="info-item">
                   <span class="label">Cargas Familiares:</span>
                   <input type="number" class="value" [(ngModel)]="cargasFamiliares" [disabled]="!sectionEditStates['datos-personales']" min="0">
-                </div>
-              </div>
-              
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="label">Documento de Identidad:</span>
-                  <input type="file" accept="application/pdf" class="value file-input" [(ngModel)]="documentoIdentidad" [disabled]="!sectionEditStates['datos-personales']">
                 </div>
               </div>
             </section>
@@ -256,27 +242,36 @@
                     </select>
                   </div>
                 </div>
-                <div class="info-item">
-                  <span class="label">Nombre del Cónyuge:</span>
-                  <input type="text" class="value" [(ngModel)]="nombreConyuge" [disabled]="!sectionEditStates['datos-personales']">
-                </div>
               </div>
               
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="label">Fecha de Matrimonio:</span>
-                  <input type="date" class="value" [(ngModel)]="fechaMatrimonio" [disabled]="!sectionEditStates['datos-personales']">
+              <!-- Formulario que solo aparece cuando está casado o en unión libre -->
+              <div *ngIf="estadoConyugal === 'Casado' || estadoConyugal === 'Unión libre'">
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Nombre del Cónyuge:</span>
+                    <input type="text" class="value" [(ngModel)]="nombreConyuge" [disabled]="!sectionEditStates['datos-personales']">
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Fecha de Matrimonio:</span>
+                    <input type="date" class="value" [(ngModel)]="fechaMatrimonio" [disabled]="!sectionEditStates['datos-personales']">
+                  </div>
                 </div>
-                <div class="info-item">
-                  <span class="label">Discapacidad:</span>
-                  <input type="text" class="value" [(ngModel)]="discapacidadConyuge" [disabled]="!sectionEditStates['datos-personales']">
-                </div>
-              </div>
-              
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="label">Documentos:</span>
-                  <input type="file" class="value file-input" [(ngModel)]="documentosConyuge" [disabled]="!sectionEditStates['datos-personales']" accept=".pdf">
+                
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="label">Discapacidad:</span>
+                    <div class="filter-group">
+                      <label class="checkbox-container">
+                        <input type="checkbox" [(ngModel)]="discapacidadConyuge" [disabled]="!sectionEditStates['datos-personales']">
+                        <span class="checkmark"></span>
+                        Tiene discapacidad
+                      </label>
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Documentos:</span>
+                    <input type="file" class="value file-input" [(ngModel)]="documentosConyuge" [disabled]="!sectionEditStates['datos-personales']" accept=".pdf">
+                  </div>
                 </div>
               </div>
             </section>
@@ -342,20 +337,6 @@
                 <div class="form-actions">
                   <button class="nav-button secondary" (click)="toggleAddDependentForm()">Cancelar</button>
                   <button class="nav-button" (click)="addDependent()">Guardar Dependiente</button>
-                </div>
-              </div>
-            </section>
-
-            <section class="form-section">
-              <h3 class="section-title">Documentos de Identidad</h3>
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="label">Número de Cédula:</span>
-                  <input type="text" class="value" [(ngModel)]="numeroCedula" [disabled]="!sectionEditStates['datos-personales']">
-                </div>
-                <div class="info-item">
-                  <span class="label">Documento de Identidad:</span>
-                  <input type="file" accept="application/pdf" class="value file-input" [(ngModel)]="documentoIdentidad" [disabled]="!sectionEditStates['datos-personales']">
                 </div>
               </div>
             </section>
