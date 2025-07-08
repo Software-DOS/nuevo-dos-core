@@ -42,6 +42,7 @@ namespace WebAppConexion.Controllers
                 Tipo = tipo,
                 IdCapacitacion = e.IdCapacitacion,
                 IdEmpleado = e.IdEmpleado,
+                CedulaEmpleado = e.CedulaEmpleado,
                 Justificacion = e.Justificacion,
                 FechaSolicitud = e.FechaSolicitud,
                 Respuesta = e.Respuesta,
@@ -70,13 +71,14 @@ namespace WebAppConexion.Controllers
             {
                 IdCapacitacion = model.IdCapacitacion,
                 IdEmpleado = model.IdEmpleado,
+                CedulaEmpleado = model.CedulaEmpleado,
                 Justificacion = model.Justificacion,
                 FechaSolicitud = model.FechaSolicitud,
                 Respuesta = model.Respuesta,
                 FechaRespuesta = model.FechaRespuesta
             };
 
-            var resultado = await _repository.Gestionar(model.Tipo, solicitud);
+            var resultado = await _repository.Gestionar(model.Tipo, solicitud, model.CedulaEmpleado);
             return Ok(resultado.Select(r => new Generica
             {
                 valor1 = r.valor1,
