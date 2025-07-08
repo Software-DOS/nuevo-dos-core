@@ -19,12 +19,13 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
         /// <summary>
         /// Ejecuta SP para mostrar solicitudes de capacitación según filtros.
-        /// 1 = IdCapacitacion, 2 = IdEmpleado.
+        /// 1 = IdCapacitacion, 2 = IdEmpleado, 3 = CedulaEmpleado, 0 = Todos.
         /// </summary>
         public async Task<IEnumerable<GTHSolicitudCapacitacion>> Mostrar(
             int tipo,
             int? idCapacitacion = null,
-            int? idEmpleado = null)
+            int? idEmpleado = null,
+            string cedulaEmpleado = null)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("GTH_MostrarSolicitudCapacitacion", sql)
@@ -34,6 +35,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
             cmd.Parameters.Add(new SqlParameter("@ID_Capacitacion", idCapacitacion ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@ID_Empleado", idEmpleado ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CedulaEmpleado", cedulaEmpleado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
 
             await sql.OpenAsync();
@@ -78,7 +80,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar una solicitud de capacitación.
-        /// 1 = Insertar, 2 = Editar, 3 = Eliminar.
+        /// 0 = Insertar, 1 = Editar, 2 = Eliminar.
         /// </summary>
         public async Task<IEnumerable<Generica>> Gestionar(
             int tipo,

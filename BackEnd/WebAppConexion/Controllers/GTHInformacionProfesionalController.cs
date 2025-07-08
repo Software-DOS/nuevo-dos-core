@@ -21,18 +21,20 @@ namespace WebAppConexion.Controllers
 
         /// <summary>
         /// Devuelve la lista de información profesional según los filtros proporcionados.
-        /// 1 = IdInfoProf, 2 = IdEmpleado, 0 = Todos.
+        /// 1 = IdInfoProf, 2 = IdEmpleado, 3 = CedulaEmpleado, 0 = Todos.
         /// </summary>
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<GTHInformacionProfesionalViewModel>>> Mostrar(
             [FromQuery] int tipo,
             [FromQuery] long? idInfoProf = null,
-            [FromQuery] long? idEmpleado = null)
+            [FromQuery] long? idEmpleado = null,
+            [FromQuery] string cedulaEmpleado = null)
         {
             var entidades = await _repository.Mostrar(
                 tipo,
                 idInfoProf.HasValue ? (int?)idInfoProf.Value : null,
-                idEmpleado.HasValue ? (int?)idEmpleado.Value : null
+                idEmpleado.HasValue ? (int?)idEmpleado.Value : null,
+                cedulaEmpleado
             );
 
             var modelos = entidades.Select(e => new GTHInformacionProfesionalViewModel

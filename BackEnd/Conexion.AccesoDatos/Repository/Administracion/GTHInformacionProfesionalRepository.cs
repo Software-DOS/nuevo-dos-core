@@ -19,12 +19,13 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
         /// <summary>
         /// Ejecuta SP para mostrar información profesional según filtros.
-        /// 1 = IdInfoProf, 2 = IdEmpleado.
+        /// 1 = IdInfoProf, 2 = IdEmpleado, 3 = CedulaEmpleado, 0 = Todos.
         /// </summary>
         public async Task<IEnumerable<GTHInformacionProfesional>> Mostrar(
             int tipo,
             int? idInfoProf = null,
-            int? idEmpleado = null)
+            int? idEmpleado = null,
+            string cedulaEmpleado = null)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("GTH_MostrarInformacionProfesional", sql)
@@ -34,6 +35,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
             cmd.Parameters.Add(new SqlParameter("@ID_Infoprof", idInfoProf ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@ID_Empleado", idEmpleado ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CedulaEmpleado", cedulaEmpleado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
 
             await sql.OpenAsync();

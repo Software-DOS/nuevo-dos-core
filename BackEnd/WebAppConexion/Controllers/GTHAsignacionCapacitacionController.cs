@@ -21,15 +21,16 @@ namespace WebAppConexion.Controllers
 
         /// <summary>
         /// Devuelve la lista de asignaciones de capacitación según los filtros proporcionados.
-        /// 1 = IdCapacitacion, 2 = IdEmpleado, 0 = Todos.
+        /// 1 = IdCapacitacion, 2 = IdEmpleado, 3 = CedulaEmpleado, 0 = Todos.
         /// </summary>
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<GTHAsignacionCapacitacionViewModel>>> Mostrar(
             [FromQuery] int tipo,
             [FromQuery] int? idCapacitacion = null,
-            [FromQuery] int? idEmpleado = null)
+            [FromQuery] int? idEmpleado = null,
+            [FromQuery] string cedulaEmpleado = null)
         {
-            var entidades = await _repository.Mostrar(tipo, idCapacitacion, idEmpleado);
+            var entidades = await _repository.Mostrar(tipo, idCapacitacion, idEmpleado, cedulaEmpleado);
 
             var modelos = entidades.Select(e => new GTHAsignacionCapacitacionViewModel
             {
