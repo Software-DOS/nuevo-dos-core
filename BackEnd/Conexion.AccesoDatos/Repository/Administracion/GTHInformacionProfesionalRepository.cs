@@ -54,6 +54,9 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     IdEmpleado = empVal != DBNull.Value
                         ? Convert.ToInt64(empVal)
                         : (long?)null,
+                    CedulaEmpleado = reader["EMP_CEDULA"] != DBNull.Value 
+                        ? reader["EMP_CEDULA"].ToString() 
+                        : string.Empty,
                     DescripcionProfesional = reader["INFPROF_DESCPROFESIONAL"]?.ToString(),
                     PerfilLinkedIn = reader["INFPROF_PERFILLINKEDIN"]?.ToString(),
                     FechaCreacion = reader["INFPROF_FECHACREACION"] as DateTime?
@@ -64,8 +67,12 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar información profesional.
+        /// 0 = Insertar, 1 = Editar, 2 = Eliminar.
         /// </summary>
-        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHInformacionProfesional infoProf)
+        public async Task<IEnumerable<Generica>> Gestionar(
+            int tipo, 
+            GTHInformacionProfesional infoProf,
+            string cedulaEmpleado = null)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_INFORMACIONPROFESIONAL", sql)
@@ -75,7 +82,8 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
             cmd.Parameters.Add(new SqlParameter("@ID_INFOPROF", infoProf.IdInfoProf));
-            cmd.Parameters.Add(new SqlParameter("@ID_EMPLEADO", infoProf.IdEmpleado ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@ID_EMPLEADO", infoProf.IdEmpleado == 0 ? (object)DBNull.Value : infoProf.IdEmpleado));
+            cmd.Parameters.Add(new SqlParameter("@CedulaEmpleado", cedulaEmpleado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@INFPROF_DESCPROFESIONAL", infoProf.DescripcionProfesional ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@INFPROF_PERFILLINKEDIN", infoProf.PerfilLinkedIn ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@INFPROF_FECHACREACION", infoProf.FechaCreacion ?? (object)DBNull.Value));

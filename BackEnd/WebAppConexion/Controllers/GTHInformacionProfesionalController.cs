@@ -42,6 +42,7 @@ namespace WebAppConexion.Controllers
                 Tipo = tipo,
                 IdInfoProf = e.IdInfoProf,
                 IdEmpleado = e.IdEmpleado,
+                CedulaEmpleado = e.CedulaEmpleado,
                 DescripcionProfesional = e.DescripcionProfesional,
                 PerfilLinkedIn = e.PerfilLinkedIn,
                 FechaCreacion = e.FechaCreacion
@@ -62,12 +63,13 @@ namespace WebAppConexion.Controllers
             {
                 IdInfoProf = model.IdInfoProf,
                 IdEmpleado = model.IdEmpleado,
+                CedulaEmpleado = model.CedulaEmpleado,
                 DescripcionProfesional = model.DescripcionProfesional,
                 PerfilLinkedIn = model.PerfilLinkedIn,
                 FechaCreacion = model.FechaCreacion
             };
 
-            var resultado = await _repository.Gestionar(model.Tipo, entidad);
+            var resultado = await _repository.Gestionar(model.Tipo, entidad, model.CedulaEmpleado);
             return Ok(resultado.Select(r => new Generica
             {
                 valor1 = r.valor1,
