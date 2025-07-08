@@ -98,12 +98,14 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
         /// <summary>
         /// Ejecuta SP para mostrar empleados según filtros.
+        /// 1 = IdEmpleado/Cédula, 2 = IdCelula, 3 = EstadoEmpleado, 4 = Cédula exclusiva, 0 = Todos.
         /// </summary>
         public async Task<IEnumerable<GTHEmpleado>> Mostrar(
             int tipo,
             int? idEmpleado = null,
             int? idCelula = null,
-            string estadoEmpleado = null)
+            string estadoEmpleado = null,
+            string cedulaEmpleado = null)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("GTH_MostrarEmpleado", sql)
@@ -114,6 +116,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@ID_Empleado", idEmpleado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@ID_Celula", idCelula ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@Emp_EstadoEmpleado", estadoEmpleado ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CedulaEmpleado", cedulaEmpleado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
 
             await sql.OpenAsync();

@@ -26,17 +26,18 @@ namespace WebAppConexion.Controllers
 
         /// <summary>
         /// Devuelve la lista de empleados según los filtros proporcionados.
-        /// 1 = IdEmpleado, 2 = IdCelula, 3 = estadoEmpleado, 0 = Todos.
+        /// 1 = IdEmpleado/Cédula, 2 = IdCelula, 3 = EstadoEmpleado, 4 = Cédula exclusiva, 0 = Todos.
         /// </summary>
         [HttpGet("[action]")]
         public async Task<IEnumerable<GTHEmpleadoViewModel>> Mostrar(
         [FromQuery] int tipo,
         [FromQuery] int? idEmpleado = null,
         [FromQuery] int? idCelula = null,
-        [FromQuery] string estadoEmpleado = null)
+        [FromQuery] string estadoEmpleado = null,
+        [FromQuery] string cedulaEmpleado = null)
         {
             // Llamamos al repositorio con los filtros
-            var entidades = await _repository.Mostrar(tipo, idEmpleado, idCelula, estadoEmpleado);
+            var entidades = await _repository.Mostrar(tipo, idEmpleado, idCelula, estadoEmpleado, cedulaEmpleado);
 
             // Mapear cada GTHEmpleado a tu ViewModel
             return entidades.Select(e => new GTHEmpleadoViewModel
