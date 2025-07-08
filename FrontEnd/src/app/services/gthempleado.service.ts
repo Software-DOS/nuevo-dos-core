@@ -20,18 +20,28 @@ export class GthEmpleadoService {
 
   /**
    * Obtener empleados GTH con parámetros específicos
-   * @param tipo - Tipo de consulta (0 = Todos, 1 = Por ID, etc.)
+   * @param tipo - Tipo de consulta (0 = Todos, 1 = Por ID/Cédula, 2 = Por Célula, 3 = Por Estado, 4 = Por Cédula exclusiva)
    * @param idEmpleado - ID del empleado específico
    * @param idCelula - ID de la célula
    * @param estadoEmpleado - Estado del empleado
+   * @param cedulaEmpleado - Cédula del empleado
    */
-  MostrarConParametros(tipo: number = 0, idEmpleado?: number, idCelula?: number, estadoEmpleado?: string){
+  MostrarConParametros(tipo: number = 0, idEmpleado?: number, idCelula?: number, estadoEmpleado?: string, cedulaEmpleado?: string){
     let params = `?tipo=${tipo}`;
     if (idEmpleado) params += `&idEmpleado=${idEmpleado}`;
     if (idCelula) params += `&idCelula=${idCelula}`;
     if (estadoEmpleado) params += `&estadoEmpleado=${estadoEmpleado}`;
+    if (cedulaEmpleado) params += `&cedulaEmpleado=${cedulaEmpleado}`;
     
     return this.http.get(environment.urlbackend + "api/GTHEmpleado/Mostrar" + params);
+  }
+
+  /**
+   * Buscar empleado específicamente por cédula
+   * @param cedula - Cédula del empleado a buscar
+   */
+  BuscarPorCedula(cedula: string){
+    return this.MostrarConParametros(4, undefined, undefined, undefined, cedula);
   }
 
   /**
