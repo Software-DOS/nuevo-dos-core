@@ -11,6 +11,7 @@ namespace WebAppConexion.Models
         public int Tipo { get; set; }
         public long IdCapacitacion { get; set; }
         public long IdEmpleado { get; set; }
+        public string CedulaEmpleado { get; set; }
         public DateTime? Fecha { get; set; }
         public int? Progreso { get; set; }
     }

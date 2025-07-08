@@ -54,6 +54,9 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     IdEmpleado = empleadoValue != DBNull.Value
                         ? Convert.ToInt64(empleadoValue)
                         : 0L,
+                    CedulaEmpleado = reader["EMP_CEDULA"] != DBNull.Value 
+                        ? reader["EMP_CEDULA"].ToString() 
+                        : string.Empty,
                     Fecha = reader["CAP_A_FECHA"] as DateTime?,
                     Progreso = reader["CAP_A_PROGRESO"] as int?
                 });
@@ -64,11 +67,12 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
         /// <summary>
         /// Ejecuta SP para insertar, actualizar o eliminar una asignación de capacitación.
-        /// 1 = Insertar, 2 = Editar, 3 = Eliminar.
+        /// 0 = Insertar, 1 = Editar, 2 = Eliminar.
         /// </summary>
         public async Task<IEnumerable<Generica>> Gestionar(
             int tipo,
-            GTHAsignacionCapacitacion asignacion)
+            GTHAsignacionCapacitacion asignacion,
+            string cedulaEmpleado = null)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_ASIGNACIONCAPACITACION", sql)
@@ -78,7 +82,8 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
             cmd.Parameters.Add(new SqlParameter("@ID_Capacitacion", asignacion.IdCapacitacion));
-            cmd.Parameters.Add(new SqlParameter("@ID_Empleado", asignacion.IdEmpleado));
+            cmd.Parameters.Add(new SqlParameter("@ID_Empleado", asignacion.IdEmpleado == 0 ? (object)DBNull.Value : asignacion.IdEmpleado));
+            cmd.Parameters.Add(new SqlParameter("@CedulaEmpleado", cedulaEmpleado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@CAP_A_Fecha", asignacion.Fecha ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@CAP_A_Progreso", asignacion.Progreso ?? (object)DBNull.Value));
 

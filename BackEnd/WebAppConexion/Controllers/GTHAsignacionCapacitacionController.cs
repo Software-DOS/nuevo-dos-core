@@ -37,6 +37,7 @@ namespace WebAppConexion.Controllers
                 Tipo = e.Tipo,
                 IdCapacitacion = e.IdCapacitacion,
                 IdEmpleado = e.IdEmpleado,
+                CedulaEmpleado = e.CedulaEmpleado,
                 Fecha = e.Fecha,
                 Progreso = e.Progreso
             });
@@ -59,12 +60,13 @@ namespace WebAppConexion.Controllers
                 Tipo = model.Tipo,
                 IdCapacitacion = model.IdCapacitacion,
                 IdEmpleado = model.IdEmpleado,
+                CedulaEmpleado = model.CedulaEmpleado,
                 Fecha = model.Fecha,
                 Progreso = model.Progreso
             };
 
-            // Llamamos a Gestionar pasándole model.Tipo (igual que en Empleado)
-            var response = await _repository.Gestionar(entidad.Tipo, entidad);
+            // Llamamos a Gestionar pasándole model.Tipo y la cédula
+            var response = await _repository.Gestionar(entidad.Tipo, entidad, model.CedulaEmpleado);
 
             // Mapeamos de Generica a Generica (solo para replicar el patrón de Empleado)
             return Ok(response.Select(r => new Generica
