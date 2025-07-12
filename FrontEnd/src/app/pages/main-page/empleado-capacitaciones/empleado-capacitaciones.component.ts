@@ -78,22 +78,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     }
   ];
 
-  availableTrainings: Training[] = [
-    {
-      id: 3,
-      name: 'Comunicación Efectiva',
-      duration: 15,
-      certification: 'Soft Skills Essentials',
-      company: 'Oracle'
-    },
-    {
-      id: 4,
-      name: 'Excel para Análisis',
-      duration: 25,
-      certification: 'Certificación Excel Avanzado',
-      company: 'Microsoft'
-    }
-  ];
+  availableTrainings: Training[] = [];
 
   completedTrainings: Training[] = [
     {
@@ -129,6 +114,31 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadRequestedTrainings();
+    this.cargarCapacitacionesDesdeBackend();
+  }
+
+  private cargarCapacitacionesDesdeBackend(): void {
+    // Cargar capacitaciones disponibles del backend
+    this.gthCapacitacionService.MostrarCapacitaciones(0).subscribe({
+      next: (response: any) => {
+        // El backend devuelve un objeto con $values que contiene el array real
+        const capacitaciones = response.$values || response;
+        
+        if (capacitaciones && Array.isArray(capacitaciones)) {
+          // Convertir las capacitaciones del backend al formato local
+          this.availableTrainings = capacitaciones.map((cap: any) => ({
+            id: cap.idCapacitacion || 0,
+            name: cap.nombre || '',
+            duration: cap.duracion || 0,
+            certification: cap.titulo || cap.nombre || '', // Usar título o nombre como respaldo
+            company: 'N/A' // Removemos el campo empresa como solicitado
+          }));
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar capacitaciones del backend:', error);
+      }
+    });
   }
 
   switchTab(tabName: string): void {

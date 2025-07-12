@@ -58,14 +58,12 @@
           <div>Nombre</div>
           <div>Duración (h)</div>
           <div>Certificación</div>
-          <div>Empresa</div>
         </div>
 
         <div *ngFor="let training of availableTrainings" class="cap-row">
           <div>{{ training.name }}</div>
           <div>{{ training.duration }}</div>
           <div>{{ training.certification }}</div>
-          <div>{{ training.company }}</div>
         </div>
       </div>
     </div>
