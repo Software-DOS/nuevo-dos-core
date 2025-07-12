@@ -64,8 +64,10 @@ export class ListaCapacitacionesComponent implements OnInit {
   showForm: boolean = false;
   showFormButton: boolean = true;
   showModal: boolean = false;
+  showEditModal: boolean = false;
   selectedEmployeeTrainings: EmpleadoCapacitaciones | null = null;
   capacitacionEditandoId: string | null = null;
+  capacitacionEditando: CapacitacionDisponible | null = null;
 
   nuevaCapacitacion: NuevaCapacitacion = {
     nombre: '',
@@ -331,9 +333,14 @@ export class ListaCapacitacionesComponent implements OnInit {
 
     this.showForm = false;
     this.showFormButton = true;
+    this.capacitacionEditandoId = null;
+    this.capacitacionEditando = null;
   }
 
   editarCapacitacion(capacitacion: CapacitacionDisponible): void {
+    // Almacenar la capacitación que se va a editar
+    this.capacitacionEditando = { ...capacitacion };
+    
     // Llenar el formulario con los datos de la capacitación a editar
     this.nuevaCapacitacion = {
       nombre: capacitacion.nombre,
@@ -343,13 +350,116 @@ export class ListaCapacitacionesComponent implements OnInit {
       enlace: ''
     };
     
-    // Guardar el ID de la capacitación que se está editando (si no es estática)
-    // Para capacitaciones estáticas, se creará una nueva entrada dinámica
-    this.capacitacionEditandoId = capacitacion.isStatic ? null : (capacitacion.id || null);
+    // Guardar el ID de la capacitación que se está editando
+    this.capacitacionEditandoId = capacitacion.id || null;
     
-    // Mostrar el formulario
-    this.showForm = true;
-    this.showFormButton = false;
+    // Mostrar el modal de edición
+    this.showEditModal = true;
+  }
+
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.capacitacionEditando = null;
+    this.capacitacionEditandoId = null;
+    this.resetForm();
+  }
+
+  cancelarEdicion(): void {
+    Swal.fire({
+      title: '¿Cancelar edición?',
+      text: 'Se perderán los cambios realizados.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, continuar'
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        this.closeEditModal();
+        Swal.fire('Cancelado', 'La edición ha sido cancelada.', 'info');
+      }
+    });
+  }
+
+  guardarEdicion(): void {
+    if (!this.nuevaCapacitacion.nombre || !this.nuevaCapacitacion.duracion) {
+      Swal.fire({
+        title: 'Campos incompletos',
+        text: 'Por favor completa los campos obligatorios.',
+        icon: 'warning',
+        confirmButtonText: 'Ok'
+      });
+      return;
+    }
+
+    if (!this.capacitacionEditandoId) {
+      Swal.fire({
+        title: 'Error',
+        text: 'No se puede editar esta capacitación. ID no válido.',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+      return;
+    }
+
+    // Crear objeto de capacitación compatible con el backend para edición
+    const capacitacionData: iGTHCapacitacion = {
+      tipo: 1, // 1 = Editar
+      idCapacitacion: parseInt(this.capacitacionEditandoId),
+      idEntidadCap: 1, // Valor por defecto
+      nombre: this.nuevaCapacitacion.nombre,
+      titulo: this.nuevaCapacitacion.nombre,
+      categoria: 'Disponible',
+      descripcion: this.nuevaCapacitacion.justificacion || '',
+      estado: 'Disponible',
+      fechaInicio: undefined,
+      fechaFin: undefined,
+      fechaExpiracion: undefined,
+      urlVerificacion: this.nuevaCapacitacion.enlace || '',
+      archivosAdjuntos: '',
+      observaciones: '',
+      duracion: this.nuevaCapacitacion.duracion,
+      costo: 0,
+      modalidad: 'Por definir'
+    };
+
+    // Llamar al servicio para actualizar en el backend
+    this.gthCapacitacionService.GuardarGthCapacitacion(capacitacionData).subscribe({
+      next: (response: any) => {
+        // Actualizar la capacitación en la lista local
+        const index = this.capacitacionesDisponibles.findIndex(cap => cap.id === this.capacitacionEditandoId);
+        if (index !== -1) {
+          this.capacitacionesDisponibles[index] = {
+            ...this.capacitacionesDisponibles[index],
+            nombre: this.nuevaCapacitacion.nombre,
+            duracion: this.nuevaCapacitacion.duracion,
+            certificacion: this.nuevaCapacitacion.certificacion
+          };
+        }
+        
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: 'Capacitación actualizada',
+          text: 'La capacitación ha sido actualizada exitosamente.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+
+        // Cerrar el modal y resetear formulario
+        this.closeEditModal();
+        
+        // Recargar capacitaciones del backend para asegurar sincronización
+        this.cargarCapacitacionesDesdeBackend();
+      },
+      error: (error) => {
+        console.error('Error al actualizar la capacitación:', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un error al actualizar la capacitación. Por favor, intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        });
+      }
+    });
   }
 
   confirmarEliminacion(capacitacion: CapacitacionDisponible): void {

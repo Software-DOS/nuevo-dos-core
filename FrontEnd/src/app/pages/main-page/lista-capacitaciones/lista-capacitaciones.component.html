@@ -201,3 +201,81 @@
     </div>
   </div>
 </div>
+
+<!-- Edit Training Modal -->
+<div class="modal-overlay" [class.active]="showEditModal" (click)="closeEditModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Editar Capacitación</h3>
+      <button class="modal-close" (click)="closeEditModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form class="cv-form" (ngSubmit)="guardarEdicion()">
+        <div class="form-group">
+          <label for="editNombre">Nombre de la Capacitación *</label>
+          <input 
+            type="text" 
+            id="editNombre"
+            [(ngModel)]="nuevaCapacitacion.nombre" 
+            name="editNombre" 
+            required
+            placeholder="Ingresa el nombre de la capacitación">
+        </div>
+        
+        <div class="form-group">
+          <label for="editDuracion">Duración Estimada (horas) *</label>
+          <input 
+            type="number" 
+            id="editDuracion"
+            [(ngModel)]="nuevaCapacitacion.duracion" 
+            name="editDuracion" 
+            min="1" 
+            required
+            placeholder="Ingresa la duración en horas">
+        </div>
+        
+        <div class="form-group">
+          <label for="editCertificacion">Certificación Esperada</label>
+          <input 
+            type="text" 
+            id="editCertificacion"
+            [(ngModel)]="nuevaCapacitacion.certificacion" 
+            name="editCertificacion"
+            placeholder="Ingresa la certificación esperada">
+        </div>
+        
+        <div class="form-group">
+          <label for="editJustificacion">Justificación</label>
+          <textarea 
+            id="editJustificacion"
+            [(ngModel)]="nuevaCapacitacion.justificacion" 
+            name="editJustificacion" 
+            rows="4"
+            placeholder="Ingresa una justificación para la capacitación"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="editEnlace">Enlace a la Certificación</label>
+          <input 
+            type="url" 
+            id="editEnlace"
+            [(ngModel)]="nuevaCapacitacion.enlace" 
+            name="editEnlace"
+            placeholder="https://ejemplo.com/certificacion">
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="nav-button" (click)="guardarEdicion()">
+        <i class="fas fa-save"></i> Guardar Cambios
+      </button>
+      <button type="button" class="nav-button gray" (click)="cancelarEdicion()">
+        <i class="fas fa-times"></i> Cancelar
+      </button>
+    </div>
+  </div>
+</div>
