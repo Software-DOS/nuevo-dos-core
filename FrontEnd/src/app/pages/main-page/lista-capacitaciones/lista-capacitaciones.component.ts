@@ -94,10 +94,7 @@ export class ListaCapacitacionesComponent implements OnInit {
     }
   ];
 
-  capacitacionesDisponibles: CapacitacionDisponible[] = [
-    { id: 'demo-1', nombre: 'Gestión de Proyectos', duracion: 30, certificacion: 'PMI Básico', isStatic: false },
-    { id: 'demo-2', nombre: 'Desarrollo Web', duracion: 40, certificacion: 'Web Developer', isStatic: false }
-  ];
+  capacitacionesDisponibles: CapacitacionDisponible[] = [];
 
   capacitacionesSolicitadas: CapacitacionSolicitada[] = [
     {
@@ -170,7 +167,6 @@ export class ListaCapacitacionesComponent implements OnInit {
   constructor(private gthCapacitacionService: GthCapacitacionService) { }
 
   ngOnInit(): void {
-    this.cargarCapacitacionesGuardadas();
     this.cargarCapacitacionesDesdeBackend();
   }
 
@@ -178,21 +174,24 @@ export class ListaCapacitacionesComponent implements OnInit {
     // Cargar capacitaciones disponibles del backend
     this.gthCapacitacionService.MostrarCapacitaciones(0).subscribe({
       next: (response: any) => {
-        if (response && Array.isArray(response)) {
+        console.log('Respuesta completa del backend:', response);
+        
+        // El backend devuelve un objeto con $values que contiene el array real
+        const capacitaciones = response.$values || response;
+        
+        if (capacitaciones && Array.isArray(capacitaciones)) {
+          console.log('Primer elemento de la respuesta:', capacitaciones[0]);
           // Convertir las capacitaciones del backend al formato local
-          const capacitacionesBackend = response.map((cap: any) => ({
-            id: cap.idCapacitacion.toString(),
-            nombre: cap.nombre,
+          this.capacitacionesDisponibles = capacitaciones.map((cap: any) => ({
+            id: cap.idCapacitacion?.toString() || '',
+            nombre: cap.nombre || '',
             duracion: cap.duracion || 0,
-            certificacion: cap.titulo || '',
-            isStatic: true // Marcar como estáticas las del backend
+            certificacion: cap.titulo || cap.nombre || '', // Usar titulo o nombre como fallback
+            isStatic: false // Permitir edición y eliminación de capacitaciones del backend
           }));
-          
-          // Agregar las capacitaciones del backend a las locales
-          this.capacitacionesDisponibles = [
-            ...this.capacitacionesDisponibles.filter(cap => !cap.isStatic), // Mantener solo las locales
-            ...capacitacionesBackend
-          ];
+          console.log('Capacitaciones mapeadas:', this.capacitacionesDisponibles);
+        } else {
+          console.log('La respuesta no contiene un array válido');
         }
       },
       error: (error) => {
@@ -312,8 +311,9 @@ export class ListaCapacitacionesComponent implements OnInit {
           });
         }
 
-        this.guardarCapacitaciones();
         this.resetForm();
+        // Recargar capacitaciones del backend para mostrar la nueva
+        this.cargarCapacitacionesDesdeBackend();
       },
       error: (error) => {
         console.error('Error al guardar la capacitación:', error);
@@ -383,19 +383,7 @@ export class ListaCapacitacionesComponent implements OnInit {
 
   private eliminarCapacitacion(id: string): void {
     this.capacitacionesDisponibles = this.capacitacionesDisponibles.filter(cap => cap.id !== id);
-    this.guardarCapacitaciones();
-  }
-
-  private cargarCapacitacionesGuardadas(): void {
-    const capacitacionesGuardadas = localStorage.getItem('capacitacionesDisponibles');
-    if (capacitacionesGuardadas) {
-      const capacitacionesDinamicas = JSON.parse(capacitacionesGuardadas);
-      // Añadir las capacitaciones dinámicas a las estáticas
-      this.capacitacionesDisponibles = [
-        ...this.capacitacionesDisponibles,
-        ...capacitacionesDinamicas.map((cap: any) => ({ ...cap, isStatic: false }))
-      ];
-    }
+    // No guardar en localStorage, los datos vienen del backend
   }
 
   openEmployeeTrainingsModal(empleado: Empleado): void {
@@ -428,10 +416,5 @@ export class ListaCapacitacionesComponent implements OnInit {
       case 'Solicitada': return 'estado-solicitada';
       default: return '';
     }
-  }
-
-  private guardarCapacitaciones(): void {
-    const capacitacionesDinamicas = this.capacitacionesDisponibles.filter(cap => !cap.isStatic);
-    localStorage.setItem('capacitacionesDisponibles', JSON.stringify(capacitacionesDinamicas));
   }
 }
