@@ -362,20 +362,71 @@ export class ListaCapacitacionesComponent implements OnInit {
       cancelButtonText: 'No, cancelar'
     }).then((result: any) => {
       if (result.isConfirmed) {
-        this.eliminarCapacitacion(capacitacion.id!);
-        Swal.fire({
-          title: 'Eliminado',
-          text: `La capacitación "${capacitacion.nombre}" ha sido eliminada correctamente.`,
-          icon: 'success',
-          confirmButtonText: 'Aceptar'
-        });
+        this.eliminarCapacitacion(capacitacion.id!, capacitacion.nombre);
       }
     });
   }
 
-  private eliminarCapacitacion(id: string): void {
-    this.capacitacionesDisponibles = this.capacitacionesDisponibles.filter(cap => cap.id !== id);
-    // Los datos vienen del backend, no se requiere almacenamiento local
+  private eliminarCapacitacion(id: string, nombre: string): void {
+    // Validar que el ID exista
+    if (!id || id === '') {
+      Swal.fire({
+        title: 'Error',
+        text: 'No se puede eliminar esta capacitación. ID no válido.',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+      return;
+    }
+
+    // Crear objeto de capacitación para eliminación (tipo 2)
+    const capacitacionData: iGTHCapacitacion = {
+      tipo: 2, // 2 = Eliminación
+      idCapacitacion: parseInt(id),
+      idEntidadCap: 0,
+      nombre: 'string',
+      titulo: 'string',
+      categoria: 'string',
+      descripcion: 'string',
+      estado: 'string',
+      fechaInicio: new Date().toISOString(),
+      fechaFin: new Date().toISOString(),
+      fechaExpiracion: new Date().toISOString(),
+      urlVerificacion: 'string',
+      archivosAdjuntos: 'string',
+      observaciones: 'string',
+      duracion: 0,
+      costo: 0,
+      modalidad: 'string'
+    };
+
+    // Llamar al servicio para eliminar en el backend
+    this.gthCapacitacionService.GuardarGthCapacitacion(capacitacionData).subscribe({
+      next: (response: any) => {
+        // Eliminar de la lista local
+        this.capacitacionesDisponibles = this.capacitacionesDisponibles.filter(cap => cap.id !== id);
+        
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: 'Eliminado',
+          text: `La capacitación "${nombre}" ha sido eliminada correctamente del servidor.`,
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+
+        // Recargar capacitaciones del backend para asegurar sincronización
+        this.cargarCapacitacionesDesdeBackend();
+      },
+      error: (error) => {
+        // Error al eliminar la capacitación
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un error al eliminar la capacitación. Por favor, intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        });
+      }
+    });
   }
 
   openEmployeeTrainingsModal(empleado: Empleado): void {
