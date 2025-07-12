@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { GthCapacitacionService } from 'src/app/services/gthcapacitacion.service';
+import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
 
 interface Training {
   id: number;
@@ -123,19 +125,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     }
   ];
 
-  // New training request form
-  newTrainingRequest: Training = {
-    id: 0,
-    name: '',
-    duration: 0,
-    certification: '',
-    company: '',
-    price: '',
-    justification: '',
-    link: ''
-  };
-
-  constructor() { }
+  constructor(private gthCapacitacionService: GthCapacitacionService) { }
 
   ngOnInit(): void {
     this.loadRequestedTrainings();
@@ -192,52 +182,87 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
   submitTrainingRequest(): void {
     if (this.isFormValid()) {
-      const newRequest: Training = {
-        id: Date.now(),
-        name: this.newTrainingRequest.name,
-        duration: this.newTrainingRequest.duration,
-        completionDate: 'Pendiente',
-        certification: this.newTrainingRequest.certification,
-        company: 'Pendiente',
-        status: 'Pendiente',
-        price: this.newTrainingRequest.price,
-        justification: this.newTrainingRequest.justification,
-        link: this.newTrainingRequest.link
+      // Crear objeto de capacitación compatible con el backend
+      const capacitacionData: iGTHCapacitacion = {
+        tipo: 0, // 0 = Insertar
+        idCapacitacion: 0, // Se generará en el backend
+        idEntidadCap: 1, // Valor por defecto, se puede hacer dinámico después
+        nombre: this.nombreCapacitacion,
+        titulo: this.nombreCapacitacion, // Usar el mismo nombre como título
+        categoria: 'Solicitud de Empleado',
+        descripcion: this.justificacionCapacitacion,
+        estado: 'Solicitada',
+        fechaInicio: undefined,
+        fechaFin: undefined,
+        fechaExpiracion: undefined,
+        urlVerificacion: this.enlaceCapacitacion,
+        archivosAdjuntos: '',
+        observaciones: `Precio estimado: ${this.precioCapacitacion}`,
+        duracion: this.duracionCapacitacion,
+        costo: this.parsePrice(this.precioCapacitacion),
+        modalidad: 'Por definir'
       };
 
-      this.requestedTrainings.push(newRequest);
-      this.saveRequestedTrainings();
-      
-      alert('Solicitud enviada. Tu capacitación ha sido registrada correctamente.');
-      
-      this.resetForm();
-      this.showForm = false;
-      this.showRequestButton = true;
+      // Llamar al servicio para guardar en el backend
+      this.gthCapacitacionService.GuardarGthCapacitacion(capacitacionData).subscribe({
+        next: (response: any) => {
+          console.log('Capacitación guardada exitosamente:', response);
+          
+          // También agregar a la lista local para mostrar inmediatamente
+          const newRequest: Training = {
+            id: Date.now(),
+            name: this.nombreCapacitacion,
+            duration: this.duracionCapacitacion,
+            completionDate: 'Pendiente',
+            certification: this.certificacionCapacitacion,
+            company: 'Pendiente',
+            status: 'Solicitada',
+            price: this.precioCapacitacion,
+            justification: this.justificacionCapacitacion,
+            link: this.enlaceCapacitacion
+          };
+
+          this.requestedTrainings.push(newRequest);
+          this.saveRequestedTrainings();
+          
+          alert('Solicitud enviada exitosamente. Tu capacitación ha sido registrada en el sistema.');
+          
+          this.resetForm();
+          this.showForm = false;
+          this.showRequestButton = true;
+        },
+        error: (error) => {
+          console.error('Error al guardar la capacitación:', error);
+          alert('Error al enviar la solicitud. Por favor, intenta nuevamente.');
+        }
+      });
     } else {
       alert('Por favor completa todos los campos antes de enviar la solicitud.');
     }
   }
 
+  private parsePrice(priceString: string): number {
+    // Extraer números del string de precio
+    const numericValue = priceString.replace(/[^0-9.]/g, '');
+    return parseFloat(numericValue) || 0;
+  }
+
   private isFormValid(): boolean {
-    return !!(this.newTrainingRequest.name &&
-             this.newTrainingRequest.duration &&
-             this.newTrainingRequest.certification &&
-             this.newTrainingRequest.price &&
-             this.newTrainingRequest.justification &&
-             this.newTrainingRequest.link);
+    return !!(this.nombreCapacitacion &&
+             this.duracionCapacitacion &&
+             this.certificacionCapacitacion &&
+             this.precioCapacitacion &&
+             this.justificacionCapacitacion &&
+             this.enlaceCapacitacion);
   }
 
   private resetForm(): void {
-    this.newTrainingRequest = {
-      id: 0,
-      name: '',
-      duration: 0,
-      certification: '',
-      company: '',
-      price: '',
-      justification: '',
-      link: ''
-    };
+    this.nombreCapacitacion = '';
+    this.duracionCapacitacion = 0;
+    this.certificacionCapacitacion = '';
+    this.precioCapacitacion = '';
+    this.justificacionCapacitacion = '';
+    this.enlaceCapacitacion = '';
   }
 
   private loadRequestedTrainings(): void {

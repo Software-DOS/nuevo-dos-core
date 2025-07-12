@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
-declare var Swal: any;
+import { GthCapacitacionService } from 'src/app/services/gthcapacitacion.service';
+import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
+import Swal from 'sweetalert2';
 
 interface Empleado {
   nombre: string;
@@ -166,10 +167,38 @@ export class ListaCapacitacionesComponent implements OnInit {
     }
   ];
 
-  constructor() { }
+  constructor(private gthCapacitacionService: GthCapacitacionService) { }
 
   ngOnInit(): void {
     this.cargarCapacitacionesGuardadas();
+    this.cargarCapacitacionesDesdeBackend();
+  }
+
+  private cargarCapacitacionesDesdeBackend(): void {
+    // Cargar capacitaciones disponibles del backend
+    this.gthCapacitacionService.MostrarCapacitaciones(0).subscribe({
+      next: (response: any) => {
+        if (response && Array.isArray(response)) {
+          // Convertir las capacitaciones del backend al formato local
+          const capacitacionesBackend = response.map((cap: any) => ({
+            id: cap.idCapacitacion.toString(),
+            nombre: cap.nombre,
+            duracion: cap.duracion || 0,
+            certificacion: cap.titulo || '',
+            isStatic: true // Marcar como estáticas las del backend
+          }));
+          
+          // Agregar las capacitaciones del backend a las locales
+          this.capacitacionesDisponibles = [
+            ...this.capacitacionesDisponibles.filter(cap => !cap.isStatic), // Mantener solo las locales
+            ...capacitacionesBackend
+          ];
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar capacitaciones del backend:', error);
+      }
+    });
   }
 
   setActiveTab(tab: string): void {
@@ -220,45 +249,85 @@ export class ListaCapacitacionesComponent implements OnInit {
       return;
     }
 
-    if (this.capacitacionEditandoId) {
-      // Modo edición
-      const index = this.capacitacionesDisponibles.findIndex(cap => cap.id === this.capacitacionEditandoId);
-      if (index !== -1) {
-        this.capacitacionesDisponibles[index] = {
-          ...this.capacitacionesDisponibles[index],
-          nombre: this.nuevaCapacitacion.nombre,
-          duracion: this.nuevaCapacitacion.duracion,
-          certificacion: this.nuevaCapacitacion.certificacion
-        };
+    // Crear objeto de capacitación compatible con el backend
+    const capacitacionData: iGTHCapacitacion = {
+      tipo: this.capacitacionEditandoId ? 1 : 0, // 0 = Insertar, 1 = Editar
+      idCapacitacion: this.capacitacionEditandoId ? parseInt(this.capacitacionEditandoId) : 0,
+      idEntidadCap: 1, // Valor por defecto
+      nombre: this.nuevaCapacitacion.nombre,
+      titulo: this.nuevaCapacitacion.nombre,
+      categoria: 'Disponible',
+      descripcion: this.nuevaCapacitacion.justificacion || '',
+      estado: 'Disponible',
+      fechaInicio: undefined,
+      fechaFin: undefined,
+      fechaExpiracion: undefined,
+      urlVerificacion: this.nuevaCapacitacion.enlace || '',
+      archivosAdjuntos: '',
+      observaciones: '',
+      duracion: this.nuevaCapacitacion.duracion,
+      costo: 0,
+      modalidad: 'Por definir'
+    };
+
+    // Llamar al servicio para guardar en el backend
+    this.gthCapacitacionService.GuardarGthCapacitacion(capacitacionData).subscribe({
+      next: (response: any) => {
+        console.log('Capacitación guardada exitosamente:', response);
+        
+        if (this.capacitacionEditandoId) {
+          // Modo edición
+          const index = this.capacitacionesDisponibles.findIndex(cap => cap.id === this.capacitacionEditandoId);
+          if (index !== -1) {
+            this.capacitacionesDisponibles[index] = {
+              ...this.capacitacionesDisponibles[index],
+              nombre: this.nuevaCapacitacion.nombre,
+              duracion: this.nuevaCapacitacion.duracion,
+              certificacion: this.nuevaCapacitacion.certificacion
+            };
+          }
+          this.capacitacionEditandoId = null;
+          Swal.fire({
+            title: 'Capacitación actualizada',
+            text: 'La capacitación ha sido actualizada exitosamente en el servidor.',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
+        } else {
+          // Modo creación
+          const nuevaCapacitacion: CapacitacionDisponible = {
+            id: Date.now().toString(),
+            nombre: this.nuevaCapacitacion.nombre,
+            duracion: this.nuevaCapacitacion.duracion,
+            certificacion: this.nuevaCapacitacion.certificacion,
+            isStatic: false
+          };
+
+          this.capacitacionesDisponibles.push(nuevaCapacitacion);
+          Swal.fire({
+            title: 'Capacitación añadida',
+            text: 'La capacitación ha sido registrada exitosamente en el servidor.',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+
+        this.guardarCapacitaciones();
+        this.resetForm();
+      },
+      error: (error) => {
+        console.error('Error al guardar la capacitación:', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un error al guardar la capacitación. Por favor, intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        });
       }
-      this.capacitacionEditandoId = null;
-      Swal.fire({
-        title: 'Capacitación actualizada',
-        text: 'La capacitación ha sido actualizada exitosamente.',
-        icon: 'success',
-        confirmButtonText: 'Aceptar'
-      });
-    } else {
-      // Modo creación
-      const nuevaCapacitacion: CapacitacionDisponible = {
-        id: Date.now().toString(),
-        nombre: this.nuevaCapacitacion.nombre,
-        duracion: this.nuevaCapacitacion.duracion,
-        certificacion: this.nuevaCapacitacion.certificacion,
-        isStatic: false
-      };
+    });
+  }
 
-      this.capacitacionesDisponibles.push(nuevaCapacitacion);
-      Swal.fire({
-        title: 'Capacitación añadida',
-        text: 'La capacitación ha sido registrada exitosamente.',
-        icon: 'success',
-        confirmButtonText: 'Aceptar'
-      });
-    }
-
-    this.guardarCapacitaciones();
-
+  private resetForm(): void {
     // Resetear formulario
     this.nuevaCapacitacion = {
       nombre: '',
