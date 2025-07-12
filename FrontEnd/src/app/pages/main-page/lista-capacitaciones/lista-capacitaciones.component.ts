@@ -113,7 +113,7 @@ export class ListaCapacitacionesComponent implements OnInit {
     }
   ];
 
-  // Data for modal - Employee training details
+  // Datos para el modal - Detalles de capacitaciones del empleado
   employeeTrainingsData: EmpleadoCapacitaciones[] = [
     {
       empleado: { nombre: 'José Casas', photo: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' },
@@ -174,28 +174,22 @@ export class ListaCapacitacionesComponent implements OnInit {
     // Cargar capacitaciones disponibles del backend
     this.gthCapacitacionService.MostrarCapacitaciones(0).subscribe({
       next: (response: any) => {
-        console.log('Respuesta completa del backend:', response);
-        
         // El backend devuelve un objeto con $values que contiene el array real
         const capacitaciones = response.$values || response;
         
         if (capacitaciones && Array.isArray(capacitaciones)) {
-          console.log('Primer elemento de la respuesta:', capacitaciones[0]);
           // Convertir las capacitaciones del backend al formato local
           this.capacitacionesDisponibles = capacitaciones.map((cap: any) => ({
             id: cap.idCapacitacion?.toString() || '',
             nombre: cap.nombre || '',
             duracion: cap.duracion || 0,
-            certificacion: cap.titulo || cap.nombre || '', // Usar titulo o nombre como fallback
+            certificacion: cap.titulo || cap.nombre || '', // Usar título o nombre como respaldo
             isStatic: false // Permitir edición y eliminación de capacitaciones del backend
           }));
-          console.log('Capacitaciones mapeadas:', this.capacitacionesDisponibles);
-        } else {
-          console.log('La respuesta no contiene un array válido');
         }
       },
       error: (error) => {
-        console.error('Error al cargar capacitaciones del backend:', error);
+        // Error al cargar capacitaciones del backend
       }
     });
   }
@@ -272,8 +266,6 @@ export class ListaCapacitacionesComponent implements OnInit {
     // Llamar al servicio para guardar en el backend
     this.gthCapacitacionService.GuardarGthCapacitacion(capacitacionData).subscribe({
       next: (response: any) => {
-        console.log('Capacitación guardada exitosamente:', response);
-        
         if (this.capacitacionEditandoId) {
           // Modo edición
           const index = this.capacitacionesDisponibles.findIndex(cap => cap.id === this.capacitacionEditandoId);
@@ -316,7 +308,7 @@ export class ListaCapacitacionesComponent implements OnInit {
         this.cargarCapacitacionesDesdeBackend();
       },
       error: (error) => {
-        console.error('Error al guardar la capacitación:', error);
+        // Error al guardar la capacitación
         Swal.fire({
           title: 'Error',
           text: 'Hubo un error al guardar la capacitación. Por favor, intenta nuevamente.',
@@ -383,11 +375,11 @@ export class ListaCapacitacionesComponent implements OnInit {
 
   private eliminarCapacitacion(id: string): void {
     this.capacitacionesDisponibles = this.capacitacionesDisponibles.filter(cap => cap.id !== id);
-    // No guardar en localStorage, los datos vienen del backend
+    // Los datos vienen del backend, no se requiere almacenamiento local
   }
 
   openEmployeeTrainingsModal(empleado: Empleado): void {
-    // Find employee training data
+    // Buscar los datos de capacitación del empleado
     this.selectedEmployeeTrainings = this.employeeTrainingsData.find(
       emp => emp.empleado.nombre === empleado.nombre
     ) || null;
@@ -404,9 +396,9 @@ export class ListaCapacitacionesComponent implements OnInit {
 
   getProgressColor(progreso?: number): string {
     if (!progreso) return '#gray-400';
-    if (progreso < 30) return '#ef4444'; // red
-    if (progreso < 70) return '#f59e0b'; // amber
-    return '#10b981'; // emerald
+    if (progreso < 30) return '#ef4444'; // rojo
+    if (progreso < 70) return '#f59e0b'; // ámbar
+    return '#10b981'; // verde esmeralda
   }
 
   getEstadoClass(estado: string): string {
