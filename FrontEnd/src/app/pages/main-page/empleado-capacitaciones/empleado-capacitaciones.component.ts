@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GthCapacitacionService } from 'src/app/services/gthcapacitacion.service';
 import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
+import Swal from 'sweetalert2';
 
 interface Training {
   id: number;
@@ -115,28 +116,74 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   ngOnInit(): void {
     this.loadRequestedTrainings();
     this.cargarCapacitacionesDesdeBackend();
+    this.cargarCapacitacionesSolicitadas();
   }
 
   private cargarCapacitacionesDesdeBackend(): void {
-    // Cargar capacitaciones disponibles del backend
-    this.gthCapacitacionService.MostrarCapacitaciones(0).subscribe({
+    // Cargar capacitaciones disponibles del backend (solo las que tienen estado "Disponible")
+    this.gthCapacitacionService.MostrarCapacitaciones(0, undefined, undefined, 'Disponible').subscribe({
       next: (response: any) => {
         // El backend devuelve un objeto con $values que contiene el array real
         const capacitaciones = response.$values || response;
         
         if (capacitaciones && Array.isArray(capacitaciones)) {
           // Convertir las capacitaciones del backend al formato local
-          this.availableTrainings = capacitaciones.map((cap: any) => ({
-            id: cap.idCapacitacion || 0,
-            name: cap.nombre || '',
-            duration: cap.duracion || 0,
-            certification: cap.titulo || cap.nombre || '', // Usar título o nombre como respaldo
-            company: 'N/A' // Removemos el campo empresa como solicitado
-          }));
+          // Solo incluir las que tienen estado "Disponible"
+          this.availableTrainings = capacitaciones
+            .filter((cap: any) => cap.estado === 'Disponible')
+            .map((cap: any) => ({
+              id: cap.idCapacitacion || 0,
+              name: cap.nombre || '',
+              duration: cap.duracion || 0,
+              certification: cap.titulo || cap.nombre || '', // Usar título o nombre como respaldo
+              company: 'N/A' // Removemos el campo empresa como solicitado
+            }));
         }
       },
       error: (error) => {
         console.error('Error al cargar capacitaciones del backend:', error);
+      }
+    });
+  }
+
+  private cargarCapacitacionesSolicitadas(): void {
+    // Cargar capacitaciones solicitadas desde el backend (solo las que tienen estado "Solicitada")
+    this.gthCapacitacionService.MostrarCapacitaciones(0, undefined, undefined, 'Solicitada').subscribe({
+      next: (response: any) => {
+        const capacitaciones = response.$values || response;
+        
+        if (capacitaciones && Array.isArray(capacitaciones)) {
+          // Convertir las capacitaciones solicitadas del backend al formato local
+          // Solo incluir las que tienen estado "Solicitada"
+          const capacitacionesBackend: Training[] = capacitaciones
+            .filter((cap: any) => cap.estado === 'Solicitada')
+            .map((cap: any) => ({
+              id: cap.idCapacitacion || 0,
+              name: cap.nombre || '',
+              duration: cap.duracion || 0,
+              certification: cap.titulo || cap.nombre || '',
+              company: 'Por definir',
+              status: cap.estado || 'Solicitada',
+              price: cap.costo ? `$${cap.costo}` : 'N/A',
+              justification: cap.descripcion || '',
+              link: cap.urlVerificacion || '',
+              completionDate: 'Pendiente'
+            }));
+          
+          // Mantener también las capacitaciones locales (las que se acaban de agregar)
+          const localRequested = this.requestedTrainings.filter(t => t.id > 1000);
+          
+          // Combinar ambas listas evitando duplicados
+          this.requestedTrainings = [
+            ...capacitacionesBackend,
+            ...localRequested.filter(local => 
+              !capacitacionesBackend.some(backend => backend.name === local.name)
+            )
+          ];
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar capacitaciones solicitadas:', error);
       }
     });
   }
@@ -172,22 +219,57 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   }
 
   cancelContract(): void {
-    // Here you would normally use a proper Angular dialog/alert service
-    if (confirm('¿Cancelar solicitud? Se cancelará el proceso de solicitud de capacitación.')) {
-      this.showContract = false;
-      this.showRequestButton = true;
-      this.contractAccepted = false;
-      console.log('Solicitud cancelada');
-    }
+    Swal.fire({
+      title: '¿Cancelar solicitud?',
+      text: 'Se cancelará el proceso de solicitud de capacitación.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, continuar',
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.showContract = false;
+        this.showRequestButton = true;
+        this.contractAccepted = false;
+        
+        Swal.fire({
+          title: 'Solicitud cancelada',
+          text: 'El proceso de solicitud ha sido cancelado.',
+          icon: 'info',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#17a2b8'
+        });
+      }
+    });
   }
 
   cancelForm(): void {
-    if (confirm('¿Cancelar solicitud? Se cancelará el proceso de solicitud de capacitación.')) {
-      this.showForm = false;
-      this.showRequestButton = true;
-      this.resetForm();
-      console.log('Formulario cancelado');
-    }
+    Swal.fire({
+      title: '¿Cancelar formulario?',
+      text: 'Se perderán todos los datos ingresados en el formulario.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, continuar',
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.showForm = false;
+        this.showRequestButton = true;
+        this.resetForm();
+        
+        Swal.fire({
+          title: 'Formulario cancelado',
+          text: 'El formulario ha sido cancelado y los datos se han limpiado.',
+          icon: 'info',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#17a2b8'
+        });
+      }
+    });
   }
 
   submitTrainingRequest(): void {
@@ -198,10 +280,10 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
         idCapacitacion: 0, // Se generará en el backend
         idEntidadCap: 1, // Valor por defecto, se puede hacer dinámico después
         nombre: this.nombreCapacitacion,
-        titulo: this.nombreCapacitacion, // Usar el mismo nombre como título
-        categoria: 'Solicitud de Empleado',
+        titulo: this.certificacionCapacitacion, // Usar la certificación como título
+        categoria: 'Solicitadas',
         descripcion: this.justificacionCapacitacion,
-        estado: 'Solicitada',
+        estado: 'Solicitada', // SIEMPRE será "Solicitada" desde el formulario del empleado
         fechaInicio: undefined,
         fechaFin: undefined,
         fechaExpiracion: undefined,
@@ -210,7 +292,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
         observaciones: `Precio estimado: ${this.precioCapacitacion}`,
         duracion: this.duracionCapacitacion,
         costo: this.parsePrice(this.precioCapacitacion),
-        modalidad: 'Por definir'
+        modalidad: 'Virtual' // Valor por defecto más específico
       };
 
       // Llamar al servicio para guardar en el backend
@@ -225,8 +307,8 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
             duration: this.duracionCapacitacion,
             completionDate: 'Pendiente',
             certification: this.certificacionCapacitacion,
-            company: 'Pendiente',
-            status: 'Solicitada',
+            company: 'Por definir',
+            status: 'Solicitada', // Estado confirmado como "Solicitada"
             price: this.precioCapacitacion,
             justification: this.justificacionCapacitacion,
             link: this.enlaceCapacitacion
@@ -235,19 +317,23 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
           this.requestedTrainings.push(newRequest);
           this.saveRequestedTrainings();
           
-          alert('Solicitud enviada exitosamente. Tu capacitación ha sido registrada en el sistema.');
+          // Usar SweetAlert2 para un mensaje más profesional
+          this.showSuccessMessage();
           
           this.resetForm();
           this.showForm = false;
           this.showRequestButton = true;
+          
+          // Recargar capacitaciones solicitadas para mostrar la nueva
+          this.cargarCapacitacionesSolicitadas();
         },
         error: (error) => {
           console.error('Error al guardar la capacitación:', error);
-          alert('Error al enviar la solicitud. Por favor, intenta nuevamente.');
+          this.showErrorMessage();
         }
       });
     } else {
-      alert('Por favor completa todos los campos antes de enviar la solicitud.');
+      this.showValidationMessage();
     }
   }
 
@@ -303,6 +389,37 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
   logout(): void {
     console.log('Logout clicked');
+  }
+
+  // Métodos para mostrar mensajes con SweetAlert2
+  private showSuccessMessage(): void {
+    Swal.fire({
+      title: '¡Solicitud enviada exitosamente!',
+      text: 'Tu capacitación ha sido registrada en el sistema con estado "Solicitada".',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#28a745'
+    });
+  }
+
+  private showErrorMessage(): void {
+    Swal.fire({
+      title: 'Error al enviar la solicitud',
+      text: 'Hubo un problema al guardar la capacitación. Por favor, intenta nuevamente.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#dc3545'
+    });
+  }
+
+  private showValidationMessage(): void {
+    Swal.fire({
+      title: 'Campos incompletos',
+      text: 'Por favor completa todos los campos obligatorios antes de enviar la solicitud.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#ffc107'
+    });
   }
 
 }
