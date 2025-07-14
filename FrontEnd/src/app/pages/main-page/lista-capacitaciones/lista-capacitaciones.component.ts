@@ -173,25 +173,28 @@ export class ListaCapacitacionesComponent implements OnInit {
   }
 
   private cargarCapacitacionesDesdeBackend(): void {
-    // Cargar capacitaciones disponibles del backend
-    this.gthCapacitacionService.MostrarCapacitaciones(0).subscribe({
+    // Cargar capacitaciones disponibles del backend (solo las que tienen estado "Disponible")
+    this.gthCapacitacionService.MostrarCapacitaciones(0, undefined, undefined, 'Disponible').subscribe({
       next: (response: any) => {
         // El backend devuelve un objeto con $values que contiene el array real
         const capacitaciones = response.$values || response;
         
         if (capacitaciones && Array.isArray(capacitaciones)) {
           // Convertir las capacitaciones del backend al formato local
-          this.capacitacionesDisponibles = capacitaciones.map((cap: any) => ({
-            id: cap.idCapacitacion?.toString() || '',
-            nombre: cap.nombre || '',
-            duracion: cap.duracion || 0,
-            certificacion: cap.titulo || cap.nombre || '', // Usar título o nombre como respaldo
-            isStatic: false // Permitir edición y eliminación de capacitaciones del backend
-          }));
+          // Solo incluir las que tienen estado "Disponible"
+          this.capacitacionesDisponibles = capacitaciones
+            .filter((cap: any) => cap.estado === 'Disponible')
+            .map((cap: any) => ({
+              id: cap.idCapacitacion?.toString() || '',
+              nombre: cap.nombre || '',
+              duracion: cap.duracion || 0,
+              certificacion: cap.titulo || cap.nombre || '', // Usar título o nombre como respaldo
+              isStatic: false // Permitir edición y eliminación de capacitaciones del backend
+            }));
         }
       },
       error: (error) => {
-        // Error al cargar capacitaciones del backend
+        console.error('Error al cargar capacitaciones del backend:', error);
       }
     });
   }
