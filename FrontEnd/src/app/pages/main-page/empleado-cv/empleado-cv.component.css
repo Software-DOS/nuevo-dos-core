@@ -98,7 +98,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
   padding-bottom: 1rem;
   border-bottom: 2px solid var(--border-color);
 }
@@ -112,8 +112,8 @@
 
 /* ===== SECCIONES DE FORMULARIO ===== */
 .form-section {
-  margin-bottom: 3rem;
-  padding: 1.5rem;
+  /* margin-bottom: 3rem; */
+  padding: 0.5rem 1rem;
   background: #fafbfc;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
@@ -134,6 +134,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
+}
+
+.label-form {
+  font-weight: 700;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -254,7 +258,7 @@
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
-  top: 0;
+  top: 70px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -294,10 +298,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 32px;
-  border-bottom: 1px solid #e5e7eb;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 14px 25px;
+  border-bottom: 1px solid #e5e7eb;  
   color: white;
+}
+.header-modal1 {
+  background: linear-gradient(135deg, #778fff 0%, #8842d0 100%);
+}
+.header-modal2 {
+  background: linear-gradient(135deg, #66e3ea 0%, #4b67a2 100%);
 }
 
 .modal-title {
@@ -401,6 +410,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  margin-bottom: 8px;
 }
 
 .form-group.full-width {
@@ -415,7 +425,7 @@
 }
 
 .form-input {
-  padding: 12px 16px;
+  padding: 5px 15px;
   border: 2px solid #e5e7eb;
   border-radius: 8px;
   font-size: 14px;
@@ -436,10 +446,10 @@
 .modal-footer {
   display: flex;
   gap: 12px;
-  justify-content: flex-end;
-  padding: 24px 32px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  justify-content: space-between;
+  padding: 15px 20px;
+  border-top: 1px solid #6b8dd0;
+  background: #eceded;
 }
 
 .btn {

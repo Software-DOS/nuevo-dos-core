@@ -21,8 +21,11 @@ export class EmpleadoCvComponent implements OnInit {
     'info-profesional': false
   };
 
+  // Variables para el modal de datos personales secundarios
+  showDatosPersonalesSecundariosModal: boolean = false;
+
   // NgModel properties for employee personal info
-  public nombreCompleto: string = '';
+  //public nombreCompleto: string = '';
   public correoElectronico: string = '';
   public posicion: string = '';
   public area: string = '';
@@ -130,6 +133,19 @@ export class EmpleadoCvComponent implements OnInit {
   public nuevoHistorialEmpresa: string = '';
   public nuevoHistorialFechas: string = '';
   public nuevoHistorialFunciones: string = '';
+
+
+  /* -------------  Campos para mostrar en el HTML  ----------  */
+// Variables para mostrar la información (solo lectura)
+  fechaNacimientoDisplay: string = '';
+  sexoDisplay: string = '';
+  tipoSangreDisplay: string = '';
+  etniaDisplay: string = '';
+  numeroCedulaDisplay: string = '';
+  paisNacimientoDisplay: string = '';
+  provinciaNacimientoDisplay: string = '';
+  ciudadNacimientoDisplay: string = '';
+
 
   //
   public generica: any = [];
@@ -581,7 +597,7 @@ export class EmpleadoCvComponent implements OnInit {
     };
   }
 
-  // Variable para controlar el modal
+// Variable para controlar el modal
 showEditModal: boolean = false;
 
 // Función para abrir el modal
@@ -595,11 +611,110 @@ closeEditModal(): void {
 }
 
 // Función para cerrar el modal al hacer clic en el overlay
-closeModalOnOverlay(event: Event): void {
+closeModalOnOverlay(event: Event, modal: string): void {
   if (event.target === event.currentTarget) {
-    this.closeEditModal();
+    if (modal === 'edit') {
+      this.closeEditModal();
+    } else if (modal === 'secundario') {
+      this.closeDatosPersonalesSecundariosModal();
+    }
   }
 }
 
+
+/* ========================================================================
+    Funciones para mostrar datos y Modal de Datos Personales Secundarios
+  =========================================================================*/
+  // Función para abrir el modal de datos personales secundarios
+  openDatosPersonalesSecundariosModal(): void {
+    // Cargar los datos actuales en el formulario
+    this.cargarDatosPersonalesSecundarios();
+    this.showDatosPersonalesSecundariosModal = true;
+  }
+  
+  // Función para cerrar el modal de datos personales secundarios
+  closeDatosPersonalesSecundariosModal(): void {
+    this.showDatosPersonalesSecundariosModal = false;
+  }
+  
+  // Función para cerrar el modal al hacer clic en el overlay
+  // closeModalOnOverlay(event: Event): void {
+  //   if (event.target === event.currentTarget) {
+  //     this.closeDatosPersonalesSecundariosModal();
+  //   }
+  // }
+  
+  // Función para cargar los datos personales secundarios en el formulario
+  cargarDatosPersonalesSecundarios(): void {
+    this.fechaNacimiento = this.fechaNacimientoDisplay;
+    this.sexo = this.sexoDisplay;
+    this.tipoSangre = this.tipoSangreDisplay;
+    this.etnia = this.etniaDisplay;
+    this.numeroCedula = this.numeroCedulaDisplay;
+    this.paisNacimiento = this.paisNacimientoDisplay;
+    this.provinciaNacimiento = this.provinciaNacimientoDisplay;
+    this.ciudadNacimiento = this.ciudadNacimientoDisplay;
+  }
+  
+  // Función para guardar los cambios
+  guardarDatosPersonalesSecundarios(): void {
+    // Validar campos obligatorios
+    if (!this.fechaNacimiento || !this.sexo || !this.tipoSangre || !this.etnia || 
+        !this.numeroCedula || !this.paisNacimiento || !this.provinciaNacimiento || 
+        !this.ciudadNacimiento) {
+      alert('Por favor, completa todos los campos obligatorios');
+      return;
+    }
+    
+    // Actualizar las variables de display
+    this.fechaNacimientoDisplay = this.fechaNacimiento;
+    this.sexoDisplay = this.sexo;
+    this.tipoSangreDisplay = this.tipoSangre;
+    this.etniaDisplay = this.etnia;
+    this.numeroCedulaDisplay = this.numeroCedula;
+    this.paisNacimientoDisplay = this.paisNacimiento;
+    this.provinciaNacimientoDisplay = this.provinciaNacimiento;
+    this.ciudadNacimientoDisplay = this.ciudadNacimiento;
+    
+    // Cerrar el modal
+    this.closeDatosPersonalesSecundariosModal();
+    
+    // Mostrar mensaje de éxito
+    alert('Datos personales secundarios actualizados correctamente');
+  }
+
+  // Función para manejar el cambio de archivo
+  onFileChange(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.documentoIdentidad = file;
+    }
+  }
+
+  // Función para obtener los datos personales secundarios como objeto
+  getDatosPersonalesSecundarios(): any {
+    return {
+      fechaNacimiento: this.fechaNacimientoDisplay,
+      sexo: this.sexoDisplay,
+      tipoSangre: this.tipoSangreDisplay,
+      etnia: this.etniaDisplay,
+      numeroCedula: this.numeroCedulaDisplay,
+      documentoIdentidad: this.documentoIdentidad,
+      paisNacimiento: this.paisNacimientoDisplay,
+      provinciaNacimiento: this.provinciaNacimientoDisplay,
+      ciudadNacimiento: this.ciudadNacimientoDisplay
+    };
+  }
+
+  // Función para formatear la fecha para mostrar
+  formatearFecha(fecha: string): string {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
 
 }
