@@ -155,5 +155,40 @@ namespace WebAppConexion.Controllers
             });
         }
 
+        /// <summary>
+        /// Obtiene el ID del empleado GTH basado en su cédula.
+        /// Utiliza el SP GTH_MostrarEmpleado con tipo 4 para búsqueda exclusiva por cédula.
+        /// </summary>
+        /// <param name="cedula">Cédula del empleado a buscar</param>
+        /// <returns>ID del empleado GTH o null si no se encuentra</returns>
+        [HttpGet("obtener-id-gth-empleado/{cedula}")]
+        public async Task<IActionResult> ObtenerIdGthEmpleado(string cedula)
+        {
+            try
+            {
+                // Validar que la cédula no esté vacía
+                if (string.IsNullOrWhiteSpace(cedula))
+                {
+                    return BadRequest(new { mensaje = "La cédula es requerida" });
+                }
+
+                // Usar el método Mostrar con tipo 4 para búsqueda exclusiva por cédula
+                var empleados = await _repository.Mostrar(4, null, null, null, cedula);
+                var empleado = empleados.FirstOrDefault();
+
+                if (empleado == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró un empleado GTH con la cédula proporcionada" });
+                }
+
+                // Retornar solo el ID del empleado
+                return Ok(new { idEmpleado = empleado.IdEmpleado });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
     }
 }
