@@ -152,31 +152,6 @@ export class LoginService {
     console.log("🚪 [DEBUG] User logged out, token removed");
   }
 
-  /**
-   * Obtiene la cédula del usuario actual desde el token
-   * @returns Cédula del usuario o null si no existe
-   */
-  obtenerCedulaUsuarioActual(): string | null {
-    try {
-      const token = sessionStorage.getItem('token');
-      if (!token) return null;
-      
-      const decoded = JSON.parse(atob(token.split('.')[1]));
-      
-      // Buscar la cédula en diferentes campos posibles del token
-      const cedula = decoded['cedula'] || 
-                    decoded['Cedula'] || 
-                    decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ||
-                    decoded['nameid'] ||
-                    decoded['sub'];
-      
-      console.log("🔍 [DEBUG] Cédula obtenida del token:", cedula);
-      return cedula || null;
-    } catch (error) {
-      console.error("❌ [DEBUG] Error obteniendo cédula del token:", error);
-      return null;
-    }
-  }
 
   /**
    * Obtiene el email del usuario actual desde el token
