@@ -95,106 +95,177 @@
       <div class="cap-header">
         <div>Nombre</div>
         <div>Duración (h)</div>
-        <div>Fecha Completado</div>
         <div>Certificación</div>
         <div>Estado</div>
+        <div>Precio</div>
       </div>
 
       <div *ngFor="let training of requestedTrainings" class="cap-row">
-        <div>{{ training.name }}</div>
+        <div class="training-name">
+          <strong>{{ training.name }}</strong>
+          <small class="text-muted" *ngIf="training.justification">
+            {{ training.justification.substring(0, 100) }}...
+          </small>
+        </div>
         <div>{{ training.duration }}</div>
-        <div>{{ training.completionDate }}</div>
         <div>{{ training.certification }}</div>
-        <div>{{ training.status }}</div>
+        <div>
+          <span class="badge badge-warning">{{ training.status || 'Solicitada' }}</span>
+        </div>
+        <div>{{ training.price }}</div>
+      </div>
+
+      <div *ngIf="requestedTrainings.length === 0" class="no-data">
+        <i class="fas fa-clipboard-list"></i>
+        <p>No tienes capacitaciones solicitadas aún.</p>
+        <p class="text-muted">Utiliza el botón "Solicitar Capacitación" para agregar una nueva solicitud.</p>
       </div>
     </div>
 
     <!-- Botón para mostrar el contrato -->
     <div class="text-right mb-2" *ngIf="showRequestButton">
-      <button class="nav-button" (click)="showRequestForm()">Solicitar Capacitación</button>
+      <button class="nav-button" (click)="showRequestForm()">
+        <i class="fas fa-plus"></i> Solicitar Capacitación
+      </button>
     </div>
 
     <!-- Contrato de Términos -->
     <div id="contratoTerminos" class="popup-form" [style.display]="showContract ? 'block' : 'none'">
-      <h3 class="h3-dark">Términos de la Solicitud</h3>
-      <p class="mb-2">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel tincidunt facilisis, nunc nisl
-        aliquam nunc, eget aliquam nisl nunc eget nunc.
-      </p>
-      <div class="form-group mt-2">
+      <h3 class="h3-dark">Términos y Condiciones para Solicitud de Capacitación</h3>
+      <div class="contract-content">
+        <h4>1. Proceso de Solicitud</h4>
+        <p class="mb-2">
+          Al solicitar una capacitación, usted acepta que la misma será evaluada por el departamento de Recursos Humanos 
+          y deberá ser aprobada antes de su ejecución.
+        </p>
+        
+        <h4>2. Estado de la Solicitud</h4>
+        <p class="mb-2">
+          Todas las solicitudes ingresadas por empleados tendrán el estado inicial "Solicitada" y pasarán por un 
+          proceso de revisión y aprobación.
+        </p>
+        
+        <h4>3. Información Requerida</h4>
+        <p class="mb-2">
+          Debe proporcionar información completa y precisa sobre la capacitación, incluyendo justificación, 
+          duración, costo estimado y beneficios esperados.
+        </p>
+        
+        <h4>4. Compromiso del Empleado</h4>
+        <p class="mb-2">
+          Una vez aprobada la capacitación, el empleado se compromete a completarla exitosamente y aplicar 
+          los conocimientos adquiridos en su trabajo.
+        </p>
+      </div>
+      
+      <div class="form-group mt-3">
         <label class="flex-gap">
           <input type="checkbox" [(ngModel)]="contractAccepted" (change)="onContractAcceptedChange()">
-          He leído y acepto los términos del acuerdo.
+          <span>He leído y acepto los términos y condiciones para la solicitud de capacitación.</span>
         </label>
       </div>
+      
       <div class="edit-controls">
-        <button class="nav-button" [disabled]="!contractAccepted" (click)="signContract()">Firmar</button>
-        <button class="nav-button gray" (click)="cancelContract()">Cancelar</button>
+        <button class="nav-button" [disabled]="!contractAccepted" (click)="signContract()">
+          <i class="fas fa-signature"></i> Aceptar y Continuar
+        </button>
+        <button class="nav-button gray" (click)="cancelContract()">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
       </div>
     </div>
 
     <!-- Formulario emergente -->
     <div id="formularioSolicitud" class="popup-form" [style.display]="showForm ? 'block' : 'none'">
-      <h3 class="h3-dark">Formulario de Solicitud</h3>
+      <h3 class="h3-dark">Solicitud de Capacitación</h3>
+      <p class="mb-3 text-muted">Complete todos los campos para solicitar una nueva capacitación. El estado inicial será "Solicitada".</p>
+      
       <form class="cv-form" (ngSubmit)="submitTrainingRequest()" #trainingForm="ngForm">
         <div class="form-group">
-          <label for="nombre">Nombre de la Capacitación</label>
+          <label for="nombre">Nombre de la Capacitación *</label>
           <input 
             type="text" 
             id="nombre" 
             [(ngModel)]="nombreCapacitacion"
             name="nombre"
+            class="form-control"
+            placeholder="Ej. Curso de Liderazgo Ágil"
             required>
         </div>
+
         <div class="form-group">
-          <label for="duracion">Duración Estimada (horas)</label>
+          <label for="duracion">Duración Estimada (horas) *</label>
           <input 
             type="number" 
             id="duracion" 
             [(ngModel)]="duracionCapacitacion"
             name="duracion"
+            class="form-control"
+            placeholder="Ej. 40"
             min="1" 
             required>
         </div>
+
         <div class="form-group">
-          <label for="certificacion">Certificación Esperada</label>
+          <label for="certificacion">Certificación Esperada *</label>
           <input 
             type="text" 
             id="certificacion"
             [(ngModel)]="certificacionCapacitacion"
             name="certificacion"
+            class="form-control"
+            placeholder="Ej. Scrum Foundation"
             required>
         </div>
+
         <div class="form-group">
-          <label for="precio">Precio</label>
+          <label for="precio">Precio Estimado *</label>
           <input 
             type="text" 
             id="precio"
             [(ngModel)]="precioCapacitacion"
             name="precio"
+            class="form-control"
+            placeholder="Ej. $500 USD"
             required>
         </div>
+
         <div class="form-group">
-          <label for="justificacion">Justificación</label>
+          <label for="justificacion">Justificación de la Solicitud *</label>
           <textarea 
             id="justificacion" 
             [(ngModel)]="justificacionCapacitacion"
             name="justificacion"
+            class="form-control"
             rows="4"
+            placeholder="Explique por qué es importante esta capacitación para su desarrollo profesional..."
             required></textarea>
         </div>
+
         <div class="form-group">
-          <label for="enlace">Enlace a la Certificación</label>
+          <label for="enlace">Enlace a la Capacitación *</label>
           <input 
             type="url" 
             id="enlace"
             [(ngModel)]="enlaceCapacitacion"
             name="enlace"
+            class="form-control"
+            placeholder="https://ejemplo.com/capacitacion"
             required>
         </div>
+
+        <div class="alert alert-info mb-3">
+          <i class="fas fa-info-circle"></i>
+          <strong>Importante:</strong> Esta solicitud tendrá el estado inicial "Solicitada" y será revisada por el administrador.
+        </div>
+
         <div class="edit-controls">
-          <button type="submit" class="nav-button">Enviar Solicitud</button>
-          <button type="button" class="nav-button gray" (click)="cancelForm()">Cancelar</button>
+          <button type="submit" class="nav-button" [disabled]="!trainingForm.valid">
+            <i class="fas fa-paper-plane"></i> Enviar Solicitud
+          </button>
+          <button type="button" class="nav-button gray" (click)="cancelForm()">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
         </div>
       </form>
     </div>

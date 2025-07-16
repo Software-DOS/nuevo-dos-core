@@ -155,5 +155,125 @@ namespace WebAppConexion.Controllers
             });
         }
 
+        /// <summary>
+        /// Obtiene la cédula del empleado basado en su email/correo.
+        /// Utiliza el SP GTH_MostrarEmpleado con tipo 0 para búsqueda por todos los campos.
+        /// </summary>
+        /// <param name="email">Email del empleado a buscar</param>
+        /// <returns>Cédula del empleado o null si no se encuentra</returns>
+        [HttpGet("obtener-cedula-por-email/{email}")]
+        public async Task<IActionResult> ObtenerCedulaPorEmail(string email)
+        {
+            try
+            {
+                // Validar que el email no esté vacío
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    return BadRequest(new { mensaje = "El email es requerido" });
+                }
+
+                // Usar el método Mostrar con tipo 0 para búsqueda general
+                var empleados = await _repository.Mostrar(0, null, null, null, null);
+                
+                // Buscar por email en ambos campos (correo personal y corporativo)
+                var empleado = empleados.FirstOrDefault(e => 
+                    (!string.IsNullOrEmpty(e.Correo) && e.Correo.Equals(email, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(e.CorreoCorporativo) && e.CorreoCorporativo.Equals(email, StringComparison.OrdinalIgnoreCase))
+                );
+
+                if (empleado == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró un empleado GTH con el email proporcionado" });
+                }
+
+                // Retornar la cédula y el ID del empleado
+                return Ok(new { 
+                    cedula = empleado.Cedula,
+                    idEmpleado = empleado.IdEmpleado,
+                    nombre = empleado.Nombre,
+                    apellido = empleado.Apellido
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Obtiene el ID del empleado GTH basado en su cédula.
+        /// Utiliza el SP GTH_MostrarEmpleado con tipo 4 para búsqueda exclusiva por cédula.
+        /// </summary>
+        /// <param name="cedula">Cédula del empleado a buscar</param>
+        /// <returns>ID del empleado GTH o null si no se encuentra</returns>
+        [HttpGet("obtener-id-gth-empleado/{cedula}")]
+        public async Task<IActionResult> ObtenerIdGthEmpleado(string cedula)
+        {
+            try
+            {
+                // Validar que la cédula no esté vacía
+                if (string.IsNullOrWhiteSpace(cedula))
+                {
+                    return BadRequest(new { mensaje = "La cédula es requerida" });
+                }
+
+                // Usar el método Mostrar con tipo 4 para búsqueda exclusiva por cédula
+                var empleados = await _repository.Mostrar(4, null, null, null, cedula);
+                var empleado = empleados.FirstOrDefault();
+
+                if (empleado == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró un empleado GTH con la cédula proporcionada" });
+                }
+
+                // Retornar solo el ID del empleado
+                return Ok(new { idEmpleado = empleado.IdEmpleado });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Obtiene el ID del empleado GTH basado en su email/correo.
+        /// Combina la búsqueda por email y obtención de ID en un solo endpoint.
+        /// </summary>
+        /// <param name="email">Email del empleado a buscar</param>
+        /// <returns>ID del empleado GTH o null si no se encuentra</returns>
+        [HttpGet("obtener-id-gth-empleado-por-email/{email}")]
+        public async Task<IActionResult> ObtenerIdGthEmpleadoPorEmail(string email)
+        {
+            try
+            {
+                // Validar que el email no esté vacío
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    return BadRequest(new { mensaje = "El email es requerido" });
+                }
+
+                // Usar el método Mostrar con tipo 0 para búsqueda general
+                var empleados = await _repository.Mostrar(0, null, null, null, null);
+                
+                // Buscar por email en ambos campos (correo personal y corporativo)
+                var empleado = empleados.FirstOrDefault(e => 
+                    (!string.IsNullOrEmpty(e.Correo) && e.Correo.Equals(email, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(e.CorreoCorporativo) && e.CorreoCorporativo.Equals(email, StringComparison.OrdinalIgnoreCase))
+                );
+
+                if (empleado == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró un empleado GTH con el email proporcionado" });
+                }
+
+                // Retornar solo el ID del empleado
+                return Ok(new { idEmpleado = empleado.IdEmpleado });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
     }
 }
