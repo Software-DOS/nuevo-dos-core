@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GthCapacitacionService } from 'src/app/services/gthcapacitacion.service';
+import { GthSolicitudCapacitacionService, GTHSolicitudCapacitacionDetalladaModel } from 'src/app/services/gth-solicitud-capacitacion.service';
 import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
 import Swal from 'sweetalert2';
 
@@ -115,6 +116,10 @@ export class ListaCapacitacionesComponent implements OnInit {
     }
   ];
 
+  // Nuevas propiedades para datos reales del backend
+  solicitudesDetalladas: GTHSolicitudCapacitacionDetalladaModel[] = [];
+  cargandoSolicitudes: boolean = false;
+
   // Datos para el modal - Detalles de capacitaciones del empleado
   employeeTrainingsData: EmpleadoCapacitaciones[] = [
     {
@@ -166,10 +171,38 @@ export class ListaCapacitacionesComponent implements OnInit {
     }
   ];
 
-  constructor(private gthCapacitacionService: GthCapacitacionService) { }
+  constructor(
+    private gthCapacitacionService: GthCapacitacionService,
+    private gthSolicitudCapacitacionService: GthSolicitudCapacitacionService
+  ) { }
 
   ngOnInit(): void {
     this.cargarCapacitacionesDesdeBackend();
+    this.cargarSolicitudesCapacitacion();
+  }
+
+  private cargarSolicitudesCapacitacion(): void {
+    this.cargandoSolicitudes = true;
+    
+    // Cargar todas las solicitudes (tipo 0 = todas)
+    this.gthSolicitudCapacitacionService.mostrarSolicitudesCapacitacionDetallada(0).subscribe({
+      next: (response: GTHSolicitudCapacitacionDetalladaModel[]) => {
+        this.solicitudesDetalladas = response || [];
+        console.log('Solicitudes detalladas cargadas:', this.solicitudesDetalladas);
+        this.cargandoSolicitudes = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar solicitudes de capacitación:', error);
+        this.cargandoSolicitudes = false;
+        // No mostrar SweetAlert por ahora para debug, solo console.error
+        // Swal.fire({
+        //   title: 'Error',
+        //   text: 'No se pudieron cargar las solicitudes de capacitación.',
+        //   icon: 'error',
+        //   confirmButtonText: 'OK'
+        // });
+      }
+    });
   }
 
   private cargarCapacitacionesDesdeBackend(): void {
