@@ -8,7 +8,7 @@ export interface GTHSolicitudCapacitacionModel {
   tipo: number;
   idCapacitacion: number;
   idEmpleado: number;
-  cedulaEmpleado?: string;
+  cedulaEmpleado?: string; // Opcional, no se usará cuando tenemos idEmpleado
   justificacion: string;
   fechaSolicitud?: Date;
   respuesta?: string;

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GthCapacitacionService } from 'src/app/services/gthcapacitacion.service';
 import { GthSolicitudCapacitacionService, GTHSolicitudCapacitacionModel } from 'src/app/services/gth-solicitud-capacitacion.service';
+import { SessionStorageService } from 'src/app/services/session-storage.service';
 import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
 import Swal from 'sweetalert2';
 
@@ -114,7 +115,8 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
   constructor(
     private gthCapacitacionService: GthCapacitacionService,
-    private gthSolicitudCapacitacionService: GthSolicitudCapacitacionService
+    private gthSolicitudCapacitacionService: GthSolicitudCapacitacionService,
+    private sessionStorageService: SessionStorageService
   ) { }
 
   ngOnInit(): void {
@@ -278,6 +280,20 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
   submitTrainingRequest(): void {
     if (this.isFormValid()) {
+      // Obtener el ID del empleado del sessionStorage
+      const idEmpleadoLogueado = this.sessionStorageService.getIdGthEmpleado();
+      
+      if (!idEmpleadoLogueado) {
+        Swal.fire({
+          title: 'Error de sesión',
+          text: 'No se pudo obtener la información del empleado. Por favor, vuelve a iniciar sesión.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#dc3545'
+        });
+        return;
+      }
+
       // Crear objeto de capacitación compatible con el backend
       const capacitacionData: iGTHCapacitacion = {
         tipo: 0, // 0 = Insertar
@@ -304,12 +320,11 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
         next: (idCapacitacionGenerado: number) => {
           console.log('ID de capacitación generado:', idCapacitacionGenerado);
           
-          // Paso 2: Crear la solicitud de capacitación usando el ID generado
+          // Paso 2: Crear la solicitud de capacitación usando el ID generado y el ID del empleado del sessionStorage
           const solicitudData: GTHSolicitudCapacitacionModel = {
             tipo: 0, // 0 = Insertar
             idCapacitacion: idCapacitacionGenerado,
-            idEmpleado: 0, // Se resolverá por cédula
-            cedulaEmpleado: '1234567890', // TODO: Obtener la cédula del usuario logueado
+            idEmpleado: idEmpleadoLogueado, // ID del empleado obtenido del sessionStorage
             justificacion: this.justificacionCapacitacion,
             fechaSolicitud: new Date()
           };
