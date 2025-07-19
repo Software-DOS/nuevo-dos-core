@@ -1,14 +1,15 @@
 <main class="container-main">
-  <div class="cap-table">
-    <div class="cap-header">
-      <div class="empleado-row">Nombre</div>
-      <div>Cédula</div>
-      <div>Cargo</div>
-      <div>Área</div>
-      <div>Certificaciones</div>
-    </div>
+  <div id="lista-empleados" class="cap-table">
+  <div class="cap-header">
+    <div>Foto</div>
+    <div>Nombre</div>
+    <div>Cédula</div>
+    <div>Cargo</div>
+    <div>Área</div>
+    <div>Certificaciones</div>
+  </div>
 
-    <div class="cap-row" *ngFor="let empleado of empleados" (click)="navigateToEmployeeCV(empleado.id)" style="cursor: pointer;">
+    <!-- <div class="cap-row" *ngFor="let empleado of empleados" (click)="navigateToEmployeeCV(empleado.id)" style="cursor: pointer;">
       <div class="empleado-info-column">
         <img [src]="empleado.photo" [alt]="empleado.nombre" class="employee-photo">
         <span>{{ empleado.nombre }}</span>
@@ -17,6 +18,25 @@
       <div>{{ empleado.cargo }}</div>
       <div>{{ empleado.area }}</div>
       <div>{{ empleado.certificaciones }}</div>
+    </div> -->
+
+    <!-- <tr *ngFor="let empleado of empleados" (click)="navigateToEmployeeCV(empleado.id)" style="cursor: pointer;">
+      <td><img [src]="empleado.photo" class="employee-photo" alt="Foto"></td>
+      <td>{{ empleado.nombre }}</td>
+      <td>{{ empleado.cedula }}</td>
+      <td>{{ empleado.cargo }}</td>
+      <td>{{ empleado.area }}</td>
+      <td>{{ empleado.certificaciones }}</td>
+    </tr> -->
+
+    <div class="cap-row" *ngFor="let empleado of empleados" (click)="navigateToEmployeeCV()" style="cursor: pointer;">
+      <div><img [src]="empleado.photo" class="employee-photo" [alt]="empleado.nombre"></div>
+      <div>{{ empleado.nombre }}</div>
+      <div>{{ empleado.cedula }}</div>
+      <div>{{ empleado.cargo }}</div>
+      <div [ngClass]="getAreaClass(empleado.area)" class="area-badge">{{ empleado.area.toUpperCase() }}</div>
+      <div class="certifications-count"><span style="margin-right: 0.5rem;">✓</span>{{ empleado.certificaciones }}</div>
     </div>
-  </div>
+</div>
+
 </main>

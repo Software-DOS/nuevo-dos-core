@@ -22,10 +22,10 @@ export class EmpleadoCvComponent implements OnInit {
   };
 
   // Variables para el modal de datos personales secundarios
-  showDatosPersonalesSecundariosModal: boolean = false;
+  //showDatosPersonalesSecundariosModal: boolean = false;
 
   // NgModel properties for employee personal info
-  //public nombreCompleto: string = '';
+  public nombreCompleto: string = '';
   public correoElectronico: string = '';
   public posicion: string = '';
   public area: string = '';
@@ -137,6 +137,13 @@ export class EmpleadoCvComponent implements OnInit {
 
   /* -------------  Campos para mostrar en el HTML  ----------  */
 // Variables para mostrar la información (solo lectura)
+
+  nombreCompletoDisplay: string = ''; 
+  correoElectronicoDisplay: string = ''; 
+  posicionDisplay: string = ''; 
+  areaDisplay: string = ''; 
+  subareaDisplay: string = '';
+
   fechaNacimientoDisplay: string = '';
   sexoDisplay: string = '';
   tipoSangreDisplay: string = '';
@@ -177,7 +184,7 @@ export class EmpleadoCvComponent implements OnInit {
       tipo: 0,
       idEmpleado: 0,
       idPerfil: 0,
-      idCelula: 1,
+      idCelula: 3,
       cedula: this.numeroCedula,
       nombre: this.nombres,
       apellido: this.apellidos,
@@ -597,54 +604,83 @@ export class EmpleadoCvComponent implements OnInit {
     };
   }
 
-// Variable para controlar el modal
-showEditModal: boolean = false;
+  /* ========================================================================
+          Estados de Modales (centralizado)
+  ======================================================================== */
 
-// Función para abrir el modal
-openEditModal(): void {
-  this.showEditModal = true;
-}
+  modalStates = {
+    principal: false,
+    secundarios: false,
+    emergencia: false,
+    familiar: false
+  };
 
-// Función para cerrar el modal
-closeEditModal(): void {
-  this.showEditModal = false;
-}
+  /* ========================================================================
+    Funciones para abrir y cerrar modales de forma general
+  ======================================================================== */
 
-// Función para cerrar el modal al hacer clic en el overlay
-closeModalOnOverlay(event: Event, modal: string): void {
-  if (event.target === event.currentTarget) {
-    if (modal === 'edit') {
-      this.closeEditModal();
-    } else if (modal === 'secundario') {
-      this.closeDatosPersonalesSecundariosModal();
+  openModal(modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar') {
+    if (modal === 'secundarios') this.cargarDatosPersonalesSecundarios();
+    this.modalStates[modal] = true;
+  }
+
+  closeModal(modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar') {
+    this.modalStates[modal] = false;
+  }
+
+  closeModalOnOverlay(event: Event, modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar') {
+    if (event.target === event.currentTarget) {
+      this.closeModal(modal);
     }
   }
-}
 
+  
 
-/* ========================================================================
-    Funciones para mostrar datos y Modal de Datos Personales Secundarios
-  =========================================================================*/
-  // Función para abrir el modal de datos personales secundarios
-  openDatosPersonalesSecundariosModal(): void {
-    // Cargar los datos actuales en el formulario
-    this.cargarDatosPersonalesSecundarios();
-    this.showDatosPersonalesSecundariosModal = true;
+  /* ========================================================================
+    Datos Personales 
+  ======================================================================== */
+  // Cargar datos al abrir modal Datos personales
+  cargarDatosPersonales(): void {
+    
+    this.nombres = this.nombres; 
+    this.apellidos = this.apellidos;
+    this.correoElectronico = this.correoElectronicoDisplay; 
+    this.posicion = this.posicionDisplay; 
+    this.area = this.areaDisplay; 
+    this.subarea = this.subareaDisplay;
   }
-  
-  // Función para cerrar el modal de datos personales secundarios
-  closeDatosPersonalesSecundariosModal(): void {
-    this.showDatosPersonalesSecundariosModal = false;
+  // Guardar cambios de datos personales 
+  guardarDatosPersonales(): void {
+    if (!this.nombres || !this.correoElectronico ) {
+      alert('Por favor, completa todos los campos obligatorios');
+      return;
+    }
+     
+    
+    this.nombreCompletoDisplay = this.nombres + ' ' + this.apellidos;  
+    this.correoElectronicoDisplay = this.correoElectronico;
+    this.posicionDisplay = this.posicion;
+    this.areaDisplay = this.area;
+    this.subareaDisplay = this.subarea; 
+
+    this.closeModal('principal');
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Datos personales actualizados',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
   }
+
   
-  // Función para cerrar el modal al hacer clic en el overlay
-  // closeModalOnOverlay(event: Event): void {
-  //   if (event.target === event.currentTarget) {
-  //     this.closeDatosPersonalesSecundariosModal();
-  //   }
-  // }
-  
-  // Función para cargar los datos personales secundarios en el formulario
+  /* ========================================================================
+    Datos Personales Secundarios
+  ======================================================================== */
+
+  // Cargar datos al abrir modal secundarios
   cargarDatosPersonalesSecundarios(): void {
     this.fechaNacimiento = this.fechaNacimientoDisplay;
     this.sexo = this.sexoDisplay;
@@ -655,18 +691,16 @@ closeModalOnOverlay(event: Event, modal: string): void {
     this.provinciaNacimiento = this.provinciaNacimientoDisplay;
     this.ciudadNacimiento = this.ciudadNacimientoDisplay;
   }
-  
-  // Función para guardar los cambios
+
+  // Guardar cambios de datos personales secundarios
   guardarDatosPersonalesSecundarios(): void {
-    // Validar campos obligatorios
     if (!this.fechaNacimiento || !this.sexo || !this.tipoSangre || !this.etnia || 
         !this.numeroCedula || !this.paisNacimiento || !this.provinciaNacimiento || 
         !this.ciudadNacimiento) {
       alert('Por favor, completa todos los campos obligatorios');
       return;
     }
-    
-    // Actualizar las variables de display
+
     this.fechaNacimientoDisplay = this.fechaNacimiento;
     this.sexoDisplay = this.sexo;
     this.tipoSangreDisplay = this.tipoSangre;
@@ -675,15 +709,20 @@ closeModalOnOverlay(event: Event, modal: string): void {
     this.paisNacimientoDisplay = this.paisNacimiento;
     this.provinciaNacimientoDisplay = this.provinciaNacimiento;
     this.ciudadNacimientoDisplay = this.ciudadNacimiento;
-    
-    // Cerrar el modal
-    this.closeDatosPersonalesSecundariosModal();
-    
-    // Mostrar mensaje de éxito
-    alert('Datos personales secundarios actualizados correctamente');
+
+    this.closeModal('secundarios');
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Datos personales secundarios actualizados',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
   }
 
-  // Función para manejar el cambio de archivo
+  // Manejo de archivo
   onFileChange(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -691,22 +730,22 @@ closeModalOnOverlay(event: Event, modal: string): void {
     }
   }
 
-  // Función para obtener los datos personales secundarios como objeto
-  getDatosPersonalesSecundarios(): any {
-    return {
-      fechaNacimiento: this.fechaNacimientoDisplay,
-      sexo: this.sexoDisplay,
-      tipoSangre: this.tipoSangreDisplay,
-      etnia: this.etniaDisplay,
-      numeroCedula: this.numeroCedulaDisplay,
-      documentoIdentidad: this.documentoIdentidad,
-      paisNacimiento: this.paisNacimientoDisplay,
-      provinciaNacimiento: this.provinciaNacimientoDisplay,
-      ciudadNacimiento: this.ciudadNacimientoDisplay
-    };
-  }
+  // Obtener los datos personales secundarios
+  // getDatosPersonalesSecundarios(): any {
+  //   return {
+  //     fechaNacimiento: this.fechaNacimientoDisplay,
+  //     sexo: this.sexoDisplay,
+  //     tipoSangre: this.tipoSangreDisplay,
+  //     etnia: this.etniaDisplay,
+  //     numeroCedula: this.numeroCedulaDisplay,
+  //     documentoIdentidad: this.documentoIdentidad,
+  //     paisNacimiento: this.paisNacimientoDisplay,
+  //     provinciaNacimiento: this.provinciaNacimientoDisplay,
+  //     ciudadNacimiento: this.ciudadNacimientoDisplay
+  //   };
+  // }
 
-  // Función para formatear la fecha para mostrar
+  // Formatear fecha para mostrar
   formatearFecha(fecha: string): string {
     if (!fecha) return '';
     const date = new Date(fecha);
@@ -716,5 +755,60 @@ closeModalOnOverlay(event: Event, modal: string): void {
       year: 'numeric'
     });
   }
+
+
+  /* ========================================================================
+    Contacto de Emergencia
+  ======================================================================== */
+
+  guardarContactoEmergencia() {
+    // Puedes hacer validaciones aquí si deseas
+    this.closeModal('emergencia');
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Contacto de emergencia actualizado',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  }
+
+  /* ========================================================================
+    Información Familiar
+  ======================================================================== */
+
+  dependientes = [
+    {
+      nombre: '',
+      fechaNacimiento: '',
+      discapacidad: '',
+      documentoBase64: ''
+    }
+  ];
+
+  agregarDependiente() {
+    this.dependientes.push({
+      nombre: '',
+      fechaNacimiento: '',
+      discapacidad: '',
+      documentoBase64: ''
+    });
+  }
+
+  guardarInformacionFamiliar() {
+    this.closeModal('familiar');
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Información familiar actualizada',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  }
+
 
 }
