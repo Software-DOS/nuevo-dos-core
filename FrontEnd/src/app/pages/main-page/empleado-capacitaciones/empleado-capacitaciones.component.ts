@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GthCapacitacionService } from 'src/app/services/gthcapacitacion.service';
+import { GthSolicitudCapacitacionService, GTHSolicitudCapacitacionModel } from 'src/app/services/gth-solicitud-capacitacion.service';
 import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
 import Swal from 'sweetalert2';
 
@@ -111,7 +112,10 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     }
   ];
 
-  constructor(private gthCapacitacionService: GthCapacitacionService) { }
+  constructor(
+    private gthCapacitacionService: GthCapacitacionService,
+    private gthSolicitudCapacitacionService: GthSolicitudCapacitacionService
+  ) { }
 
   ngOnInit(): void {
     this.loadRequestedTrainings();
@@ -295,40 +299,61 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
         modalidad: 'Virtual' // Valor por defecto más específico
       };
 
-      // Llamar al servicio para guardar en el backend
-      this.gthCapacitacionService.GuardarGthCapacitacion(capacitacionData).subscribe({
-        next: (response: any) => {
-          console.log('Capacitación guardada exitosamente:', response);
+      // Paso 1: Crear la capacitación y obtener el ID generado
+      this.gthCapacitacionService.crearCapacitacion(capacitacionData).subscribe({
+        next: (idCapacitacionGenerado: number) => {
+          console.log('ID de capacitación generado:', idCapacitacionGenerado);
           
-          // También agregar a la lista local para mostrar inmediatamente
-          const newRequest: Training = {
-            id: Date.now(),
-            name: this.nombreCapacitacion,
-            duration: this.duracionCapacitacion,
-            completionDate: 'Pendiente',
-            certification: this.certificacionCapacitacion,
-            company: 'Por definir',
-            status: 'Solicitada', // Estado confirmado como "Solicitada"
-            price: this.precioCapacitacion,
-            justification: this.justificacionCapacitacion,
-            link: this.enlaceCapacitacion
+          // Paso 2: Crear la solicitud de capacitación usando el ID generado
+          const solicitudData: GTHSolicitudCapacitacionModel = {
+            tipo: 0, // 0 = Insertar
+            idCapacitacion: idCapacitacionGenerado,
+            idEmpleado: 0, // Se resolverá por cédula
+            cedulaEmpleado: '1234567890', // TODO: Obtener la cédula del usuario logueado
+            justificacion: this.justificacionCapacitacion,
+            fechaSolicitud: new Date()
           };
 
-          this.requestedTrainings.push(newRequest);
-          this.saveRequestedTrainings();
-          
-          // Usar SweetAlert2 para un mensaje más profesional
-          this.showSuccessMessage();
-          
-          this.resetForm();
-          this.showForm = false;
-          this.showRequestButton = true;
-          
-          // Recargar capacitaciones solicitadas para mostrar la nueva
-          this.cargarCapacitacionesSolicitadas();
+          // Crear la solicitud
+          this.gthSolicitudCapacitacionService.crearSolicitudCapacitacion(solicitudData).subscribe({
+            next: (responseSolicitud: any) => {
+              console.log('Solicitud de capacitación creada:', responseSolicitud);
+              
+              // Agregar a la lista local para mostrar inmediatamente
+              const newRequest: Training = {
+                id: idCapacitacionGenerado,
+                name: this.nombreCapacitacion,
+                duration: this.duracionCapacitacion,
+                completionDate: 'Pendiente',
+                certification: this.certificacionCapacitacion,
+                company: 'Por definir',
+                status: 'Solicitada',
+                price: this.precioCapacitacion,
+                justification: this.justificacionCapacitacion,
+                link: this.enlaceCapacitacion
+              };
+
+              this.requestedTrainings.push(newRequest);
+              this.saveRequestedTrainings();
+              
+              // Mostrar mensaje de éxito
+              this.showSuccessMessage();
+              
+              this.resetForm();
+              this.showForm = false;
+              this.showRequestButton = true;
+              
+              // Recargar capacitaciones solicitadas
+              this.cargarCapacitacionesSolicitadas();
+            },
+            error: (error) => {
+              console.error('Error al crear la solicitud de capacitación:', error);
+              this.showErrorMessage();
+            }
+          });
         },
         error: (error) => {
-          console.error('Error al guardar la capacitación:', error);
+          console.error('Error al crear la capacitación:', error);
           this.showErrorMessage();
         }
       });

@@ -40,6 +40,20 @@ export class GthCapacitacionService {
       );
   }
 
+  /**
+   * Crea una nueva capacitación y devuelve el ID generado automáticamente.
+   * Utiliza el endpoint específico para inserción que retorna solo el ID.
+   */
+  crearCapacitacion(capacitacion: iGTHCapacitacion): Observable<number> {
+    return this.http.post<number>(environment.urlbackend + "api/GTHCapacitacion/crear", capacitacion)
+      .pipe(
+        tap((idGenerado: number) => {
+          console.log('ID de capacitación generado:', idGenerado);
+        }),
+        catchError(this.handleError)
+      );
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Error desconocido';
     if (error.error instanceof ErrorEvent) {
