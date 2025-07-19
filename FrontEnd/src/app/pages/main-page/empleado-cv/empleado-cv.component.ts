@@ -21,6 +21,9 @@ export class EmpleadoCvComponent implements OnInit {
     'info-profesional': false
   };
 
+  // Variables para el modal de datos personales secundarios
+  //showDatosPersonalesSecundariosModal: boolean = false;
+
   // NgModel properties for employee personal info
   public nombreCompleto: string = '';
   public correoElectronico: string = '';
@@ -131,6 +134,26 @@ export class EmpleadoCvComponent implements OnInit {
   public nuevoHistorialFechas: string = '';
   public nuevoHistorialFunciones: string = '';
 
+
+  /* -------------  Campos para mostrar en el HTML  ----------  */
+// Variables para mostrar la información (solo lectura)
+
+  nombreCompletoDisplay: string = ''; 
+  correoElectronicoDisplay: string = ''; 
+  posicionDisplay: string = ''; 
+  areaDisplay: string = ''; 
+  subareaDisplay: string = '';
+
+  fechaNacimientoDisplay: string = '';
+  sexoDisplay: string = '';
+  tipoSangreDisplay: string = '';
+  etniaDisplay: string = '';
+  numeroCedulaDisplay: string = '';
+  paisNacimientoDisplay: string = '';
+  provinciaNacimientoDisplay: string = '';
+  ciudadNacimientoDisplay: string = '';
+
+
   //
   public generica: any = [];
   public cargaInicial: any = [];
@@ -161,7 +184,7 @@ export class EmpleadoCvComponent implements OnInit {
       tipo: 0,
       idEmpleado: 0,
       idPerfil: 0,
-      idCelula: 1,
+      idCelula: 3,
       cedula: this.numeroCedula,
       nombre: this.nombres,
       apellido: this.apellidos,
@@ -581,25 +604,211 @@ export class EmpleadoCvComponent implements OnInit {
     };
   }
 
-  // Variable para controlar el modal
-showEditModal: boolean = false;
+  /* ========================================================================
+          Estados de Modales (centralizado)
+  ======================================================================== */
 
-// Función para abrir el modal
-openEditModal(): void {
-  this.showEditModal = true;
-}
+  modalStates = {
+    principal: false,
+    secundarios: false,
+    emergencia: false,
+    familiar: false
+  };
 
-// Función para cerrar el modal
-closeEditModal(): void {
-  this.showEditModal = false;
-}
+  /* ========================================================================
+    Funciones para abrir y cerrar modales de forma general
+  ======================================================================== */
 
-// Función para cerrar el modal al hacer clic en el overlay
-closeModalOnOverlay(event: Event): void {
-  if (event.target === event.currentTarget) {
-    this.closeEditModal();
+  openModal(modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar') {
+    if (modal === 'secundarios') this.cargarDatosPersonalesSecundarios();
+    this.modalStates[modal] = true;
   }
-}
+
+  closeModal(modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar') {
+    this.modalStates[modal] = false;
+  }
+
+  closeModalOnOverlay(event: Event, modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar') {
+    if (event.target === event.currentTarget) {
+      this.closeModal(modal);
+    }
+  }
+
+  
+
+  /* ========================================================================
+    Datos Personales 
+  ======================================================================== */
+  // Cargar datos al abrir modal Datos personales
+  cargarDatosPersonales(): void {
+    
+    this.nombres = this.nombres; 
+    this.apellidos = this.apellidos;
+    this.correoElectronico = this.correoElectronicoDisplay; 
+    this.posicion = this.posicionDisplay; 
+    this.area = this.areaDisplay; 
+    this.subarea = this.subareaDisplay;
+  }
+  // Guardar cambios de datos personales 
+  guardarDatosPersonales(): void {
+    if (!this.nombres || !this.correoElectronico ) {
+      alert('Por favor, completa todos los campos obligatorios');
+      return;
+    }
+     
+    
+    this.nombreCompletoDisplay = this.nombres + ' ' + this.apellidos;  
+    this.correoElectronicoDisplay = this.correoElectronico;
+    this.posicionDisplay = this.posicion;
+    this.areaDisplay = this.area;
+    this.subareaDisplay = this.subarea; 
+
+    this.closeModal('principal');
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Datos personales actualizados',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  }
+
+  
+  /* ========================================================================
+    Datos Personales Secundarios
+  ======================================================================== */
+
+  // Cargar datos al abrir modal secundarios
+  cargarDatosPersonalesSecundarios(): void {
+    this.fechaNacimiento = this.fechaNacimientoDisplay;
+    this.sexo = this.sexoDisplay;
+    this.tipoSangre = this.tipoSangreDisplay;
+    this.etnia = this.etniaDisplay;
+    this.numeroCedula = this.numeroCedulaDisplay;
+    this.paisNacimiento = this.paisNacimientoDisplay;
+    this.provinciaNacimiento = this.provinciaNacimientoDisplay;
+    this.ciudadNacimiento = this.ciudadNacimientoDisplay;
+  }
+
+  // Guardar cambios de datos personales secundarios
+  guardarDatosPersonalesSecundarios(): void {
+    if (!this.fechaNacimiento || !this.sexo || !this.tipoSangre || !this.etnia || 
+        !this.numeroCedula || !this.paisNacimiento || !this.provinciaNacimiento || 
+        !this.ciudadNacimiento) {
+      alert('Por favor, completa todos los campos obligatorios');
+      return;
+    }
+
+    this.fechaNacimientoDisplay = this.fechaNacimiento;
+    this.sexoDisplay = this.sexo;
+    this.tipoSangreDisplay = this.tipoSangre;
+    this.etniaDisplay = this.etnia;
+    this.numeroCedulaDisplay = this.numeroCedula;
+    this.paisNacimientoDisplay = this.paisNacimiento;
+    this.provinciaNacimientoDisplay = this.provinciaNacimiento;
+    this.ciudadNacimientoDisplay = this.ciudadNacimiento;
+
+    this.closeModal('secundarios');
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Datos personales secundarios actualizados',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  }
+
+  // Manejo de archivo
+  onFileChange(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.documentoIdentidad = file;
+    }
+  }
+
+  // Obtener los datos personales secundarios
+  // getDatosPersonalesSecundarios(): any {
+  //   return {
+  //     fechaNacimiento: this.fechaNacimientoDisplay,
+  //     sexo: this.sexoDisplay,
+  //     tipoSangre: this.tipoSangreDisplay,
+  //     etnia: this.etniaDisplay,
+  //     numeroCedula: this.numeroCedulaDisplay,
+  //     documentoIdentidad: this.documentoIdentidad,
+  //     paisNacimiento: this.paisNacimientoDisplay,
+  //     provinciaNacimiento: this.provinciaNacimientoDisplay,
+  //     ciudadNacimiento: this.ciudadNacimientoDisplay
+  //   };
+  // }
+
+  // Formatear fecha para mostrar
+  formatearFecha(fecha: string): string {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
+
+
+  /* ========================================================================
+    Contacto de Emergencia
+  ======================================================================== */
+
+  guardarContactoEmergencia() {
+    // Puedes hacer validaciones aquí si deseas
+    this.closeModal('emergencia');
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Contacto de emergencia actualizado',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  }
+
+  /* ========================================================================
+    Información Familiar
+  ======================================================================== */
+
+  dependientes = [
+    {
+      nombre: '',
+      fechaNacimiento: '',
+      discapacidad: '',
+      documentoBase64: ''
+    }
+  ];
+
+  agregarDependiente() {
+    this.dependientes.push({
+      nombre: '',
+      fechaNacimiento: '',
+      discapacidad: '',
+      documentoBase64: ''
+    });
+  }
+
+  guardarInformacionFamiliar() {
+    this.closeModal('familiar');
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Información familiar actualizada',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  }
 
 
 }

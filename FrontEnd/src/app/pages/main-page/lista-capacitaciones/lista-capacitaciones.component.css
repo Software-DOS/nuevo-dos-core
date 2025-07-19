@@ -284,6 +284,120 @@
   justify-content: flex-end;
 }
 
+/*  ===================================================
+              Estilos para las tablas
+=======================================================*/
+/* ===== Tabla: Curso en Progreso ===== */
+#curso .cap-header,
+#curso .cap-row {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  padding: 0.5rem 1rem;
+}
+
+#curso .cap-header > div:nth-child(1), /* Empleado */
+#curso .cap-row > div:nth-child(1) {
+  flex: 2;
+}
+
+#curso .cap-header > div:nth-child(2), /* Nombre */
+#curso .cap-row > div:nth-child(2) {
+  flex: 3;
+}
+
+#curso .cap-header > div:nth-child(3), /* Duración */
+#curso .cap-row > div:nth-child(3) {
+  flex: 2;
+}
+
+#curso .cap-header > div:nth-child(4), /* Fecha Inicio */
+#curso .cap-row > div:nth-child(4) {
+  flex: 2;
+}
+
+#curso .cap-header > div:nth-child(5), /* Certificación */
+#curso .cap-row > div:nth-child(5) {
+  flex: 3;
+}
+
+#curso .cap-header > div:nth-child(6), /* Progreso */
+#curso .cap-row > div:nth-child(6) {
+  flex: 2;
+}
+
+/* ===== Tabla: Disponibles ===== */
+#disponible .cap-header,
+#disponible .cap-row {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  padding: 0.5rem 1rem;
+}
+
+#disponible .cap-header > div:nth-child(1), /* Nombre */
+#disponible .cap-row > div:nth-child(1) {
+  flex: 3;
+}
+
+#disponible .cap-header > div:nth-child(2), /* Duración */
+#disponible .cap-row > div:nth-child(2) {
+  flex: 2;
+}
+
+#disponible .cap-header > div:nth-child(3), /* Certificación */
+#disponible .cap-row > div:nth-child(3) {
+  flex: 3;
+}
+
+#disponible .cap-header > div:nth-child(4), /* Acciones */
+#disponible .cap-row > div:nth-child(4) {
+  flex: 2;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ===== Tabla: Solicitadas ===== */
+#solicitadas .cap-header,
+#solicitadas .cap-row {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  padding: 0.5rem 1rem;
+}
+
+#solicitadas .cap-header > div:nth-child(1), /* Empleado */
+#solicitadas .cap-row > div:nth-child(1) {
+  flex: 2;
+}
+
+#solicitadas .cap-header > div:nth-child(2), /* Departamento */
+#solicitadas .cap-row > div:nth-child(2) {
+  flex: 2;
+}
+
+#solicitadas .cap-header > div:nth-child(3), /* Nombre */
+#solicitadas .cap-row > div:nth-child(3) {
+  flex: 3;
+}
+
+#solicitadas .cap-header > div:nth-child(4), /* Duración */
+#solicitadas .cap-row > div:nth-child(4) {
+  flex: 2;
+}
+
+#solicitadas .cap-header > div:nth-child(5), /* Certificación */
+#solicitadas .cap-row > div:nth-child(5) {
+  flex: 3;
+}
+
+.cap-row > div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
 /* Responsive para botones de acción */
 @media (max-width: 768px) {
   .acciones-column {
