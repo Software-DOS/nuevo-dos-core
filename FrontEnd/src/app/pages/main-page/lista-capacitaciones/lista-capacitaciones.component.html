@@ -110,7 +110,55 @@
 
   <!-- Solicitadas -->
   <div id="solicitadas" class="subcategory-section" [class.active]="activeTab === 'solicitadas'">
-    <div class="cap-table">      <div class="cap-header">
+    <!-- Mensaje de carga -->
+    <div *ngIf="cargandoSolicitudes" class="text-center p-3">
+      <i class="fas fa-spinner fa-spin"></i> Cargando solicitudes...
+    </div>
+
+    <!-- Mostrar datos reales del backend -->
+    <div *ngIf="!cargandoSolicitudes && solicitudesDetalladas.length > 0" class="cap-table">
+      <div class="cap-header">
+        <div>Empleado</div>
+        <div>Departamento/Área</div>
+        <div>Capacitación Solicitada</div>
+        <div>Categoría</div>
+        <div>Duración (h)</div>
+        <div>Fecha Solicitud</div>
+        <div>Modalidad</div>
+      </div>
+
+      <div class="cap-row" *ngFor="let solicitud of solicitudesDetalladas">
+        <div class="empleado-info-column">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" 
+               [alt]="solicitud.empleado?.nombreCompleto" 
+               class="employee-photo">
+          <div class="empleado-details">
+            <span class="empleado-nombre">{{ solicitud.empleado?.nombreCompleto || 'N/A' }}</span>
+            <small class="empleado-cedula">{{ solicitud.empleado?.cedula || 'N/A' }}</small>
+          </div>
+        </div>  
+        <div>{{ solicitud.empleado?.area || solicitud.empleado?.cargoActual || 'N/A' }}</div>
+        <div class="capacitacion-info">
+          <strong>{{ solicitud.capacitacion?.nombre || solicitud.capacitacion?.titulo || 'N/A' }}</strong>
+          <small *ngIf="solicitud.justificacion" class="justificacion-text">
+            {{ solicitud.justificacion }}
+          </small>
+        </div>
+        <div>{{ solicitud.capacitacion?.categoria || 'N/A' }}</div>
+        <div>{{ solicitud.capacitacion?.duracion || 'N/A' }}</div>
+        <div>{{ (solicitud.fechaSolicitud | date:'dd/MM/yyyy') || 'N/A' }}</div>
+        <div>{{ solicitud.capacitacion?.modalidad || 'N/A' }}</div>
+      </div>
+    </div>
+
+    <!-- Mensaje cuando no hay solicitudes -->
+    <div *ngIf="!cargandoSolicitudes && solicitudesDetalladas.length === 0" class="text-center p-3">
+      <i class="fas fa-info-circle"></i> No hay solicitudes de capacitación registradas.
+    </div>
+
+    <!-- Datos estáticos como respaldo (comentado para referencia) 
+    <div class="cap-table">
+      <div class="cap-header">
         <div>Empleado</div>
         <div>Departamento</div>
         <div>Nombre</div>
@@ -129,6 +177,7 @@
         <div>{{ capacitacion.certificacion }}</div>
       </div>
     </div>
+    -->
   </div>
 </main>
 
