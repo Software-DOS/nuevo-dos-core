@@ -123,5 +123,41 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             }
             return result;
         }
+
+        /// <summary>
+        /// Inserta una nueva capacitación y devuelve el ID generado automáticamente.
+        /// Utiliza el SP específico SP_Insertar_GTH_CAPACITACION que retorna solo el ID.
+        /// </summary>
+        public async Task<long> InsertarYObtenerIdCapacitacionAsync(GTHCapacitacion capacitacion)
+        {
+            using var sql = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SP_Insertar_GTH_CAPACITACION", sql)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            // Agregar todos los parámetros necesarios para la inserción
+            cmd.Parameters.Add(new SqlParameter("@ID_ENTIDADCAP", capacitacion.IdEntidadCap ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_NOMBRE", capacitacion.Nombre ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_TITULO", capacitacion.Titulo ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_CATEGORIA", capacitacion.Categoria ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_DESCRIPCION", capacitacion.Descripcion ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_ESTADO", capacitacion.Estado ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_FECHAINICIO", capacitacion.FechaInicio ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_FECHAFIN", capacitacion.FechaFin ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_FECHAEXPIRACION", capacitacion.FechaExpiracion ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_URLVERIFICACION", capacitacion.UrlVerificacion ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_ARCHIVOSADJUNTOS", capacitacion.ArchivosAdjuntos ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_OBSERVACIONES", capacitacion.Observaciones ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_DURACION", capacitacion.Duracion ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_COSTO", capacitacion.Costo ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_MODALIDAD", capacitacion.Modalidad ?? (object)DBNull.Value));
+
+            await sql.OpenAsync();
+            
+            // Usar ExecuteScalarAsync para obtener directamente el ID retornado
+            var result = await cmd.ExecuteScalarAsync();
+            return result != null && result != DBNull.Value ? Convert.ToInt64(result) : 0L;
+        }
     }
 }

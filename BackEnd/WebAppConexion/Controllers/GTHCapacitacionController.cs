@@ -105,5 +105,43 @@ namespace WebAppConexion.Controllers
                 valor2 = r.valor2
             }));
         }
+
+        /// <summary>
+        /// Crea una nueva capacitación y devuelve el ID generado automáticamente.
+        /// Utiliza el SP específico para inserción que retorna solo el ID.
+        /// </summary>
+        [HttpPost("crear")]
+        public async Task<IActionResult> CrearCapacitacion([FromBody] GTHCapacitacionViewModel model)
+        {
+            try
+            {
+                // Mapear ViewModel a Entidad
+                var entidad = new GTHCapacitacion
+                {
+                    IdEntidadCap = model.IdEntidadCap,
+                    Nombre = model.Nombre,
+                    Titulo = model.Titulo,
+                    Categoria = model.Categoria,
+                    Descripcion = model.Descripcion,
+                    Estado = model.Estado,
+                    FechaInicio = model.FechaInicio,
+                    FechaFin = model.FechaFin,
+                    FechaExpiracion = model.FechaExpiracion,
+                    UrlVerificacion = model.UrlVerificacion,
+                    ArchivosAdjuntos = model.ArchivosAdjuntos,
+                    Observaciones = model.Observaciones,
+                    Duracion = model.Duracion,
+                    Costo = model.Costo,
+                    Modalidad = model.Modalidad
+                };
+
+                var idGenerado = await _repository.InsertarYObtenerIdCapacitacionAsync(entidad);
+                return Ok(idGenerado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al crear la capacitación: {ex.Message}");
+            }
+        }
     }
 }
