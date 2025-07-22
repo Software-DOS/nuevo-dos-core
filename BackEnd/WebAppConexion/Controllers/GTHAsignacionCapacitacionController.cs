@@ -46,9 +46,7 @@ namespace WebAppConexion.Controllers
                 var capacitaciones = await _capacitacionRepository.Mostrar(1, (int)asignacion.IdCapacitacion);
                 var capacitacion = capacitaciones.FirstOrDefault();
 
-                // Solo incluir si la capacitación está EN CURSO
-                if (capacitacion == null || !string.Equals(capacitacion.Estado, "EN CURSO", System.StringComparison.OrdinalIgnoreCase))
-                    continue;
+                // Si no existe la capacitación, igual se agrega el registro (puedes cambiar esto si quieres filtrar solo los que tengan capacitación)
 
                 // Obtener información del empleado (tipo 1 = por ID)
                 var empleados = await _empleadoRepository.Mostrar(1, (int)asignacion.IdEmpleado);
