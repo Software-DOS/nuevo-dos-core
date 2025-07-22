@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GthCapacitacionService } from 'src/app/services/gthcapacitacion.service';
 import { GthSolicitudCapacitacionService, GTHSolicitudCapacitacionDetalladaModel } from 'src/app/services/gth-solicitud-capacitacion.service';
+import { GthAsignacionCapacitacionService, GTHAsignacionCapacitacionDetalladaModel } from 'src/app/services/gth-asignacion-capacitacion.service';
 import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
 import Swal from 'sweetalert2';
 
@@ -171,14 +172,20 @@ export class ListaCapacitacionesComponent implements OnInit {
     }
   ];
 
+  // Datos reales de asignaciones en curso
+  asignacionesEnCurso: GTHAsignacionCapacitacionDetalladaModel[] = [];
+  cargandoAsignaciones: boolean = false;
+
   constructor(
     private gthCapacitacionService: GthCapacitacionService,
-    private gthSolicitudCapacitacionService: GthSolicitudCapacitacionService
+    private gthSolicitudCapacitacionService: GthSolicitudCapacitacionService,
+    private gthAsignacionCapacitacionService: GthAsignacionCapacitacionService
   ) { }
 
   ngOnInit(): void {
     this.cargarCapacitacionesDesdeBackend();
     this.cargarSolicitudesCapacitacion();
+    this.cargarAsignacionesEnCurso();
   }
 
   private cargarSolicitudesCapacitacion(): void {
@@ -228,6 +235,20 @@ export class ListaCapacitacionesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar capacitaciones del backend:', error);
+      }
+    });
+  }
+
+  private cargarAsignacionesEnCurso(): void {
+    this.cargandoAsignaciones = true;
+    this.gthAsignacionCapacitacionService.mostrarAsignacionesEnCurso(0).subscribe({
+      next: (response: GTHAsignacionCapacitacionDetalladaModel[]) => {
+        this.asignacionesEnCurso = response || [];
+        this.cargandoAsignaciones = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar asignaciones en curso:', error);
+        this.cargandoAsignaciones = false;
       }
     });
   }
