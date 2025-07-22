@@ -13,10 +13,88 @@ namespace WebAppConexion.Controllers
     public class GTHAsignacionCapacitacionController : ControllerBase
     {
         private readonly GTHAsignacionCapacitacionRepository _repository;
+        private readonly GTHEmpleadoRepository _empleadoRepository;
+        private readonly GTHCapacitacionRepository _capacitacionRepository;
 
-        public GTHAsignacionCapacitacionController(GTHAsignacionCapacitacionRepository repository)
+        public GTHAsignacionCapacitacionController(
+            GTHAsignacionCapacitacionRepository repository,
+            GTHEmpleadoRepository empleadoRepository,
+            GTHCapacitacionRepository capacitacionRepository)
         {
             _repository = repository;
+            _empleadoRepository = empleadoRepository;
+            _capacitacionRepository = capacitacionRepository;
+        }
+        /// <summary>
+        /// Devuelve la lista de asignaciones de capacitación EN CURSO con información detallada del empleado y la capacitación.
+        /// </summary>
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<GTHAsignacionCapacitacionDetalladaViewModel>>> MostrarDetalladaEnCurso(
+            [FromQuery] int tipo = 0,
+            [FromQuery] int? idCapacitacion = null,
+            [FromQuery] int? idEmpleado = null,
+            [FromQuery] string cedulaEmpleado = null)
+        {
+            // Obtener las asignaciones
+            var asignaciones = await _repository.Mostrar(tipo, idCapacitacion, idEmpleado, cedulaEmpleado);
+
+            var resultado = new List<GTHAsignacionCapacitacionDetalladaViewModel>();
+
+            foreach (var asignacion in asignaciones)
+            {
+                // Obtener información de la capacitación (tipo 1 = por ID)
+                var capacitaciones = await _capacitacionRepository.Mostrar(1, (int)asignacion.IdCapacitacion);
+                var capacitacion = capacitaciones.FirstOrDefault();
+
+                // Solo incluir si la capacitación está EN CURSO
+                if (capacitacion == null || !string.Equals(capacitacion.Estado, "EN CURSO", System.StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                // Obtener información del empleado (tipo 1 = por ID)
+                var empleados = await _empleadoRepository.Mostrar(1, (int)asignacion.IdEmpleado);
+                var empleado = empleados.FirstOrDefault();
+
+                var detallada = new GTHAsignacionCapacitacionDetalladaViewModel
+                {
+                    IdAsignacion = asignacion.IdEmpleado, // Temporal, si hay un ID único usarlo
+                    IdCapacitacion = asignacion.IdCapacitacion,
+                    IdEmpleado = asignacion.IdEmpleado,
+                    CedulaEmpleado = asignacion.CedulaEmpleado,
+                    Fecha = asignacion.Fecha,
+                    Progreso = asignacion.Progreso,
+                    Empleado = empleado != null ? new WebAppConexion.Models.EmpleadoInfo
+                    {
+                        IdEmpleado = empleado.IdEmpleado,
+                        Cedula = empleado.Cedula,
+                        Nombre = empleado.Nombre,
+                        Apellido = empleado.Apellido,
+                        Correo = empleado.Correo,
+                        CorreoCorporativo = empleado.CorreoCorporativo,
+                        Telefono = empleado.Telefono,
+                        CargoActual = empleado.CargoActual,
+                        Area = empleado.Area,
+                        EstadoEmpleado = empleado.EstadoEmpleado
+                    } : null,
+                    Capacitacion = capacitacion != null ? new WebAppConexion.Models.CapacitacionInfo
+                    {
+                        IdCapacitacion = capacitacion.IdCapacitacion,
+                        Nombre = capacitacion.Nombre,
+                        Titulo = capacitacion.Titulo,
+                        Categoria = capacitacion.Categoria,
+                        Descripcion = capacitacion.Descripcion,
+                        Estado = capacitacion.Estado,
+                        FechaInicio = capacitacion.FechaInicio,
+                        FechaFin = capacitacion.FechaFin,
+                        Duracion = capacitacion.Duracion,
+                        Costo = capacitacion.Costo,
+                        Modalidad = capacitacion.Modalidad,
+                        Observaciones = capacitacion.Observaciones
+                    } : null
+                };
+                resultado.Add(detallada);
+            }
+
+            return Ok(resultado);
         }
 
         /// <summary>
