@@ -7,7 +7,10 @@
 
   <!-- EN CURSO -->
   <div id="curso" class="subcategory-section" [class.active]="activeTab === 'curso'">
-    <div class="cap-table">
+    <div *ngIf="cargandoAsignaciones" class="text-center p-3">
+      <i class="fas fa-spinner fa-spin"></i> Cargando asignaciones en curso...
+    </div>
+    <div *ngIf="!cargandoAsignaciones && asignacionesEnCurso.length > 0" class="cap-table">
       <div class="cap-header">
         <div class="empleado-row">Empleado</div>
         <div>Nombre</div>
@@ -16,16 +19,18 @@
         <div>Certificación</div>
         <div>Progreso</div>
       </div>
-      
-      <div class="cap-row" *ngFor="let capacitacion of capacitacionesEnCurso" (click)="openEmployeeTrainingsModal(capacitacion.empleado)">
+      <div class="cap-row" *ngFor="let asignacion of asignacionesEnCurso">
         <div class="empleado-info-column">
-          <img [src]="capacitacion.empleado.photo" [alt]="capacitacion.empleado.nombre" class="employee-photo">
-          <span>{{ capacitacion.empleado.nombre }}</span>
-        </div>          
-        <div>{{ capacitacion.nombre }}</div>
-        <div>{{ capacitacion.duracion }}</div>
-        <div>{{ capacitacion.fechaInicio }}</div>
-        <div>{{ capacitacion.certificacion }}</div>        <div class="progress-container">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+               [alt]="asignacion.empleado?.nombreCompleto"
+               class="employee-photo">
+          <span>{{ asignacion.empleado?.nombreCompleto || 'N/A' }}</span>
+        </div>
+        <div>{{ asignacion.capacitacion?.nombre || asignacion.capacitacion?.titulo || 'N/A' }}</div>
+        <div>{{ asignacion.capacitacion?.duracion || 'N/A' }}</div>
+        <div>{{ asignacion.capacitacion?.fechaInicio | date:'dd/MM/yyyy' }}</div>
+        <div>{{ asignacion.capacitacion?.titulo || asignacion.capacitacion?.nombre || 'N/A' }}</div>
+        <div class="progress-container">
           <svg width="70" height="40" viewBox="0 0 100 50">
             <defs>
               <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -33,15 +38,15 @@
                 <stop offset="100%" class="progreso" />
               </linearGradient>
             </defs>
-            <!-- Fondo del gauge -->
             <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="#eee" stroke-width="8"/>
-            <!-- Progreso 70% - using exact same path as original -->
             <path d="M10 50 A40 40 0 0 1 75 21" fill="none" stroke="url(#grad)" stroke-width="8"/>
-            <!-- Texto encima del centro -->
-            <text x="50" y="35" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">{{ capacitacion.progreso }}%</text>
+            <text x="50" y="35" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">{{ asignacion.progreso || 0 }}%</text>
           </svg>
         </div>
       </div>
+    </div>
+    <div *ngIf="!cargandoAsignaciones && asignacionesEnCurso.length === 0" class="text-center p-3">
+      <i class="fas fa-info-circle"></i> No hay asignaciones de capacitación en curso.
     </div>
   </div>
 
