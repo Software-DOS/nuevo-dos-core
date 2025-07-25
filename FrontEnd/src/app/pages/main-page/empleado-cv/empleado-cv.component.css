@@ -310,6 +310,34 @@
 }
 
 
+/*   Estilos para la imagene o foto personal*/
+.employee-personal-info {
+  display: flex;
+  flex-direction: column;
+  /* gap: 2rem; */
+}
+.info-field {
+  display: flex;
+  align-items: center;
+  
+}
+.info-icon-titulo {
+  font-size: 24px; /* Aumenta el tamaño aquí */
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  color: #333; /* opcional */
+  justify-content: center;
+}
+.info-icon {
+  font-size: 18px;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+  color: #555; /* gris medio oscuro */
+  justify-content: center;
+}
+
+
 /* ================================================
             Estilos para el modal
 ===================================================*/

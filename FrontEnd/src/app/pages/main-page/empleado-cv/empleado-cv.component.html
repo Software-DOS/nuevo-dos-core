@@ -6,30 +6,32 @@
       <!-- Tarjeta del Empleado -->
       <div class="employee-card relative">
         <div class="employee-image-container">
-          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Foto del Empleado" class="employee-image" id="employeeImage">
+          <img [src]="fotoPerfilUrlDisplay" alt="Foto del Empleado" class="employee-image" id="employeeImage">
         </div>
         
         <div class="employee-personal-info">
           <div class="info-field">
+            <i class="info-icon-titulo fas fa-user"></i>
             <h4 class="info-label">{{nombreCompletoDisplay || 'Nombre Completo'}}</h4>
           </div>
           
           <div class="info-field">
+            <i class="info-icon far fa-envelope"></i>
             <p class="info-value">{{correoElectronicoDisplay || 'Correo Electrónico'}}</p>
           </div>
           
           <div class="info-field">
-            <!-- <label class="info-label">Posición</label> -->
+            <i class="info-icon far fa-gem"></i>
             <p class="info-value">{{posicionDisplay || 'Posición'}}</p> 
           </div>
           
           <div class="info-field">
-            <!-- <label class="info-label">Área</label> -->
+            <i class="info-icon far fa-building"></i>
             <p class="info-value">{{areaDisplay || 'Área'}}</p>
           </div>
           
           <div class="info-field">
-            <!-- <label class="info-label">Subárea</label> -->
+            <i class="info-icon far fa-address-card"></i>
             <p class="info-value">{{subareaDisplay || 'Subárea'}}</p>
           </div>
         </div>
@@ -128,22 +130,22 @@
               <div class="info-grid">
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Correo Institucional:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ correoInstitucional || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ correoInstitucionalDisplay || '' }}</span></div>
                 </div>
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Correo Personal:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ correoPersonal || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ correoPersonalDisplay || '' }}</span></div>
                 </div>
               </div>
 
               <div class="info-grid">
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Número Celular:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ numeroCelular || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ numeroCelularDisplay || '' }}</span></div>
                 </div>
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Dirección Domiciliaria:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ direccion || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ direccionDisplay || '' }}</span></div>
                 </div>
               </div>
             </section>
@@ -154,11 +156,11 @@
               <div class="info-grid">
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Último Nivel de Estudio:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ nivelEstudio || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ nivelEstudioDisplay || '' }}</span></div>
                 </div>
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Cargas Familiares:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ cargasFamiliares !== null && cargasFamiliares !== undefined ? cargasFamiliares : '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ cargasFamiliaresDisplay !== null && cargasFamiliares !== undefined ? cargasFamiliares : '' }}</span></div>
                 </div>
               </div>
             </section>
@@ -178,18 +180,18 @@
               <div class="info-grid">
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Nombre:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ nombreEmergencia || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ nombreEmergenciaDisplay || '' }}</span></div>
                 </div>
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Relación:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ relacionEmergencia || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ relacionEmergenciaDisplay || '' }}</span></div>
                 </div>
               </div>
 
               <div class="info-grid">
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Teléfono:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ telefonoEmergencia || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ telefonoEmergenciaDisplay || '' }}</span></div>
                 </div>
               </div>
 
@@ -217,25 +219,27 @@
               <div class="info-grid">
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Estado civil:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ estadoConyugal || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ estadoConyugalDisplay || '' }}</span></div>
                 </div>
               </div>
 
-              <div class="info-grid" *ngIf="estadoConyugal === 'Casado' || estadoConyugal === 'Unión libre'">
+              <div class="info-grid" *ngIf="estadoConyugalDisplay === 'Casado' || estadoConyugalDisplay === 'Unión libre'">
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Nombre del Cónyuge:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ nombreConyuge || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ nombreConyugeDisplay || '' }}</span></div>
                 </div>
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Fecha de Matrimonio:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ fechaMatrimonio || '' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ fechaMatrimonioDisplay || '' }}</span></div>
                 </div>
               </div>
 
-              <div class="info-grid" *ngIf="estadoConyugal === 'Casado' || estadoConyugal === 'Unión libre'">
+              <div class="info-grid" *ngIf="estadoConyugalDisplay === 'Casado' || estadoConyugalDisplay === 'Unión libre'">
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Discapacidad:</span></div>
-                  <div class="span-etiquetasRespuesta" style="width: 60%;"><span class="value">{{ discapacidadConyuge ? 'Sí' : 'No' }}</span></div>
+                  <div class="span-etiquetasRespuesta" style="width: 60%;">
+                    <span class="value">{{ discapacidadConyugeDisplay }}</span>
+                  </div>
                 </div>
                 <div class="info-item">
                   <div class="span-etiquetas"><span class="label-form">Documentos:</span></div>
@@ -246,21 +250,27 @@
               <!-- Dependientes -->
               <h3 class="subtitulo-etiquetas" style="margin-top: 2rem;">Dependientes</h3>
 
-              <div class="dependent-card" *ngFor="let dependiente of dependientes">
+              <div class="dependent-card">
                 <div class="info-grid">
                   <div class="info-item">
                     <div class="span-etiquetas"><span class="label-form">Nombre:</span></div>
-                    <span class="value">{{ dependiente.nombre || '' }}</span>
+                    <div class="span-etiquetasRespuesta" style="width: 60%;">
+                      <span class="value">{{ nombreDepDisplay || '' }}</span>
+                    </div>                    
                   </div>
                   <div class="info-item">
                     <div class="span-etiquetas"><span class="label-form">Fecha de Nacimiento:</span></div>
-                    <span class="value">{{ dependiente.fechaNacimiento || '' }}</span>
+                    <div class="span-etiquetasRespuesta" style="width: 60%;">
+                      <span class="value">{{ fechaNacimientoDepDisplay || '' }}</span>
+                    </div>                    
                   </div>
                 </div>
                 <div class="info-grid">
                   <div class="info-item">
                     <div class="span-etiquetas"><span class="label-form">Discapacidad:</span></div>
-                    <span class="value">{{ dependiente.discapacidad || 'No' }}</span>
+                    <div class="span-etiquetasRespuesta" style="width: 60%;">
+                      <span class="value">{{ discapacidadDepDisplay || '' }}</span>
+                    </div>                    
                   </div>
                   <div class="info-item">
                     <div class="span-etiquetas"><span class="label-form">Documentos:</span></div>
@@ -680,8 +690,13 @@
     <div class="modal-body">
       <!-- Sección de Foto -->
       <div class="photo-section">
-        <div class="photo-container">
-          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Foto del Empleado" class="modal-employee-image" id="modalEmployeeImage">
+        <div class="photo-container" (click)="seleccionarFoto()">
+          <img 
+            [src]="fotoPerfilUrlDisplay || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" 
+            alt="Foto del Empleado" 
+            class="modal-employee-image" 
+            id="modalEmployeeImage">
+
           <div class="photo-overlay">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2v11z" stroke="currentColor" stroke-width="2"/>
@@ -690,7 +705,17 @@
             <span>Cambiar foto</span>
           </div>
         </div>
+
+        <!-- input oculto -->
+        <input 
+          type="file" 
+          #fileInput 
+          accept="image/*" 
+          style="display: none;" 
+          (change)="onFileSelected($event)">
+
       </div>
+
 
       <!-- Formulario de Datos -->
       <div class="modal-form">
@@ -783,7 +808,8 @@
 </div>
 
 <!-- Modal para Datos Personales Secundarios -->
-<div id="datosPersonalesSecundariosModal" class="modal-overlay" [class.show]="modalStates['secundarios']" (click)="closeModalOnOverlay($event, 'secundarios')">  <div class="modal-container">
+<div id="datosPersonalesSecundariosModal" class="modal-overlay" [class.show]="modalStates['secundarios']" (click)="closeModalOnOverlay($event, 'secundarios')">  
+  <div class="modal-container">
     <div class="modal-header header-modal1">
       <h2 class="modal-title">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="modal-icon">
@@ -988,20 +1014,29 @@
           <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
         Cancelar
-      </button>      
+      </button>
     </div>
 
   </div>
 </div>
 
 
-
 <!-- Modal de edición de contacto de emergencia -->
-<div id="contactoEmergenciaModal" class="modal-overlay" [class.show]="modalStates['emergencia']" (click)="closeModalOnOverlay($event, 'emergencia')">  <div class="modal-container" (click)="$event.stopPropagation()">
+<div id="contactoEmergenciaModal" class="modal-overlay" [class.show]="modalStates['emergencia']" (click)="closeModalOnOverlay($event, 'emergencia')">  
+  <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header header-modal1">
-      <h3 class="modal-title">Editar Contacto de Emergencia</h3>
-      <button class="close-button" (click)="closeModal('emergencia')">&times;</button>
-    </div>
+      <h3 class="modal-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="modal-icon">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+        </svg>
+        Editar Contacto de Emergencia
+      </h3>
+      <button type="button" class="modal-close" (click)="closeModal('emergencia')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>    
 
     <div class="modal-body">
       <div class="form-row">
@@ -1025,26 +1060,31 @@
 
     <!-- BOTONES FINALES -->  
     <div class="modal-footer">
-      <button class="btn btn-primary" (click)="guardarContactoEmergencia()">
+      <button type="button" class="btn btn-primary" (click)="guardarContactoEmergencia()"> 
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>Guardar
+        </svg>
+        Guardar Cambios
       </button>
-      <button class="btn btn-secondary" (click)="closeModal('emergencia')">
+      <button type="button" class="btn btn-secondary" (click)="closeModal('emergencia')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>Cancelar
-      </button>      
+        </svg>
+        Cancelar
+      </button>
     </div>
   </div>
 </div>
 
-
-<!-- Modal: Información Familiar -->
-<div id="informacionFamiliarModal" class="modal-overlay" [class.show]="modalStates['familiar']" (click)="closeModalOnOverlay($event, 'familiar')">  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Editar Información Familiar</h3>
-      <button class="close-button" (click)="closeModal('familiar')">&times;</button>
+<div id="contactoEmergenciaModal" class="modal-overlay" [class.show]="modalStates['familiar']" (click)="closeModalOnOverlay($event, 'familiar')">  
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header header-modal1">
+      <h3 class="modal-title">Editar Información Familiar</h3>      
+      <button type="button" class="modal-close" (click)="closeModal('familiar')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
     </div>
 
     <div class="modal-body">
@@ -1107,8 +1147,18 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeModal('familiar')">Cancelar</button>
-      <button class="btn btn-primary" (click)="guardarInformacionFamiliar()">Guardar</button>
+      <button type="button" class="btn btn-primary" (click)="guardarInformacionFamiliar()"> 
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Guardar Cambios
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="closeModal('familiar')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Cancelar
+      </button>
     </div>
   </div>
 </div>
