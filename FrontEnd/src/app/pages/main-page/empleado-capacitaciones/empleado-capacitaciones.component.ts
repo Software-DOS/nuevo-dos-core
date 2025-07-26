@@ -34,6 +34,10 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   showRequestButton: boolean = true;
   contractAccepted: boolean = false;
 
+  // Propiedades para el modal de suscripción
+  showSubscriptionModal: boolean = false;
+  selectedTraining: Training | null = null;
+
   // NgModel properties for filters
   filtroEmpresa: string = '';
   filtroRoadmap: string = '';
@@ -524,6 +528,107 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
       icon: 'warning',
       confirmButtonText: 'Aceptar',
       confirmButtonColor: '#ffc107'
+    });
+  }
+
+  /**
+   * Muestra el modal de confirmación para suscribirse a una capacitación
+   */
+  mostrarModalSuscripcion(training: Training): void {
+    this.selectedTraining = training;
+    
+    Swal.fire({
+      title: '¿Suscribirse a esta capacitación?',
+      html: `
+        <div style="text-align: left; margin: 1rem 0;">
+          <p><strong>Nombre:</strong> ${training.name}</p>
+          <p><strong>Duración:</strong> ${training.duration} horas</p>
+          <p><strong>Certificación:</strong> ${training.certification}</p>
+        </div>
+        <p style="color: #666; font-size: 0.9rem; margin-top: 1rem;">
+          Al confirmar, serás inscrito en esta capacitación y aparecerá en tu pestaña "En Curso".
+        </p>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, suscribirme',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#6c757d',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.suscribirseACapacitacion(training);
+      }
+    });
+  }
+
+  /**
+   * Procesa la suscripción del empleado a una capacitación
+   */
+  private suscribirseACapacitacion(training: Training): void {
+    // Verificar que el empleado tiene ID
+    let idEmpleadoLogueado = this.sessionStorageService.getIdGthEmpleado();
+    
+    if (!idEmpleadoLogueado) {
+      idEmpleadoLogueado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+    }
+    
+    if (!idEmpleadoLogueado) {
+      console.error('[EmpleadoCapacitaciones] No se encontró ID de empleado para suscripción');
+      this.mostrarErrorSesion();
+      return;
+    }
+
+    // Crear solicitud de capacitación para la capacitación existente
+    const solicitudData: GTHSolicitudCapacitacionModel = {
+      tipo: 0, // 0 = Insertar
+      idCapacitacion: training.id,
+      idEmpleado: idEmpleadoLogueado,
+      justificacion: `Suscripción automática a capacitación: ${training.name}`,
+      fechaSolicitud: new Date()
+    };
+
+    // Crear la solicitud
+    this.gthSolicitudCapacitacionService.crearSolicitudCapacitacion(solicitudData).subscribe({
+      next: (response: any) => {
+        console.log('Suscripción exitosa:', response);
+        
+        // Mover la capacitación de "Disponibles" a "En Curso"
+        const trainingEnCurso: Training = {
+          ...training,
+          startDate: new Date().toLocaleDateString('es-ES'),
+          status: 'En Curso'
+        };
+        
+        // Agregar a en curso
+        this.inProgressTrainings.push(trainingEnCurso);
+        
+        // Remover de disponibles
+        this.availableTrainings = this.availableTrainings.filter(t => t.id !== training.id);
+        
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: '¡Suscripción exitosa!',
+          text: `Te has suscrito exitosamente a "${training.name}". La capacitación ahora aparece en tu pestaña "En Curso".`,
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#28a745'
+        }).then(() => {
+          // Cambiar automáticamente a la pestaña "En Curso"
+          this.switchTab('curso');
+        });
+      },
+      error: (error) => {
+        console.error('Error al suscribirse a la capacitación:', error);
+        Swal.fire({
+          title: 'Error en la suscripción',
+          text: 'Hubo un problema al suscribirte a la capacitación. Por favor, intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#dc3545'
+        });
+      }
     });
   }
 

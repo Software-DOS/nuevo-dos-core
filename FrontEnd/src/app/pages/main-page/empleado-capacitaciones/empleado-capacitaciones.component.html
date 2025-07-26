@@ -58,12 +58,24 @@
           <div>Nombre</div>
           <div>Duración (h)</div>
           <div>Certificación</div>
+          <div>Acción</div>
         </div>
 
-        <div *ngFor="let training of availableTrainings" class="cap-row">
+        <div *ngFor="let training of availableTrainings" class="cap-row clickable-row" (click)="mostrarModalSuscripcion(training)">
           <div>{{ training.name }}</div>
           <div>{{ training.duration }}</div>
           <div>{{ training.certification }}</div>
+          <div>
+            <button class="btn-subscribe" (click)="$event.stopPropagation(); mostrarModalSuscripcion(training)">
+              <i class="fas fa-plus-circle"></i> Suscribirse
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="availableTrainings.length === 0" class="no-data">
+          <i class="fas fa-graduation-cap"></i>
+          <p>No hay capacitaciones disponibles en este momento.</p>
+          <p class="text-muted">Las capacitaciones disponibles aparecerán aquí cuando estén habilitadas.</p>
         </div>
       </div>
     </div>
