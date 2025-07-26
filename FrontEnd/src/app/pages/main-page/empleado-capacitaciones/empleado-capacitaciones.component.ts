@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GthCapacitacionService } from 'src/app/services/gthcapacitacion.service';
 import { GthSolicitudCapacitacionService, GTHSolicitudCapacitacionModel } from 'src/app/services/gth-solicitud-capacitacion.service';
+import { GthAsignacionCapacitacionService, GTHAsignacionCapacitacionDetalladaModel, GTHAsignacionCapacitacionModel } from 'src/app/services/gth-asignacion-capacitacion.service';
 import { SessionStorageService } from 'src/app/services/session-storage.service';
 import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
 import { LoginService } from 'src/app/services/login.service';
@@ -68,24 +69,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   roadmapOptions = ['Todos', 'Scrum', 'Azure', 'AWS', 'CCNA'];
 
   // Training data
-  inProgressTrainings: Training[] = [
-    {
-      id: 1,
-      name: 'Curso de Liderazgo Ágil',
-      duration: 20,
-      startDate: '05/04/2025',
-      certification: 'Scrum Foundation',
-      company: 'N/A'
-    },
-    {
-      id: 2,
-      name: 'Gestión del Tiempo',
-      duration: 10,
-      startDate: '01/04/2025',
-      certification: 'Productividad Personal',
-      company: 'N/A'
-    }
-  ];
+  inProgressTrainings: Training[] = [];
 
   availableTrainings: Training[] = [];
 
@@ -122,6 +106,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   constructor(
     private gthCapacitacionService: GthCapacitacionService,
     private gthSolicitudCapacitacionService: GthSolicitudCapacitacionService,
+    private gthAsignacionCapacitacionService: GthAsignacionCapacitacionService,
     private sessionStorageService: SessionStorageService,
     private gthEmpleadoService: GthEmpleadoService,
     private loginService: LoginService
@@ -132,6 +117,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     this.loadRequestedTrainings();
     this.cargarCapacitacionesDesdeBackend();
     this.cargarCapacitacionesSolicitadas();
+    this.cargarCapacitacionesEnCurso();
   }
 
   /**
@@ -225,6 +211,44 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar capacitaciones solicitadas:', error);
+      }
+    });
+  }
+
+  /**
+   * Carga las capacitaciones en curso desde la tabla de asignación-capacitación
+   */
+  private cargarCapacitacionesEnCurso(): void {
+    // Obtener el ID del empleado actual
+    const idEmpleado = this.sessionStorageService.getIdGthEmpleado();
+    
+    if (!idEmpleado) {
+      console.warn('[EmpleadoCapacitaciones] No se encontró ID de empleado para cargar capacitaciones en curso');
+      return;
+    }
+
+    // Cargar asignaciones de capacitación del empleado actual
+    this.gthAsignacionCapacitacionService.mostrarAsignacionesEnCurso(0, undefined, idEmpleado).subscribe({
+      next: (asignaciones: GTHAsignacionCapacitacionDetalladaModel[]) => {
+        console.log('[EmpleadoCapacitaciones] Asignaciones en curso obtenidas:', asignaciones);
+        
+        // Convertir las asignaciones a formato Training
+        this.inProgressTrainings = asignaciones.map((asignacion: GTHAsignacionCapacitacionDetalladaModel) => ({
+          id: asignacion.idCapacitacion,
+          name: asignacion.capacitacion?.nombre || 'Capacitación sin nombre',
+          duration: asignacion.capacitacion?.duracion || 0,
+          startDate: asignacion.fecha ? new Date(asignacion.fecha).toLocaleDateString('es-ES') : 'N/A',
+          certification: asignacion.capacitacion?.titulo || asignacion.capacitacion?.nombre || 'Sin certificación',
+          company: 'N/A', // Mantenemos N/A como se usa actualmente
+          status: 'En Curso'
+        }));
+
+        console.log('[EmpleadoCapacitaciones] Capacitaciones en curso cargadas:', this.inProgressTrainings);
+      },
+      error: (error) => {
+        console.error('[EmpleadoCapacitaciones] Error al cargar capacitaciones en curso:', error);
+        // Mantener los datos estáticos en caso de error
+        console.log('[EmpleadoCapacitaciones] Manteniendo datos estáticos por error en la carga');
       }
     });
   }

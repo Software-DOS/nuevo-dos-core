@@ -48,6 +48,12 @@
           <div>{{ training.certification }}</div>
           <div>{{ training.company }}</div>
         </div>
+
+        <div *ngIf="inProgressTrainings.length === 0" class="no-data">
+          <i class="fas fa-play-circle"></i>
+          <p>No tienes capacitaciones en curso en este momento.</p>
+          <p class="text-muted">Las capacitaciones aparecerán aquí cuando te suscribas a ellas desde la pestaña "Disponibles".</p>
+        </div>
       </div>
     </div>
 

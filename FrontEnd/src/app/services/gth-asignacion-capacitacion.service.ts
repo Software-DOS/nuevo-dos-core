@@ -44,6 +44,15 @@ export interface GTHAsignacionCapacitacionDetalladaModel {
   capacitacion: CapacitacionInfo;
 }
 
+export interface GTHAsignacionCapacitacionModel {
+  tipo: number;
+  idCapacitacion: number;
+  idEmpleado: number;
+  cedulaEmpleado?: string;
+  fecha?: Date;
+  progreso?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -64,6 +73,20 @@ export class GthAsignacionCapacitacionService {
         map((response: any) => {
           const datos = response.$values || response || [];
           return datos;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Crea una nueva asignación de capacitación
+   * Tipo 0 = Insertar, 1 = Editar, 2 = Eliminar
+   */
+  crearAsignacionCapacitacion(asignacion: GTHAsignacionCapacitacionModel): Observable<any> {
+    return this.http.post(environment.urlbackend + "api/GTHAsignacionCapacitacion/Gestionar", asignacion)
+      .pipe(
+        tap((response: any) => {
+          console.log('Asignación de capacitación creada:', response);
         }),
         catchError(this.handleError)
       );
