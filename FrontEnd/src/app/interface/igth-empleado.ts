@@ -45,7 +45,7 @@ export interface iGTHEmpleado {
   // Información Laboral
   cargoActual: string;
   area: string;
-  subArea: string;
+  subarea: string;
   empresa: string;
   jefeDirecto: string;
   tipoContrato: string;

@@ -41,9 +41,11 @@ export class GthEmpleadoService {
    * Buscar empleado específicamente por cédula
    * @param cedula - Cédula del empleado a buscar
    */
-  BuscarPorCedula(cedula: string){
+  BuscarPorCedula(cedula: string) {
+    console.log('Llamando a BuscarPorCedula con cédula:', cedula); 
     return this.MostrarConParametros(4, undefined, undefined, undefined, cedula);
   }
+
 
   /**
    * Guardar o actualizar empleado GTH

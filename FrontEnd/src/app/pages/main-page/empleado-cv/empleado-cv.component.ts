@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { iGTHEmpleado } from 'src/app/interface/igth-empleado';
 import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
 import { alerts } from 'src/app/helpers/alerts';
+import { ElementRef, ViewChild } from '@angular/core';
 
 declare var Swal: any;
 
@@ -13,6 +14,8 @@ declare var Swal: any;
 })
 export class EmpleadoCvComponent implements OnInit {
   
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   activeSection: string = 'datos-personales';
   activeSubcategory: string = 'info-organizacional';
   isEditing: boolean = false;
@@ -21,8 +24,10 @@ export class EmpleadoCvComponent implements OnInit {
     'info-profesional': false
   };
 
-  // Variables para el modal de datos personales secundarios
-  //showDatosPersonalesSecundariosModal: boolean = false;
+  // Variable para almacenar la información del empleado
+  empleado: iGTHEmpleado | null = null;
+  cedulaEmpleado: string = ''; // Cambia esto por la cédula real del empleado
+  
 
   // NgModel properties for employee personal info
   public nombreCompleto: string = '';
@@ -83,7 +88,7 @@ export class EmpleadoCvComponent implements OnInit {
   public estadoConyugal: string = '';
   public nombreConyuge: string = '';
   public fechaMatrimonio: string = '';
-  public discapacidadConyuge: string = '';
+  public discapacidadConyuge?: boolean;
   public documentosConyuge: string = '';
 
   // Additional missing properties for identity documents
@@ -138,6 +143,9 @@ export class EmpleadoCvComponent implements OnInit {
   /* -------------  Campos para mostrar en el HTML  ----------  */
 // Variables para mostrar la información (solo lectura)
 
+  fotoPerfilUrl: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Imagen por defecto
+  fotoPerfilUrlDisplay: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
   nombreCompletoDisplay: string = ''; 
   correoElectronicoDisplay: string = ''; 
   posicionDisplay: string = ''; 
@@ -152,6 +160,30 @@ export class EmpleadoCvComponent implements OnInit {
   paisNacimientoDisplay: string = '';
   provinciaNacimientoDisplay: string = '';
   ciudadNacimientoDisplay: string = '';
+
+  documentoIdentidadDisplay: string = '';
+
+  correoInstitucionalDisplay: string = '';
+  correoPersonalDisplay: string = '';
+  numeroCelularDisplay: string = '';
+  direccionDisplay: string = '';
+
+  nivelEstudioDisplay: string = '';
+  cargasFamiliaresDisplay: string = '';
+
+  nombreEmergenciaDisplay: string = '';
+  relacionEmergenciaDisplay: string = '';
+  telefonoEmergenciaDisplay: string = '';
+
+  estadoConyugalDisplay: string = '';
+  nombreConyugeDisplay: string = '';
+  fechaMatrimonioDisplay: string = '';
+
+  discapacidadConyugeDisplay: string = '';
+  
+  nombreDepDisplay: string = '';
+  fechaNacimientoDepDisplay: string = '';
+  discapacidadDepDisplay: string = '';
 
 
   //
@@ -174,14 +206,131 @@ export class EmpleadoCvComponent implements OnInit {
         this.OcultarEmpresa=false;
       }*/
     }
+
+    this.cargarDatosEmpleado();
+
+
   }
- 
+
+  cargarDatosEmpleado(): void {
+    // Opción 1: Si tienes la cédula del empleado específico
+    // if (this.cedulaEmpleado) {
+    //   this.buscarEmpleadoPorCedula(this.cedulaEmpleado);
+    // } else {
+    //   // Opción 2: Cargar todos los empleados (tipo = 0 para mostrar todos)
+    //   //this.cargarTodosLosEmpleados();
+    // }
+
+    this.buscarEmpleadoPorCedula('1734567890');
+  }
+
+/**
+   * Busca un empleado específico por cédula
+   * @param cedula - Cédula del empleado a buscar
+   */
+  buscarEmpleadoPorCedula(cedula: string): void {
+    console.log('Componente: cédula enviada al servicio ->', cedula); // 👈 AÑADIR ESTO
+
+    this.gthEmpleadoService.BuscarPorCedula(cedula).subscribe({
+      next: (empleado: any) => {
+        console.log('Respuesta del backend ->', empleado);
+
+        const datosEmpleado = empleado?.$values?.[0];
+
+        if (datosEmpleado) {
+          this.empleado = datosEmpleado;
+          this.mapearDatosParaMostrar();
+        } else {
+          console.warn('No se encontró empleado con la cédula:', cedula);
+        }
+      },
+      error: (error) => {
+        console.error('Error al buscar empleado por cédula:', error);
+      }
+    });
+  }
+
+
+
+  /**
+   * Mapea los datos del empleado a las variables de visualización
+   */
+  private mapearDatosParaMostrar(): void {
+    if (this.empleado) {
+      // Información básica
+      // Mostrar foto si existe, si no usar imagen por defecto
+      this.fotoPerfilUrl = this.empleado.fotoPerfilUrl?.trim()
+      ? this.empleado.fotoPerfilUrl
+      : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+      this.nombreCompletoDisplay = `${this.empleado.nombre} ${this.empleado.apellido}`;
+      this.nombres = `${this.empleado.nombre}`; 
+      this.apellidos = `${this.empleado.apellido}`;
+      this.correoElectronicoDisplay = this.empleado.correo || this.empleado.correoCorporativo;
+      this.posicionDisplay = this.empleado.cargoActual;
+      this.areaDisplay = this.empleado.area;
+      this.subareaDisplay = this.empleado.subarea;
+
+      // Información personal
+      this.fechaNacimientoDisplay = this.empleado.fechaNacimiento || '';
+      this.sexoDisplay = this.empleado.sexo;
+      this.tipoSangreDisplay = this.empleado.tipoSangre;
+      this.etniaDisplay = this.empleado.etnia;      
+      this.paisNacimientoDisplay = this.empleado.paisNacimiento;
+      this.provinciaNacimientoDisplay = this.empleado.provinciaNacimiento;
+      this.ciudadNacimientoDisplay = this.empleado.ciudadNacimiento;
+      this.numeroCedulaDisplay = this.empleado.cedula;
+      this.documentoIdentidadDisplay = this.empleado.documentoIdentidad;
+
+      this.correoInstitucionalDisplay = this.empleado.correoCorporativo;
+      this.correoPersonalDisplay = this.empleado.correo;
+      this.numeroCelularDisplay = this.empleado.telefono;
+      this.direccionDisplay = this.empleado.direccion;
+
+      this.nivelEstudioDisplay = this.empleado.nivelEstudio;
+      this.cargasFamiliaresDisplay = (this.empleado.cargasFamiliares ?? 0).toString(); //Asignamos por defecto 0
+
+      this.nombreEmergenciaDisplay = this.empleado.nombreEmergencia;
+      this.relacionEmergenciaDisplay = this.empleado.relacionEmergencia;
+      this.telefonoEmergenciaDisplay = this.empleado.telefonoEmergencia;
+
+      
+
+      //Informacion de Dependientes
+      this.estadoConyugalDisplay = this.empleado.estadoCivil;
+      this.nombreConyugeDisplay = this.empleado.nombreConyuge;
+      this.fechaMatrimonioDisplay = this.empleado.fechaMatrimonio;
+      this.discapacidadConyugeDisplay = this.empleado.discapacidadConyuge === true ? 'Sí' : this.empleado.discapacidadConyuge === false 
+      ? 'No' : 'No registrado'; //Asignamos por defecto
+
+      
+
+    }
+  }  
+
+  /**
+   * Actualiza los datos del empleado (útil para refrescar información)
+   */
+  actualizarDatos(): void {
+    this.cargarDatosEmpleado();
+  }
+
+  /**
+   * Establece la cédula del empleado y carga sus datos
+   * @param cedula - Cédula del empleado
+   */
+  establecerEmpleado(cedula: string): void {
+    this.cedulaEmpleado = cedula;
+    this.buscarEmpleadoPorCedula(cedula);
+  }
+
+
   guardarEmpleado(){
  
     console.log("Ingreso");
  
     const data: iGTHEmpleado = {
-      tipo: 0,
+      tipo: 1,
       idEmpleado: 0,
       idPerfil: 0,
       idCelula: 3,
@@ -221,13 +370,13 @@ export class EmpleadoCvComponent implements OnInit {
       // Información Conyugal
       nombreConyuge: this.nombreConyuge,
       fechaMatrimonio: this.fechaMatrimonio,
-      discapacidadConyuge: this.discapacidadConyuge === 'true' || this.discapacidadConyuge === 'Si',
+      discapacidadConyuge: this.discapacidadConyuge,
       documentosConyuge: this.documentosConyuge,
       
       // Información Laboral
       cargoActual: this.cargoActual,
       area: this.areaLaboral || this.area,
-      subArea: this.subareaLaboral || this.subarea,
+      subarea: this.subareaLaboral || this.subarea,
       empresa: this.empresa,
       jefeDirecto: this.jefeDirecto,
       tipoContrato: this.tipoContrato,
@@ -620,7 +769,17 @@ export class EmpleadoCvComponent implements OnInit {
   ======================================================================== */
 
   openModal(modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar') {
+    
+    if (modal === 'principal') this.cargarDatosPersonales();
+    this.modalStates[modal] = true;
+    
     if (modal === 'secundarios') this.cargarDatosPersonalesSecundarios();
+    this.modalStates[modal] = true;
+
+    if (modal === 'emergencia') this.cargarDatosEmergencia();
+    this.modalStates[modal] = true;
+
+    if (modal === 'familiar') this.cargarDatosFamiliar();
     this.modalStates[modal] = true;
   }
 
@@ -639,6 +798,24 @@ export class EmpleadoCvComponent implements OnInit {
   /* ========================================================================
     Datos Personales 
   ======================================================================== */
+
+  seleccionarFoto(): void {
+    this.fileInput.nativeElement.click(); // Abre el selector de archivos
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.fotoPerfilUrlDisplay = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   // Cargar datos al abrir modal Datos personales
   cargarDatosPersonales(): void {
     
@@ -690,6 +867,18 @@ export class EmpleadoCvComponent implements OnInit {
     this.paisNacimiento = this.paisNacimientoDisplay;
     this.provinciaNacimiento = this.provinciaNacimientoDisplay;
     this.ciudadNacimiento = this.ciudadNacimientoDisplay;
+
+    this.documentoIdentidad = this.documentoIdentidadDisplay;
+    this.correoInstitucional = this.correoInstitucionalDisplay;
+    this.correoPersonal = this.correoElectronicoDisplay;
+    this.numeroCelular = this.numeroCelularDisplay;
+    this.direccion = this.direccionDisplay;
+    this.nivelEstudio = this.nivelEstudioDisplay;
+    this.cargasFamiliares = this.cargasFamiliaresDisplay ? Number(this.cargasFamiliaresDisplay) : 0;
+    this.nombreEmergencia = this.nombreEmergenciaDisplay;
+    this.relacionEmergencia = this.relacionEmergenciaDisplay;
+    this.telefonoEmergencia = this.telefonoEmergenciaDisplay;
+    
   }
 
   // Guardar cambios de datos personales secundarios
@@ -700,6 +889,12 @@ export class EmpleadoCvComponent implements OnInit {
       alert('Por favor, completa todos los campos obligatorios');
       return;
     }
+
+    this.nombreCompletoDisplay = this.nombres + ' ' + this.apellidos;  
+    this.correoElectronicoDisplay = this.correoElectronico;
+    this.posicionDisplay = this.posicion;
+    this.areaDisplay = this.area;
+    this.subareaDisplay = this.subarea;
 
     this.fechaNacimientoDisplay = this.fechaNacimiento;
     this.sexoDisplay = this.sexo;
@@ -730,39 +925,38 @@ export class EmpleadoCvComponent implements OnInit {
     }
   }
 
-  // Obtener los datos personales secundarios
-  // getDatosPersonalesSecundarios(): any {
-  //   return {
-  //     fechaNacimiento: this.fechaNacimientoDisplay,
-  //     sexo: this.sexoDisplay,
-  //     tipoSangre: this.tipoSangreDisplay,
-  //     etnia: this.etniaDisplay,
-  //     numeroCedula: this.numeroCedulaDisplay,
-  //     documentoIdentidad: this.documentoIdentidad,
-  //     paisNacimiento: this.paisNacimientoDisplay,
-  //     provinciaNacimiento: this.provinciaNacimientoDisplay,
-  //     ciudadNacimiento: this.ciudadNacimientoDisplay
-  //   };
-  // }
-
   // Formatear fecha para mostrar
   formatearFecha(fecha: string): string {
-    if (!fecha) return '';
-    const date = new Date(fecha);
-    return date.toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  }
+  if (!fecha) return '';
+  
+  // Añade hora media para evitar desfases por zona horaria
+  const date = new Date(fecha + 'T12:00:00');
+  
+  return date.toLocaleDateString('es-EC', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+}
 
 
   /* ========================================================================
     Contacto de Emergencia
   ======================================================================== */
 
+  // Cargar datos al abrir modal Emergencia
+  cargarDatosEmergencia(): void {
+    this.nombreEmergencia = this.nombreEmergenciaDisplay;
+    this.relacionEmergencia = this.relacionEmergenciaDisplay;
+    this.telefonoEmergencia = this.telefonoEmergenciaDisplay;
+  }
+
   guardarContactoEmergencia() {
-    // Puedes hacer validaciones aquí si deseas
+    
+    this.nombreEmergenciaDisplay = this.nombreEmergencia;  
+    this.relacionEmergenciaDisplay = this.relacionEmergencia;
+    this.telefonoEmergenciaDisplay = this.telefonoEmergencia;
+
     this.closeModal('emergencia');
 
     Swal.fire({
@@ -787,6 +981,33 @@ export class EmpleadoCvComponent implements OnInit {
       documentoBase64: ''
     }
   ];
+  
+  // Cargar datos al abrir modal Dependeientes familiares
+  cargarDatosFamiliar(): void {
+    this.estadoConyugal = this.estadoConyugalDisplay;
+    this.nombreConyuge = this.nombreConyugeDisplay;
+    this.fechaMatrimonio = this.fechaMatrimonioDisplay;
+    this.discapacidadConyuge = (this.discapacidadConyugeDisplay === 'true' || this.discapacidadConyugeDisplay === '1' || this.discapacidadConyugeDisplay?.toLowerCase() === 'si');
+  }
+
+  guardarInformacionFamiliar() {
+    
+    this.estadoConyugalDisplay = this.estadoConyugal;  
+    this.nombreConyugeDisplay = this.nombreConyuge;
+    this.fechaMatrimonioDisplay = this.fechaMatrimonio;
+    this.discapacidadConyugeDisplay = this.discapacidadConyuge ? 'Sí' : 'No';
+
+    this.closeModal('familiar');
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Contacto de emergencia actualizado',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  }
 
   agregarDependiente() {
     this.dependientes.push({
@@ -794,19 +1015,6 @@ export class EmpleadoCvComponent implements OnInit {
       fechaNacimiento: '',
       discapacidad: '',
       documentoBase64: ''
-    });
-  }
-
-  guardarInformacionFamiliar() {
-    this.closeModal('familiar');
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Información familiar actualizada',
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000
     });
   }
 
