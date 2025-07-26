@@ -241,16 +241,28 @@ export class ListaCapacitacionesComponent implements OnInit {
 
   private cargarAsignacionesEnCurso(): void {
     this.cargandoAsignaciones = true;
+    console.log('[ListaCapacitaciones] Cargando asignaciones en curso...');
+    
     this.gthAsignacionCapacitacionService.mostrarAsignacionesEnCurso(0).subscribe({
       next: (response: GTHAsignacionCapacitacionDetalladaModel[]) => {
         this.asignacionesEnCurso = response || [];
+        console.log('[ListaCapacitaciones] Asignaciones en curso cargadas:', this.asignacionesEnCurso.length, 'registros');
         this.cargandoAsignaciones = false;
       },
       error: (error) => {
-        console.error('Error al cargar asignaciones en curso:', error);
+        console.error('[ListaCapacitaciones] Error al cargar asignaciones en curso:', error);
+        this.asignacionesEnCurso = []; // Limpiar en caso de error
         this.cargandoAsignaciones = false;
       }
     });
+  }
+
+  /**
+   * Refresca la lista de asignaciones en curso
+   */
+  public refrescarAsignacionesEnCurso(): void {
+    console.log('[ListaCapacitaciones] Refrescando asignaciones en curso...');
+    this.cargarAsignacionesEnCurso();
   }
 
   setActiveTab(tab: string): void {

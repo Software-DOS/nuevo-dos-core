@@ -556,6 +556,24 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   }
 
   /**
+   * Verifica si el empleado ya está suscrito a una capacitación específica
+   */
+  private yaEstaSuscrito(idCapacitacion: number): boolean {
+    return this.inProgressTrainings.some(training => training.id === idCapacitacion);
+  }
+
+  /**
+   * Refresca las listas de capacitaciones después de cambios importantes
+   */
+  private refrescarCapacitaciones(): void {
+    // Pequeño delay para permitir que el backend procese la nueva asignación
+    setTimeout(() => {
+      this.cargarCapacitacionesEnCurso();
+      this.cargarCapacitacionesDesdeBackend(); // Recargar disponibles por si hay cambios
+    }, 500);
+  }
+
+  /**
    * Muestra el modal de confirmación para suscribirse a una capacitación
    */
   mostrarModalSuscripcion(training: Training): void {
@@ -570,7 +588,10 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
           <p><strong>Certificación:</strong> ${training.certification}</p>
         </div>
         <p style="color: #666; font-size: 0.9rem; margin-top: 1rem;">
-          Al confirmar, serás inscrito en esta capacitación y aparecerá en tu pestaña "En Curso".
+          Al confirmar, serás inscrito automáticamente en esta capacitación y aparecerá inmediatamente en tu pestaña "En Curso".
+        </p>
+        <p style="color: #28a745; font-size: 0.85rem; font-weight: 500;">
+          ✓ Tu progreso iniciará en 0% y podrás trackear tu avance.
         </p>
       `,
       icon: 'question',
@@ -604,32 +625,41 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
       return;
     }
 
-    // Crear solicitud de capacitación para la capacitación existente
-    const solicitudData: GTHSolicitudCapacitacionModel = {
+    // Verificar si ya está suscrito a esta capacitación
+    if (this.yaEstaSuscrito(training.id)) {
+      Swal.fire({
+        title: 'Ya estás suscrito',
+        text: `Ya estás suscrito a la capacitación "${training.name}". Puedes verla en tu pestaña "En Curso".`,
+        icon: 'info',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#17a2b8'
+      }).then(() => {
+        this.switchTab('curso');
+      });
+      return;
+    }
+
+    // Crear asignación de capacitación directamente (en lugar de solicitud)
+    const asignacionData: GTHAsignacionCapacitacionModel = {
       tipo: 0, // 0 = Insertar
       idCapacitacion: training.id,
       idEmpleado: idEmpleadoLogueado,
-      justificacion: `Suscripción automática a capacitación: ${training.name}`,
-      fechaSolicitud: new Date()
+      fecha: new Date(),
+      progreso: 0 // Iniciar con progreso 0%
     };
 
-    // Crear la solicitud
-    this.gthSolicitudCapacitacionService.crearSolicitudCapacitacion(solicitudData).subscribe({
+    console.log('[EmpleadoCapacitaciones] Creando asignación de capacitación:', asignacionData);
+
+    // Crear la asignación en la tabla asignacion-capacitacion
+    this.gthAsignacionCapacitacionService.crearAsignacionCapacitacion(asignacionData).subscribe({
       next: (response: any) => {
-        console.log('Suscripción exitosa:', response);
+        console.log('[EmpleadoCapacitaciones] Asignación de capacitación creada exitosamente:', response);
         
-        // Mover la capacitación de "Disponibles" a "En Curso"
-        const trainingEnCurso: Training = {
-          ...training,
-          startDate: new Date().toLocaleDateString('es-ES'),
-          status: 'En Curso'
-        };
-        
-        // Agregar a en curso
-        this.inProgressTrainings.push(trainingEnCurso);
-        
-        // Remover de disponibles
+        // Remover de disponibles inmediatamente
         this.availableTrainings = this.availableTrainings.filter(t => t.id !== training.id);
+        
+        // Recargar las capacitaciones para mostrar los cambios
+        this.refrescarCapacitaciones();
         
         // Mostrar mensaje de éxito
         Swal.fire({
@@ -644,7 +674,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
         });
       },
       error: (error) => {
-        console.error('Error al suscribirse a la capacitación:', error);
+        console.error('[EmpleadoCapacitaciones] Error al crear asignación de capacitación:', error);
         Swal.fire({
           title: 'Error en la suscripción',
           text: 'Hubo un problema al suscribirte a la capacitación. Por favor, intenta nuevamente.',

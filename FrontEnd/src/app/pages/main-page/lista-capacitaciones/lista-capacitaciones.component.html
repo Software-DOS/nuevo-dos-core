@@ -7,6 +7,12 @@
 
   <!-- EN CURSO -->
   <div id="curso" class="subcategory-section" [class.active]="activeTab === 'curso'">
+    <div class="mb-3 text-right" *ngIf="!cargandoAsignaciones">
+      <button class="btn btn-sm btn-outline-primary" (click)="refrescarAsignacionesEnCurso()">
+        <i class="fas fa-sync-alt"></i> Actualizar
+      </button>
+    </div>
+    
     <div *ngIf="cargandoAsignaciones" class="text-center p-3">
       <i class="fas fa-spinner fa-spin"></i> Cargando asignaciones en curso...
     </div>
@@ -28,7 +34,7 @@
         </div>
         <div>{{ asignacion.capacitacion?.nombre || asignacion.capacitacion?.titulo || 'N/A' }}</div>
         <div>{{ asignacion.capacitacion?.duracion || 'N/A' }}</div>
-        <div>{{ asignacion.capacitacion?.fechaInicio | date:'dd/MM/yyyy' }}</div>
+        <div>{{ asignacion.fecha | date:'dd/MM/yyyy' }}</div>
         <div>{{ asignacion.capacitacion?.titulo || asignacion.capacitacion?.nombre || 'N/A' }}</div>
         <div class="progress-container">
           <svg width="70" height="40" viewBox="0 0 100 50">
@@ -40,7 +46,9 @@
             </defs>
             <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="#eee" stroke-width="8"/>
             <path d="M10 50 A40 40 0 0 1 75 21" fill="none" stroke="url(#grad)" stroke-width="8"/>
-            <text x="50" y="35" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">{{ asignacion.progreso || 0 }}%</text>
+            <text x="50" y="35" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">
+              {{ (asignacion.progreso !== null && asignacion.progreso !== undefined) ? asignacion.progreso : 0 }}%
+            </text>
           </svg>
         </div>
       </div>
