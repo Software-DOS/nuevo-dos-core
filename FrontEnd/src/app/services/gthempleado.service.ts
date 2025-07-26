@@ -99,7 +99,10 @@ export class GthEmpleadoService {
    * @param idEmpleado - ID del empleado GTH a guardar
    */
   guardarIdGthEmpleadoEnSession(idEmpleado: number): void {
+    console.log('[GthEmpleadoService] Guardando ID:', idEmpleado);
     sessionStorage.setItem('idGthEmpleado', idEmpleado.toString());
+    const verificacion = sessionStorage.getItem('idGthEmpleado');
+    console.log('[GthEmpleadoService] Verificación guardado:', verificacion);
   }
 
   /**
@@ -108,6 +111,7 @@ export class GthEmpleadoService {
    */
   obtenerIdGthEmpleadoDesdeSession(): number | null {
     const id = sessionStorage.getItem('idGthEmpleado');
+    console.log('[GthEmpleadoService] Obteniendo ID:', id);
     return id ? parseInt(id, 10) : null;
   }
 

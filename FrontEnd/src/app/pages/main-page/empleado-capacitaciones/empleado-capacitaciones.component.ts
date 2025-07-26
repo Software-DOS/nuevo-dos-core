@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { GthCapacitacionService } from 'src/app/services/gthcapacitacion.service';
 import { GthSolicitudCapacitacionService, GTHSolicitudCapacitacionModel } from 'src/app/services/gth-solicitud-capacitacion.service';
 import { SessionStorageService } from 'src/app/services/session-storage.service';
+import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
+import { LoginService } from 'src/app/services/login.service';
 import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
 import Swal from 'sweetalert2';
 
@@ -116,13 +118,42 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   constructor(
     private gthCapacitacionService: GthCapacitacionService,
     private gthSolicitudCapacitacionService: GthSolicitudCapacitacionService,
-    private sessionStorageService: SessionStorageService
+    private sessionStorageService: SessionStorageService,
+    private gthEmpleadoService: GthEmpleadoService,
+    private loginService: LoginService
   ) { }
 
   ngOnInit(): void {
+    this.verificarIdEmpleado();
     this.loadRequestedTrainings();
     this.cargarCapacitacionesDesdeBackend();
     this.cargarCapacitacionesSolicitadas();
+  }
+
+  /**
+   * Verifica y recupera el ID del empleado GTH si es necesario
+   */
+  private verificarIdEmpleado(): void {
+    const idEmpleado = this.sessionStorageService.getIdGthEmpleado();
+    console.log('[EmpleadoCapacitaciones] Verificando ID de empleado:', idEmpleado);
+    
+    if (!idEmpleado) {
+      console.warn('[EmpleadoCapacitaciones] ID de empleado no encontrado, intentando recuperar...');
+      const email = this.loginService.obtenerEmailUsuarioActual();
+      
+      if (email) {
+        this.gthEmpleadoService.procesarYGuardarIdGthEmpleadoPorEmail(email).subscribe({
+          next: (response) => {
+            console.log('[EmpleadoCapacitaciones] ID recuperado exitosamente:', response.idEmpleado);
+            // Asegurar que esté en ambos servicios
+            this.sessionStorageService.setIdGthEmpleado(response.idEmpleado);
+          },
+          error: (error) => {
+            console.error('[EmpleadoCapacitaciones] Error recuperando ID:', error);
+          }
+        });
+      }
+    }
   }
 
   private cargarCapacitacionesDesdeBackend(): void {
@@ -280,19 +311,46 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
   submitTrainingRequest(): void {
     if (this.isFormValid()) {
-      // Obtener el ID del empleado del sessionStorage
-      const idEmpleadoLogueado = this.sessionStorageService.getIdGthEmpleado();
+      // Intentar obtener el ID del empleado
+      let idEmpleadoLogueado = this.sessionStorageService.getIdGthEmpleado();
+      console.log('[EmpleadoCapacitaciones] ID obtenido del sessionStorage:', idEmpleadoLogueado);
+      
+      // Si no está disponible, intentar obtenerlo directamente
+      if (!idEmpleadoLogueado) {
+        idEmpleadoLogueado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+        console.log('[EmpleadoCapacitaciones] ID obtenido del gthEmpleadoService:', idEmpleadoLogueado);
+      }
       
       if (!idEmpleadoLogueado) {
-        Swal.fire({
-          title: 'Error de sesión',
-          text: 'No se pudo obtener la información del empleado. Por favor, vuelve a iniciar sesión.',
-          icon: 'error',
-          confirmButtonText: 'Aceptar',
-          confirmButtonColor: '#dc3545'
-        });
+        console.error('[EmpleadoCapacitaciones] No se encontró ID de empleado, intentando recuperar...');
+        
+        const email = this.loginService.obtenerEmailUsuarioActual();
+        if (email) {
+          this.gthEmpleadoService.procesarYGuardarIdGthEmpleadoPorEmail(email).subscribe({
+            next: (response) => {
+              console.log('[EmpleadoCapacitaciones] ID recuperado, procesando solicitud...');
+              this.sessionStorageService.setIdGthEmpleado(response.idEmpleado);
+              this.procesarSolicitud(response.idEmpleado);
+            },
+            error: (error) => {
+              console.error('[EmpleadoCapacitaciones] Error recuperando ID:', error);
+              this.mostrarErrorSesion();
+            }
+          });
+        } else {
+          this.mostrarErrorSesion();
+        }
         return;
       }
+
+      this.procesarSolicitud(idEmpleadoLogueado);
+    } else {
+      this.showValidationMessage();
+    }
+  }
+
+  private procesarSolicitud(idEmpleadoLogueado: number): void {
+    console.log('[EmpleadoCapacitaciones] Procesando solicitud con ID:', idEmpleadoLogueado);
 
       // Crear objeto de capacitación compatible con el backend
       const capacitacionData: iGTHCapacitacion = {
@@ -372,9 +430,16 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
           this.showErrorMessage();
         }
       });
-    } else {
-      this.showValidationMessage();
-    }
+  }
+
+  private mostrarErrorSesion(): void {
+    Swal.fire({
+      title: 'Error de sesión',
+      text: 'No se pudo obtener la información del empleado. Por favor, vuelve a iniciar sesión.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#dc3545'
+    });
   }
 
   private parsePrice(priceString: string): number {

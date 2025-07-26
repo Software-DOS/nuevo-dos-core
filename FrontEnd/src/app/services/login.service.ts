@@ -194,10 +194,20 @@ export class LoginService {
     
     this.gthEmpleadoService.procesarYGuardarIdGthEmpleadoPorEmail(emailUsuario).subscribe({
       next: (response) => {
-        console.log("✅ [DEBUG] ID de GTH empleado procesado exitosamente:", response.idEmpleado);
+        console.log("[LoginService] ID de GTH empleado procesado exitosamente:", response.idEmpleado);
+        
+        // Verificar que se guardó correctamente
+        setTimeout(() => {
+          const idVerificacion = sessionStorage.getItem('idGthEmpleado');
+          console.log("[LoginService] Verificación - ID en sessionStorage:", idVerificacion);
+          if (!idVerificacion) {
+            console.warn("[LoginService] Forzando guardado del ID...");
+            sessionStorage.setItem('idGthEmpleado', response.idEmpleado.toString());
+          }
+        }, 100);
       },
       error: (error) => {
-        console.warn("⚠️ [DEBUG] No se pudo obtener el ID de GTH empleado:", error);
+        console.warn("[LoginService] No se pudo obtener el ID de GTH empleado:", error);
         // No es un error crítico, el usuario puede seguir usando la aplicación
       }
     });

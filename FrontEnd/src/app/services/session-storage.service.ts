@@ -71,6 +71,7 @@ export class SessionStorageService {
    */
   getIdGthEmpleado(): number | null {
     const id = this.getItem(this.KEYS.ID_GTH_EMPLEADO);
+    console.log('[SessionStorageService] Obteniendo ID:', id);
     return id ? parseInt(id, 10) : null;
   }
 
@@ -79,7 +80,10 @@ export class SessionStorageService {
    * @param idEmpleado - ID del empleado GTH a guardar
    */
   setIdGthEmpleado(idEmpleado: number): void {
+    console.log('[SessionStorageService] Guardando ID:', idEmpleado);
     this.setItem(this.KEYS.ID_GTH_EMPLEADO, idEmpleado.toString());
+    const verificacion = this.getItem(this.KEYS.ID_GTH_EMPLEADO);
+    console.log('[SessionStorageService] Verificación guardado:', verificacion);
   }
 
   /**
