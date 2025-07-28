@@ -228,7 +228,7 @@ export class ListaCapacitacionesComponent implements OnInit {
               id: cap.idCapacitacion?.toString() || '',
               nombre: cap.nombre || '',
               duracion: cap.duracion || 0,
-              certificacion: cap.titulo || cap.nombre || '', // Usar título o nombre como respaldo
+              certificacion: cap.CAP_TITULO || cap.titulo || cap.nombre || '', // Usar CAP_TITULO como principal
               isStatic: false // Permitir edición y eliminación de capacitaciones del backend
             }));
         }
@@ -319,7 +319,7 @@ export class ListaCapacitacionesComponent implements OnInit {
       idCapacitacion: this.capacitacionEditandoId ? parseInt(this.capacitacionEditandoId) : 0,
       idEntidadCap: 1, // Valor por defecto
       nombre: this.nuevaCapacitacion.nombre,
-      titulo: this.nuevaCapacitacion.nombre,
+      titulo: this.nuevaCapacitacion.certificacion, // Usar certificacion como titulo (CAP_TITULO)
       categoria: 'Disponible',
       descripcion: this.nuevaCapacitacion.justificacion || '',
       estado: 'Disponible',
@@ -476,7 +476,7 @@ export class ListaCapacitacionesComponent implements OnInit {
       idCapacitacion: parseInt(this.capacitacionEditandoId),
       idEntidadCap: 1, // Valor por defecto
       nombre: this.nuevaCapacitacion.nombre,
-      titulo: this.nuevaCapacitacion.nombre,
+      titulo: this.nuevaCapacitacion.certificacion, // Usar certificacion como titulo (CAP_TITULO)
       categoria: 'Disponible',
       descripcion: this.nuevaCapacitacion.justificacion || '',
       estado: 'Disponible',
