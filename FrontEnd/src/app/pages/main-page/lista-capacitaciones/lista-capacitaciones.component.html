@@ -23,7 +23,7 @@
         <div>Duración (h)</div>
         <div>Fecha Inicio</div>
         <div>Certificación</div>
-        <div>Progreso</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 10px;">Progreso</div>
       </div>
       <div class="cap-row" *ngFor="let asignacion of asignacionesEnCurso">
         <div class="empleado-info-column">
@@ -65,7 +65,7 @@
         <div>Nombre</div>
         <div>Duración (h)</div>
         <div>Certificación</div>
-        <div>Acciones</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 80px;">Acciones</div>
       </div>
 
       <!-- Capacitaciones estáticas -->
@@ -74,6 +74,9 @@
         <div>{{ capacitacion.duracion }}</div>
         <div>{{ capacitacion.certificacion }}</div>
         <div class="acciones-column">
+          <button class="btn-accion btn-asignar" (click)="abrirModalAsignar(capacitacion)" title="Asignar" style="margin-left: -12px; margin-right: 12px; background: #10b981; color: #fff; border: none; border-radius: 4px; padding: 6px 22px; font-size: 15px; min-width: 110px; display: inline-flex; align-items: center; gap: 7px; transition: background 0.2s; font-weight: 500;">
+            <i class="fas fa-user-plus"></i> Asignar
+          </button>
           <button class="btn-accion btn-editar" (click)="editarCapacitacion(capacitacion)" title="Editar">
             <i class="fas fa-edit"></i>
           </button>
@@ -131,13 +134,13 @@
     <!-- Mostrar datos reales del backend -->
     <div *ngIf="!cargandoSolicitudes && solicitudesDetalladas.length > 0" class="cap-table">
       <div class="cap-header">
-        <div>Empleado</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 10px;">Empleado</div>
         <div>Departamento/Área</div>
         <div>Capacitación Solicitada</div>
         <div>Categoría</div>
         <div>Duración (h)</div>
-        <div>Fecha Solicitud</div>
-        <div>Modalidad</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 30px;">Fecha Solicitud</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 60px;">Modalidad</div>
       </div>
 
       <div class="cap-row" *ngFor="let solicitud of solicitudesDetalladas">
@@ -159,8 +162,8 @@
         </div>
         <div>{{ solicitud.capacitacion?.categoria || 'N/A' }}</div>
         <div>{{ solicitud.capacitacion?.duracion || 'N/A' }}</div>
-        <div>{{ (solicitud.fechaSolicitud | date:'dd/MM/yyyy') || 'N/A' }}</div>
-        <div>{{ solicitud.capacitacion?.modalidad || 'N/A' }}</div>
+        <div style="min-width: 120px;">{{ (solicitud.fechaSolicitud | date:'dd/MM/yyyy') || 'N/A' }}</div>
+        <div style="min-width: 120px; margin-left: 16px;">{{ solicitud.capacitacion?.modalidad || 'N/A' }}</div>
       </div>
     </div>
 

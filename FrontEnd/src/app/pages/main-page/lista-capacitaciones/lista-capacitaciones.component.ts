@@ -67,9 +67,11 @@ export class ListaCapacitacionesComponent implements OnInit {
   showFormButton: boolean = true;
   showModal: boolean = false;
   showEditModal: boolean = false;
+  showAssignModal: boolean = false;
   selectedEmployeeTrainings: EmpleadoCapacitaciones | null = null;
   capacitacionEditandoId: string | null = null;
   capacitacionEditando: CapacitacionDisponible | null = null;
+  capacitacionParaAsignar: CapacitacionDisponible | null = null;
 
   nuevaCapacitacion: NuevaCapacitacion = {
     nombre: '',
@@ -622,6 +624,19 @@ export class ListaCapacitacionesComponent implements OnInit {
   closeModal(): void {
     this.showModal = false;
     this.selectedEmployeeTrainings = null;
+  }
+
+  /**
+   * Abre el modal de asignación de empleados para una capacitación disponible
+   */
+  abrirModalAsignar(capacitacion: CapacitacionDisponible): void {
+    this.capacitacionParaAsignar = capacitacion;
+    this.showAssignModal = true;
+  }
+
+  cerrarModalAsignar(): void {
+    this.showAssignModal = false;
+    this.capacitacionParaAsignar = null;
   }
 
   getProgressColor(progreso?: number): string {
