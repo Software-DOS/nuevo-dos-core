@@ -143,7 +143,7 @@
         <div class="acciones-header" style="text-align: center; padding-right: 60px;">Modalidad</div>
       </div>
 
-      <div class="cap-row" *ngFor="let solicitud of solicitudesDetalladas">
+      <div class="cap-row" *ngFor="let solicitud of solicitudesDetalladas" (click)="abrirModalSolicitud(solicitud)">
         <div class="empleado-info-column">
           <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" 
                [alt]="solicitud.empleado?.nombreCompleto" 
@@ -376,6 +376,37 @@
     </div>
     <div class="modal-footer">
       <button class="nav-button gray" (click)="cerrarModalAsignar()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal visual para justificación de solicitud -->
+<div class="modal-overlay" [class.active]="showSolicitudModal" (click)="cerrarModalSolicitud()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Justificación de la solicitud</h3>
+      <button class="modal-close" (click)="cerrarModalSolicitud()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="solicitudSeleccionada">
+        <div class="mb-2">
+          <strong>Empleado:</strong> {{ solicitudSeleccionada.empleado?.nombreCompleto }}<br>
+          <strong>Capacitación:</strong> {{ solicitudSeleccionada.capacitacion?.nombre || solicitudSeleccionada.capacitacion?.titulo }}<br>
+          <strong>Justificación:</strong>
+          <div class="justificacion-box">{{ solicitudSeleccionada.justificacion }}</div>
+        </div>
+        <div class="form-group">
+          <label for="respuestaJustificacion">Respuesta:</label>
+          <textarea id="respuestaJustificacion" [(ngModel)]="respuestaJustificacion" name="respuestaJustificacion" rows="3" class="form-control" placeholder="Escribe tu respuesta aquí..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="nav-button green" (click)="aprobarSolicitud()">Aprobar</button>
+      <button class="nav-button red" (click)="rechazarSolicitud()">Rechazar</button>
+      <button class="nav-button gray" (click)="cerrarModalSolicitud()">Cerrar</button>
     </div>
   </div>
 </div>

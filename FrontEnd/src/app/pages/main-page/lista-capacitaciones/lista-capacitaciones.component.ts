@@ -70,10 +70,13 @@ export class ListaCapacitacionesComponent implements OnInit {
   showModal: boolean = false;
   showEditModal: boolean = false;
   showAssignModal: boolean = false;
+  showSolicitudModal: boolean = false;
   selectedEmployeeTrainings: EmpleadoCapacitaciones | null = null;
   capacitacionEditandoId: string | null = null;
   capacitacionEditando: CapacitacionDisponible | null = null;
   capacitacionParaAsignar: CapacitacionDisponible | null = null;
+  solicitudSeleccionada: GTHSolicitudCapacitacionDetalladaModel | null = null;
+  respuestaJustificacion: string = '';
 
   nuevaCapacitacion: NuevaCapacitacion = {
     nombre: '',
@@ -713,6 +716,28 @@ export class ListaCapacitacionesComponent implements OnInit {
         });
       }
     });
+  }
+
+  abrirModalSolicitud(solicitud: GTHSolicitudCapacitacionDetalladaModel): void {
+    this.solicitudSeleccionada = solicitud;
+    this.respuestaJustificacion = '';
+    this.showSolicitudModal = true;
+  }
+
+  cerrarModalSolicitud(): void {
+    this.showSolicitudModal = false;
+    this.solicitudSeleccionada = null;
+    this.respuestaJustificacion = '';
+  }
+
+  aprobarSolicitud(): void {
+    // Aquí irá la lógica real de aprobación
+    this.cerrarModalSolicitud();
+  }
+
+  rechazarSolicitud(): void {
+    // Aquí irá la lógica real de rechazo
+    this.cerrarModalSolicitud();
   }
 
   getProgressColor(progreso?: number): string {
