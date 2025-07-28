@@ -731,13 +731,81 @@ export class ListaCapacitacionesComponent implements OnInit {
   }
 
   aprobarSolicitud(): void {
-    // Aquí irá la lógica real de aprobación
-    this.cerrarModalSolicitud();
+    if (!this.solicitudSeleccionada) return;
+    const respuestaTexto = this.respuestaJustificacion?.trim() || '';
+    const respuesta = `Aceptada, ${respuestaTexto}`;
+    const fechaRespuesta = new Date();
+
+    const solicitudEditada = {
+      tipo: 1, // Editar
+      idCapacitacion: this.solicitudSeleccionada.idCapacitacion,
+      idEmpleado: this.solicitudSeleccionada.idEmpleado,
+      cedulaEmpleado: this.solicitudSeleccionada.cedulaEmpleado,
+      justificacion: this.solicitudSeleccionada.justificacion,
+      fechaSolicitud: this.solicitudSeleccionada.fechaSolicitud,
+      respuesta: respuesta,
+      fechaRespuesta: fechaRespuesta
+    };
+
+    this.gthSolicitudCapacitacionService.crearSolicitudCapacitacion(solicitudEditada).subscribe({
+      next: () => {
+        this.cerrarModalSolicitud();
+        this.cargarSolicitudesCapacitacion();
+        Swal.fire({
+          title: 'Solicitud aprobada',
+          text: 'La solicitud ha sido aprobada correctamente.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+      },
+      error: (error) => {
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo aprobar la solicitud. Intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
   }
 
   rechazarSolicitud(): void {
-    // Aquí irá la lógica real de rechazo
-    this.cerrarModalSolicitud();
+    if (!this.solicitudSeleccionada) return;
+    const respuestaTexto = this.respuestaJustificacion?.trim() || '';
+    const respuesta = `Rechazada, ${respuestaTexto}`;
+    const fechaRespuesta = new Date();
+
+    const solicitudEditada = {
+      tipo: 1, // Editar
+      idCapacitacion: this.solicitudSeleccionada.idCapacitacion,
+      idEmpleado: this.solicitudSeleccionada.idEmpleado,
+      cedulaEmpleado: this.solicitudSeleccionada.cedulaEmpleado,
+      justificacion: this.solicitudSeleccionada.justificacion,
+      fechaSolicitud: this.solicitudSeleccionada.fechaSolicitud,
+      respuesta: respuesta,
+      fechaRespuesta: fechaRespuesta
+    };
+
+    this.gthSolicitudCapacitacionService.crearSolicitudCapacitacion(solicitudEditada).subscribe({
+      next: () => {
+        this.cerrarModalSolicitud();
+        this.cargarSolicitudesCapacitacion();
+        Swal.fire({
+          title: 'Solicitud rechazada',
+          text: 'La solicitud ha sido rechazada correctamente.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+      },
+      error: (error) => {
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo rechazar la solicitud. Intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
   }
 
   getProgressColor(progreso?: number): string {
