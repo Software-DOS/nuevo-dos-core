@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { GthCapacitacionService } from 'src/app/services/gthcapacitacion.service';
 import { GthSolicitudCapacitacionService, GTHSolicitudCapacitacionDetalladaModel } from 'src/app/services/gth-solicitud-capacitacion.service';
 import { GthAsignacionCapacitacionService, GTHAsignacionCapacitacionDetalladaModel } from 'src/app/services/gth-asignacion-capacitacion.service';
+import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
 import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
+import { iGTHEmpleado } from 'src/app/interface/igth-empleado';
 import Swal from 'sweetalert2';
 
 interface Empleado {
@@ -178,10 +180,16 @@ export class ListaCapacitacionesComponent implements OnInit {
   asignacionesEnCurso: GTHAsignacionCapacitacionDetalladaModel[] = [];
   cargandoAsignaciones: boolean = false;
 
+  // Nuevas propiedades para cargar empleados GTH
+  empleadosGTH: iGTHEmpleado[] = [];
+  cargandoEmpleadosGTH: boolean = false;
+  empleadoSeleccionado: iGTHEmpleado | null = null;
+
   constructor(
     private gthCapacitacionService: GthCapacitacionService,
     private gthSolicitudCapacitacionService: GthSolicitudCapacitacionService,
-    private gthAsignacionCapacitacionService: GthAsignacionCapacitacionService
+    private gthAsignacionCapacitacionService: GthAsignacionCapacitacionService,
+    private gthEmpleadoService: GthEmpleadoService
   ) { }
 
   ngOnInit(): void {
@@ -631,12 +639,80 @@ export class ListaCapacitacionesComponent implements OnInit {
    */
   abrirModalAsignar(capacitacion: CapacitacionDisponible): void {
     this.capacitacionParaAsignar = capacitacion;
+    this.cargandoEmpleadosGTH = true;
     this.showAssignModal = true;
+    this.empleadoSeleccionado = null;
+    // Cargar empleados GTH desde el backend (solo activos)
+    this.gthEmpleadoService.MostrarConParametros(0, undefined, undefined, 'Activo').subscribe({
+      next: (response: any) => {
+        this.empleadosGTH = response.$values || response || [];
+        this.cargandoEmpleadosGTH = false;
+      },
+      error: (error) => {
+        this.empleadosGTH = [];
+        this.cargandoEmpleadosGTH = false;
+        console.error('Error al cargar empleados GTH:', error);
+      }
+    });
   }
 
   cerrarModalAsignar(): void {
     this.showAssignModal = false;
     this.capacitacionParaAsignar = null;
+  }
+
+  seleccionarEmpleado(emp: iGTHEmpleado): void {
+    this.empleadoSeleccionado = emp;
+  }
+
+  confirmarAsignacion(event: Event): void {
+    event.stopPropagation();
+    if (!this.empleadoSeleccionado || !this.capacitacionParaAsignar) return;
+    Swal.fire({
+      title: '¿Asignar capacitación?',
+      html: `¿Deseas asignar <b>${this.capacitacionParaAsignar.nombre}</b> a <b>${this.empleadoSeleccionado.nombre} ${this.empleadoSeleccionado.apellido}</b>?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, asignar',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.crearAsignacionCapacitacion();
+      }
+    });
+  }
+
+  private crearAsignacionCapacitacion(): void {
+    if (!this.empleadoSeleccionado || !this.capacitacionParaAsignar) return;
+    const asignacionData = {
+      tipo: 0, // 0 = Insertar
+      idAsignacion: 0,
+      idCapacitacion: this.capacitacionParaAsignar.id ? parseInt(this.capacitacionParaAsignar.id) : 0,
+      idEmpleado: this.empleadoSeleccionado.idEmpleado,
+      estado: 'En Progreso',
+      fecha: new Date(), // Usar objeto Date
+      observaciones: ''
+    };
+    this.gthAsignacionCapacitacionService.crearAsignacionCapacitacion(asignacionData).subscribe({
+      next: () => {
+        Swal.fire({
+          title: 'Asignación exitosa',
+          text: `La capacitación "${this.capacitacionParaAsignar?.nombre}" ha sido asignada a ${this.empleadoSeleccionado?.nombre} ${this.empleadoSeleccionado?.apellido}.`,
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+        this.cerrarModalAsignar();
+        this.refrescarAsignacionesEnCurso();
+      },
+      error: (error: any) => {
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo asignar la capacitación. Intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
   }
 
   getProgressColor(progreso?: number): string {

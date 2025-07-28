@@ -344,3 +344,38 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de asignación de empleados -->
+<div class="modal-overlay" [class.active]="showAssignModal" (click)="cerrarModalAsignar()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Asignar capacitación: {{ capacitacionParaAsignar?.nombre }}</h3>
+      <button class="modal-close" (click)="cerrarModalAsignar()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="cargandoEmpleadosGTH" class="text-center p-3">
+        <i class="fas fa-spinner fa-spin"></i> Cargando empleados...
+      </div>
+      <div class="empleados-lista-asignar" *ngIf="!cargandoEmpleadosGTH">
+        <div *ngFor="let emp of empleadosGTH" 
+             class="empleado-card-asignar"
+             [class.seleccionado]="empleadoSeleccionado?.idEmpleado === emp.idEmpleado"
+             (click)="seleccionarEmpleado(emp)">
+          <img [src]="emp.fotoPerfilUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" [alt]="emp.nombre + ' ' + emp.apellido" class="employee-photo-modal">
+          <div class="empleado-nombre-asignar">{{ emp.nombre }} {{ emp.apellido }}</div>
+          <button *ngIf="empleadoSeleccionado?.idEmpleado === emp.idEmpleado" class="nav-button green mt-2" (click)="confirmarAsignacion($event)">
+            <i class="fas fa-check"></i> Asignar a este empleado
+          </button>
+        </div>
+        <div *ngIf="empleadosGTH.length === 0" class="text-center p-3 text-muted">
+          No se encontraron empleados activos.
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="nav-button gray" (click)="cerrarModalAsignar()">Cerrar</button>
+    </div>
+  </div>
+</div>

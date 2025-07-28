@@ -23,9 +23,9 @@
 .modal-container {
   background: white;
   border-radius: 12px;
-  width: 90%;
-  max-width: 700px;
-  max-height: 80vh;
+  width: 98%;
+  max-width: 1100px;
+  max-height: 90vh;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   transform: scale(0.9);
@@ -557,4 +557,74 @@
 .fas.fa-info-circle {
   color: #6b7280;
   margin-right: 8px;
+}
+
+/* Estilos para el modal de asignación de empleados */
+.empleados-lista-asignar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.empleado-card-asignar {
+  background: #f8fafc;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
+  padding: 18px 20px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 170px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, border 0.2s, background 0.2s;
+}
+
+.empleado-card-asignar:hover {
+  border: 2px solid #10b981;
+  background: #e6f9f2;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+.employee-photo-modal {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid #10b981;
+  margin-bottom: 10px;
+}
+
+.empleado-nombre-asignar {
+  font-size: 1.08rem;
+  font-weight: 500;
+  color: #1f2937;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+.empleado-card-asignar {
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 12px 10px 10px 10px;
+  margin: 8px 8px 8px 0;
+  background: #f9fafb;
+  display: inline-block;
+  width: 180px;
+  text-align: center;
+  transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.empleado-card-asignar.seleccionado {
+  border: 2.5px solid #2563eb;
+  background: #e0e7ff;
+  box-shadow: 0 0 0 2px #2563eb33;
+}
+
+.empleado-card-asignar:hover {
+  border: 2px solid #10b981;
+  background: #f0fdf4;
 }
