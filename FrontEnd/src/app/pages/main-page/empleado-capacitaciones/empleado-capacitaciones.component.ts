@@ -73,6 +73,9 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
   availableTrainings: Training[] = [];
 
+  // Cambiar estructura: ahora cada elemento tiene { training, solicitudCapacitacion }
+  requestedTrainings: { training: Training, solicitudCapacitacion: any }[] = [];
+
   completedTrainings: Training[] = [
     {
       id: 5,
@@ -89,17 +92,6 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
       completionDate: '15/01/2025',
       certification: 'Python Básico',
       company: 'Cisco'
-    }
-  ];
-  requestedTrainings: Training[] = [
-    {
-      id: 7,
-      name: 'Gestión de Proyectos',
-      duration: 30,
-      completionDate: '01/03/2025',
-      certification: 'PMI Fundamentals',
-      company: 'N/A',
-      status: 'Aprobada'
     }
   ];
 
@@ -174,43 +166,31 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   }
 
   private cargarCapacitacionesSolicitadas(): void {
-    // Cargar capacitaciones solicitadas desde el backend (solo las que tienen estado "Solicitada")
-    this.gthCapacitacionService.MostrarCapacitaciones(0, undefined, undefined, 'Solicitada').subscribe({
-      next: (response: any) => {
-        const capacitaciones = response.$values || response;
-        
-        if (capacitaciones && Array.isArray(capacitaciones)) {
-          // Convertir las capacitaciones solicitadas del backend al formato local
-          // Solo incluir las que tienen estado "Solicitada"
-          const capacitacionesBackend: Training[] = capacitaciones
-            .filter((cap: any) => cap.estado === 'Solicitada')
-            .map((cap: any) => ({
-              id: cap.idCapacitacion || 0,
-              name: cap.nombre || '',
-              duration: cap.duracion || 0,
-              certification: cap.titulo || cap.nombre || '',
+    // Cargar todas las solicitudes detalladas del backend
+    this.gthSolicitudCapacitacionService.mostrarSolicitudesCapacitacionDetallada(0).subscribe({
+      next: (solicitudes: any[]) => {
+        // Filtrar solo las solicitudes que tengan una capacitación asociada
+        const trainingsWithSolicitud = solicitudes
+          .filter(s => s.capacitacion) // Solo las que tienen capacitación asociada
+          .map(s => ({
+            training: {
+              id: s.capacitacion.idCapacitacion || 0,
+              name: s.capacitacion.nombre || '',
+              duration: s.capacitacion.duracion || 0,
+              certification: s.capacitacion.titulo || s.capacitacion.nombre || '',
               company: 'Por definir',
-              status: cap.estado || 'Solicitada',
-              price: cap.costo ? `$${cap.costo}` : 'N/A',
-              justification: cap.descripcion || '',
-              link: cap.urlVerificacion || '',
+              status: this.getEstadoSolicitud(s),
+              price: s.capacitacion.costo ? `$${s.capacitacion.costo}` : 'N/A',
+              justification: s.justificacion || '',
+              link: s.capacitacion.urlVerificacion || '',
               completionDate: 'Pendiente'
-            }));
-          
-          // Mantener también las capacitaciones locales (las que se acaban de agregar)
-          const localRequested = this.requestedTrainings.filter(t => t.id > 1000);
-          
-          // Combinar ambas listas evitando duplicados
-          this.requestedTrainings = [
-            ...capacitacionesBackend,
-            ...localRequested.filter(local => 
-              !capacitacionesBackend.some(backend => backend.name === local.name)
-            )
-          ];
-        }
+            },
+            solicitudCapacitacion: s
+          }));
+        this.requestedTrainings = trainingsWithSolicitud;
       },
       error: (error) => {
-        console.error('Error al cargar capacitaciones solicitadas:', error);
+        console.error('Error al cargar solicitudes de capacitación:', error);
       }
     });
   }
@@ -434,7 +414,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
                 link: this.enlaceCapacitacion
               };
 
-              this.requestedTrainings.push(newRequest);
+              this.requestedTrainings.push({ training: newRequest, solicitudCapacitacion: responseSolicitud });
               this.saveRequestedTrainings();
               
               // Mostrar mensaje de éxito
@@ -509,7 +489,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
   private saveRequestedTrainings(): void {
     // Save only the dynamically added ones (those with higher IDs)
-    const dynamicTrainings = this.requestedTrainings.filter(t => t.id > 1000);
+    const dynamicTrainings = this.requestedTrainings.filter(t => t.training.id > 1000);
     localStorage.setItem('capacitacionesSolicitadasEmpleado', JSON.stringify(dynamicTrainings));
   }
 
@@ -650,7 +630,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
     console.log('[EmpleadoCapacitaciones] Creando asignación de capacitación:', asignacionData);
 
-    // Crear la asignación en la tabla asignacion-capacitacion
+    // Crear la asignación en la tabla asignacion-capacitación
     this.gthAsignacionCapacitacionService.crearAsignacionCapacitacion(asignacionData).subscribe({
       next: (response: any) => {
         console.log('[EmpleadoCapacitaciones] Asignación de capacitación creada exitosamente:', response);
@@ -684,6 +664,33 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Devuelve el estado de la solicitud basado en el campo respuesta
+  getEstadoSolicitud(solicitud: any): string {
+    if (!solicitud.respuesta || solicitud.respuesta.trim() === '') {
+      return 'Solicitada';
+    }
+    if (solicitud.respuesta.startsWith('Aceptada')) {
+      return 'Aprobada';
+    }
+    if (solicitud.respuesta.startsWith('Rechazada')) {
+      return 'Rechazada';
+    }
+    return 'Solicitada';
+  }
+
+  // Devuelve solo las capacitaciones con solicitud asociada
+  getCapacitacionesSolicitadasConSolicitud(): any[] {
+    return this.requestedTrainings;
+  }
+
+  // Devuelve la clase de color para el estado de la solicitud
+  getEstadoColor(solicitud: any): string {
+    const estado = this.getEstadoSolicitud(solicitud);
+    if (estado === 'Aprobada') return 'badge-success'; // verde
+    if (estado === 'Rechazada') return 'badge-danger'; // rojo
+    return 'badge-warning'; // amarillo para solicitada
   }
 
 }

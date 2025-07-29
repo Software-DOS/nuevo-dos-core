@@ -808,6 +808,28 @@ export class ListaCapacitacionesComponent implements OnInit {
     });
   }
 
+  // Devuelve el estado de la solicitud basado en el campo respuesta
+  getEstadoSolicitud(solicitud: GTHSolicitudCapacitacionDetalladaModel): string {
+    if (!solicitud.respuesta || solicitud.respuesta.trim() === '') {
+      return 'Solicitada';
+    }
+    if (solicitud.respuesta.startsWith('Aceptada')) {
+      return 'Aprobada';
+    }
+    if (solicitud.respuesta.startsWith('Rechazada')) {
+      return 'Rechazada';
+    }
+    return 'Solicitada';
+  }
+
+  // Devuelve la clase de color para el estado de la solicitud
+  getEstadoColor(solicitud: GTHSolicitudCapacitacionDetalladaModel): string {
+    const estado = this.getEstadoSolicitud(solicitud);
+    if (estado === 'Aprobada') return 'badge-success'; // verde
+    if (estado === 'Rechazada') return 'badge-danger'; // rojo
+    return 'badge-warning'; // amarillo para solicitada
+  }
+
   getProgressColor(progreso?: number): string {
     if (!progreso) return '#gray-400';
     if (progreso < 30) return '#ef4444'; // rojo

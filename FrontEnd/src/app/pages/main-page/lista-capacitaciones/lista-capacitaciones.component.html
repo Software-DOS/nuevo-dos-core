@@ -141,6 +141,7 @@
         <div>Duración (h)</div>
         <div class="acciones-header" style="text-align: center; padding-right: 30px;">Fecha Solicitud</div>
         <div class="acciones-header" style="text-align: center; padding-right: 60px;">Modalidad</div>
+        <div>Estado</div>
       </div>
 
       <div class="cap-row" *ngFor="let solicitud of solicitudesDetalladas" (click)="abrirModalSolicitud(solicitud)">
@@ -164,6 +165,9 @@
         <div>{{ solicitud.capacitacion?.duracion || 'N/A' }}</div>
         <div style="min-width: 120px;">{{ (solicitud.fechaSolicitud | date:'dd/MM/yyyy') || 'N/A' }}</div>
         <div style="min-width: 120px; margin-left: 16px;">{{ solicitud.capacitacion?.modalidad || 'N/A' }}</div>
+        <div>
+          <span class="badge" [ngClass]="getEstadoColor(solicitud)">{{ getEstadoSolicitud(solicitud) }}</span>
+        </div>
       </div>
     </div>
 
