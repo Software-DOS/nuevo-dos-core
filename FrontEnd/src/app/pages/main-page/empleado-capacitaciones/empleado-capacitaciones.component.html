@@ -102,6 +102,12 @@
           <div>{{ training.certification }}</div>
           <div>{{ training.company }}</div>
         </div>
+
+        <div *ngIf="completedTrainings.length === 0" class="no-data">
+          <i class="fas fa-medal"></i>
+          <p>No tienes capacitaciones completadas aún.</p>
+          <p class="text-muted">Las capacitaciones aparecerán aquí cuando completes el 100% de progreso.</p>
+        </div>
       </div>
     </div>
 

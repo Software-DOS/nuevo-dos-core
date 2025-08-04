@@ -20,6 +20,7 @@ interface Training {
   price?: string;
   justification?: string;
   link?: string;
+  progreso?: number; // Nuevo campo para el porcentaje de progreso
 }
 
 @Component({
@@ -76,24 +77,8 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   // Cambiar estructura: ahora cada elemento tiene { training, solicitudCapacitacion }
   requestedTrainings: { training: Training, solicitudCapacitacion: any }[] = [];
 
-  completedTrainings: Training[] = [
-    {
-      id: 5,
-      name: 'Gestión de Proyectos',
-      duration: 30,
-      completionDate: '01/03/2025',
-      certification: 'PMI Fundamentals',
-      company: 'Cisco'
-    },
-    {
-      id: 6,
-      name: 'Introducción a Python',
-      duration: 25,
-      completionDate: '15/01/2025',
-      certification: 'Python Básico',
-      company: 'Cisco'
-    }
-  ];
+  // Capacitaciones completadas - ahora se cargan desde el backend
+  completedTrainings: Training[] = [];
 
   constructor(
     private gthCapacitacionService: GthCapacitacionService,
@@ -110,6 +95,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     this.cargarCapacitacionesDesdeBackend();
     this.cargarCapacitacionesSolicitadas();
     this.cargarCapacitacionesEnCurso();
+    this.cargarCapacitacionesCompletadas(); // Nueva llamada para cargar completadas
   }
 
   /**
@@ -229,6 +215,45 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
         console.error('[EmpleadoCapacitaciones] Error al cargar capacitaciones en curso:', error);
         // Mantener los datos estáticos en caso de error
         console.log('[EmpleadoCapacitaciones] Manteniendo datos estáticos por error en la carga');
+      }
+    });
+  }
+
+  /**
+   * Carga las capacitaciones completadas (progreso >= 100%) desde la tabla de asignación-capacitación
+   */
+  private cargarCapacitacionesCompletadas(): void {
+    // Obtener el ID del empleado actual
+    const idEmpleado = this.sessionStorageService.getIdGthEmpleado();
+    
+    if (!idEmpleado) {
+      console.warn('[EmpleadoCapacitaciones] No se encontró ID de empleado para cargar capacitaciones completadas');
+      return;
+    }
+
+    // Cargar capacitaciones completadas del empleado actual
+    this.gthAsignacionCapacitacionService.mostrarCapacitacionesCompletadas(idEmpleado).subscribe({
+      next: (asignacionesCompletadas: GTHAsignacionCapacitacionDetalladaModel[]) => {
+        console.log('[EmpleadoCapacitaciones] Asignaciones completadas obtenidas:', asignacionesCompletadas);
+        
+        // Convertir las asignaciones completadas a formato Training
+        this.completedTrainings = asignacionesCompletadas.map((asignacion: GTHAsignacionCapacitacionDetalladaModel) => ({
+          id: asignacion.idCapacitacion,
+          name: asignacion.capacitacion?.nombre || 'Capacitación sin nombre',
+          duration: asignacion.capacitacion?.duracion || 0,
+          completionDate: asignacion.fecha ? new Date(asignacion.fecha).toLocaleDateString('es-ES') : 'N/A',
+          certification: asignacion.capacitacion?.titulo || asignacion.capacitacion?.nombre || 'Sin certificación',
+          company: 'N/A', // Mantenemos N/A como se usa actualmente
+          progreso: asignacion.progreso || 100 // Asegurar que sea al menos 100%
+        }));
+
+        console.log('[EmpleadoCapacitaciones] Capacitaciones completadas cargadas:', this.completedTrainings);
+      },
+      error: (error) => {
+        console.error('[EmpleadoCapacitaciones] Error al cargar capacitaciones completadas:', error);
+        // En caso de error, mantener el array vacío
+        this.completedTrainings = [];
+        console.log('[EmpleadoCapacitaciones] Manteniendo array vacío por error en la carga');
       }
     });
   }
@@ -549,6 +574,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     // Pequeño delay para permitir que el backend procese la nueva asignación
     setTimeout(() => {
       this.cargarCapacitacionesEnCurso();
+      this.cargarCapacitacionesCompletadas(); // También recargar completadas
       this.cargarCapacitacionesDesdeBackend(); // Recargar disponibles por si hay cambios
     }, 500);
   }
