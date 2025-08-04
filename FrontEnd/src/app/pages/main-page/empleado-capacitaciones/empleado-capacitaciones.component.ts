@@ -152,9 +152,19 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   }
 
   private cargarCapacitacionesSolicitadas(): void {
-    // Cargar todas las solicitudes detalladas del backend
-    this.gthSolicitudCapacitacionService.mostrarSolicitudesCapacitacionDetallada(0).subscribe({
+    // Obtener el ID del empleado actual
+    const idEmpleado = this.sessionStorageService.getIdGthEmpleado();
+    
+    if (!idEmpleado) {
+      console.warn('[EmpleadoCapacitaciones] No se encontró ID de empleado para cargar capacitaciones solicitadas');
+      return;
+    }
+
+    // Cargar solicitudes detalladas filtradas por empleado actual (tipo=2 para filtrar por idEmpleado)
+    this.gthSolicitudCapacitacionService.mostrarSolicitudesCapacitacionDetallada(2, undefined, idEmpleado).subscribe({
       next: (solicitudes: any[]) => {
+        console.log('[EmpleadoCapacitaciones] Solicitudes del empleado obtenidas:', solicitudes);
+        
         // Filtrar solo las solicitudes que tengan una capacitación asociada
         const trainingsWithSolicitud = solicitudes
           .filter(s => s.capacitacion) // Solo las que tienen capacitación asociada
@@ -174,9 +184,10 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
             solicitudCapacitacion: s
           }));
         this.requestedTrainings = trainingsWithSolicitud;
+        console.log('[EmpleadoCapacitaciones] Capacitaciones solicitadas cargadas para el empleado:', this.requestedTrainings);
       },
       error: (error) => {
-        console.error('Error al cargar solicitudes de capacitación:', error);
+        console.error('[EmpleadoCapacitaciones] Error al cargar solicitudes de capacitación:', error);
       }
     });
   }
@@ -193,28 +204,35 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
       return;
     }
 
-    // Cargar asignaciones de capacitación del empleado actual
-    this.gthAsignacionCapacitacionService.mostrarAsignacionesEnCurso(0, undefined, idEmpleado).subscribe({
+    // Cargar asignaciones de capacitación del empleado actual (tipo=2 para filtrar por idEmpleado)
+    this.gthAsignacionCapacitacionService.mostrarAsignacionesEnCurso(2, undefined, idEmpleado).subscribe({
       next: (asignaciones: GTHAsignacionCapacitacionDetalladaModel[]) => {
-        console.log('[EmpleadoCapacitaciones] Asignaciones en curso obtenidas:', asignaciones);
+        console.log('[EmpleadoCapacitaciones] Asignaciones en curso obtenidas para el empleado:', asignaciones);
+        
+        // Filtrar solo las que NO están completadas (progreso < 100 o null)
+        const enCurso = asignaciones.filter(asignacion => 
+          !asignacion.progreso || asignacion.progreso < 100
+        );
         
         // Convertir las asignaciones a formato Training
-        this.inProgressTrainings = asignaciones.map((asignacion: GTHAsignacionCapacitacionDetalladaModel) => ({
+        this.inProgressTrainings = enCurso.map((asignacion: GTHAsignacionCapacitacionDetalladaModel) => ({
           id: asignacion.idCapacitacion,
           name: asignacion.capacitacion?.nombre || 'Capacitación sin nombre',
           duration: asignacion.capacitacion?.duracion || 0,
           startDate: asignacion.fecha ? new Date(asignacion.fecha).toLocaleDateString('es-ES') : 'N/A',
           certification: asignacion.capacitacion?.titulo || asignacion.capacitacion?.nombre || 'Sin certificación',
           company: 'N/A', // Mantenemos N/A como se usa actualmente
-          status: 'En Curso'
+          status: 'En Curso',
+          progreso: asignacion.progreso || 0
         }));
 
-        console.log('[EmpleadoCapacitaciones] Capacitaciones en curso cargadas:', this.inProgressTrainings);
+        console.log('[EmpleadoCapacitaciones] Capacitaciones en curso cargadas para el empleado:', this.inProgressTrainings);
       },
       error: (error) => {
         console.error('[EmpleadoCapacitaciones] Error al cargar capacitaciones en curso:', error);
-        // Mantener los datos estáticos en caso de error
-        console.log('[EmpleadoCapacitaciones] Manteniendo datos estáticos por error en la carga');
+        // Mantener array vacío en caso de error
+        this.inProgressTrainings = [];
+        console.log('[EmpleadoCapacitaciones] Manteniendo array vacío por error en la carga');
       }
     });
   }
@@ -231,10 +249,10 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
       return;
     }
 
-    // Cargar capacitaciones completadas del empleado actual
+    // Cargar capacitaciones completadas del empleado actual (tipo=2 para filtrar por idEmpleado)
     this.gthAsignacionCapacitacionService.mostrarCapacitacionesCompletadas(idEmpleado).subscribe({
       next: (asignacionesCompletadas: GTHAsignacionCapacitacionDetalladaModel[]) => {
-        console.log('[EmpleadoCapacitaciones] Asignaciones completadas obtenidas:', asignacionesCompletadas);
+        console.log('[EmpleadoCapacitaciones] Asignaciones completadas obtenidas para el empleado:', asignacionesCompletadas);
         
         // Convertir las asignaciones completadas a formato Training
         this.completedTrainings = asignacionesCompletadas.map((asignacion: GTHAsignacionCapacitacionDetalladaModel) => ({
@@ -247,7 +265,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
           progreso: asignacion.progreso || 100 // Asegurar que sea al menos 100%
         }));
 
-        console.log('[EmpleadoCapacitaciones] Capacitaciones completadas cargadas:', this.completedTrainings);
+        console.log('[EmpleadoCapacitaciones] Capacitaciones completadas cargadas para el empleado:', this.completedTrainings);
       },
       error: (error) => {
         console.error('[EmpleadoCapacitaciones] Error al cargar capacitaciones completadas:', error);

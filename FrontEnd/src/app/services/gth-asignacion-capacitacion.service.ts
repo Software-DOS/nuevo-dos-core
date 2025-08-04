@@ -82,14 +82,14 @@ export class GthAsignacionCapacitacionService {
    * Obtiene las capacitaciones completadas (progreso >= 100%) de un empleado
    */
   mostrarCapacitacionesCompletadas(idEmpleado?: number, cedulaEmpleado?: string): Observable<GTHAsignacionCapacitacionDetalladaModel[]> {
-    let params = `?tipo=0`; // Obtener todas las asignaciones
+    let params = `?tipo=2`; // Filtrar por idEmpleado (más eficiente que obtener todas y filtrar)
     if (idEmpleado) params += `&idEmpleado=${idEmpleado}`;
     if (cedulaEmpleado) params += `&cedulaEmpleado=${cedulaEmpleado}`;
 
     return this.http.get<any>(environment.urlbackend + 'api/GTHAsignacionCapacitacion/MostrarDetalladaEnCurso' + params)
       .pipe(
         tap((response: any) => {
-          console.log('Todas las asignaciones obtenidas para filtrar completadas:', response);
+          console.log('Asignaciones del empleado obtenidas para filtrar completadas:', response);
         }),
         map((response: any) => {
           const datos = response.$values || response || [];
@@ -97,7 +97,7 @@ export class GthAsignacionCapacitacionService {
           const completadas = datos.filter((asignacion: any) => 
             asignacion.progreso !== null && asignacion.progreso !== undefined && asignacion.progreso >= 100
           );
-          console.log('Capacitaciones completadas filtradas:', completadas);
+          console.log('Capacitaciones completadas filtradas del empleado:', completadas);
           return completadas;
         }),
         catchError(this.handleError)
