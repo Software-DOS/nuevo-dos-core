@@ -87,6 +87,61 @@
       </div>
     </div>
     
+    <!-- Sección de Capacitaciones Pendientes -->
+    <div class="mb-4" style="border-top: 2px solid #e9ecef; padding-top: 1.5rem; margin-top: 2rem;">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h4 style="color: #495057; margin: 0; font-size: 1.2rem; font-weight: 600;">
+          <i class="fas fa-clock" style="color: #ffc107; margin-right: 8px;"></i>
+          Capacitaciones Pendientes
+        </h4>
+        <button class="btn btn-sm btn-outline-warning" (click)="refrescarAsignacionesPendientes()" [disabled]="cargandoAsignacionesPendientes">
+          <i class="fas fa-sync-alt" [class.fa-spin]="cargandoAsignacionesPendientes"></i> Actualizar
+        </button>
+      </div>
+      
+      <div class="alert alert-info" style="font-size: 0.9rem;">
+        <i class="fas fa-info-circle"></i>
+        <strong>Información:</strong> Estas capacitaciones han sido aprobadas para empleados específicos pero aún no han sido iniciadas. 
+        Aparecerán como "En Curso" cuando el empleado confirme el inicio de la capacitación.
+      </div>
+
+      <div *ngIf="cargandoAsignacionesPendientes" class="text-center p-3">
+        <i class="fas fa-spinner fa-spin"></i> Cargando asignaciones pendientes...
+      </div>
+
+      <div *ngIf="!cargandoAsignacionesPendientes && asignacionesPendientes.length > 0" class="cap-table">
+        <div class="cap-header">
+          <div class="empleado-row">Empleado</div>
+          <div>Nombre</div>
+          <div>Duración (h)</div>
+          <div>Fecha Asignación</div>
+          <div>Certificación</div>
+          <div class="acciones-header" style="text-align: center; padding-right: 10px;">Estado</div>
+        </div>
+        <div class="cap-row" *ngFor="let asignacion of asignacionesPendientes">
+          <div class="empleado-info-column">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                 [alt]="asignacion.empleado?.nombreCompleto"
+                 class="employee-photo">
+            <span>{{ asignacion.empleado?.nombreCompleto || 'N/A' }}</span>
+          </div>
+          <div>{{ asignacion.capacitacion?.nombre || asignacion.capacitacion?.titulo || 'N/A' }}</div>
+          <div>{{ asignacion.capacitacion?.duracion || 'N/A' }}</div>
+          <div>{{ asignacion.fecha | date:'dd/MM/yyyy' }}</div>
+          <div>{{ asignacion.capacitacion?.titulo || asignacion.capacitacion?.nombre || 'N/A' }}</div>
+          <div style="text-align: center;">
+            <span class="badge badge-warning" style="background-color: #ffc107; color: #212529; padding: 0.4em 0.8em; border-radius: 0.3rem; font-size: 0.85em; font-weight: 500;">
+              <i class="fas fa-clock"></i> Pendiente
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!cargandoAsignacionesPendientes && asignacionesPendientes.length === 0" class="text-center p-3" style="color: #6c757d;">
+        <i class="fas fa-check-circle" style="color: #28a745;"></i> No hay capacitaciones pendientes. Todos los empleados han iniciado sus capacitaciones asignadas.
+      </div>
+    </div>
+    
     <!-- Botón para mostrar formulario -->
     <div class="text-right mb-2">
       <button id="mostrarFormularioBtn" class="nav-button" (click)="mostrarFormulario()" [style.display]="showFormButton ? 'inline-block' : 'none'">Añadir Capacitación</button>
@@ -408,8 +463,24 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="nav-button green" (click)="aprobarSolicitud()">Aprobar</button>
-      <button class="nav-button red" (click)="rechazarSolicitud()">Rechazar</button>
+      <!-- Mostrar estado actual si ya fue respondida -->
+      <div *ngIf="solicitudSeleccionada && getEstadoSolicitud(solicitudSeleccionada) !== 'Solicitada'" class="alert" 
+           [ngClass]="getEstadoSolicitud(solicitudSeleccionada) === 'Aprobada' ? 'alert-success' : 'alert-danger'" 
+           style="margin-bottom: 1rem; width: 100%;">
+        <i class="fas" [class.fa-check-circle]="getEstadoSolicitud(solicitudSeleccionada) === 'Aprobada'" 
+           [class.fa-times-circle]="getEstadoSolicitud(solicitudSeleccionada) === 'Rechazada'"></i>
+        Esta solicitud ya fue <strong>{{ getEstadoSolicitud(solicitudSeleccionada) }}</strong> y no se puede modificar.
+      </div>
+      
+      <!-- Botones de acción - solo habilitados si no ha sido respondida -->
+      <button class="nav-button green" (click)="aprobarSolicitud()" 
+              [disabled]="!solicitudSeleccionada || getEstadoSolicitud(solicitudSeleccionada) !== 'Solicitada'">
+        Aprobar
+      </button>
+      <button class="nav-button red" (click)="rechazarSolicitud()"
+              [disabled]="!solicitudSeleccionada || getEstadoSolicitud(solicitudSeleccionada) !== 'Solicitada'">
+        Rechazar
+      </button>
       <button class="nav-button gray" (click)="cerrarModalSolicitud()">Cerrar</button>
     </div>
   </div>

@@ -183,6 +183,10 @@ export class ListaCapacitacionesComponent implements OnInit {
   asignacionesEnCurso: GTHAsignacionCapacitacionDetalladaModel[] = [];
   cargandoAsignaciones: boolean = false;
 
+  // Nuevas propiedades para asignaciones pendientes (aprobadas pero no iniciadas)
+  asignacionesPendientes: GTHAsignacionCapacitacionDetalladaModel[] = [];
+  cargandoAsignacionesPendientes: boolean = false;
+
   // Nuevas propiedades para cargar empleados GTH
   empleadosGTH: iGTHEmpleado[] = [];
   cargandoEmpleadosGTH: boolean = false;
@@ -199,6 +203,7 @@ export class ListaCapacitacionesComponent implements OnInit {
     this.cargarCapacitacionesDesdeBackend();
     this.cargarSolicitudesCapacitacion();
     this.cargarAsignacionesEnCurso();
+    this.cargarAsignacionesPendientes(); // Cargar asignaciones pendientes
   }
 
   private cargarSolicitudesCapacitacion(): void {
@@ -279,7 +284,10 @@ export class ListaCapacitacionesComponent implements OnInit {
     
     this.gthAsignacionCapacitacionService.mostrarAsignacionesEnCurso(0).subscribe({
       next: (response: GTHAsignacionCapacitacionDetalladaModel[]) => {
-        this.asignacionesEnCurso = response || [];
+        // Filtrar solo las asignaciones que están realmente en curso (progreso > 0 y < 100)
+        this.asignacionesEnCurso = (response || []).filter(asignacion => 
+          asignacion.progreso && asignacion.progreso > 0 && asignacion.progreso < 100
+        );
         console.log('[ListaCapacitaciones] Asignaciones en curso cargadas:', this.asignacionesEnCurso.length, 'registros');
         this.cargandoAsignaciones = false;
       },
@@ -297,6 +305,39 @@ export class ListaCapacitacionesComponent implements OnInit {
   public refrescarAsignacionesEnCurso(): void {
     console.log('[ListaCapacitaciones] Refrescando asignaciones en curso...');
     this.cargarAsignacionesEnCurso();
+  }
+
+  /**
+   * Carga las asignaciones pendientes (aprobadas por admin pero no iniciadas por empleado)
+   * Estas son asignaciones con progreso = 0 o null
+   */
+  private cargarAsignacionesPendientes(): void {
+    this.cargandoAsignacionesPendientes = true;
+    console.log('[ListaCapacitaciones] Cargando asignaciones pendientes...');
+    
+    this.gthAsignacionCapacitacionService.mostrarAsignacionesEnCurso(0).subscribe({
+      next: (response: GTHAsignacionCapacitacionDetalladaModel[]) => {
+        // Filtrar solo las asignaciones con progreso = 0 o null (pendientes de iniciar)
+        this.asignacionesPendientes = (response || []).filter(asignacion => 
+          !asignacion.progreso || asignacion.progreso === 0
+        );
+        console.log('[ListaCapacitaciones] Asignaciones pendientes cargadas:', this.asignacionesPendientes.length, 'registros');
+        this.cargandoAsignacionesPendientes = false;
+      },
+      error: (error) => {
+        console.error('[ListaCapacitaciones] Error al cargar asignaciones pendientes:', error);
+        this.asignacionesPendientes = []; // Limpiar en caso de error
+        this.cargandoAsignacionesPendientes = false;
+      }
+    });
+  }
+
+  /**
+   * Refresca la lista de asignaciones pendientes
+   */
+  public refrescarAsignacionesPendientes(): void {
+    console.log('[ListaCapacitaciones] Refrescando asignaciones pendientes...');
+    this.cargarAsignacionesPendientes();
   }
 
   setActiveTab(tab: string): void {
@@ -770,13 +811,42 @@ export class ListaCapacitacionesComponent implements OnInit {
 
     this.gthSolicitudCapacitacionService.crearSolicitudCapacitacion(solicitudEditada).subscribe({
       next: () => {
-        this.cerrarModalSolicitud();
-        this.cargarSolicitudesCapacitacion();
-        Swal.fire({
-          title: 'Solicitud aprobada',
-          text: 'La solicitud ha sido aprobada correctamente.',
-          icon: 'success',
-          confirmButtonText: 'Aceptar'
+        // Después de aprobar la solicitud, crear una asignación de capacitación para el empleado
+        const nuevaAsignacion = {
+          tipo: 0, // Insertar nueva asignación
+          idCapacitacion: this.solicitudSeleccionada!.idCapacitacion,
+          idEmpleado: this.solicitudSeleccionada!.idEmpleado,
+          cedulaEmpleado: this.solicitudSeleccionada!.cedulaEmpleado,
+          fecha: new Date(),
+          progreso: 0 // Inicia con progreso 0, hasta que el empleado la inicie
+        };
+
+        this.gthAsignacionCapacitacionService.crearAsignacionCapacitacion(nuevaAsignacion).subscribe({
+          next: () => {
+            console.log('Asignación de capacitación creada exitosamente para el empleado');
+            this.cerrarModalSolicitud();
+            this.cargarSolicitudesCapacitacion();
+            this.cargarAsignacionesEnCurso(); // Actualizar la vista de asignaciones
+            this.cargarAsignacionesPendientes(); // Actualizar la vista de asignaciones pendientes
+            Swal.fire({
+              title: 'Solicitud aprobada',
+              text: 'La solicitud ha sido aprobada correctamente y la capacitación está disponible para el empleado.',
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            });
+          },
+          error: (error) => {
+            console.error('Error al crear asignación de capacitación:', error);
+            // Aun así mostrar éxito porque la solicitud sí se aprobó
+            this.cerrarModalSolicitud();
+            this.cargarSolicitudesCapacitacion();
+            Swal.fire({
+              title: 'Solicitud aprobada',
+              text: 'La solicitud ha sido aprobada, pero hubo un problema al crear la asignación. Por favor contacta al administrador.',
+              icon: 'warning',
+              confirmButtonText: 'Aceptar'
+            });
+          }
         });
       },
       error: (error) => {

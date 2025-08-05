@@ -619,6 +619,20 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   }
 
   /**
+   * Verifica si el empleado tiene una asignación pendiente para una capacitación específica
+   */
+  private tieneAsignacionPendiente(idCapacitacion: number): boolean {
+    const idEmpleado = this.sessionStorageService.getIdGthEmpleado();
+    if (!idEmpleado) return false;
+    
+    // Verificar si hay alguna solicitud aprobada para esta capacitación
+    return this.requestedTrainings.some(item => 
+      item.training.id === idCapacitacion && 
+      this.getEstadoSolicitud(item.solicitudCapacitacion) === 'Aprobada'
+    );
+  }
+
+  /**
    * Refresca las listas de capacitaciones después de cambios importantes
    */
   private refrescarCapacitaciones(): void {
@@ -740,13 +754,24 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
       return;
     }
 
+    // Verificar que realmente tenga una asignación pendiente (aprobada pero no iniciada)
+    if (!this.tieneAsignacionPendiente(training.id)) {
+      Swal.fire({
+        title: 'Error de asignación',
+        text: 'No tienes una asignación pendiente para esta capacitación. Por favor contacta al administrador.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
     // Crear asignación de capacitación para iniciar el progreso
     const asignacionData: GTHAsignacionCapacitacionModel = {
-      tipo: 0, // 0 = Insertar
+      tipo: 1, // 1 = Editar (la asignación ya existe con progreso 0)
       idCapacitacion: training.id,
       idEmpleado: idEmpleadoLogueado,
       fecha: new Date(),
-      progreso: 0 // Iniciar con progreso 0%
+      progreso: 1 // Cambiar de 0 a 1% para indicar que fue iniciada por el empleado
     };
 
     console.log('[EmpleadoCapacitaciones] Iniciando capacitación aprobada - Creando asignación:', asignacionData);
