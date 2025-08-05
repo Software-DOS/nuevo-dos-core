@@ -113,6 +113,14 @@
 
   <!-- SOLICITADAS -->
   <div id="solicitadas" class="subcategory-section" [class.active]="activeTab === 'solicitadas'">
+    <!-- Información del flujo para el usuario (solo si hay solicitudes o puede hacer solicitudes) -->
+    <div class="alert alert-info mb-3" *ngIf="requestedTrainings.length > 0 || showRequestButton">
+      <i class="fas fa-info-circle"></i>
+      <strong>¿Cómo funciona?</strong> Las capacitaciones solicitadas pasan por un proceso de aprobación. 
+      Una vez <span class="badge-success" style="padding: 0.15em 0.3em; border-radius: 0.2em;">Aprobadas</span> por el administrador, 
+      podrás hacer clic en ellas para iniciarlas y pasarán automáticamente a tu sección "En Curso".
+    </div>
+    
     <div class="cap-table">
       <div class="cap-header">
         <div>Nombre</div>
@@ -122,12 +130,19 @@
         <div>Precio</div>
       </div>
 
-      <div *ngFor="let item of getCapacitacionesSolicitadasConSolicitud()" class="cap-row">
+      <div *ngFor="let item of getCapacitacionesSolicitadasConSolicitud()" class="cap-row" 
+           [class.clickable-row]="getEstadoSolicitud(item.solicitudCapacitacion) === 'Aprobada'"
+           [title]="getEstadoSolicitud(item.solicitudCapacitacion) === 'Aprobada' ? 'Haz clic para iniciar esta capacitación aprobada' : ''"
+           (click)="getEstadoSolicitud(item.solicitudCapacitacion) === 'Aprobada' ? mostrarModalIniciarCapacitacion(item) : null">
         <div class="training-name">
           <strong>{{ item.training.name }}</strong>
           <small class="text-muted" *ngIf="item.training.justification">
             {{ item.training.justification.substring(0, 100) }}...
           </small>
+          <div *ngIf="getEstadoSolicitud(item.solicitudCapacitacion) === 'Aprobada'" class="approved-indicator">
+            <i class="fas fa-play-circle text-success"></i>
+            <small class="text-success">Lista para iniciar</small>
+          </div>
         </div>
         <div>{{ item.training.duration }}</div>
         <div>{{ item.training.certification }}</div>

@@ -34,6 +34,16 @@
   background-color: #ffc107;
 }
 
+.badge-success {
+  color: white;
+  background-color: #28a745;
+}
+
+.badge-danger {
+  color: white;
+  background-color: #dc3545;
+}
+
 .text-muted {
   color: #6c757d !important;
 }
@@ -136,12 +146,31 @@
 .clickable-row {
   cursor: pointer;
   transition: background-color 0.2s ease;
+  position: relative;
 }
 
 .clickable-row:hover {
   background-color: #f8f9fa;
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Indicador visual para capacitaciones aprobadas clickeables */
+.clickable-row:hover::after {
+  content: "🎯 Haz clic para iniciar";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #28a745;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 10;
 }
 
 /* Botón de suscripción */
@@ -167,6 +196,26 @@
 
 .btn-subscribe i {
   font-size: 0.875rem;
+}
+
+/* Indicador para capacitaciones aprobadas */
+.approved-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.approved-indicator i {
+  font-size: 0.875rem;
+}
+
+.approved-indicator small {
+  font-weight: 500;
+}
+
+.text-success {
+  color: #28a745 !important;
 }
 
 /* Mejoras responsivas */

@@ -165,26 +165,59 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
       next: (solicitudes: any[]) => {
         console.log('[EmpleadoCapacitaciones] Solicitudes del empleado obtenidas:', solicitudes);
         
-        // Filtrar solo las solicitudes que tengan una capacitación asociada
-        const trainingsWithSolicitud = solicitudes
-          .filter(s => s.capacitacion) // Solo las que tienen capacitación asociada
-          .map(s => ({
-            training: {
-              id: s.capacitacion.idCapacitacion || 0,
-              name: s.capacitacion.nombre || '',
-              duration: s.capacitacion.duracion || 0,
-              certification: s.capacitacion.titulo || s.capacitacion.nombre || '',
-              company: 'Por definir',
-              status: this.getEstadoSolicitud(s),
-              price: s.capacitacion.costo ? `$${s.capacitacion.costo}` : 'N/A',
-              justification: s.justificacion || '',
-              link: s.capacitacion.urlVerificacion || '',
-              completionDate: 'Pendiente'
-            },
-            solicitudCapacitacion: s
-          }));
-        this.requestedTrainings = trainingsWithSolicitud;
-        console.log('[EmpleadoCapacitaciones] Capacitaciones solicitadas cargadas para el empleado:', this.requestedTrainings);
+        // Obtener las asignaciones en curso para excluir capacitaciones ya iniciadas
+        this.gthAsignacionCapacitacionService.mostrarAsignacionesEnCurso(2, undefined, idEmpleado).subscribe({
+          next: (asignaciones: any[]) => {
+            const idsCapacitacionesEnCurso = asignaciones.map(a => a.idCapacitacion);
+            console.log('[EmpleadoCapacitaciones] IDs de capacitaciones ya iniciadas:', idsCapacitacionesEnCurso);
+            
+            // Filtrar solo las solicitudes que tengan una capacitación asociada 
+            // Y que NO estén ya iniciadas (no tengan asignación activa)
+            const trainingsWithSolicitud = solicitudes
+              .filter(s => s.capacitacion && !idsCapacitacionesEnCurso.includes(s.capacitacion.idCapacitacion))
+              .map(s => ({
+                training: {
+                  id: s.capacitacion.idCapacitacion || 0,
+                  name: s.capacitacion.nombre || '',
+                  duration: s.capacitacion.duracion || 0,
+                  certification: s.capacitacion.titulo || s.capacitacion.nombre || '',
+                  company: 'Por definir',
+                  status: this.getEstadoSolicitud(s),
+                  price: s.capacitacion.costo ? `$${s.capacitacion.costo}` : 'N/A',
+                  justification: s.justificacion || '',
+                  link: s.capacitacion.urlVerificacion || '',
+                  completionDate: 'Pendiente'
+                },
+                solicitudCapacitacion: s
+              }));
+            
+            this.requestedTrainings = trainingsWithSolicitud;
+            console.log('[EmpleadoCapacitaciones] Capacitaciones solicitadas cargadas (excluyendo ya iniciadas):', this.requestedTrainings);
+          },
+          error: (error) => {
+            console.warn('[EmpleadoCapacitaciones] Error al obtener asignaciones para filtrar:', error);
+            
+            // En caso de error, cargar solicitudes sin filtrar por asignaciones
+            const trainingsWithSolicitud = solicitudes
+              .filter(s => s.capacitacion)
+              .map(s => ({
+                training: {
+                  id: s.capacitacion.idCapacitacion || 0,
+                  name: s.capacitacion.nombre || '',
+                  duration: s.capacitacion.duracion || 0,
+                  certification: s.capacitacion.titulo || s.capacitacion.nombre || '',
+                  company: 'Por definir',
+                  status: this.getEstadoSolicitud(s),
+                  price: s.capacitacion.costo ? `$${s.capacitacion.costo}` : 'N/A',
+                  justification: s.justificacion || '',
+                  link: s.capacitacion.urlVerificacion || '',
+                  completionDate: 'Pendiente'
+                },
+                solicitudCapacitacion: s
+              }));
+            this.requestedTrainings = trainingsWithSolicitud;
+          }
+        });
       },
       error: (error) => {
         console.error('[EmpleadoCapacitaciones] Error al cargar solicitudes de capacitación:', error);
@@ -628,6 +661,130 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.suscribirseACapacitacion(training);
+      }
+    });
+  }
+
+  /**
+   * Muestra el modal para iniciar una capacitación aprobada
+   */
+  mostrarModalIniciarCapacitacion(item: { training: Training, solicitudCapacitacion: any }): void {
+    const { training, solicitudCapacitacion } = item;
+    
+    // Verificar que el estado sea realmente "Aprobada"
+    if (this.getEstadoSolicitud(solicitudCapacitacion) !== 'Aprobada') {
+      return;
+    }
+    
+    Swal.fire({
+      title: '¡Capacitación Aprobada!',
+      html: `
+        <div style="text-align: left; margin: 1rem 0;">
+          <p><strong>Nombre:</strong> ${training.name}</p>
+          <p><strong>Duración:</strong> ${training.duration} horas</p>
+          <p><strong>Certificación:</strong> ${training.certification}</p>
+          <p><strong>Estado:</strong> <span style="color: #28a745; font-weight: bold;">Aprobada</span></p>
+        </div>
+        <div style="background-color: #e7f3ff; padding: 1rem; border-radius: 5px; margin: 1rem 0;">
+          <p style="color: #0066cc; font-size: 0.9rem; margin: 0;">
+            <i class="fas fa-info-circle"></i> Esta capacitación ha sido aprobada por el administrador. 
+            Al hacer clic en "Iniciar Capacitación", se creará tu registro de progreso y la capacitación 
+            se moverá a tu sección "En Curso".
+          </p>
+        </div>
+      `,
+      icon: 'success',
+      showCancelButton: true,
+      confirmButtonText: '<i class="fas fa-play"></i> Iniciar Capacitación',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#6c757d',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.iniciarCapacitacionAprobada(item);
+      }
+    });
+  }
+
+  /**
+   * Procesa el inicio de una capacitación aprobada
+   */
+  private iniciarCapacitacionAprobada(item: { training: Training, solicitudCapacitacion: any }): void {
+    const { training, solicitudCapacitacion } = item;
+    
+    // Verificar que el empleado tiene ID
+    let idEmpleadoLogueado = this.sessionStorageService.getIdGthEmpleado();
+    
+    if (!idEmpleadoLogueado) {
+      idEmpleadoLogueado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+    }
+    
+    if (!idEmpleadoLogueado) {
+      console.error('[EmpleadoCapacitaciones] No se encontró ID de empleado para iniciar capacitación');
+      this.mostrarErrorSesion();
+      return;
+    }
+
+    // Verificar si ya tiene una asignación activa para esta capacitación
+    if (this.yaEstaSuscrito(training.id)) {
+      Swal.fire({
+        title: 'Capacitación ya iniciada',
+        text: `Ya tienes iniciada la capacitación "${training.name}". Puedes verla en tu pestaña "En Curso".`,
+        icon: 'info',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#17a2b8'
+      }).then(() => {
+        this.switchTab('curso');
+      });
+      return;
+    }
+
+    // Crear asignación de capacitación para iniciar el progreso
+    const asignacionData: GTHAsignacionCapacitacionModel = {
+      tipo: 0, // 0 = Insertar
+      idCapacitacion: training.id,
+      idEmpleado: idEmpleadoLogueado,
+      fecha: new Date(),
+      progreso: 0 // Iniciar con progreso 0%
+    };
+
+    console.log('[EmpleadoCapacitaciones] Iniciando capacitación aprobada - Creando asignación:', asignacionData);
+
+    // Crear la asignación en la tabla asignacion-capacitación
+    this.gthAsignacionCapacitacionService.crearAsignacionCapacitacion(asignacionData).subscribe({
+      next: (response: any) => {
+        console.log('[EmpleadoCapacitaciones] Asignación de capacitación creada exitosamente para capacitación aprobada:', response);
+        
+        // Remover de las capacitaciones solicitadas (ya que ahora está en curso)
+        this.requestedTrainings = this.requestedTrainings.filter(
+          req => req.training.id !== training.id
+        );
+        
+        // Recargar las capacitaciones para mostrar los cambios
+        this.refrescarCapacitaciones();
+        
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: '¡Capacitación iniciada exitosamente!',
+          text: `Has iniciado la capacitación "${training.name}". Ahora aparece en tu sección "En Curso" con progreso 0%.`,
+          icon: 'success',
+          confirmButtonText: 'Ver en "En Curso"',
+          confirmButtonColor: '#28a745'
+        }).then(() => {
+          // Cambiar automáticamente a la pestaña "En Curso"
+          this.switchTab('curso');
+        });
+      },
+      error: (error) => {
+        console.error('[EmpleadoCapacitaciones] Error al crear asignación para capacitación aprobada:', error);
+        Swal.fire({
+          title: 'Error al iniciar capacitación',
+          text: 'Hubo un problema al iniciar la capacitación. Por favor, intenta nuevamente o contacta al administrador.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#dc3545'
+        });
       }
     });
   }

@@ -207,9 +207,30 @@ export class ListaCapacitacionesComponent implements OnInit {
     // Cargar todas las solicitudes (tipo 0 = todas)
     this.gthSolicitudCapacitacionService.mostrarSolicitudesCapacitacionDetallada(0).subscribe({
       next: (response: GTHSolicitudCapacitacionDetalladaModel[]) => {
-        this.solicitudesDetalladas = response || [];
-        console.log('Solicitudes detalladas cargadas:', this.solicitudesDetalladas);
-        this.cargandoSolicitudes = false;
+        console.log('Solicitudes detalladas obtenidas:', response);
+        
+        // Obtener todas las asignaciones activas para filtrar capacitaciones ya iniciadas
+        this.gthAsignacionCapacitacionService.mostrarAsignacionesEnCurso(0).subscribe({
+          next: (asignaciones: GTHAsignacionCapacitacionDetalladaModel[]) => {
+            // Obtener IDs de capacitaciones que ya tienen asignaciones activas
+            const idsCapacitacionesConAsignacion = asignaciones.map(a => a.idCapacitacion);
+            console.log('IDs de capacitaciones con asignaciones activas:', idsCapacitacionesConAsignacion);
+            
+            // Filtrar solicitudes excluyendo las que ya tienen asignación activa
+            this.solicitudesDetalladas = (response || []).filter(solicitud => 
+              !idsCapacitacionesConAsignacion.includes(solicitud.idCapacitacion)
+            );
+            
+            console.log('Solicitudes filtradas (sin asignaciones activas):', this.solicitudesDetalladas);
+            this.cargandoSolicitudes = false;
+          },
+          error: (errorAsignaciones) => {
+            console.warn('Error al obtener asignaciones para filtrar, mostrando todas las solicitudes:', errorAsignaciones);
+            // En caso de error al obtener asignaciones, mostrar todas las solicitudes
+            this.solicitudesDetalladas = response || [];
+            this.cargandoSolicitudes = false;
+          }
+        });
       },
       error: (error) => {
         console.error('Error al cargar solicitudes de capacitación:', error);
