@@ -218,15 +218,255 @@
   color: #28a745 !important;
 }
 
+/* Estilos para la barra de progreso en la tabla */
+.progress-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-bar {
+  width: 80px;
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #495057;
+  min-width: 35px;
+}
+
+/* Modal de Progreso */
+.modal-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-progress-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-progress-header h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.modal-progress-body {
+  padding: 1.5rem;
+}
+
+.training-info {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.training-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+}
+
+.current-progress {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.progress-bar-large {
+  width: 100%;
+  height: 20px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-fill-large {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  transition: width 0.5s ease;
+}
+
+.current-progress-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #495057;
+  margin: 0;
+}
+
+.milestone-buttons h5 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+.milestone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.milestone-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  border: 2px solid #007bff;
+  background: white;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.milestone-btn:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.milestone-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.milestone-btn.completion {
+  border-color: #28a745;
+}
+
+.milestone-btn.completion:hover:not(:disabled) {
+  background: #28a745;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.milestone-btn i {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.milestone-btn span {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.milestone-btn small {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.progress-history {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.progress-history h5 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.history-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.history-date {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.history-progress {
+  font-weight: 600;
+  color: #007bff;
+}
+
+.history-note {
+  font-size: 0.85rem;
+  color: #495057;
+  font-style: italic;
+}
+
+.modal-progress-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #dee2e6;
+  text-align: right;
+}
+
 /* Mejoras responsivas */
 @media (max-width: 768px) {
-  .popup-form {
+  .modal-progress-content {
     width: 95%;
-    max-width: none;
-    margin: 1rem auto;
+    margin: 1rem;
   }
   
-  .contract-content {
-    max-height: 200px;
+  .milestone-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .history-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
   }
 }

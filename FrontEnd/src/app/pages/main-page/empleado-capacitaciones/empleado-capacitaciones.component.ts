@@ -40,6 +40,12 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   showSubscriptionModal: boolean = false;
   selectedTraining: Training | null = null;
 
+  // Propiedades para el modal de progreso
+  showProgressModal: boolean = false;
+  selectedTrainingForProgress: Training | null = null;
+  progressHistory: any[] = [];
+  isUpdatingProgress: boolean = false;
+
   // NgModel properties for filters
   filtroEmpresa: string = '';
   filtroRoadmap: string = '';
@@ -917,6 +923,129 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     if (estado === 'Aprobada') return 'badge-success'; // verde
     if (estado === 'Rechazada') return 'badge-danger'; // rojo
     return 'badge-warning'; // amarillo para solicitada
+  }
+
+  // ========== MÉTODOS PARA MODAL DE PROGRESO ==========
+
+  /**
+   * Muestra el modal de progreso para una capacitación
+   */
+  mostrarModalProgreso(training: Training): void {
+    console.log('[EmpleadoCapacitaciones] Abriendo modal de progreso para:', training);
+    this.selectedTrainingForProgress = training;
+    this.showProgressModal = true;
+    
+    // Limpiar historial previo (podrías implementar un historial real desde el backend)
+    this.progressHistory = [];
+  }
+
+  /**
+   * Cierra el modal de progreso
+   */
+  cerrarModalProgreso(): void {
+    this.showProgressModal = false;
+    this.selectedTrainingForProgress = null;
+    this.progressHistory = [];
+    this.isUpdatingProgress = false;
+  }
+
+  /**
+   * Actualiza el progreso de una capacitación
+   */
+  actualizarProgreso(nuevoProgreso: number, nota: string): void {
+    if (this.isUpdatingProgress) {
+      return; // Evitar múltiples clics
+    }
+
+    if (!this.selectedTrainingForProgress) {
+      console.error('[EmpleadoCapacitaciones] No hay capacitación seleccionada para actualizar progreso');
+      return;
+    }
+
+    // Verificar que el empleado tiene ID
+    let idEmpleadoLogueado = this.sessionStorageService.getIdGthEmpleado();
+    
+    if (!idEmpleadoLogueado) {
+      idEmpleadoLogueado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+    }
+    
+    if (!idEmpleadoLogueado) {
+      console.error('[EmpleadoCapacitaciones] No se encontró ID de empleado para actualizar progreso');
+      this.mostrarErrorSesion();
+      return;
+    }
+
+    this.isUpdatingProgress = true;
+
+    // Crear el objeto para actualizar la asignación
+    const asignacionData: GTHAsignacionCapacitacionModel = {
+      tipo: 1, // 1 = Editar
+      idCapacitacion: this.selectedTrainingForProgress.id,
+      idEmpleado: idEmpleadoLogueado,
+      fecha: nuevoProgreso === 100 ? new Date() : undefined, // Solo actualizar fecha si se completa
+      progreso: nuevoProgreso
+    };
+
+    console.log('[EmpleadoCapacitaciones] Actualizando progreso con datos:', asignacionData);
+
+    this.gthAsignacionCapacitacionService.actualizarProgresoCapacitacion(asignacionData).subscribe({
+      next: (response) => {
+        console.log('[EmpleadoCapacitaciones] Progreso actualizado exitosamente:', response);
+        
+        // Actualizar el progreso localmente
+        this.selectedTrainingForProgress!.progreso = nuevoProgreso;
+        
+        // Agregar al historial
+        this.progressHistory.unshift({
+          fecha: new Date(),
+          progreso: nuevoProgreso,
+          nota: nota
+        });
+
+        // Mostrar mensaje de éxito
+        let mensaje = `Progreso actualizado a ${nuevoProgreso}%`;
+        if (nuevoProgreso === 100) {
+          mensaje = '¡Capacitación completada exitosamente!';
+        }
+
+        Swal.fire({
+          title: '¡Progreso Actualizado!',
+          text: mensaje,
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#28a745',
+          timer: 2000,
+          timerProgressBar: true
+        }).then(() => {
+          // Si llegó al 100%, cerrar modal y refrescar listas
+          if (nuevoProgreso === 100) {
+            this.cerrarModalProgreso();
+            this.cargarCapacitacionesEnCurso();
+            this.cargarCapacitacionesCompletadas();
+            
+            // Cambiar a la pestaña completadas para mostrar el resultado
+            setTimeout(() => {
+              this.switchTab('completado');
+            }, 500);
+          }
+        });
+
+        this.isUpdatingProgress = false;
+      },
+      error: (error) => {
+        console.error('[EmpleadoCapacitaciones] Error al actualizar progreso:', error);
+        
+        Swal.fire({
+          title: 'Error al Actualizar Progreso',
+          text: 'Hubo un problema al actualizar el progreso. Por favor, intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#dc3545'
+        });
+
+        this.isUpdatingProgress = false;
+      }
+    });
   }
 
 }

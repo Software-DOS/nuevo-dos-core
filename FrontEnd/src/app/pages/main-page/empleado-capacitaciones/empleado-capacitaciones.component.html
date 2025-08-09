@@ -1,5 +1,5 @@
 <main class="main-flex-evaluacion">
-  <!-- Sidebar de filtros -->
+  <!-- Sidebar de filtros - Comentado temporalmente (no se usa actualmente)
   <aside class="filter-sidebar">
     <h3>FILTROS</h3>
     <div class="filter-group">
@@ -18,6 +18,7 @@
       </select>
     </div>
   </aside>
+  -->
 
   <!-- Contenido principal -->
   <div class="content-wrapper-tight">
@@ -37,14 +38,23 @@
           <div>Fecha Inicio</div>
           <div>Certificación</div>
           <div>Empresa</div>
+          <div>Progreso</div>
         </div>
         
-        <div *ngFor="let training of inProgressTrainings" class="cap-row">
+        <div *ngFor="let training of inProgressTrainings" class="cap-row clickable-row" 
+             (click)="mostrarModalProgreso(training)"
+             title="Haz clic para registrar el progreso de esta capacitación">
           <div>{{ training.name }}</div>
           <div>{{ training.duration }}</div>
           <div>{{ training.startDate }}</div>
           <div>{{ training.certification }}</div>
           <div>{{ training.company }}</div>
+          <div class="progress-cell">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="training.progreso || 0"></div>
+            </div>
+            <span class="progress-text">{{ (training.progreso || 0) }}%</span>
+          </div>
         </div>
 
         <div *ngIf="inProgressTrainings.length === 0" class="no-data">
@@ -305,6 +315,90 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal de Progreso de Capacitación -->
+  <div class="modal-progress" [style.display]="showProgressModal ? 'flex' : 'none'">
+    <div class="modal-progress-content">
+      <div class="modal-progress-header">
+        <h3><i class="fas fa-chart-line"></i> Registrar Progreso</h3>
+        <button class="close-btn" (click)="cerrarModalProgreso()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-progress-body" *ngIf="selectedTrainingForProgress">
+        <div class="training-info">
+          <h4>{{ selectedTrainingForProgress.name }}</h4>
+          <p class="text-muted">{{ selectedTrainingForProgress.certification }}</p>
+        </div>
+
+        <div class="current-progress">
+          <div class="progress-bar-large">
+            <div class="progress-fill-large" [style.width.%]="selectedTrainingForProgress.progreso || 0"></div>
+          </div>
+          <p class="current-progress-text">Progreso actual: {{ (selectedTrainingForProgress.progreso || 0) }}%</p>
+        </div>
+
+        <div class="milestone-buttons">
+          <h5>Selecciona el hito alcanzado:</h5>
+          <div class="milestone-grid">
+            <button 
+              class="milestone-btn" 
+              [disabled]="(selectedTrainingForProgress.progreso || 0) >= 25"
+              (click)="actualizarProgreso(25, 'Capacitación iniciada')">
+              <i class="fas fa-play"></i>
+              <span>Iniciar Capacitación</span>
+              <small>25% completado</small>
+            </button>
+
+            <button 
+              class="milestone-btn" 
+              [disabled]="(selectedTrainingForProgress.progreso || 0) >= 50 || (selectedTrainingForProgress.progreso || 0) < 25"
+              (click)="actualizarProgreso(50, 'Módulo intermedio completado')">
+              <i class="fas fa-book-open"></i>
+              <span>Progreso Intermedio</span>
+              <small>50% completado</small>
+            </button>
+
+            <button 
+              class="milestone-btn" 
+              [disabled]="(selectedTrainingForProgress.progreso || 0) >= 75 || (selectedTrainingForProgress.progreso || 0) < 50"
+              (click)="actualizarProgreso(75, 'Avance significativo')">
+              <i class="fas fa-chart-bar"></i>
+              <span>Avance Significativo</span>
+              <small>75% completado</small>
+            </button>
+
+            <button 
+              class="milestone-btn completion" 
+              [disabled]="(selectedTrainingForProgress.progreso || 0) >= 100 || (selectedTrainingForProgress.progreso || 0) < 75"
+              (click)="actualizarProgreso(100, 'Capacitación completada exitosamente')">
+              <i class="fas fa-medal"></i>
+              <span>Completar Capacitación</span>
+              <small>100% completado</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="progress-history" *ngIf="progressHistory && progressHistory.length > 0">
+          <h5>Historial de progreso:</h5>
+          <div class="history-list">
+            <div *ngFor="let record of progressHistory" class="history-item">
+              <span class="history-date">{{ record.fecha | date:'short' }}</span>
+              <span class="history-progress">{{ record.progreso }}%</span>
+              <span class="history-note">{{ record.nota }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-progress-footer">
+        <button class="nav-button gray" (click)="cerrarModalProgreso()">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+      </div>
     </div>
   </div>
   </div>

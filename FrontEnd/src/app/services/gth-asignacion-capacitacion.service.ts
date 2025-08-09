@@ -118,6 +118,23 @@ export class GthAsignacionCapacitacionService {
       );
   }
 
+  /**
+   * Actualiza el progreso de una asignación de capacitación
+   * Tipo 1 = Editar
+   */
+  actualizarProgresoCapacitacion(asignacion: GTHAsignacionCapacitacionModel): Observable<any> {
+    // Asegurar que el tipo sea 1 para editar
+    asignacion.tipo = 1;
+    
+    return this.http.post(environment.urlbackend + "api/GTHAsignacionCapacitacion/Gestionar", asignacion)
+      .pipe(
+        tap((response: any) => {
+          console.log('Progreso de capacitación actualizado:', response);
+        }),
+        catchError(this.handleError)
+      );
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Error desconocido';
     if (error.error instanceof ErrorEvent) {
