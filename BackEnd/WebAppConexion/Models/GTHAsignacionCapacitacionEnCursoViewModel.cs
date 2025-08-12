@@ -10,5 +10,9 @@
         public System.DateTime? FechaInicio { get; set; }
         public string Certificacion { get; set; }
         public int? Progreso { get; set; }
+        /// <summary>
+        /// Ruta del archivo certificado individual del empleado para esta capacitación específica
+        /// </summary>
+        public string CertificadoUrl { get; set; }
     }
 }

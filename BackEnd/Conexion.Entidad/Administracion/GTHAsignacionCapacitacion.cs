@@ -14,5 +14,9 @@ namespace Conexion.Entidad.Administracion
         public string CedulaEmpleado { get; set; }
         public DateTime? Fecha { get; set; }
         public int? Progreso { get; set; }
+        /// <summary>
+        /// Ruta del archivo certificado individual del empleado para esta capacitación específica
+        /// </summary>
+        public string CertificadoUrl { get; set; }
     }
 }

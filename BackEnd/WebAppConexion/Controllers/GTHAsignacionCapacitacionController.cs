@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Conexion.AccesoDatos.Repository.Administracion;
 using Conexion.Entidad.Administracion;
@@ -60,6 +63,7 @@ namespace WebAppConexion.Controllers
                     CedulaEmpleado = asignacion.CedulaEmpleado,
                     Fecha = asignacion.Fecha,
                     Progreso = asignacion.Progreso,
+                    CertificadoUrl = asignacion.CertificadoUrl,
                     Empleado = empleado != null ? new WebAppConexion.Models.EmpleadoInfo
                     {
                         IdEmpleado = empleado.IdEmpleado,
@@ -115,7 +119,8 @@ namespace WebAppConexion.Controllers
                 IdEmpleado = e.IdEmpleado,
                 CedulaEmpleado = e.CedulaEmpleado,
                 Fecha = e.Fecha,
-                Progreso = e.Progreso
+                Progreso = e.Progreso,
+                CertificadoUrl = e.CertificadoUrl
             });
 
             return Ok(modelos);
@@ -138,7 +143,8 @@ namespace WebAppConexion.Controllers
                 IdEmpleado = model.IdEmpleado,
                 CedulaEmpleado = model.CedulaEmpleado,
                 Fecha = model.Fecha,
-                Progreso = model.Progreso
+                Progreso = model.Progreso,
+                CertificadoUrl = model.CertificadoUrl
             };
 
             // Llamamos a Gestionar pasándole model.Tipo y la cédula
@@ -150,6 +156,136 @@ namespace WebAppConexion.Controllers
                 valor1 = r.valor1,
                 valor2 = r.valor2
             }));
+        }
+
+        /// <summary>
+        /// Sube un certificado PDF para una asignación de capacitación específica.
+        /// Sigue el mismo patrón que subir-foto-perfil del empleado.
+        /// </summary>
+        /// <param name="idEmpleado">ID del empleado</param>
+        /// <param name="idCapacitacion">ID de la capacitación</param>
+        /// <param name="archivo">Archivo PDF del certificado</param>
+        /// <returns>Información del certificado subido</returns>
+        [HttpPost("subir-certificado/{idEmpleado}/{idCapacitacion}")]
+        public async Task<IActionResult> SubirCertificado(long idEmpleado, long idCapacitacion, IFormFile archivo)
+        {
+            try
+            {
+                // Validar que se haya enviado un archivo
+                if (archivo == null || archivo.Length == 0)
+                {
+                    return BadRequest(new { mensaje = "No se ha enviado ningún archivo" });
+                }
+
+                // Validar el tipo de archivo (solo PDF)
+                var extension = Path.GetExtension(archivo.FileName).ToLowerInvariant();
+                if (extension != ".pdf")
+                {
+                    return BadRequest(new { mensaje = "Tipo de archivo no permitido. Solo se permiten archivos PDF" });
+                }
+
+                // Validar tamaño del archivo (5MB máximo)
+                if (archivo.Length > 5 * 1024 * 1024)
+                {
+                    return BadRequest(new { mensaje = "El archivo es demasiado grande. Tamaño máximo: 5MB" });
+                }
+
+                // Verificar que el empleado existe
+                var empleados = await _empleadoRepository.Mostrar(1, (int)idEmpleado);
+                var empleado = empleados.FirstOrDefault();
+                
+                if (empleado == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró el empleado especificado" });
+                }
+
+                // Verificar que la capacitación existe
+                var capacitaciones = await _capacitacionRepository.Mostrar(1, (int)idCapacitacion);
+                var capacitacion = capacitaciones.FirstOrDefault();
+                
+                if (capacitacion == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró la capacitación especificada" });
+                }
+
+                // Verificar que existe la asignación
+                var asignaciones = await _repository.Mostrar(0, (int)idCapacitacion, (int)idEmpleado);
+                var asignacion = asignaciones.FirstOrDefault(a => a.IdCapacitacion == idCapacitacion && a.IdEmpleado == idEmpleado);
+                
+                if (asignacion == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró la asignación de capacitación especificada" });
+                }
+
+                // Crear el directorio si no existe
+                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "certificados");
+                if (!Directory.Exists(uploadsPath))
+                {
+                    Directory.CreateDirectory(uploadsPath);
+                }
+
+                // Usar nombre fijo por empleado y capacitación (sin timestamp para evitar acumulación)
+                var nombreArchivo = $"empleado_{idEmpleado}_capacitacion_{idCapacitacion}.pdf";
+                var rutaCompleta = Path.Combine(uploadsPath, nombreArchivo);
+
+                // LIMPIEZA AUTOMÁTICA: Eliminar certificado anterior del empleado para esta capacitación
+                var patronBusqueda = $"empleado_{idEmpleado}_capacitacion_{idCapacitacion}.*";
+                var archivosAEliminar = Directory.GetFiles(uploadsPath, patronBusqueda);
+                
+                foreach (var archivoAEliminar in archivosAEliminar)
+                {
+                    try
+                    {
+                        System.IO.File.Delete(archivoAEliminar);
+                        Console.WriteLine($"Certificado anterior eliminado: {Path.GetFileName(archivoAEliminar)}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al eliminar certificado {Path.GetFileName(archivoAEliminar)}: {ex.Message}");
+                    }
+                }
+
+                // También limpiar archivos con timestamp del mismo empleado y capacitación (migración de formato anterior)
+                var archivosConTimestamp = Directory.GetFiles(uploadsPath, $"empleado_{idEmpleado}_capacitacion_{idCapacitacion}_*.*");
+                foreach (var archivoAntiguo in archivosConTimestamp)
+                {
+                    try
+                    {
+                        System.IO.File.Delete(archivoAntiguo);
+                        Console.WriteLine($"Certificado con timestamp eliminado: {Path.GetFileName(archivoAntiguo)}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al eliminar certificado con timestamp {Path.GetFileName(archivoAntiguo)}: {ex.Message}");
+                    }
+                }
+
+                // Guardar el archivo
+                using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+                {
+                    await archivo.CopyToAsync(stream);
+                }
+
+                // Actualizar la URL en la base de datos
+                var certificadoUrl = $"/certificados/{nombreArchivo}";
+                asignacion.CertificadoUrl = certificadoUrl;
+                asignacion.Tipo = 1; // Tipo 1 para actualizar
+
+                await _repository.Gestionar(asignacion.Tipo, asignacion, empleado.Cedula);
+
+                return Ok(new GTHSubirCertificadoViewModel
+                { 
+                    Success = true,
+                    Mensaje = "Certificado subido exitosamente",
+                    CertificadoUrl = certificadoUrl,
+                    NombreArchivo = nombreArchivo,
+                    TamanoArchivo = archivo.Length
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
         }
     }
 }

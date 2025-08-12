@@ -58,7 +58,10 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                         ? reader["EMP_CEDULA"].ToString() 
                         : string.Empty,
                     Fecha = reader["CAP_A_FECHA"] as DateTime?,
-                    Progreso = reader["CAP_A_PROGRESO"] as int?
+                    Progreso = reader["CAP_A_PROGRESO"] as int?,
+                    CertificadoUrl = reader["CAP_A_CERTIFICADO_URL"] != DBNull.Value 
+                        ? reader["CAP_A_CERTIFICADO_URL"].ToString() 
+                        : string.Empty
                 });
             }
 
@@ -86,6 +89,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@CedulaEmpleado", cedulaEmpleado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@CAP_A_Fecha", asignacion.Fecha ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@CAP_A_Progreso", asignacion.Progreso ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CAP_A_CERTIFICADO_URL", asignacion.CertificadoUrl ?? (object)DBNull.Value));
 
             await sql.OpenAsync();
             var response = new List<Generica>();
