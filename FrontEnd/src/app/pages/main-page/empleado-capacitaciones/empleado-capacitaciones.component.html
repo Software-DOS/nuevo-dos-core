@@ -75,7 +75,7 @@
           <div>Acción</div>
         </div>
 
-        <div *ngFor="let training of availableTrainings" class="cap-row clickable-row" (click)="mostrarModalSuscripcion(training)">
+        <div *ngFor="let training of availableTrainings" class="cap-row" (click)="mostrarModalSuscripcion(training)">
           <div>{{ training.name }}</div>
           <div>{{ training.duration }}</div>
           <div>{{ training.certification }}</div>
@@ -142,7 +142,7 @@
 
       <div *ngFor="let item of getCapacitacionesSolicitadasConSolicitud()" class="cap-row" 
            [class.clickable-row]="getEstadoSolicitud(item.solicitudCapacitacion) === 'Aprobada'"
-           [title]="getEstadoSolicitud(item.solicitudCapacitacion) === 'Aprobada' ? 'Haz clic para iniciar esta capacitación aprobada' : ''"
+           [title]="getEstadoSolicitud(item.solicitudCapacitacion) === 'Aprobada' ? 'Haz click para iniciar esta capacitación aprobada' : ''"
            (click)="getEstadoSolicitud(item.solicitudCapacitacion) === 'Aprobada' ? mostrarModalIniciarCapacitacion(item) : null">
         <div class="training-name">
           <strong>{{ item.training.name }}</strong>

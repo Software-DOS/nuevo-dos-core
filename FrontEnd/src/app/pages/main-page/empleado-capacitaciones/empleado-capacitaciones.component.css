@@ -157,7 +157,7 @@
 
 /* Indicador visual para capacitaciones aprobadas clickeables */
 .clickable-row:hover::after {
-  content: "🎯 Haz clic para iniciar";
+  content: "🎯 Resgistrar Progreso";
   position: absolute;
   right: 10px;
   top: 50%;
