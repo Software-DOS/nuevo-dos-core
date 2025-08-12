@@ -1,195 +1,370 @@
 /* Estilos específicos para admin-cv con navegación sticky */
 
-/* Sobrescribir estilos del layout principal para esta página */
-:host .main-section {
-  display: flex !important;
-  max-width: 1200px;
+/* Sobrescribir estilos de Sección Principal - Layout de dos columnas */
+.main-section1 {
+  display: flex;
+  gap: 0;
+  /* max-width: 1400px; */
   width: 95%;
   margin: 30px auto;
   background-color: white;
-  border-radius: var(--radius-lg, 12px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e0e0e0;
-  gap: 0;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-pale-gray, #e5e7eb);
+  overflow: hidden;
+  min-height: 600px;
+
+  
+}
+/* Monitores grandes (más de 1400px) */
+@media (min-width: 1400px) {
+  .main-section1 {
+    /* grid-template-columns: 320px 1fr; */
+    /* max-width: 2600px; */
+    /* width: 100%; */
+    /* background-color: rgb(202, 111, 111); */
+  }
+  .category-link3 {
+    /* font-size: 14px; */
+    padding: 14px 16px; 
+    width: 100%;
+  }
 }
 
-/* Hacer sticky la navegación lateral */
-:host .category-index {
-  position: sticky !important;
-  top: 80px; /* Ajustado para considerar la altura del navbar fijo */
-  height: fit-content;
-  max-height: calc(100vh - 100px); /* Altura máxima ajustada */
-  overflow-y: auto; /* Scroll si el contenido es muy largo */
-  width: 25% !important;
-  background-color: #f8f9fa !important;
-  padding: 30px !important;
-  border-right: 1px solid #e0e0e0;
-  border-top-left-radius: var(--radius-lg, 12px);
-  border-bottom-left-radius: var(--radius-lg, 12px);
-  z-index: 10;
+/* Tablets grandes (1024px - 1200px) */
+@media (max-width: 1200px) {
+  .main-section1 {
+    /* width: 100%; */
+    /* margin: 20px auto; */
+    /* background-color: rgb(111, 202, 157); */
+  }
+  .category-link3 {
+    font-size: 14px;
+    padding: 14px 16px; 
+    width: 100%;
+  }
 }
-
-/* Estilos para la lista de navegación */
-:host .category-index ul {
-  list-style-type: none !important;
-  padding: 0;
-  margin: 0;
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+  .main-section1 {
+    /* margin: 15px auto; */
+    /* width: 100%; */
+    /* background-color: rgb(111, 135, 202); */
+  }
+  .category-link3 {
+    font-size: 13px;
+    padding: 14px 16px; 
+    width: 100%;
+    /* min-height: 56px; */
+  }
 }
-
-:host .category-index li {
-  margin-bottom: 15px !important;
+/* Tablets (768px - 1024px) */
+@media (max-width: 860px) {
+  .main-section1 {
+    margin: 15px auto; 
+    /* max-width: 100%; */
+    /* background-color: rgb(25, 132, 219); */
+  }
+  .category-link3 {
+    font-size: 12px;
+    padding: 12px 16px; 
+    width: 100%;
+    /* min-height: 56px; */
+  }
 }
-
-:host .category-link {
-  display: block !important;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 12px 15px !important;
-  border-radius: 8px;
-  color: #6c757d !important;
-  font-size: 1.1rem;
-  font-weight: 500;
-  text-decoration: none;
-  border: 1px solid transparent;
+/* Tablets pequeñas y móviles grandes (600px - 768px) */
+@media (max-width: 768px) {
+  .main-section1 {
+    /* width: 100%; */
+    /* margin: 10px auto; */
+    border-radius: 10px;
+    /* background-color: rgb(196, 202, 111); */
+  }
+  .category-link3 {
+    font-size: 11px;
+    padding: 12px 16px; 
+    width: 100%;
+    /* min-height: 56px; */
+  }
+  
+  .category-index3 ul::after {
+    /* width: 2px; */
+  }
+  
+  .category-index3 {
+    /* max-width: 30%; */
+  }
 }
-
-:host .category-link:hover {
-  background-color: #dc3545 !important;
-  color: white !important;
-  transform: translateX(5px);
-  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
-}
-
-:host .category-link.selected {
-  background-color: #dc3545 !important;
-  color: white !important;
-  border-color: #c82333;
-  transform: translateX(5px);
-}
+/* Móviles (480px - 600px) */
+@media (max-width: 600px) {
+  .main-section1 {
+    /* width: 95%; */
+    margin: 5px auto;
+    border-radius: 8px;
+    /* background-color: rgb(216, 31, 223); */
+  }
+  .category-link3 {
+    font-size: 11px;
+    padding: 10px 10px;
+    /* width: 80%; */
+  }
+  
+  .category-index3 {
+    max-width: 200px;
+  }
+} 
 
 /* Área de contenido principal */
-:host .content-area {
-  width: 75% !important;
+ .content-area {
+  /* width: 75% !important; */
   padding: 30px !important;
   min-height: 80vh;
+  background-color: #fff;
 }
 
 /* Responsive design */
 @media screen and (max-width: 992px) {
-  :host .main-section {
+   /* .main-section {
     flex-direction: column !important;
     width: 90%;
   }
-
-  :host .category-index {
-    position: static !important; /* Quitar sticky en móviles */
-    width: 100% !important;
-    max-height: none;
-    border-right: none;
-    border-bottom: 1px solid #e0e0e0;
-    border-radius: var(--radius-lg, 12px) var(--radius-lg, 12px) 0 0;
-  }
-
-  :host .category-index ul {
-    display: flex !important;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-  }
-
-  :host .category-index li {
-    margin-bottom: 10px !important;
-  }
-
-  :host .content-area {
-    width: 100% !important;
-  }
-}
-
-@media screen and (max-width: 576px) {
-  :host .category-index {
-    padding: 20px !important;
-  }
   
-  :host .content-area {
-    padding: 20px !important;
-  }
-  
-  :host .category-link {
-    font-size: 1rem !important;
-    padding: 10px 12px !important;
-  }
+  .content-area {
+    width: 100% !important;
+  } */
 }
 
 /* Smooth scroll para las secciones */
-:host .content-section {
+ .content-section {
   scroll-margin-top: 30px;
 }
 
-/* Estilos adicionales para mejorar la experiencia sticky */
-:host .category-index::-webkit-scrollbar {
-  width: 6px;
+
+/*============================================
+      Estilos para el menu izquierdo
+=============================================*/
+/* Contenedor principal del menú vertical - Posicionado a la izquierda */
+.category-index3 {
+  position: relative;
+  /* width: 100%; */
+  /* max-width: 280px; */
+  height: fit-content;
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 1.5rem;
+  box-shadow: none;
+  border: none;
+  z-index: 10;
 }
 
-:host .category-index::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
+/* Lista de opciones del menú - Diseño vertical */
+.category-index3 ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: transparent;
+  border-radius: 0;
+  border-right: 2px solid #e9ecef;
+  overflow: hidden;
+  height: fit-content;
+  gap: 2px;
 }
 
-:host .category-index::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+/* Eliminar estilos de li */
+.category-index3 li {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
 }
 
-:host .category-index::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+/* Links de categoría - Estilo moderno vertical */
+.category-link3 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  
+  text-align: left;
+  cursor: pointer;
+  color: #384045;
+  font-weight: 600;
+  
+  background: #eff2f5;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2;
+  user-select: none;
+  text-decoration: none;
+  border: none;
+  border-right: 3px solid transparent;
+  margin-bottom: 2px;
+  border-radius: 8px 0 0 8px;
+  padding: 15px 24px;
+  width: 100%;
+  /* font-size: 15px; */
+  /* width: 100%; */
+  /* min-height: 56px; */
 }
 
-/* Mejoras adicionales para la experiencia sticky */
-:host .category-index {
-  transition: box-shadow 0.3s ease;
+/* Último elemento sin margen inferior */
+.category-index3 li:last-child .category-link3 {
+  margin-bottom: 0;
 }
 
-:host .category-index:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+/* Hover effect */
+.category-link3:hover {
+  color: #444f5b;
+  background: #ffffff;
+  transform: translateX(4px);
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
 }
 
-/* Indicador visual de posición sticky activa */
-:host .category-index::before {
+/* Estado activo/seleccionado */
+.category-link3.selected {
+  color: #007bff !important;
+  background: #ffffff !important;
+  /* border-right: 3px solid transparent; */
+  border-left: 4px solid #3498db;
+  /* box-shadow: 0 4px 16px rgba(0, 123, 255, 0.15); */
+  transform: translateX(6px);
+  position: relative;
+}
+
+/* Línea sombreada debajo del elemento seleccionado */
+.category-link3.selected::after {
   content: '';
   position: absolute;
-  top: 0;
+  bottom: -1px;
   left: 0;
-  right: 0;
+  width: 100%;
   height: 3px;
-  background: linear-gradient(90deg, #dc3545, #c82333);
-  border-radius: 12px 12px 0 0;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  border-radius: 2px;
+  border-left: 5px solid #3498db;
+  /* box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4); */
+  z-index: 3;
 }
 
-/* Mostrar indicador cuando está sticky */
-:host .category-index.is-sticky::before {
-  opacity: 1;
+/* Efecto de pulsación en click */
+.category-link3:active {
+  transform: translateX(-2px);
+  transition: transform 0.1s ease;
 }
 
-/* Animación suave para los enlaces */
-:host .category-link {
+/* Mejora de accesibilidad */
+.category-link3:focus {
+  outline: 3px solid #00ff44;
+  outline-offset: -2px;
+  border-radius: 8px 0 0 8px;
+}
+
+/* Efecto suave de brillo al hacer hover */
+.category-link3 {
   position: relative;
   overflow: hidden;
 }
 
-:host .category-link::after {
+.category-link3::before {
   content: '';
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
   transition: left 0.5s ease;
 }
 
-:host .category-link:hover::after {
+.category-link3:hover::before {
   left: 100%;
+}
+
+/* Micro-interacciones mejoradas */
+.category-link3:not(.selected):hover {
+  background: linear-gradient(135deg, #c9ebf357 0%, #e0ebf7 100%);
+}
+
+.category-link3.selected {
+  background: linear-gradient(135deg, #c9ebf357 0%, #e0ebf7 100%) !important;
+}
+
+/* Animación de entrada suave para el menú */
+.category-index3 {
+  animation: fadeInLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+/* Asegurar que el contenedor tenga altura y no colapse */
+.category-index3::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+/* Forzar altura mínima si es necesario */
+.category-index3 {
+  min-height: 60px !important;
+}
+
+.category-index3 ul {
+  min-height: 60px !important;
+}
+
+/* Estilos adicionales para mejor integración */
+.category-link3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
+.span-etiquetas {
+  /* background-color: #f5f5f5;  */
+  width: 35%; 
+  margin-bottom: 0.8rem; 
+  margin-right: 0.5rem; 
+  padding-left: 0.5rem; 
+  font-weight: 700;
+  /* border-radius: 2px;  */
+  
+}
+.span-etiquetasRespuesta {
+  margin-bottom: 0.8rem;
+  box-shadow: 0 1px 0 #007ee570;
+}
+
+
+
+/*=====================================================================
+      Estilos para mostrar los hijos y los campos dinamicos
+======================================================================*/
+.dependents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem; /* separación entre dependientes */
+  margin-top: 1rem;
+}
+
+.dependent-item {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
 }

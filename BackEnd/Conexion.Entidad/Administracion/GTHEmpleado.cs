@@ -29,8 +29,7 @@ namespace Conexion.Entidad.Administracion
         public bool? ActPassword { get; set; }
         public string Password { get; set; }
         public decimal? Sueldo { get; set; }
-        
-        // Nuevos campos añadidos
+
         public string TipoSangre { get; set; }
         public string Etnia { get; set; }
         public string PaisNacimiento { get; set; }
@@ -48,10 +47,11 @@ namespace Conexion.Entidad.Administracion
         public string DocumentosConyuge { get; set; }
         public string CargoActual { get; set; }
         public string Area { get; set; }
-        public string SubArea { get; set; }
+        public string Subarea { get; set; }
         public string Empresa { get; set; }
         public string JefeDirecto { get; set; }
         public string TipoContrato { get; set; }
         public string Ubicacion { get; set; }
+
     }
 }

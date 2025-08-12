@@ -42,7 +42,7 @@ export class GthEmpleadoService {
    * @param cedula - Cédula del empleado a buscar
    */
   BuscarPorCedula(cedula: string) {
-    console.log('Llamando a BuscarPorCedula con cédula:', cedula); 
+    console.log('Llamando a BuscarPorCedula con cédula:', cedula); //Comentar
     return this.MostrarConParametros(4, undefined, undefined, undefined, cedula);
   }
 

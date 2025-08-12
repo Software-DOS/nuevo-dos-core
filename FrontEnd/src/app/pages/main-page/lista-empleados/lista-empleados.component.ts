@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import * as CryptoJS from 'crypto-js'; // npm install crypto-js
 
 interface Empleado {
   id: number;
@@ -40,7 +41,7 @@ export class ListaEmpleadosComponent implements OnInit {
     {
       id: 3,
       nombre: 'María Fernanda Cordero',
-      cedula: '1102567891',
+      cedula: '1723456789',
       cargo: 'Analista de Recursos Humanos',
       area: 'Talento Humano',
       certificaciones: 5,
@@ -85,7 +86,7 @@ export class ListaEmpleadosComponent implements OnInit {
     {
       id: 8,
       nombre: 'Jorge Molina',
-      cedula: '1712345678',
+      cedula: '1734567890',
       cargo: 'Administrador de Base de Datos',
       area: 'Tecnología',
       certificaciones: 2,
@@ -113,8 +114,13 @@ export class ListaEmpleadosComponent implements OnInit {
   //   this.router.navigate(['/admin-cv', empleadoId]);
   // }
 
-  navigateToEmployeeCV(): void {
-    this.router.navigate(['/admin-cv']);
+
+  // navigateToEmployeeCV(): void {
+  //   this.router.navigate(['/admin-cv']);
+  // }
+  navigateToEmployeeCV(cedula: string): void {
+    const encryptedCedula = CryptoJS.AES.encrypt(cedula, 'clave_secreta').toString();
+    this.router.navigate(['/admin-cv', encryptedCedula]);
   }
 
   // Damos color a la etiqueta de AREA

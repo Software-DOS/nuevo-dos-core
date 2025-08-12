@@ -18,7 +18,8 @@ const routes: Routes = [
     { path: 'exportar-cv',loadChildren: () => import('./main-page/exportar-cv/exportar-cv.module').then(m=>m.ExportarCvModule) },
     { path: 'clima-laboral',loadChildren: () => import('./main-page/clima-laboral/clima-laboral.module').then(m=>m.ClimaLaboralModule) },
 
-    { path: 'admin-cv', loadChildren: () => import('./main-page/admin-cv/admin-cv.module').then(m => m.AdminCvModule) },
+    // { path: 'admin-cv', loadChildren: () => import('./main-page/admin-cv/admin-cv.module').then(m => m.AdminCvModule) },
+    { path: 'admin-cv/:id', loadChildren: () => import('./main-page/admin-cv/admin-cv.module').then(m => m.AdminCvModule) },
 
     { path: '**', component: Error404Component }
   ]}

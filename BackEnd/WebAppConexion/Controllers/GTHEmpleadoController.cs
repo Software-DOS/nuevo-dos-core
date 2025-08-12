@@ -32,15 +32,15 @@ namespace WebAppConexion.Controllers
 
         /// <summary>
         /// Devuelve la lista de empleados según los filtros proporcionados.
-        /// 1 = IdEmpleado/Cédula, 2 = IdCelula, 3 = EstadoEmpleado, 4 = Cédula exclusiva, 0 = Todos.
+        /// 1 = IdEmpleado, 2 = IdCelula, 3 = estadoEmpleado, 0 = Todos.
         /// </summary>
         [HttpGet("[action]")]
         public async Task<IEnumerable<GTHEmpleadoViewModel>> Mostrar(
-        [FromQuery] int tipo,
-        [FromQuery] int? idEmpleado = null,
-        [FromQuery] int? idCelula = null,
-        [FromQuery] string estadoEmpleado = null,
-        [FromQuery] string cedulaEmpleado = null)
+            [FromQuery] int tipo,
+            [FromQuery] int? idEmpleado = null,
+            [FromQuery] int? idCelula = null,
+            [FromQuery] string estadoEmpleado = null,
+            [FromQuery] string cedulaEmpleado = null) // <-- Agregado
         {
             // Llamamos al repositorio con los filtros
             var entidades = await _repository.Mostrar(tipo, idEmpleado, idCelula, estadoEmpleado, cedulaEmpleado);
@@ -48,6 +48,7 @@ namespace WebAppConexion.Controllers
             // Mapear cada GTHEmpleado a tu ViewModel
             return entidades.Select(e => new GTHEmpleadoViewModel
             {
+                //GthViewModel = GTH_Empleado
                 Tipo = e.Tipo,
                 IdEmpleado = e.IdEmpleado,
                 IdPerfil = e.IdPerfil,
@@ -69,8 +70,7 @@ namespace WebAppConexion.Controllers
                 ActPassword = e.ActPassword,
                 Password = e.Password,
                 Sueldo = e.Sueldo,
-                
-                // Nuevos campos añadidos
+
                 TipoSangre = e.TipoSangre,
                 Etnia = e.Etnia,
                 PaisNacimiento = e.PaisNacimiento,
@@ -88,7 +88,7 @@ namespace WebAppConexion.Controllers
                 DocumentosConyuge = e.DocumentosConyuge,
                 CargoActual = e.CargoActual,
                 Area = e.Area,
-                SubArea = e.SubArea,
+                Subarea = e.Subarea,
                 Empresa = e.Empresa,
                 JefeDirecto = e.JefeDirecto,
                 TipoContrato = e.TipoContrato,
@@ -116,7 +116,7 @@ namespace WebAppConexion.Controllers
                 FechaNacimiento = model.FechaNacimiento,
                 Direccion = model.Direccion,
                 Telefono = model.Telefono,
-                Correo = model.Correo?.ToLower(),
+                Correo = model.Correo.ToLower(),
                 CorreoCorporativo = model.CorreoCorporativo?.ToLower(),
                 FechaContratacion = model.FechaContratacion,
                 EstadoCivil = model.EstadoCivil,
@@ -125,8 +125,7 @@ namespace WebAppConexion.Controllers
                 EstadoEmpleado = model.EstadoEmpleado,
                 EmpTipo = model.EmpTipo,
                 Sueldo = model.Sueldo,
-                
-                // Nuevos campos añadidos
+
                 TipoSangre = model.TipoSangre,
                 Etnia = model.Etnia,
                 PaisNacimiento = model.PaisNacimiento,
@@ -144,7 +143,7 @@ namespace WebAppConexion.Controllers
                 DocumentosConyuge = model.DocumentosConyuge,
                 CargoActual = model.CargoActual,
                 Area = model.Area,
-                SubArea = model.SubArea,
+                Subarea = model.Subarea,
                 Empresa = model.Empresa,
                 JefeDirecto = model.JefeDirecto,
                 TipoContrato = model.TipoContrato,

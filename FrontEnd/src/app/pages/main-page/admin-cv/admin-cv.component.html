@@ -2,357 +2,274 @@
 <div *ngIf="empleadoActual || !cargando">
 <!-- Tarjeta del Empleado -->
 <div class="employee-card">
-    <img [src]="employeeData.personalInfo.photo" alt="Foto del Empleado" class="employee-image">
+    <img [src]="fotoPerfilUrlDisplay" alt="Foto del Empleado" class="employee-image">
     <div class="employee-personal-info">
-        <h1>{{employeeData.personalInfo.fullName}}</h1>
+        <h1>{{nombreCompletoDisplay}}</h1>
         <div class="employee-contact">
-            <a [href]="'mailto:' + employeeData.personalInfo.email">✉️ {{employeeData.personalInfo.email}}</a>
+            <a [href]="'mailto:' + correoElectronicoDisplay">✉️ {{correoElectronicoDisplay}}</a>
         </div>
-        <p class="employee-position">{{employeeData.personalInfo.position}}</p>
-        <p class="employee-area">{{employeeData.personalInfo.area}}</p>
-        <p class="employee-subarea">{{employeeData.personalInfo.subArea}}</p>
+        <p class="employee-position">{{posicionDisplay}}</p>
+        <p class="employee-area">{{areaDisplay}}</p>
+        <p class="employee-subarea">{{subareaDisplay}}</p>
     </div>
 </div>
 
 <!-- Sección Principal -->
-<div class="main-section">    <div class="category-index">
+<div class="main-section1">    
+    <div class="category-index3 col-sm-3">
         <ul>
-            <li><div class="category-link selected" data-target="bibliografia" (click)="onCategoryClick($event, 'bibliografia')">Bibliografía</div></li>
-            <li><div class="category-link" data-target="info-personal" (click)="onCategoryClick($event, 'info-personal')">Información Personal</div></li>
-            <li><div class="category-link" data-target="contacto" (click)="onCategoryClick($event, 'contacto')">Contacto y Dirección</div></li>
-            <li><div class="category-link" data-target="emergencia" (click)="onCategoryClick($event, 'emergencia')">Contacto de Emergencia</div></li>
-            <li><div class="category-link" data-target="familiares" (click)="onCategoryClick($event, 'familiares')">Familiares</div></li>
-            <li><div class="category-link" data-target="documentos" (click)="onCategoryClick($event, 'documentos')">Documentos de Identidad</div></li>
-            <li><div class="category-link" data-target="empleo" (click)="onCategoryClick($event, 'empleo')">Información de Empleo</div></li>
-            <li><div class="category-link" data-target="historia-laboral" (click)="onCategoryClick($event, 'historia-laboral')">Historia Laboral</div></li>
-            <li><div class="category-link" data-target="formacion" (click)="onCategoryClick($event, 'formacion')">Formación Académica</div></li>
-            <li><div class="category-link" data-target="idiomas" (click)="onCategoryClick($event, 'idiomas')">Idiomas</div></li>
-            <li><div class="category-link" data-target="proyectos" (click)="onCategoryClick($event, 'proyectos')">Proyectos</div></li>
+            <!-- <li><div class="category-link3" data-target="bibliografia" (click)="onCategoryClick($event, 'bibliografia')">Bibliografía</div></li> -->
+            <li><div class="category-link3 selected" data-target="info-personal" (click)="onCategoryClick($event, 'info-personal')">Información Personal</div></li>
+            <li><div class="category-link3" data-target="contacto" (click)="onCategoryClick($event, 'contacto')">Contacto y Dirección</div></li>
+            <li><div class="category-link3" data-target="emergencia" (click)="onCategoryClick($event, 'emergencia')">Contacto de Emergencia</div></li>
+            <li><div class="category-link3" data-target="familiares" (click)="onCategoryClick($event, 'familiares')">Familiares</div></li>
+            <!-- <li><div class="category-link" data-target="documentos" (click)="onCategoryClick($event, 'documentos')">Documentos de Identidad</div></li> -->
+            <li><div class="category-link3" data-target="empleo" (click)="onCategoryClick($event, 'empleo')">Información de Empleo</div></li>
+            <li><div class="category-link3" data-target="historia-laboral" (click)="onCategoryClick($event, 'historia-laboral')">Historia Laboral</div></li>
+            <li><div class="category-link3" data-target="formacion" (click)="onCategoryClick($event, 'formacion')">Formación Académica</div></li>
+            <li><div class="category-link3" data-target="idiomas" (click)="onCategoryClick($event, 'idiomas')">Idiomas</div></li>
+            <li><div class="category-link3" data-target="proyectos" (click)="onCategoryClick($event, 'proyectos')">Proyectos</div></li>
         </ul>
     </div>
-    <div class="content-area">            <div id="bibliografia" class="content-section active">
-                <h2>Bibliografía</h2>
+    <div class="content-area col-sm-9">            
+        <!-- <div id="bibliografia" class="content-section active">
+                <h2>Contacto y Ubicación</h2>
                 <div class="info-grid">
-                    <div class="info-item">
-                        <span class="label">Fecha de Nacimiento:</span>
-                        <span class="value">{{employeeData.bibliography.birthDate}}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">País de Nacimiento:</span>
-                        <span class="value">{{employeeData.bibliography.birthCountry}}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Provincia:</span>
-                        <span class="value">{{employeeData.bibliography.birthProvince}}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Ciudad:</span>
-                        <span class="value">{{employeeData.bibliography.birthCity}}</span>
-                    </div>
+                   
                 </div>
-            </div>            <div id="info-personal" class="content-section">
-                <h2>Información Personal</h2>
+            </div>             -->
+        <div id="info-personal" class="content-section active">
+            <h2>Información Personal</h2>
                 <div class="info-grid">
                     <div class="info-item">
-                        <span class="label">Nombres:</span>
-                        <span class="value">{{employeeData.personalDetails.firstName}}</span>
+                        <span class="label span-etiquetas">Nombres:</span>
+                        <span class="value span-etiquetasRespuesta" style="width: 60%;">{{nombresDisplay}}</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">Apellidos:</span>
-                        <span class="value">{{employeeData.personalDetails.lastName}}</span>
+                        <span class="label span-etiquetas">Apellidos:</span>
+                        <span class="value span-etiquetasRespuesta" style="width: 60%;">{{apellidosDisplay}}</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">Sexo:</span>
-                        <span class="value">{{employeeData.personalDetails.gender}}</span>
+                        <span class="label span-etiquetas">Número de Cédula:</span>
+                        <span class="value span-etiquetasRespuesta" style="width: 60%;">{{numeroCedulaDisplay}}</span>
+                    </div>
+                    <!-- <div class="info-item">
+                        <span class="label">Documento:</span>
+                        <span class="value document-placeholder">Archivos Adjuntos</span>
+                    </div> -->
+                    <div class="info-item">
+                        <span class="label span-etiquetas">Sexo:</span>
+                        <span class="value span-etiquetasRespuesta" style="width: 60%;">{{sexoDisplay}}</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">Estado Civil:</span>
-                        <span class="value">{{employeeData.personalDetails.maritalStatus}}</span>
+                        <span class="label span-etiquetas">Estado Civil:</span>
+                        <span class="value span-etiquetasRespuesta" style="width: 60%;">{{estadoConyugalDisplay}}</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">Tipo de Sangre:</span>
-                        <span class="value">{{employeeData.personalDetails.bloodType}}</span>
+                        <span class="label span-etiquetas">Tipo de Sangre:</span>
+                        <span class="value span-etiquetasRespuesta">{{tipoSangreDisplay}}</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">Último Nivel de Estudio:</span>
-                        <span class="value">{{employeeData.personalDetails.educationLevel}}</span>
+                        <span class="label span-etiquetas">Último Nivel de Estudio:</span>
+                        <span class="value span-etiquetasRespuesta" style="width: 60%;">{{nivelEstudioDisplay}}</span>
                     </div>
-                    <div class="info-item">
+                    <!-- <div class="info-item">
                         <span class="label">Cargas Familiares:</span>
-                        <span class="value">{{employeeData.personalDetails.dependents}}</span>
+                        <span class="value">{{cargasFamiliaresDisplay}}</span>
+                    </div> -->
+                    <div class="info-item">
+                        <span class="label span-etiquetas">Etnia:</span>
+                        <span class="value span-etiquetasRespuesta" style="width: 60%;">{{etniaDisplay}}</span>
                     </div>
-                        <div class="info-item">
-                        <span class="label">Etnia:</span>
-                        <span class="value">{{employeeData.personalDetails.ethnic}}</span>
+                     <div class="info-item">
+                        <span class="label span-etiquetas">Fecha de Nacimiento:</span>
+                        <span class="value span-etiquetasRespuesta" style="width: 60%;">{{fechaNacimientoDisplay}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label span-etiquetas">País de Nacimiento:</span>
+                        <span class="value span-etiquetasRespuesta" style="width: 60%;">{{paisNacimientoDisplay}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label span-etiquetas">Provincia:</span>
+                        <span class="value span-etiquetasRespuesta">{{provinciaNacimientoDisplay}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label span-etiquetas">Ciudad:</span>
+                        <span class="value span-etiquetasRespuesta" style="width: 60%;">{{ciudadNacimientoDisplay}}</span>
                     </div>
                 </div>
-            </div>            <div id="contacto" class="content-section">
+        </div>            
+        <div id="contacto" class="content-section">
                 <h2>Contacto y Dirección</h2>
                 <div class="info-grid">
                     <div class="info-item">
-                        <span class="label">Correo Institucional:</span>
-                        <span class="value">{{employeeData.contact.institutionalEmail}}</span>
+                        <span class="label span-etiquetas">Correo Institucional:</span>
+                        <span class="value">{{correoInstitucionalDisplay}}</span>
                     </div>
-                    <div class="info-item">
+                    <!-- <div class="info-item">
                         <span class="label">Correo Personal:</span>
-                        <span class="value">{{employeeData.contact.personalEmail}}</span>
+                        <span class="value">{{correoPersonalDisplay}}</span>
+                    </div> -->
+                    <div class="info-item">
+                        <span class="label span-etiquetas">Número Celular:</span>
+                        <span class="value">{{numeroCelularDisplay}}</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">Número Celular:</span>
-                        <span class="value">{{employeeData.contact.cellPhone}}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Dirección Domiciliaria:</span>
-                        <span class="value">{{employeeData.contact.address}}</span>
+                        <span class="label span-etiquetas">Dirección Domiciliaria:</span>
+                        <span class="value">{{direccionDisplay}}</span>
                     </div>
                 </div>
-            </div>            <div id="emergencia" class="content-section">
+        </div>            
+        <div id="emergencia" class="content-section">
                 <h2>Contacto de Emergencia</h2>
                 <div class="info-grid">
                     <div class="info-item">
-                        <span class="label">Nombre:</span>
-                        <span class="value">{{employeeData.emergency.name}}</span>
+                        <span class="label span-etiquetas">Nombre:</span>
+                        <span class="value">{{nombreEmergenciaDisplay}}</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">Relación:</span>
-                        <span class="value">{{employeeData.emergency.relationship}}</span>
+                        <span class="label span-etiquetas">Relación:</span>
+                        <span class="value">{{relacionEmergenciaDisplay}}</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">Teléfono:</span>
-                        <span class="value">{{employeeData.emergency.phone}}</span>
+                        <span class="label span-etiquetas">Teléfono:</span>
+                        <span class="value">{{telefonoEmergenciaDisplay}}</span>
                     </div>
                 </div>
-            </div>            <div id="familiares" class="content-section">
+        </div>            
+        <div id="familiares" class="content-section">
                 <h2>Familiares</h2>
                 <div class="subsection">
                     <h3>Información Conyugal</h3>
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="label">Estado:</span>
-                            <span class="value">{{employeeData.personalDetails.maritalStatus}}</span>
+                            <span class="label span-etiquetas">Estado:</span>
+                            <span class="value">{{estadoConyugalDisplay}}</span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Nombre del Cónyuge:</span>
-                            <span class="value">{{employeeData.family.spouse.name}}</span>
+                            <span class="label span-etiquetas">Nombre del Cónyuge:</span>
+                            <span class="value">{{nombreConyugeDisplay}}</span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Fecha de Matrimonio:</span>
-                            <span class="value">{{employeeData.family.spouse.marriageDate}}</span>
+                            <span class="label span-etiquetas">Fecha de Matrimonio:</span>
+                            <span class="value">{{fechaMatrimonioDisplay}}</span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Discapacidad:</span>
-                            <span class="value">{{employeeData.family.spouse.disability}}</span>
+                            <span class="label span-etiquetas">Discapacidad:</span>
+                            <span class="value">{{discapacidadConyugeDisplay}}</span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Documentos:</span>
+                            <span class="label span-etiquetas">Documentos:</span>
                             <span class="value document-placeholder">Archivos Adjuntos</span>
                         </div>
                     </div>
                 </div>
-                <div class="subsection">
-                    <h3>Dependientes</h3>
+                <div class="subsection" style="margin-top: 2rem; margin-left: 1rem;">
+                    <h4 style="color: #003051;">Dependientes</h4>
                     <div class="dependents-list">
-                        <div class="dependent-item" *ngFor="let child of employeeData.family.children">
+                        <div class="dependent-item" *ngFor="let child of employeeData?.family?.children">
                             <div class="info-grid">
                                 <div class="info-item">
-                                    <span class="label">Nombre:</span>
+                                    <span class="label span-etiquetas">Nombre:</span>
                                     <span class="value">{{child.name}}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="label">Fecha de Nacimiento:</span>
+                                    <span class="label span-etiquetas">Fecha de Nacimiento:</span>
                                     <span class="value">{{child.birthDate}}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="label">Discapacidad:</span>
+                                    <span class="label span-etiquetas">Discapacidad:</span>
                                     <span class="value">{{child.disability}}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="label">Documentos:</span>
+                                    <span class="label span-etiquetas">Documentos:</span>
                                     <span class="value document-placeholder">Archivos Adjuntos</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+        </div>       
+
+        <div id="empleo" class="content-section">
+            <h2>Información de Empleo</h2>
+            <div class="subcategory-nav">
+                <div class="subcategory-link active" data-subtarget="info-organizacional" (click)="onSubcategoryClick($event, 'info-organizacional')">Información Organizacional</div>
+                <div class="subcategory-link" data-subtarget="info-plaza" (click)="onSubcategoryClick($event, 'info-plaza')">Información de Plaza</div>
+                <div class="subcategory-link" data-subtarget="organigrama" (click)="onSubcategoryClick($event, 'organigrama')">Organigrama</div>
             </div>
 
-        <div id="documentos" class="content-section">
-            <h2>Documentos de Identidad</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="label">Número de Cédula:</span>
-                    <span class="value">12345678A</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">Documento:</span>
-                    <span class="value document-placeholder">Archivos Adjuntos</span>
-                </div>
-            </div>
-        </div>            <div id="empleo" class="content-section">
-                <h2>Información de Empleo</h2>
-                <div class="subcategory-nav">
-                    <div class="subcategory-link active" data-subtarget="info-organizacional" (click)="onSubcategoryClick($event, 'info-organizacional')">Información Organizacional</div>
-                    <div class="subcategory-link" data-subtarget="info-plaza" (click)="onSubcategoryClick($event, 'info-plaza')">Información de Plaza</div>
-                    <div class="subcategory-link" data-subtarget="organigrama" (click)="onSubcategoryClick($event, 'organigrama')">Organigrama</div>
-                </div>
-                
-                <div class="subcategory-content">
-                    <div id="info-organizacional" class="subcategory-section active">
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <span class="label">Cargo:</span>
-                                <span class="value">{{employeeData.employment.position}}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Fecha de Inicio:</span>
-                                <span class="value">{{employeeData.employment.startDate}}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Empresa:</span>
-                                <span class="value">{{employeeData.employment.company}}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Área:</span>
-                                <span class="value">{{employeeData.employment.area}}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Subárea:</span>
-                                <span class="value">{{employeeData.employment.subArea}}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="info-plaza" class="subcategory-section">
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <span class="label">Jefe Directo:</span>
-                                <span class="value">{{employeeData.employment.directManager}}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Tipo de Contrato:</span>
-                                <span class="value">{{employeeData.employment.contractType}}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Ubicación:</span>
-                                <span class="value">{{employeeData.employment.location}}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="organigrama" class="subcategory-section">
-                        <div class="organigrama-visual">
-                            <div class="org-nivel">
-                                <div class="org-box jefe">
-                                    <div class="org-avatar">MS</div>
-                                    <div class="org-info">
-                                        <h4>{{employeeData.employment.directManager}}</h4>
-                                        <p>Gerente de Desarrollo</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="org-conector">
-                                <div class="org-linea-vertical"></div>
-                            </div>
-                            <div class="org-nivel">
-                                <div class="org-box empleado">
-                                    <div class="org-avatar">JR</div>
-                                    <div class="org-info">
-                                        <h4>{{employeeData.personalDetails.firstName.charAt(0)}}{{employeeData.personalDetails.lastName.split(' ')[0]}}</h4>
-                                        <p>{{employeeData.employment.position}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>            <div id="historia-laboral" class="content-section">
-                <h2>Historia Laboral</h2>
-                <div class="job-history">
-                    <div class="job-item" *ngFor="let job of employeeData.workHistory">
-                        <h3>{{job.position}}</h3>
-                        <p class="company">{{job.company}}</p>
-                        <p class="dates">{{job.dates}}</p>
-                        <p class="functions">{{job.functions}}</p>
-                    </div>
-                </div>
-            </div>            <div id="formacion" class="content-section">
-                <h2>Formación Académica</h2>
-                <div class="subcategory-nav">
-                    <div class="subcategory-link active" data-subtarget="estudios" (click)="onSubcategoryClick($event, 'estudios')">Estudios</div>
-                    <div class="subcategory-link" data-subtarget="certificaciones" (click)="onSubcategoryClick($event, 'certificaciones')">Especialidades y Certificaciones</div>
-                </div>
-
-                <div class="subcategory-content">
-                    <div id="estudios" class="subcategory-section active">
-                        <div class="education-item" *ngFor="let degree of employeeData.education.degrees">
-                            <h4>{{degree.level}}</h4>
-                            <p>{{degree.title}}</p>
-                            <p>{{degree.institution}}</p>
-                        </div>
-                    </div>
-
-                    <div id="certificaciones" class="subcategory-section">
-                        <div class="certification-item" *ngFor="let cert of employeeData.education.certifications">
-                            <div class="info-grid">
-                                <div class="info-item">
-                                    <span class="label">Título:</span>
-                                    <span class="value">{{cert.title}}</span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="label">Institución:</span>
-                                    <span class="value">{{cert.institution}}</span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="label">Fecha:</span>
-                                    <span class="value">{{cert.date}}</span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="label">Certificado:</span>
-                                    <span class="value document-placeholder">Archivos Adjuntos</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>            <div id="idiomas" class="content-section">
-                <h2>Idiomas</h2>
-                <div class="language-item" *ngFor="let lang of employeeData.languages">
+            <div class="subcategory-content">
+                <div id="info-organizacional" class="subcategory-section active">
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="label">Idioma:</span>
-                            <span class="value">{{lang.language}}</span>
+                            <span class="label">Cargo:</span>
+                            <!-- <span class="value">{{employeeData?.employment?.position}}</span> -->
                         </div>
                         <div class="info-item">
-                            <span class="label">Nivel:</span>
-                            <span class="value">{{lang.level}}</span>
+                            <span class="label">Fecha de Inicio:</span>
+                            <!-- <span class="value">{{employeeData?.employment?.startDate}}</span> -->
                         </div>
                         <div class="info-item">
-                            <span class="label">Certificación:</span>
-                            <span class="value document-placeholder">Archivos Adjuntos</span>
+                            <span class="label">Empresa:</span>
+                            <!-- <span class="value">{{employeeData?.employment?.company}}</span> -->
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Área:</span>
+                            <!-- <span class="value">{{employeeData?.employment?.area}}</span> -->
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Subárea:</span>
+                            <!-- <span class="value">{{employeeData?.employment?.subArea}}</span> -->
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="proyectos" class="content-section">
-                <h2>Proyectos</h2>
-                <div class="project-item" *ngFor="let project of employeeData.projects">
+                <div id="info-plaza" class="subcategory-section">
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="label">Título:</span>
-                            <span class="value">{{project.title}}</span>
+                            <span class="label">Jefe Directo:</span>
+                            <!-- <span class="value">{{employeeData?.employment?.directManager}}</span> -->
                         </div>
                         <div class="info-item">
-                            <span class="label">Especialidad:</span>
-                            <span class="value">{{project.specialty}}</span>
+                            <span class="label">Tipo de Contrato:</span>
+                            <!-- <span class="value">{{employeeData?.employment?.contractType}}</span> -->
                         </div>
                         <div class="info-item">
-                            <span class="label">Año:</span>
-                            <span class="value">{{project.year}}</span>
+                            <span class="label">Ubicación:</span>
+                            <!-- <span class="value">{{employeeData?.employment?.location}}</span> -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="organigrama" class="subcategory-section">
+                    <div class="organigrama-visual">
+                        <div class="org-nivel">
+                            <div class="org-box jefe">
+                                <div class="org-avatar">MS</div>
+                                <div class="org-info">
+                                    <!-- <h4>{{employeeData?.employment?.directManager}}</h4> -->
+                                    <p>Gerente de Desarrollo</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="org-conector">
+                            <div class="org-linea-vertical"></div>
+                        </div>
+                    <div class="org-nivel">
+                        <div class="org-box empleado">
+                            <div class="org-avatar">JR</div>
+                                <div class="org-info">
+                                    <h4>{{nombresDisplay.charAt(0)}}{{apellidosDisplay.split(' ')[0]}}</h4>
+                                    <!-- <p>{{employeeData?.employment?.position}}</p> -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+
     </div>
 </div>
 </div> <!-- Cierre del contenido principal -->
