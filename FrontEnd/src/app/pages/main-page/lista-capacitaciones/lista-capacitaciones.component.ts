@@ -633,52 +633,97 @@ export class ListaCapacitacionesComponent implements OnInit {
       return;
     }
 
-    // Crear objeto de capacitación para eliminación (tipo 2)
-    const capacitacionData: iGTHCapacitacion = {
-      tipo: 2, // 2 = Eliminación
-      idCapacitacion: parseInt(id),
-      idEntidadCap: 0,
-      nombre: 'string',
-      titulo: 'string',
-      categoria: 'string',
-      descripcion: 'string',
-      estado: 'string',
-      fechaInicio: new Date().toISOString(),
-      fechaFin: new Date().toISOString(),
-      fechaExpiracion: new Date().toISOString(),
-      urlVerificacion: 'string',
-      archivosAdjuntos: 'string',
-      observaciones: 'string',
-      duracion: 0,
-      costo: 0,
-      modalidad: 'string'
-    };
+    const idCapacitacion = parseInt(id);
 
-    // Llamar al servicio para eliminar en el backend
-    this.gthCapacitacionService.GuardarGthCapacitacion(capacitacionData).subscribe({
-      next: (response: any) => {
-        // Eliminar de la lista local
-        this.capacitacionesDisponibles = this.capacitacionesDisponibles.filter(cap => cap.id !== id);
-        
-        // Mostrar mensaje de éxito
+    // Primero verificar si tiene dependencias para mostrar advertencia adecuada
+    this.gthCapacitacionService.verificarDependencias(idCapacitacion).subscribe({
+      next: (verificacion: any) => {
+        // Mostrar modal de confirmación con información específica
+        const mensajeAdvertencia = verificacion.tieneDependencias 
+          ? `⚠️ Esta capacitación tiene solicitudes o asignaciones relacionadas.\n\n` +
+            `Se marcará como "inactiva" en lugar de eliminarse para preservar la integridad de los datos.\n\n` +
+            `¿Desea continuar?`
+          : `Esta capacitación será eliminada completamente del sistema.\n\n` +
+            `¿Está seguro de que desea eliminar "${nombre}"?`;
+
         Swal.fire({
-          title: 'Eliminado',
-          text: `La capacitación "${nombre}" ha sido eliminada correctamente del servidor.`,
-          icon: 'success',
-          confirmButtonText: 'Aceptar'
+          title: verificacion.tieneDependencias ? 'Marcar como Inactiva' : 'Eliminar Capacitación',
+          text: mensajeAdvertencia,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: verificacion.tieneDependencias ? '#f39c12' : '#d33',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: verificacion.tieneDependencias ? 'Sí, marcar como inactiva' : 'Sí, eliminar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.ejecutarEliminacionInteligente(idCapacitacion, nombre, verificacion.tieneDependencias);
+          }
         });
-
-        // Recargar capacitaciones del backend para asegurar sincronización
-        this.cargarCapacitacionesDesdeBackend();
       },
       error: (error) => {
-        // Error al eliminar la capacitación
+        console.error('Error al verificar dependencias:', error);
+        // Si hay error en verificación, proceder con eliminación estándar
+        this.mostrarConfirmacionEliminacion(idCapacitacion, nombre);
+      }
+    });
+  }
+
+  private ejecutarEliminacionInteligente(idCapacitacion: number, nombre: string, tieneDependencias: boolean): void {
+    // Llamar al nuevo endpoint de eliminación inteligente
+    this.gthCapacitacionService.eliminarInteligente(idCapacitacion).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          // Eliminar de la lista local (tanto si se elimina como si se marca inactiva)
+          this.capacitacionesDisponibles = this.capacitacionesDisponibles.filter(cap => cap.id !== idCapacitacion.toString());
+          
+          // Mostrar mensaje de éxito apropiado
+          const icono = tieneDependencias ? 'info' : 'success';
+          const titulo = tieneDependencias ? 'Marcada como Inactiva' : 'Eliminada';
+          
+          Swal.fire({
+            title: titulo,
+            text: response.message,
+            icon: icono,
+            confirmButtonText: 'Aceptar'
+          });
+
+          // Recargar capacitaciones del backend para asegurar sincronización
+          this.cargarCapacitacionesDesdeBackend();
+        } else {
+          Swal.fire({
+            title: 'Error',
+            text: response.message || 'No se pudo procesar la eliminación.',
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error en eliminación inteligente:', error);
         Swal.fire({
           title: 'Error',
-          text: 'Hubo un error al eliminar la capacitación. Por favor, intenta nuevamente.',
+          text: 'Hubo un error al procesar la eliminación. Por favor, intenta nuevamente.',
           icon: 'error',
           confirmButtonText: 'Ok'
         });
+      }
+    });
+  }
+
+  private mostrarConfirmacionEliminacion(idCapacitacion: number, nombre: string): void {
+    Swal.fire({
+      title: '¿Eliminar Capacitación?',
+      text: `¿Está seguro de que desea eliminar "${nombre}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.ejecutarEliminacionInteligente(idCapacitacion, nombre, false);
       }
     });
   }

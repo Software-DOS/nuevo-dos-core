@@ -54,6 +54,35 @@ export class GthCapacitacionService {
       );
   }
 
+  /**
+   * Verifica si una capacitación tiene registros relacionados (solicitudes o asignaciones).
+   * Útil para mostrar advertencias antes de eliminar.
+   */
+  verificarDependencias(idCapacitacion: number): Observable<any> {
+    return this.http.get(environment.urlbackend + `api/GTHCapacitacion/verificar-dependencias/${idCapacitacion}`)
+      .pipe(
+        tap((response: any) => {
+          console.log('Dependencias verificadas:', response);
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Realiza eliminación inteligente de una capacitación:
+   * - Si no tiene registros relacionados: elimina físicamente
+   * - Si tiene registros relacionados: cambia estado a 'inactiva'
+   */
+  eliminarInteligente(idCapacitacion: number): Observable<any> {
+    return this.http.delete(environment.urlbackend + `api/GTHCapacitacion/eliminar-inteligente/${idCapacitacion}`)
+      .pipe(
+        tap((response: any) => {
+          console.log('Eliminación inteligente completada:', response);
+        }),
+        catchError(this.handleError)
+      );
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Error desconocido';
     if (error.error instanceof ErrorEvent) {
