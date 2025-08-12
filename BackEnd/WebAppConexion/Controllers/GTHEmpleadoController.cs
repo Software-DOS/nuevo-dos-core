@@ -5,9 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppConexion.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 
 namespace WebAppConexion.Controllers
 {
@@ -18,10 +21,13 @@ namespace WebAppConexion.Controllers
     {
         private readonly GTHEmpleadoRepository _repository;
         private readonly IConfiguration _config;
-        public GTHEmpleadoController(GTHEmpleadoRepository repository, IConfiguration config)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        
+        public GTHEmpleadoController(GTHEmpleadoRepository repository, IConfiguration config, IWebHostEnvironment webHostEnvironment)
         {
             this._repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _config = config;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         /// <summary>
@@ -268,6 +274,188 @@ namespace WebAppConexion.Controllers
 
                 // Retornar solo el ID del empleado
                 return Ok(new { idEmpleado = empleado.IdEmpleado });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Sube una foto de perfil para un empleado GTH
+        /// </summary>
+        /// <param name="idEmpleado">ID del empleado</param>
+        /// <param name="archivo">Archivo de imagen a subir</param>
+        /// <returns>URL de la imagen subida</returns>
+        [HttpPost("subir-foto-perfil/{idEmpleado}")]
+        public async Task<IActionResult> SubirFotoPerfil(long idEmpleado, IFormFile archivo)
+        {
+            try
+            {
+                // Validar que se haya enviado un archivo
+                if (archivo == null || archivo.Length == 0)
+                {
+                    return BadRequest(new { mensaje = "No se ha enviado ningún archivo" });
+                }
+
+                // Validar el tipo de archivo
+                var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var extension = Path.GetExtension(archivo.FileName).ToLowerInvariant();
+                
+                if (!extensionesPermitidas.Contains(extension))
+                {
+                    return BadRequest(new { mensaje = "Tipo de archivo no permitido. Solo se permiten: " + string.Join(", ", extensionesPermitidas) });
+                }
+
+                // Validar tamaño del archivo (5MB máximo)
+                if (archivo.Length > 5 * 1024 * 1024)
+                {
+                    return BadRequest(new { mensaje = "El archivo es demasiado grande. Tamaño máximo: 5MB" });
+                }
+
+                // Verificar que el empleado existe
+                var empleados = await _repository.Mostrar(1, (int)idEmpleado, null, null, null);
+                var empleado = empleados.FirstOrDefault();
+                
+                if (empleado == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró el empleado especificado" });
+                }
+
+                // Crear el directorio si no existe
+                var uploadsPath = Path.Combine(_webHostEnvironment.WebRootPath, "img", "usuarios");
+                if (!Directory.Exists(uploadsPath))
+                {
+                    Directory.CreateDirectory(uploadsPath);
+                }
+
+                // Generar nombre único para el archivo
+                var nombreArchivo = $"empleado_{idEmpleado}_{DateTime.Now:yyyyMMddHHmmss}{extension}";
+                var rutaCompleta = Path.Combine(uploadsPath, nombreArchivo);
+
+                // Eliminar foto anterior si existe
+                if (!string.IsNullOrEmpty(empleado.FotoPerfilUrl))
+                {
+                    var fotoAnterior = empleado.FotoPerfilUrl.Replace("/img/usuarios/", "");
+                    var rutaFotoAnterior = Path.Combine(uploadsPath, fotoAnterior);
+                    if (System.IO.File.Exists(rutaFotoAnterior) && fotoAnterior != "default-avatar.png")
+                    {
+                        System.IO.File.Delete(rutaFotoAnterior);
+                    }
+                }
+
+                // Guardar el archivo
+                using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+                {
+                    await archivo.CopyToAsync(stream);
+                }
+
+                // Actualizar la URL en la base de datos
+                var urlFoto = $"/img/usuarios/{nombreArchivo}";
+                empleado.FotoPerfilUrl = urlFoto;
+                empleado.Tipo = 1; // Tipo 1 para actualizar
+
+                await _repository.Gestionar(empleado.Tipo, empleado);
+
+                return Ok(new { 
+                    mensaje = "Foto de perfil actualizada exitosamente",
+                    fotoPerfilUrl = urlFoto,
+                    nombreArchivo = nombreArchivo
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Obtiene la foto de perfil de un empleado específico
+        /// </summary>
+        /// <param name="idEmpleado">ID del empleado</param>
+        /// <returns>URL de la foto de perfil o imagen por defecto</returns>
+        [HttpGet("obtener-foto-perfil/{idEmpleado}")]
+        public async Task<IActionResult> ObtenerFotoPerfil(long idEmpleado)
+        {
+            try
+            {
+                // Buscar el empleado
+                var empleados = await _repository.Mostrar(1, (int)idEmpleado, null, null, null);
+                var empleado = empleados.FirstOrDefault();
+
+                if (empleado == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró el empleado especificado" });
+                }
+
+                // Verificar si tiene foto de perfil
+                var fotoUrl = !string.IsNullOrEmpty(empleado.FotoPerfilUrl) 
+                    ? empleado.FotoPerfilUrl 
+                    : "/img/usuarios/default-avatar.png";
+
+                // Verificar si el archivo existe físicamente
+                var nombreArchivo = fotoUrl.Replace("/img/usuarios/", "");
+                var rutaCompleta = Path.Combine(_webHostEnvironment.WebRootPath, "img", "usuarios", nombreArchivo);
+                
+                if (!System.IO.File.Exists(rutaCompleta))
+                {
+                    fotoUrl = "/img/usuarios/default-avatar.png";
+                }
+
+                return Ok(new { 
+                    fotoPerfilUrl = fotoUrl,
+                    idEmpleado = empleado.IdEmpleado,
+                    nombre = empleado.Nombre,
+                    apellido = empleado.Apellido
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Elimina la foto de perfil de un empleado y restaura la imagen por defecto
+        /// </summary>
+        /// <param name="idEmpleado">ID del empleado</param>
+        /// <returns>Confirmación de eliminación</returns>
+        [HttpDelete("eliminar-foto-perfil/{idEmpleado}")]
+        public async Task<IActionResult> EliminarFotoPerfil(long idEmpleado)
+        {
+            try
+            {
+                // Buscar el empleado
+                var empleados = await _repository.Mostrar(1, (int)idEmpleado, null, null, null);
+                var empleado = empleados.FirstOrDefault();
+
+                if (empleado == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró el empleado especificado" });
+                }
+
+                // Eliminar archivo físico si existe y no es la imagen por defecto
+                if (!string.IsNullOrEmpty(empleado.FotoPerfilUrl) && empleado.FotoPerfilUrl != "/img/usuarios/default-avatar.png")
+                {
+                    var nombreArchivo = empleado.FotoPerfilUrl.Replace("/img/usuarios/", "");
+                    var rutaCompleta = Path.Combine(_webHostEnvironment.WebRootPath, "img", "usuarios", nombreArchivo);
+                    
+                    if (System.IO.File.Exists(rutaCompleta))
+                    {
+                        System.IO.File.Delete(rutaCompleta);
+                    }
+                }
+
+                // Actualizar la base de datos con imagen por defecto
+                empleado.FotoPerfilUrl = "/img/usuarios/default-avatar.png";
+                empleado.Tipo = 1; // Tipo 1 para actualizar
+
+                await _repository.Gestionar(empleado.Tipo, empleado);
+
+                return Ok(new { 
+                    mensaje = "Foto de perfil eliminada exitosamente",
+                    fotoPerfilUrl = "/img/usuarios/default-avatar.png"
+                });
             }
             catch (Exception ex)
             {

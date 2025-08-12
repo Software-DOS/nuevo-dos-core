@@ -117,6 +117,7 @@ namespace WebAppConexion
 
             app.UseCors("Todos");
             app.UseHttpsRedirection();
+            app.UseStaticFiles(); // Para servir archivos estáticos como imágenes
 
             app.UseRouting();
 
