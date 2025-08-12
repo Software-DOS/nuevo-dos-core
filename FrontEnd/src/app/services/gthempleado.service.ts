@@ -179,12 +179,13 @@ export class GthEmpleadoService {
       formData
     ).pipe(
       tap((response: any) => {
-        // Notificar a otros componentes que la foto ha cambiado
+        // Notificar a otros componentes que la foto ha cambiado con cache-busting
         if (response && response.fotoPerfilUrl) {
-          const urlCompleta = this.construirUrlImagen(response.fotoPerfilUrl);
+          const urlBase = this.construirUrlImagen(response.fotoPerfilUrl);
+          const urlConCacheBusting = `${urlBase}?t=${Date.now()}`;
           this.fotoPerfilCambiada.next({
             idEmpleado: idEmpleado,
-            nuevaUrl: urlCompleta
+            nuevaUrl: urlConCacheBusting
           });
         }
       })

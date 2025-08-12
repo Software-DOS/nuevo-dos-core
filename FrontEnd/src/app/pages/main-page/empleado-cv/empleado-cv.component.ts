@@ -897,10 +897,14 @@ export class EmpleadoCvComponent implements OnInit {
       next: (response: any) => {
         console.log('Foto subida exitosamente:', response);
         
-        // Actualizar la URL de la foto con la nueva imagen
+        // Actualizar la URL de la foto con la nueva imagen y cache-busting
         if (response.fotoPerfilUrl) {
-          this.fotoPerfilUrl = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
+          const urlBase = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
+          const cacheBusting = `?t=${Date.now()}`;
+          this.fotoPerfilUrl = urlBase + cacheBusting;
           this.fotoPerfilUrlDisplay = this.fotoPerfilUrl;
+          
+          console.log('Foto actualizada con cache-busting:', this.fotoPerfilUrl);
         }
 
         Swal.fire({
@@ -1000,10 +1004,14 @@ export class EmpleadoCvComponent implements OnInit {
         next: (response: any) => {
           console.log('Foto subida exitosamente desde modal:', response);
           
-          // Actualizar la URL de la foto local
+          // Actualizar la URL de la foto local con cache-busting
           if (response.fotoPerfilUrl) {
-            this.fotoPerfilUrl = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
+            const urlBase = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
+            const cacheBusting = `?t=${Date.now()}`;
+            this.fotoPerfilUrl = urlBase + cacheBusting;
             this.fotoPerfilUrlDisplay = this.fotoPerfilUrl;
+            
+            console.log('Nueva URL de imagen con cache-busting:', this.fotoPerfilUrl);
           }
 
           this.subiendoFoto = false;
