@@ -159,5 +159,81 @@ export class GthEmpleadoService {
       })
     );
   }
+
+  /**
+   * Sube una foto de perfil para un empleado
+   * @param idEmpleado - ID del empleado
+   * @param archivo - Archivo de imagen a subir
+   * @returns Observable con la respuesta del servidor
+   */
+  subirFotoPerfil(idEmpleado: number, archivo: File) {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    
+    return this.http.post(
+      environment.urlbackend + `api/GTHEmpleado/subir-foto-perfil/${idEmpleado}`, 
+      formData
+    );
+  }
+
+  /**
+   * Obtiene la foto de perfil de un empleado
+   * @param idEmpleado - ID del empleado
+   * @returns Observable con la URL de la foto de perfil
+   */
+  obtenerFotoPerfil(idEmpleado: number) {
+    return this.http.get(
+      environment.urlbackend + `api/GTHEmpleado/obtener-foto-perfil/${idEmpleado}`
+    );
+  }
+
+  /**
+   * Elimina la foto de perfil de un empleado
+   * @param idEmpleado - ID del empleado
+   * @returns Observable con la confirmación de eliminación
+   */
+  eliminarFotoPerfil(idEmpleado: number) {
+    return this.http.delete(
+      environment.urlbackend + `api/GTHEmpleado/eliminar-foto-perfil/${idEmpleado}`
+    );
+  }
+
+  /**
+   * Construye la URL completa para mostrar una imagen
+   * @param fotoPerfilUrl - URL relativa de la foto
+   * @returns URL completa para mostrar la imagen
+   */
+  construirUrlImagen(fotoPerfilUrl: string): string {
+    if (!fotoPerfilUrl) {
+      return environment.urlbackend + 'img/usuarios/default-avatar.png';
+    }
+    
+    // Si ya tiene el dominio, devolverla tal como está
+    if (fotoPerfilUrl.startsWith('http')) {
+      return fotoPerfilUrl;
+    }
+    
+    // Si es una URL relativa, agregar el dominio del backend
+    const urlLimpia = fotoPerfilUrl.startsWith('/') ? fotoPerfilUrl.substring(1) : fotoPerfilUrl;
+    return environment.urlbackend + urlLimpia;
+  }
+
+  /**
+   * Obtiene la foto de perfil del empleado logueado desde sessionStorage
+   * @returns Observable con la URL de la foto de perfil del empleado actual
+   */
+  obtenerFotoPerfilEmpleadoActual() {
+    const idEmpleado = this.obtenerIdGthEmpleadoDesdeSession();
+    if (!idEmpleado) {
+      return of({ fotoPerfilUrl: '/img/usuarios/default-avatar.png' });
+    }
+    
+    return this.obtenerFotoPerfil(idEmpleado).pipe(
+      catchError(error => {
+        console.error('Error al obtener foto de perfil del empleado actual:', error);
+        return of({ fotoPerfilUrl: '/img/usuarios/default-avatar.png' });
+      })
+    );
+  }
  
 }

@@ -146,6 +146,11 @@ export class EmpleadoCvComponent implements OnInit {
   fotoPerfilUrl: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Imagen por defecto
   fotoPerfilUrlDisplay: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
+  // Variables para manejar la subida de fotos
+  archivoSeleccionado: File | null = null;
+  subiendoFoto: boolean = false;
+  idEmpleadoActual: number | null = null;
+
   nombreCompletoDisplay: string = ''; 
   correoElectronicoDisplay: string = ''; 
   posicionDisplay: string = ''; 
@@ -213,15 +218,43 @@ export class EmpleadoCvComponent implements OnInit {
   }
 
   cargarDatosEmpleado(): void {
-    // Opción 1: Si tienes la cédula del empleado específico
-    // if (this.cedulaEmpleado) {
-    //   this.buscarEmpleadoPorCedula(this.cedulaEmpleado);
-    // } else {
-    //   // Opción 2: Cargar todos los empleados (tipo = 0 para mostrar todos)
-    //   //this.cargarTodosLosEmpleados();
-    // }
+    // Obtener ID del empleado del sessionStorage
+    const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+    
+    if (idEmpleado) {
+      this.idEmpleadoActual = idEmpleado;
+      this.buscarEmpleadoPorId(idEmpleado);
+    } else {
+      console.warn('No se encontró ID de empleado en sessionStorage, usando cédula de prueba');
+      // Fallback: usar cédula hardcoded para testing
+      this.buscarEmpleadoPorCedula('1206039933001');
+    }
+  }
 
-    this.buscarEmpleadoPorCedula('1734567890');
+  /**
+   * Busca un empleado específico por ID
+   * @param idEmpleado - ID del empleado a buscar
+   */
+  buscarEmpleadoPorId(idEmpleado: number): void {
+    console.log('Componente: ID enviado al servicio ->', idEmpleado);
+
+    this.gthEmpleadoService.MostrarConParametros(1, idEmpleado).subscribe({
+      next: (empleado: any) => {
+        console.log('Respuesta del backend ->', empleado);
+
+        const datosEmpleado = empleado?.$values?.[0];
+
+        if (datosEmpleado) {
+          this.empleado = datosEmpleado;
+          this.mapearDatosParaMostrar();
+        } else {
+          console.warn('No se encontró empleado con el ID:', idEmpleado);
+        }
+      },
+      error: (error) => {
+        console.error('Error al buscar empleado por ID:', error);
+      }
+    });
   }
 
   /**
@@ -257,11 +290,12 @@ export class EmpleadoCvComponent implements OnInit {
    */
   private mapearDatosParaMostrar(): void {
     if (this.empleado) {
+      // Guardar ID del empleado para usar en subida de fotos
+      this.idEmpleadoActual = this.empleado.idEmpleado;
+
       // Información básica
-      // Mostrar foto si existe, si no usar imagen por defecto
-      this.fotoPerfilUrl = this.empleado.fotoPerfilUrl?.trim()
-      ? this.empleado.fotoPerfilUrl
-      : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+      // Cargar foto desde el backend usando el servicio
+      this.cargarFotoPerfilEmpleado();
 
       this.nombreCompletoDisplay = `${this.empleado.nombre} ${this.empleado.apellido}`;
       this.nombres = `${this.empleado.nombre}`; 
@@ -807,13 +841,132 @@ export class EmpleadoCvComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
+      
+      // Validar tipo de archivo
+      const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      if (!tiposPermitidos.includes(file.type)) {
+        Swal.fire({
+          title: 'Error',
+          text: 'Solo se permiten archivos de imagen (JPG, PNG, GIF)',
+          icon: 'error'
+        });
+        return;
+      }
 
+      // Validar tamaño (5MB máximo)
+      const maxSize = 5 * 1024 * 1024; // 5MB en bytes
+      if (file.size > maxSize) {
+        Swal.fire({
+          title: 'Error', 
+          text: 'El archivo es demasiado grande. Tamaño máximo: 5MB',
+          icon: 'error'
+        });
+        return;
+      }
+
+      this.archivoSeleccionado = file;
+
+      // Mostrar preview de la imagen
       const reader = new FileReader();
       reader.onload = () => {
         this.fotoPerfilUrlDisplay = reader.result as string;
       };
       reader.readAsDataURL(file);
+
+      // Subir automáticamente
+      this.subirFotoPerfil();
     }
+  }
+
+  /**
+   * Sube la foto de perfil al backend
+   */
+  subirFotoPerfil(): void {
+    if (!this.archivoSeleccionado || !this.idEmpleadoActual) {
+      Swal.fire({
+        title: 'Error',
+        text: 'No se ha seleccionado ningún archivo o no se pudo identificar el empleado',
+        icon: 'error'
+      });
+      return;
+    }
+
+    this.subiendoFoto = true;
+
+    this.gthEmpleadoService.subirFotoPerfil(this.idEmpleadoActual, this.archivoSeleccionado).subscribe({
+      next: (response: any) => {
+        console.log('Foto subida exitosamente:', response);
+        
+        // Actualizar la URL de la foto con la nueva imagen
+        if (response.fotoPerfilUrl) {
+          this.fotoPerfilUrl = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
+          this.fotoPerfilUrlDisplay = this.fotoPerfilUrl;
+        }
+
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'Foto de perfil actualizada correctamente',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+
+        this.subiendoFoto = false;
+        this.archivoSeleccionado = null;
+      },
+      error: (error) => {
+        console.error('Error al subir foto:', error);
+        
+        // Restaurar imagen anterior en caso de error
+        this.cargarFotoPerfilEmpleado();
+        
+        let mensajeError = 'Error al subir la foto de perfil';
+        if (error.error && error.error.mensaje) {
+          mensajeError = error.error.mensaje;
+        }
+
+        Swal.fire({
+          title: 'Error',
+          text: mensajeError,
+          icon: 'error'
+        });
+
+        this.subiendoFoto = false;
+        this.archivoSeleccionado = null;
+      }
+    });
+  }
+
+  /**
+   * Carga la foto de perfil del empleado desde el backend
+   */
+  cargarFotoPerfilEmpleado(): void {
+    if (this.idEmpleadoActual) {
+      this.gthEmpleadoService.obtenerFotoPerfil(this.idEmpleadoActual).subscribe({
+        next: (response: any) => {
+          if (response && response.fotoPerfilUrl) {
+            this.fotoPerfilUrl = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
+            this.fotoPerfilUrlDisplay = this.fotoPerfilUrl;
+          } else {
+            this.establecerImagenPorDefecto();
+          }
+        },
+        error: (error) => {
+          console.error('Error al cargar foto de perfil:', error);
+          this.establecerImagenPorDefecto();
+        }
+      });
+    } else {
+      this.establecerImagenPorDefecto();
+    }
+  }
+
+  /**
+   * Establece la imagen por defecto
+   */
+  private establecerImagenPorDefecto(): void {
+    this.fotoPerfilUrl = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+    this.fotoPerfilUrlDisplay = this.fotoPerfilUrl;
   }
 
   // Cargar datos al abrir modal Datos personales
