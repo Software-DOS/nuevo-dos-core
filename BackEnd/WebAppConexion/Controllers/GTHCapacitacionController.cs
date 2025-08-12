@@ -143,5 +143,70 @@ namespace WebAppConexion.Controllers
                 return BadRequest($"Error al crear la capacitación: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Realiza eliminación inteligente de una capacitación:
+        /// - Si no tiene registros relacionados: elimina físicamente
+        /// - Si tiene registros relacionados: cambia estado a 'inactiva'
+        /// </summary>
+        [HttpDelete("eliminar-inteligente/{idCapacitacion}")]
+        public async Task<IActionResult> EliminarInteligente(long idCapacitacion)
+        {
+            try
+            {
+                var resultado = await _repository.EliminarInteligenteAsync(idCapacitacion);
+                
+                if (resultado.valor1 == 1)
+                {
+                    return Ok(new { 
+                        success = true, 
+                        message = resultado.valor2,
+                        idCapacitacion = idCapacitacion 
+                    });
+                }
+                else
+                {
+                    return BadRequest(new { 
+                        success = false, 
+                        message = resultado.valor2 
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { 
+                    success = false, 
+                    message = $"Error al eliminar la capacitación: {ex.Message}" 
+                });
+            }
+        }
+
+        /// <summary>
+        /// Verifica si una capacitación tiene registros relacionados (solicitudes o asignaciones).
+        /// Útil para mostrar advertencias en el frontend antes de intentar eliminar.
+        /// </summary>
+        [HttpGet("verificar-dependencias/{idCapacitacion}")]
+        public async Task<IActionResult> VerificarDependencias(long idCapacitacion)
+        {
+            try
+            {
+                var tieneDependencias = await _repository.TieneRegistrosRelacionadosAsync(idCapacitacion);
+                
+                return Ok(new { 
+                    idCapacitacion = idCapacitacion,
+                    tieneDependencias = tieneDependencias,
+                    mensaje = tieneDependencias 
+                        ? "Esta capacitación tiene solicitudes o asignaciones. Se marcará como inactiva en lugar de eliminarse."
+                        : "Esta capacitación puede ser eliminada completamente."
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { 
+                    success = false, 
+                    message = $"Error al verificar dependencias: {ex.Message}" 
+                });
+            }
+        }
     }
 }
