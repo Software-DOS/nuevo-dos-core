@@ -873,8 +873,8 @@ export class EmpleadoCvComponent implements OnInit {
       };
       reader.readAsDataURL(file);
 
-      // Subir automáticamente
-      this.subirFotoPerfil();
+      // Ya no subir automáticamente, esperar a que se presione "Guardar"
+      console.log('Archivo seleccionado para subir:', file.name);
     }
   }
 
@@ -993,16 +993,65 @@ export class EmpleadoCvComponent implements OnInit {
     this.areaDisplay = this.area;
     this.subareaDisplay = this.subarea; 
 
-    this.closeModal('principal');
+    // Si hay una nueva foto seleccionada, subirla antes de cerrar el modal
+    if (this.archivoSeleccionado && this.idEmpleadoActual) {
+      this.subiendoFoto = true;
+      this.gthEmpleadoService.subirFotoPerfil(this.idEmpleadoActual, this.archivoSeleccionado).subscribe({
+        next: (response: any) => {
+          console.log('Foto subida exitosamente desde modal:', response);
+          
+          // Actualizar la URL de la foto local
+          if (response.fotoPerfilUrl) {
+            this.fotoPerfilUrl = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
+            this.fotoPerfilUrlDisplay = this.fotoPerfilUrl;
+          }
 
-    Swal.fire({
-      icon: 'success',
-      title: 'Datos personales actualizados',
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000
-    });
+          this.subiendoFoto = false;
+          this.archivoSeleccionado = null;
+          
+          // Cerrar modal y mostrar éxito
+          this.closeModal('principal');
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Datos y foto actualizados correctamente',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          });
+        },
+        error: (error) => {
+          console.error('Error al subir foto desde modal:', error);
+          this.subiendoFoto = false;
+          
+          // Aún cerrar el modal pero mostrar que los datos se guardaron
+          this.closeModal('principal');
+          
+          Swal.fire({
+            icon: 'warning',
+            title: 'Datos actualizados, pero hubo un problema con la foto',
+            text: 'Intenta subir la foto nuevamente',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 4000
+          });
+        }
+      });
+    } else {
+      // No hay foto nueva, solo cerrar modal
+      this.closeModal('principal');
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Datos personales actualizados',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+      });
+    }
   }
 
   

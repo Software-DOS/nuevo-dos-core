@@ -2,13 +2,17 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from 'src/environments/environment';
 import { map, tap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { iGTHEmpleado } from '../interface/igth-empleado';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GthEmpleadoService {
+
+  // Subject para comunicar cambios de foto de perfil entre componentes
+  private fotoPerfilCambiada = new Subject<{idEmpleado: number, nuevaUrl: string}>();
+  public fotoPerfilCambiada$ = this.fotoPerfilCambiada.asObservable();
  
   constructor(private http: HttpClient) { }
  
@@ -173,6 +177,17 @@ export class GthEmpleadoService {
     return this.http.post(
       environment.urlbackend + `api/GTHEmpleado/subir-foto-perfil/${idEmpleado}`, 
       formData
+    ).pipe(
+      tap((response: any) => {
+        // Notificar a otros componentes que la foto ha cambiado
+        if (response && response.fotoPerfilUrl) {
+          const urlCompleta = this.construirUrlImagen(response.fotoPerfilUrl);
+          this.fotoPerfilCambiada.next({
+            idEmpleado: idEmpleado,
+            nuevaUrl: urlCompleta
+          });
+        }
+      })
     );
   }
 
@@ -234,6 +249,18 @@ export class GthEmpleadoService {
         return of({ fotoPerfilUrl: '/img/usuarios/default-avatar.png' });
       })
     );
+  }
+
+  /**
+   * Notifica manualmente que la foto de perfil de un empleado ha cambiado
+   * @param idEmpleado - ID del empleado
+   * @param nuevaUrl - Nueva URL de la foto
+   */
+  notificarCambioFotoPerfil(idEmpleado: number, nuevaUrl: string): void {
+    this.fotoPerfilCambiada.next({
+      idEmpleado: idEmpleado,
+      nuevaUrl: nuevaUrl
+    });
   }
  
 }

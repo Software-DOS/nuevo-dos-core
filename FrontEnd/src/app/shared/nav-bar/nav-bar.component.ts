@@ -36,6 +36,17 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setPageDataAttribute();
     });
 
+    // Escuchar cambios en la foto de perfil desde otros componentes
+    this.gthEmpleadoService.fotoPerfilCambiada$.subscribe({
+      next: (cambio) => {
+        console.log('NavBar: Recibido cambio de foto de perfil:', cambio);
+        this.Imagen = cambio.nuevaUrl;
+      },
+      error: (error) => {
+        console.error('NavBar: Error al recibir cambio de foto:', error);
+      }
+    });
+
     const valor = sessionStorage.getItem('token');
     if (typeof valor === 'string') {
       var IdEmpleado =JSON.parse(atob(valor.split('.')[1]));
