@@ -328,18 +328,39 @@ namespace WebAppConexion.Controllers
                     Directory.CreateDirectory(uploadsPath);
                 }
 
-                // Generar nombre único para el archivo
-                var nombreArchivo = $"empleado_{idEmpleado}_{DateTime.Now:yyyyMMddHHmmss}{extension}";
+                // Usar nombre fijo por empleado (sin timestamp para evitar acumulación de archivos)
+                var nombreArchivo = $"empleado_{idEmpleado}{extension}";
                 var rutaCompleta = Path.Combine(uploadsPath, nombreArchivo);
 
-                // Eliminar foto anterior si existe
-                if (!string.IsNullOrEmpty(empleado.FotoPerfilUrl))
+                // LIMPIEZA AUTOMÁTICA: Eliminar TODOS los archivos anteriores del empleado (cualquier extensión)
+                var patronBusqueda = $"empleado_{idEmpleado}.*";
+                var archivosAEliminar = Directory.GetFiles(uploadsPath, patronBusqueda);
+                
+                foreach (var archivoAEliminar in archivosAEliminar)
                 {
-                    var fotoAnterior = empleado.FotoPerfilUrl.Replace("/img/usuarios/", "");
-                    var rutaFotoAnterior = Path.Combine(uploadsPath, fotoAnterior);
-                    if (System.IO.File.Exists(rutaFotoAnterior) && fotoAnterior != "default-avatar.png")
+                    try
                     {
-                        System.IO.File.Delete(rutaFotoAnterior);
+                        System.IO.File.Delete(archivoAEliminar);
+                        Console.WriteLine($"Archivo anterior eliminado: {Path.GetFileName(archivoAEliminar)}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al eliminar archivo {Path.GetFileName(archivoAEliminar)}: {ex.Message}");
+                    }
+                }
+
+                // También limpiar archivos con timestamp del mismo empleado (migración de formato anterior)
+                var archivosConTimestamp = Directory.GetFiles(uploadsPath, $"empleado_{idEmpleado}_*.*");
+                foreach (var archivoAntiguo in archivosConTimestamp)
+                {
+                    try
+                    {
+                        System.IO.File.Delete(archivoAntiguo);
+                        Console.WriteLine($"Archivo con timestamp eliminado: {Path.GetFileName(archivoAntiguo)}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al eliminar archivo con timestamp {Path.GetFileName(archivoAntiguo)}: {ex.Message}");
                     }
                 }
 
@@ -454,6 +475,105 @@ namespace WebAppConexion.Controllers
                 return Ok(new { 
                     mensaje = "Foto de perfil eliminada exitosamente",
                     fotoPerfilUrl = "/img/usuarios/default-avatar.png"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Limpia archivos huérfanos de fotos de empleados (opcional - para mantenimiento)
+        /// </summary>
+        /// <returns>Resultado de la limpieza</returns>
+        [HttpPost("limpiar-fotos-huerfanas")]
+        public async Task<IActionResult> LimpiarFotosHuerfanas()
+        {
+            try
+            {
+                var uploadsPath = Path.Combine(_webHostEnvironment.WebRootPath, "img", "usuarios");
+                if (!Directory.Exists(uploadsPath))
+                {
+                    return Ok(new { mensaje = "No existe la carpeta de fotos", archivosEliminados = 0 });
+                }
+
+                // Obtener todos los empleados con sus fotos
+                var empleados = await _repository.Mostrar(0); // Tipo 0 = todos los empleados
+                var empleadosConFoto = empleados.Where(e => !string.IsNullOrEmpty(e.FotoPerfilUrl))
+                                               .ToList();
+
+                // Extraer solo los nombres de archivo (sin ruta) de las fotos en uso
+                var fotosEnUso = empleadosConFoto.Select(e => e.FotoPerfilUrl.Replace("/img/usuarios/", ""))
+                                               .Where(f => !string.IsNullOrEmpty(f))
+                                               .ToHashSet();
+
+                // Obtener IDs de empleados activos para validar archivos
+                var idsEmpleadosActivos = empleados.Select(e => e.IdEmpleado).ToHashSet();
+
+                // Obtener todos los archivos de empleados en el directorio
+                var archivosEmpleados = Directory.GetFiles(uploadsPath, "empleado_*.*")
+                                               .Select(f => Path.GetFileName(f))
+                                               .ToList();
+
+                int archivosEliminados = 0;
+                var archivosEliminadosList = new List<string>();
+
+                // Eliminar archivos que no están en uso
+                foreach (var archivo in archivosEmpleados)
+                {
+                    bool debeEliminar = false;
+                    string razon = "";
+
+                    // Verificar si el archivo está en uso
+                    if (!fotosEnUso.Contains(archivo))
+                    {
+                        // Extraer ID del empleado del nombre del archivo
+                        var parts = archivo.Split('_');
+                        if (parts.Length >= 2 && int.TryParse(parts[1].Split('.')[0], out int idEmpleado))
+                        {
+                            // Si el empleado no existe, marcar para eliminación
+                            if (!idsEmpleadosActivos.Contains(idEmpleado))
+                            {
+                                debeEliminar = true;
+                                razon = "empleado no existe";
+                            }
+                            else
+                            {
+                                debeEliminar = true;
+                                razon = "archivo no referenciado en BD";
+                            }
+                        }
+                        else
+                        {
+                            debeEliminar = true;
+                            razon = "formato de archivo inválido";
+                        }
+                    }
+
+                    if (debeEliminar)
+                    {
+                        try
+                        {
+                            var rutaCompleta = Path.Combine(uploadsPath, archivo);
+                            System.IO.File.Delete(rutaCompleta);
+                            archivosEliminados++;
+                            archivosEliminadosList.Add($"{archivo} ({razon})");
+                            Console.WriteLine($"Archivo huérfano eliminado: {archivo} - Razón: {razon}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error al eliminar {archivo}: {ex.Message}");
+                        }
+                    }
+                }
+
+                return Ok(new { 
+                    mensaje = $"Limpieza completada. {archivosEliminados} archivos huérfanos eliminados.",
+                    archivosEliminados = archivosEliminados,
+                    archivosEnUso = fotosEnUso.Count,
+                    empleadosConFoto = empleadosConFoto.Count,
+                    archivosEliminadosDetalle = archivosEliminadosList
                 });
             }
             catch (Exception ex)

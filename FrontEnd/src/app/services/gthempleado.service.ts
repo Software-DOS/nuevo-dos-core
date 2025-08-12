@@ -262,5 +262,16 @@ export class GthEmpleadoService {
       nuevaUrl: nuevaUrl
     });
   }
+
+  /**
+   * Limpia archivos huérfanos de fotos de empleados (mantenimiento)
+   * @returns Observable con el resultado de la limpieza
+   */
+  limpiarFotosHuerfanas() {
+    return this.http.post(
+      environment.urlbackend + 'api/GTHEmpleado/limpiar-fotos-huerfanas',
+      {}
+    );
+  }
  
 }
