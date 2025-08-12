@@ -47,17 +47,17 @@
       </div>
 
       <!-- Sección Principal -->
-      <div class="main-section">
+      <div class="main-card">
         <!-- Nueva barra lateral con solo dos categorías -->
-        <div class="category-index">
+        <div class="category-index2">
           <ul>
-            <li><div class="category-link" [class.selected]="activeSection === 'datos-personales'" (click)="showSection('datos-personales')">Datos Personales</div></li>
-            <li><div class="category-link" [class.selected]="activeSection === 'info-profesional'" (click)="showSection('info-profesional')">Información Profesional</div></li>
+            <li><div class="category-link2" [class.selected]="activeSection === 'datos-personales'" (click)="showSection('datos-personales')">Datos Personales</div></li>
+            <li><div class="category-link2" [class.selected]="activeSection === 'info-profesional'" (click)="showSection('info-profesional')">Información Profesional</div></li>
           </ul>
         </div>
         <div class="content-area">
           <!-- Sección Datos Personales -->
-          <div id="datos-personales" class="content-section" [class.active]="activeSection === 'datos-personales'" style="margin-left: 1.5rem;">
+          <div id="datos-personales" class="content-section" [class.active]="activeSection === 'datos-personales'" style="margin-bottom: 0;">
             <!-- Sección de Datos Personales -->
             <div class="section-header">
               <h2>Datos Personales</h2>

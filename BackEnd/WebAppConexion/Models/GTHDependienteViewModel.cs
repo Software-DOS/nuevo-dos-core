@@ -15,5 +15,6 @@ namespace WebAppConexion.Models
         public DateTime? DepFechaNacimiento { get; set; }
         public bool? DepDiscapacidad { get; set; }
         public string DepDocumentoUrl { get; set; }
+        public string DepRelacion { get; set; }
     }
 }

@@ -1,6 +1,9 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
 import { iGTHEmpleado } from 'src/app/interface/igth-empleado';
+import { ActivatedRoute } from '@angular/router';
+
+import * as CryptoJS from 'crypto-js';
 
 declare var Swal: any;
 
@@ -40,12 +43,7 @@ interface EmployeeData {
     relationship: string;
     phone: string;
   };
-  family: {
-    spouse: {
-      name: string;
-      marriageDate: string;
-      disability: string;
-    };
+  family: {    
     children: Array<{
       name: string;
       birthDate: string;
@@ -110,6 +108,171 @@ export class AdminCvComponent implements OnInit, AfterViewInit {
   public listaAreas: any[] = [];
   public listaDepartamentos: any[] = [];
 
+  // Variable para almacenar la información del empleado
+  empleado: iGTHEmpleado | null = null;
+  // cedulaEmpleado: string = ''; // Cambia esto por la cédula real del empleado
+
+  /* -------------  Campos para mostrar en el HTML  ----------  */
+// Variables para mostrar la información (solo lectura)
+
+  fotoPerfilUrl: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Imagen por defecto
+  fotoPerfilUrlDisplay: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+  nombreCompletoDisplay: string = ''; 
+  nombresDisplay: string = '';
+  apellidosDisplay: string = '';
+  correoElectronicoDisplay: string = ''; 
+  posicionDisplay: string = ''; 
+  areaDisplay: string = ''; 
+  subareaDisplay: string = '';
+
+  fechaNacimientoDisplay: string = '';
+  sexoDisplay: string = '';
+  tipoSangreDisplay: string = '';
+  etniaDisplay: string = '';
+  numeroCedulaDisplay: string = '';
+  paisNacimientoDisplay: string = '';
+  provinciaNacimientoDisplay: string = '';
+  ciudadNacimientoDisplay: string = '';
+
+  documentoIdentidadDisplay: string = '';
+
+  correoInstitucionalDisplay: string = '';
+  correoPersonalDisplay: string = '';
+  numeroCelularDisplay: string = '';
+  direccionDisplay: string = '';
+
+  nivelEstudioDisplay: string = '';
+  cargasFamiliaresDisplay: string = '';
+
+  nombreEmergenciaDisplay: string = '';
+  relacionEmergenciaDisplay: string = '';
+  telefonoEmergenciaDisplay: string = '';
+
+  estadoConyugalDisplay: string = ''; //Duplicado en html
+  nombreConyugeDisplay: string = '';
+  fechaMatrimonioDisplay: string = '';
+
+  discapacidadConyugeDisplay: string = '';
+  
+  nombreDepDisplay: string = '';
+  fechaNacimientoDepDisplay: string = '';
+  discapacidadDepDisplay: string = '';
+
+  // Dependientes
+  employeeData: {
+    family: {
+      children: Array<{
+        name: string;
+        birthDate: string;
+        disability: string;
+      }>;
+    };
+  } = {
+    family: {
+      children: []  // Por ahora está vacío
+    }
+  };
+  // Empleo actual
+  currentPosition: string = '';
+  employmentStartDate: string = '';
+  currentCompany: string = '';
+  employmentArea: string = '';
+  employmentSubArea: string = '';
+  directManager: string = '';
+  contractType: string = '';
+  employmentLocation: string = '';
+
+
+  // Familia
+  // spouseName: string = 'Ana Martínez López';
+  // spouseMarriageDate: string = '10 de junio de 2015';
+  // spouseDisability: string = 'No';
+
+  // children: { name: string; birthDate: string; disability: string }[] = [
+  //   {
+  //     name: 'Carlos Rodríguez Martínez',
+  //     birthDate: '5 de mayo de 2016',
+  //     disability: 'No'
+  //   }
+  // ];
+
+//   // Empleo actual
+//   currentPosition: string = 'Analista de Sistemas';
+//   employmentStartDate: string = '1 de enero de 2020';
+//   currentCompany: string = 'Tecnología Innovadora S.A.';
+//   employmentArea: string = 'Tecnología de la Información';
+//   employmentSubArea: string = 'Desarrollo de Aplicaciones';
+//   directManager: string = 'María Sánchez';
+//   contractType: string = 'Indefinido';
+//   employmentLocation: string = 'Sede Central Madrid';
+
+//   // Historial laboral
+//   workHistory: { position: string; company: string; dates: string; functions: string }[] = [
+//     {
+//       position: 'Desarrollador Senior',
+//       company: 'Software Solutions Inc.',
+//       dates: '2018 - 2019',
+//       functions: 'Desarrollo de aplicaciones web empresariales, liderazgo de equipo técnico'
+//     },
+//     {
+//       position: 'Desarrollador Full Stack',
+//       company: 'Tech Innovations Ltd.',
+//       dates: '2016 - 2018',
+//       functions: 'Desarrollo full stack, implementación de APIs RESTful'
+//     },
+//     {
+//       position: 'Desarrollador Junior',
+//       company: 'Digital Systems Corp.',
+//       dates: '2014 - 2016',
+//       functions: 'Mantenimiento de aplicaciones web, desarrollo frontend'
+//     }
+//   ];
+
+// // Educación
+// educationDegrees: { level: string; title: string; institution: string }[] = [
+//   {
+//     level: 'Título de Tercer Nivel',
+//     title: 'Ingeniería en Sistemas Informáticos',
+//     institution: 'Universidad Politécnica de Madrid'
+//   },
+//   {
+//     level: 'Títulos de Cuarto Nivel',
+//     title: 'Máster en Desarrollo de Software',
+//     institution: 'ESIC Business School'
+//   },
+//   {
+//     level: 'Títulos de Cuarto Nivel',
+//     title: 'Máster en Gestión de Proyectos IT',
+//     institution: 'IE Business School'
+//   }
+// ];
+
+// certifications: { title: string; institution: string; date: string }[] = [
+//   {
+//     title: 'Certificación AWS Solutions Architect',
+//     institution: 'Amazon Web Services',
+//     date: '2022'
+//   }
+// ];
+
+// // Idiomas
+// languages: { language: string; level: string }[] = [
+//   {
+//     language: 'Inglés',
+//     level: 'Avanzado'
+//   }
+// ];
+
+// // Proyectos
+// projects: { title: string; specialty: string; year: string }[] = [
+//   {
+//     title: 'Sistema de Gestión Empresarial',
+//     specialty: 'Desarrollo Full Stack',
+//     year: '2022'
+//   }
+// ];
+
   // Control de carga
   public cargando: boolean = false;
   public empleadoActual: any = null;
@@ -117,205 +280,199 @@ export class AdminCvComponent implements OnInit, AfterViewInit {
   // Datos del empleado desde el backend
   public empleadoBackend: iGTHEmpleado | null = null;
 
-  employeeData: EmployeeData = {
-    personalInfo: {
-      fullName: 'Juan Carlos Rodríguez Martínez',
-      email: 'juan.rodriguez@empresa.com',
-      position: 'Analista de Sistemas',
-      area: 'Tecnología de la Información',
-      subArea: 'Desarrollo de Aplicaciones',
-      photo: 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
-    },
-    bibliography: {
-      birthDate: '15 de marzo de 1985',
-      birthCountry: 'España',
-      birthProvince: 'Madrid',
-      birthCity: 'Madrid'
-    },
-    personalDetails: {
-      firstName: 'Juan Carlos',
-      lastName: 'Rodríguez Martínez',
-      gender: 'Masculino',
-      maritalStatus: 'Casado',
-      bloodType: 'O+',
-      educationLevel: 'Máster',
-      dependents: 2,
-      ethnic: 'Hispano'
-    },
-    contact: {
-      institutionalEmail: 'juan.rodriguez@empresa.com',
-      personalEmail: 'juanc.rodriguez@gmail.com',
-      cellPhone: '+34 612 345 678',
-      address: 'Calle Serrano 123, 28006 Madrid'
-    },
-    emergency: {
-      name: 'Ana Martínez López',
-      relationship: 'Esposa',
-      phone: '+34 623 456 789'
-    },
-    family: {
-      spouse: {
-        name: 'Ana Martínez López',
-        marriageDate: '10 de junio de 2015',
-        disability: 'No'
-      },
-      children: [
-        {
-          name: 'Carlos Rodríguez Martínez',
-          birthDate: '5 de mayo de 2016',
-          disability: 'No'
-        }
-      ]
-    },
-    employment: {
-      position: 'Analista de Sistemas',
-      startDate: '1 de enero de 2020',
-      company: 'Tecnología Innovadora S.A.',
-      area: 'Tecnología de la Información',
-      subArea: 'Desarrollo de Aplicaciones',
-      directManager: 'María Sánchez',
-      contractType: 'Indefinido',
-      location: 'Sede Central Madrid'
-    },
-    workHistory: [
-      {
-        position: 'Desarrollador Senior',
-        company: 'Software Solutions Inc.',
-        dates: '2018 - 2019',
-        functions: 'Desarrollo de aplicaciones web empresariales, liderazgo de equipo técnico'
-      },
-      {
-        position: 'Desarrollador Full Stack',
-        company: 'Tech Innovations Ltd.',
-        dates: '2016 - 2018',
-        functions: 'Desarrollo full stack, implementación de APIs RESTful'
-      },
-      {
-        position: 'Desarrollador Junior',
-        company: 'Digital Systems Corp.',
-        dates: '2014 - 2016',
-        functions: 'Mantenimiento de aplicaciones web, desarrollo frontend'
-      }
-    ],
-    education: {
-      degrees: [
-        {
-          level: 'Título de Tercer Nivel',
-          title: 'Ingeniería en Sistemas Informáticos',
-          institution: 'Universidad Politécnica de Madrid'
-        },
-        {
-          level: 'Títulos de Cuarto Nivel',
-          title: 'Máster en Desarrollo de Software',
-          institution: 'ESIC Business School'
-        },
-        {
-          level: 'Títulos de Cuarto Nivel',
-          title: 'Máster en Gestión de Proyectos IT',
-          institution: 'IE Business School'
-        }
-      ],
-      certifications: [
-        {
-          title: 'Certificación AWS Solutions Architect',
-          institution: 'Amazon Web Services',
-          date: '2022'
-        }
-      ]
-    },
-    languages: [
-      {
-        language: 'Inglés',
-        level: 'Avanzado'
-      }
-    ],
-    projects: [
-      {
-        title: 'Sistema de Gestión Empresarial',
-        specialty: 'Desarrollo Full Stack',
-        year: '2022'
-      }
-    ]
-  };
+  //employeeData: EmployeeData | null = null;
 
-  currentSection: string = 'bibliografia';
+  
+  
+  currentSection: string = 'info-personal';
   currentSubSection: string = 'info-organizacional';
 
-  constructor(private gthEmpleadoService: GthEmpleadoService) { }
+  constructor(
+    private gthEmpleadoService: GthEmpleadoService,
+    private route: ActivatedRoute 
+  ) { }
+
 
   ngOnInit(): void {
     // Asegurar que bibliografía sea la sección activa por defecto
-    this.currentSection = 'bibliografia';
+    this.currentSection = 'info-personal';
     this.currentSubSection = 'info-organizacional';
     
     // Cargar empleado por defecto (ID 1)
     this.cargarEmpleadoPorId(5);
     this.cargarListasIniciales();
+
+    const encryptedId = this.route.snapshot.paramMap.get('id');
+    const decryptedId = CryptoJS.AES.decrypt(encryptedId!, 'clave_secreta').toString(CryptoJS.enc.Utf8);
+    console.log('Cédula descifrada:', decryptedId); //Borrar
+
+    this.buscarEmpleadoPorCedula(decryptedId);
   }
+
+  /**
+   * Busca un empleado específico por cédula
+   * @param cedula - Cédula del empleado a buscar
+   */
+  buscarEmpleadoPorCedula(cedula: string): void {
+    console.log('Componente: cédula enviada al servicio ->', cedula); // 👈 AÑADIR ESTO
+
+    this.gthEmpleadoService.BuscarPorCedula(cedula).subscribe({
+      next: (empleado: any) => {
+        console.log('Respuesta del backend ->', empleado);
+
+        const datosEmpleado = empleado?.$values?.[0];
+
+        if (datosEmpleado) {
+          this.empleado = datosEmpleado;
+          this.mapearDatosParaMostrar();
+        } else {
+          console.warn('No se encontró empleado con la cédula:', cedula);
+        }
+      },
+      error: (error) => {
+        console.error('Error al buscar empleado por cédula:', error);
+      }
+    });
+  }
+
+  /**
+   * Mapea los datos del empleado a las variables de visualización
+   */
+  private mapearDatosParaMostrar(): void {
+    if (this.empleado) {
+      // Información básica
+      // Mostrar foto si existe, si no usar imagen por defecto
+      this.fotoPerfilUrl = this.empleado.fotoPerfilUrl?.trim()
+      ? this.empleado.fotoPerfilUrl
+      : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+      this.nombreCompletoDisplay = `${this.empleado.nombre} ${this.empleado.apellido}`;
+      this.nombresDisplay = `${this.empleado.nombre}`; 
+      this.apellidosDisplay = `${this.empleado.apellido}`;
+      this.correoElectronicoDisplay = this.empleado.correo || this.empleado.correoCorporativo;
+      this.posicionDisplay = this.empleado.cargoActual;
+      this.areaDisplay = this.empleado.area;
+      this.subareaDisplay = this.empleado.subarea;
+
+      // Información personal
+      this.fechaNacimientoDisplay = this.empleado.fechaNacimiento || '';
+      this.sexoDisplay = this.empleado.sexo;
+      this.tipoSangreDisplay = this.empleado.tipoSangre;
+      this.etniaDisplay = this.empleado.etnia;      
+      this.paisNacimientoDisplay = this.empleado.paisNacimiento;
+      this.provinciaNacimientoDisplay = this.empleado.provinciaNacimiento;
+      this.ciudadNacimientoDisplay = this.empleado.ciudadNacimiento;
+      this.numeroCedulaDisplay = this.empleado.cedula;
+      this.documentoIdentidadDisplay = this.empleado.documentoIdentidad;
+
+      this.correoInstitucionalDisplay = this.empleado.correoCorporativo;
+      this.correoPersonalDisplay = this.empleado.correo;
+      this.numeroCelularDisplay = this.empleado.telefono;
+      this.direccionDisplay = this.empleado.direccion;
+
+      this.nivelEstudioDisplay = this.empleado.nivelEstudio;
+      this.cargasFamiliaresDisplay = (this.empleado.cargasFamiliares ?? 0).toString(); //Asignamos por defecto 0
+
+      this.nombreEmergenciaDisplay = this.empleado.nombreEmergencia;
+      this.relacionEmergenciaDisplay = this.empleado.relacionEmergencia;
+      this.telefonoEmergenciaDisplay = this.empleado.telefonoEmergencia;
+
+      
+
+      //Informacion de Dependientes
+      this.estadoConyugalDisplay = this.empleado.estadoCivil;
+      this.nombreConyugeDisplay = this.empleado.nombreConyuge;
+      this.fechaMatrimonioDisplay = this.empleado.fechaMatrimonio;
+      this.discapacidadConyugeDisplay = this.empleado.discapacidadConyuge === true ? 'Sí' : this.empleado.discapacidadConyuge === false 
+      ? 'No' : 'No registrado'; //Asignamos por defecto
+
+      this.employeeData = {
+        family: {
+          children: [
+            {
+              name: 'Leo',
+              birthDate: '1994-12-01',
+              disability: 'No'
+            },
+            {
+              name: 'Jose',
+              birthDate: '1992-12-01',
+              disability: 'No'
+            }
+          ]
+        }
+      };
+
+    }
+  }  
+
+
+
+
+
+
   ngAfterViewInit(): void {
     this.initializeAnimations();
-    this.showSection('bibliografia');
-    this.showSubcategory('info-organizacional');
     this.initializeStickyNavigation();
     
-    // Asegurar que bibliografía esté seleccionada al cargar
-    setTimeout(() => {
-      this.marcarCategoriaSeleccionada('bibliografia');
-    }, 100);
+    // Mostrar sección inicial (esto ya hace todo: mostrar, marcar, animar)
+    this.showSection('info-personal');
+    this.showSubcategory('info-organizacional'); // si aplica
   }
+
 
   showSection(targetId: string): void {
-    // Hide all sections
-    const sections = document.querySelectorAll('.content-section');
-    sections.forEach(section => {
-      section.classList.remove('active');
+  // Hide all sections
+  const sections = document.querySelectorAll('.content-section');
+  sections.forEach(section => {
+    section.classList.remove('active');
+  });
+  
+  // Reset all category links - CAMBIAR de .category-link a .category-link3
+  const links = document.querySelectorAll('.category-link3');
+  links.forEach(link => {
+    link.classList.remove('selected');
+  });
+  
+  // Show selected section
+  const targetSection = document.getElementById(targetId);
+  if (targetSection) {
+    targetSection.classList.add('active');
+    
+    // Add animation indices for list items
+    const listItems = targetSection.querySelectorAll('li');
+    listItems.forEach((li, index) => {
+      (li as HTMLElement).style.setProperty('--index', index.toString());
     });
-
-    // Reset all category links
-    const links = document.querySelectorAll('.category-link');
-    links.forEach(link => {
-      link.classList.remove('selected');
-    });
-
-    // Show selected section
-    const targetSection = document.getElementById(targetId);
-    if (targetSection) {
-      targetSection.classList.add('active');
-      
-      // Add animation indices for list items
-      const listItems = targetSection.querySelectorAll('li');
-      listItems.forEach((li, index) => {
-        (li as HTMLElement).style.setProperty('--index', index.toString());
-      });
-    }
-
-    // Mark selected link
-    const selectedLink = document.querySelector(`.category-link[data-target="${targetId}"]`);
-    if (selectedLink) {
-      selectedLink.classList.add('selected');
-    }
-
-    this.currentSection = targetId;
   }
-
-  marcarCategoriaSeleccionada(targetId: string): void {
-    // Asegurar que la categoría esté marcada como seleccionada
-    const links = document.querySelectorAll('.category-link');
-    links.forEach(link => {
-      link.classList.remove('selected');
-    });
-
-    const selectedLink = document.querySelector(`.category-link[data-target="${targetId}"]`);
-    if (selectedLink) {
-      selectedLink.classList.add('selected');
-    }
-
-    // También asegurar que la sección esté activa
-    const targetSection = document.getElementById(targetId);
-    if (targetSection) {
-      targetSection.classList.add('active');
-    }
+  
+  // Mark selected link - CAMBIAR de .category-link a .category-link3
+  const selectedLink = document.querySelector(`.category-link3[data-target="${targetId}"]`);
+  if (selectedLink) {
+    selectedLink.classList.add('selected');
   }
+  
+  this.currentSection = targetId;
+}
+
+  // marcarCategoriaSeleccionada(targetId: string): void {
+  //   // Asegurar que la categoría esté marcada como seleccionada
+  //   const links = document.querySelectorAll('.category-link');
+  //   links.forEach(link => {
+  //     link.classList.remove('selected');
+  //   });
+
+  //   const selectedLink = document.querySelector(`.category-link[data-target="${targetId}"]`);
+  //   if (selectedLink) {
+  //     selectedLink.classList.add('selected');
+  //   }
+
+  //   // También asegurar que la sección esté activa
+  //   const targetSection = document.getElementById(targetId);
+  //   if (targetSection) {
+  //     targetSection.classList.add('active');
+  //   }
+  // }
 
   showSubcategory(targetId: string): void {
     const section = document.querySelector(`#${targetId}`)?.closest('.content-section');
@@ -484,7 +641,7 @@ export class AdminCvComponent implements OnInit, AfterViewInit {
         }
         
         if (this.empleadoActual) {
-          this.actualizarDatosEmpleado();
+          //this.actualizarDatosEmpleado();
           // this.mostrarMensajeExito(`Empleado ${this.empleadoActual.nombre} ${this.empleadoActual.apellido} cargado correctamente`);
           console.log(`Empleado ${this.empleadoActual.nombre} ${this.empleadoActual.apellido} cargado correctamente`);
         } else {
@@ -547,75 +704,75 @@ export class AdminCvComponent implements OnInit, AfterViewInit {
     ];
   }
 
-  actualizarDatosEmpleado(): void {
-    if (!this.empleadoActual) return;
+  // actualizarDatosEmpleado(): void {
+  //   if (!this.empleadoActual) return;
     
-    // Actualizar employeeData con los datos del backend
-    this.employeeData = {
-      personalInfo: {
-        fullName: `${this.empleadoActual.nombre || ''} ${this.empleadoActual.apellido || ''}`.trim() || 'Nombre no disponible',
-        email: this.empleadoActual.correo || this.empleadoActual.correoCorporativo || 'Email no disponible',
-        position: this.empleadoActual.cargoActual || 'Cargo no disponible',
-        area: this.empleadoActual.area || 'Área no disponible',
-        subArea: this.empleadoActual.subArea || 'Sub-área no disponible',
-        photo: this.empleadoActual.fotoPerfilUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
-      },
-      bibliography: {
-        birthDate: this.empleadoActual.fechaNacimiento || 'Fecha no disponible',
-        birthCountry: this.empleadoActual.paisNacimiento || 'País no disponible',
-        birthProvince: this.empleadoActual.provinciaNacimiento || 'Provincia no disponible',
-        birthCity: this.empleadoActual.ciudadNacimiento || 'Ciudad no disponible'
-      },
-      personalDetails: {
-        firstName: this.empleadoActual.nombre || 'Nombre no disponible',
-        lastName: this.empleadoActual.apellido || 'Apellido no disponible',
-        gender: this.empleadoActual.sexo || 'No especificado',
-        maritalStatus: this.empleadoActual.estadoCivil || 'No especificado',
-        bloodType: this.empleadoActual.tipoSangre || 'No especificado',
-        educationLevel: this.empleadoActual.nivelEstudio || 'No especificado',
-        dependents: this.empleadoActual.cargasFamiliares || 0,
-        ethnic: this.empleadoActual.etnia || 'No especificado'
-      },
-      contact: {
-        institutionalEmail: this.empleadoActual.correoCorporativo || 'Email no disponible',
-        personalEmail: this.empleadoActual.correo || 'Email no disponible',
-        cellPhone: this.empleadoActual.telefono || 'Teléfono no disponible',
-        address: this.empleadoActual.direccion || 'Dirección no disponible'
-      },
-      emergency: {
-        name: this.empleadoActual.nombreEmergencia || 'No especificado',
-        relationship: this.empleadoActual.relacionEmergencia || 'No especificado',
-        phone: this.empleadoActual.telefonoEmergencia || 'No especificado'
-      },
-      family: {
-        spouse: {
-          name: this.empleadoActual.nombreConyuge || 'No especificado',
-          marriageDate: this.empleadoActual.fechaMatrimonio || 'No especificado',
-          disability: this.empleadoActual.discapacidadConyuge ? 'Sí' : 'No'
-        },
-        children: [] // Esto se cargaría de otra tabla/endpoint
-      },
-      employment: {
-        position: this.empleadoActual.cargoActual || 'Cargo no disponible',
-        startDate: this.empleadoActual.fechaContratacion || 'Fecha no disponible',
-        company: this.empleadoActual.empresa || 'Empresa no disponible',
-        area: this.empleadoActual.area || 'Área no disponible',
-        subArea: this.empleadoActual.subArea || 'Sub-área no disponible',
-        directManager: this.empleadoActual.jefeDirecto || 'No especificado',
-        contractType: this.empleadoActual.tipoContrato || 'No especificado',
-        location: this.empleadoActual.ubicacion || 'No especificado'
-      },
-      workHistory: [], // Esto se cargaría de otra tabla/endpoint
-      education: {
-        degrees: [], // Esto se cargaría de otra tabla/endpoint
-        certifications: [] // Esto se cargaría de otra tabla/endpoint
-      },
-      languages: [], // Esto se cargaría de otra tabla/endpoint
-      projects: [] // Esto se cargaría de otra tabla/endpoint
-    };
+  //   // Actualizar employeeData con los datos del backend
+  //   this.employeeData = {
+  //     personalInfo: {
+  //       fullName: `${this.empleadoActual.nombre || ''} ${this.empleadoActual.apellido || ''}`.trim() || 'Nombre no disponible',
+  //       email: this.empleadoActual.correo || this.empleadoActual.correoCorporativo || 'Email no disponible',
+  //       position: this.empleadoActual.cargoActual || 'Cargo no disponible',
+  //       area: this.empleadoActual.area || 'Área no disponible',
+  //       subArea: this.empleadoActual.subArea || 'Sub-área no disponible',
+  //       photo: this.empleadoActual.fotoPerfilUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+  //     },
+  //     bibliography: {
+  //       birthDate: this.empleadoActual.fechaNacimiento || 'Fecha no disponible',
+  //       birthCountry: this.empleadoActual.paisNacimiento || 'País no disponible',
+  //       birthProvince: this.empleadoActual.provinciaNacimiento || 'Provincia no disponible',
+  //       birthCity: this.empleadoActual.ciudadNacimiento || 'Ciudad no disponible'
+  //     },
+  //     personalDetails: {
+  //       firstName: this.empleadoActual.nombre || 'Nombre no disponible',
+  //       lastName: this.empleadoActual.apellido || 'Apellido no disponible',
+  //       gender: this.empleadoActual.sexo || 'No especificado',
+  //       maritalStatus: this.empleadoActual.estadoCivil || 'No especificado',
+  //       bloodType: this.empleadoActual.tipoSangre || 'No especificado',
+  //       educationLevel: this.empleadoActual.nivelEstudio || 'No especificado',
+  //       dependents: this.empleadoActual.cargasFamiliares || 0,
+  //       ethnic: this.empleadoActual.etnia || 'No especificado'
+  //     },
+  //     contact: {
+  //       institutionalEmail: this.empleadoActual.correoCorporativo || 'Email no disponible',
+  //       personalEmail: this.empleadoActual.correo || 'Email no disponible',
+  //       cellPhone: this.empleadoActual.telefono || 'Teléfono no disponible',
+  //       address: this.empleadoActual.direccion || 'Dirección no disponible'
+  //     },
+  //     emergency: {
+  //       name: this.empleadoActual.nombreEmergencia || 'No especificado',
+  //       relationship: this.empleadoActual.relacionEmergencia || 'No especificado',
+  //       phone: this.empleadoActual.telefonoEmergencia || 'No especificado'
+  //     },
+  //     family: {
+  //       spouse: {
+  //         name: this.empleadoActual.nombreConyuge || 'No especificado',
+  //         marriageDate: this.empleadoActual.fechaMatrimonio || 'No especificado',
+  //         disability: this.empleadoActual.discapacidadConyuge ? 'Sí' : 'No'
+  //       },
+  //       children: [] // Esto se cargaría de otra tabla/endpoint
+  //     },
+  //     employment: {
+  //       position: this.empleadoActual.cargoActual || 'Cargo no disponible',
+  //       startDate: this.empleadoActual.fechaContratacion || 'Fecha no disponible',
+  //       company: this.empleadoActual.empresa || 'Empresa no disponible',
+  //       area: this.empleadoActual.area || 'Área no disponible',
+  //       subArea: this.empleadoActual.subArea || 'Sub-área no disponible',
+  //       directManager: this.empleadoActual.jefeDirecto || 'No especificado',
+  //       contractType: this.empleadoActual.tipoContrato || 'No especificado',
+  //       location: this.empleadoActual.ubicacion || 'No especificado'
+  //     },
+  //     workHistory: [], // Esto se cargaría de otra tabla/endpoint
+  //     education: {
+  //       degrees: [], // Esto se cargaría de otra tabla/endpoint
+  //       certifications: [] // Esto se cargaría de otra tabla/endpoint
+  //     },
+  //     languages: [], // Esto se cargaría de otra tabla/endpoint
+  //     projects: [] // Esto se cargaría de otra tabla/endpoint
+  //   };
     
-    console.log('Datos actualizados del empleado:', this.employeeData);
-  }
+  //   console.log('Datos actualizados del empleado:', this.employeeData);
+  // }
 
   onEmpleadoSeleccionadoChange(): void {
     if (this.empleadoSeleccionado) {

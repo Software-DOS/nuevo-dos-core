@@ -44,7 +44,8 @@ namespace WebAppConexion.Controllers
                 DepNombre = e.DepNombre,
                 DepFechaNacimiento = e.DepFechaNacimiento,
                 DepDiscapacidad = e.DepDiscapacidad,
-                DepDocumentoUrl = e.DepDocumentoUrl
+                DepDocumentoUrl = e.DepDocumentoUrl,
+                DepRelacion = e.DepRelacion
             });
         }
 
@@ -64,7 +65,8 @@ namespace WebAppConexion.Controllers
                 DepNombre = model.DepNombre,
                 DepFechaNacimiento = model.DepFechaNacimiento,
                 DepDiscapacidad = model.DepDiscapacidad,
-                DepDocumentoUrl = model.DepDocumentoUrl
+                DepDocumentoUrl = model.DepDocumentoUrl,
+                DepRelacion = model.DepRelacion
             };
 
             var responseResul = await _repository.Gestionar(db.Tipo, db);

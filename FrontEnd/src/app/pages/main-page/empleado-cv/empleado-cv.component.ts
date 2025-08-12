@@ -140,7 +140,7 @@ export class EmpleadoCvComponent implements OnInit {
   public nuevoHistorialFunciones: string = '';
 
 
-  /* -------------  Campos para mostrar en el HTML  ----------  */
+/* -------------  Campos para mostrar en el HTML  ----------  */
 // Variables para mostrar la información (solo lectura)
 
   fotoPerfilUrl: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Imagen por defecto
@@ -224,7 +224,7 @@ export class EmpleadoCvComponent implements OnInit {
     this.buscarEmpleadoPorCedula('1734567890');
   }
 
-/**
+  /**
    * Busca un empleado específico por cédula
    * @param cedula - Cédula del empleado a buscar
    */

@@ -29,7 +29,7 @@
       <td>{{ empleado.certificaciones }}</td>
     </tr> -->
 
-    <div class="cap-row" *ngFor="let empleado of empleados" (click)="navigateToEmployeeCV()" style="cursor: pointer;">
+<div class="cap-row" *ngFor="let empleado of empleados" (click)="navigateToEmployeeCV(empleado.cedula)" style="cursor: pointer;">
       <div><img [src]="empleado.photo" class="employee-photo" [alt]="empleado.nombre"></div>
       <div>{{ empleado.nombre }}</div>
       <div>{{ empleado.cedula }}</div>
