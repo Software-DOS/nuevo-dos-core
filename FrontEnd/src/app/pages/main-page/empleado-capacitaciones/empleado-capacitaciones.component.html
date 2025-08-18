@@ -39,6 +39,7 @@
           <div>Certificación</div>
           <div>Empresa</div>
           <div>Progreso</div>
+          <div>Certificado</div>
         </div>
         
         <div *ngFor="let training of inProgressTrainings" class="cap-row clickable-row" 
@@ -54,6 +55,24 @@
               <div class="progress-fill" [style.width.%]="training.progreso || 0"></div>
             </div>
             <span class="progress-text">{{ (training.progreso || 0) }}%</span>
+          </div>
+          <div class="certificate-cell" (click)="$event.stopPropagation()">
+            <button *ngIf="training.certificadoUrl" 
+                    class="cert-btn view" 
+                    (click)="verCertificado(training.certificadoUrl)"
+                    title="Ver certificado">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button *ngIf="(training.progreso || 0) >= 75 && (training.progreso || 0) < 100" 
+                    class="cert-btn complete"
+                    (click)="abrirModalCertificado(training, 'complete')"
+                    title="Completar con certificado">
+              <i class="fas fa-certificate"></i>
+            </button>
+            <span *ngIf="!training.certificadoUrl && (training.progreso || 0) < 75" 
+                  class="text-muted small">
+              Progreso mínimo 75% para completar
+            </span>
           </div>
         </div>
 
@@ -103,6 +122,7 @@
           <div>Fecha Completado</div>
           <div>Certificación</div>
           <div>Empresa</div>
+          <div>Certificado</div>
         </div>
 
         <div *ngFor="let training of completedTrainings" class="cap-row">
@@ -111,6 +131,19 @@
           <div>{{ training.completionDate }}</div>
           <div>{{ training.certification }}</div>
           <div>{{ training.company }}</div>
+          <div class="certificate-cell">
+            <button *ngIf="training.certificadoUrl" 
+                    class="cert-btn view" 
+                    (click)="verCertificado(training.certificadoUrl)"
+                    title="Ver certificado">
+              <i class="fas fa-eye"></i>
+              <span>Ver</span>
+            </button>
+            <span *ngIf="!training.certificadoUrl" 
+                  class="text-muted small">
+              Sin certificado
+            </span>
+          </div>
         </div>
 
         <div *ngIf="completedTrainings.length === 0" class="no-data">
@@ -317,6 +350,7 @@
       </form>
     </div>
   </div>
+  </div> <!-- Fin de content-wrapper-tight -->
 
   <!-- Modal de Progreso de Capacitación -->
   <div class="modal-progress" [style.display]="showProgressModal ? 'flex' : 'none'">
@@ -374,7 +408,7 @@
             <button 
               class="milestone-btn completion" 
               [disabled]="(selectedTrainingForProgress.progreso || 0) >= 100 || (selectedTrainingForProgress.progreso || 0) < 75"
-              (click)="actualizarProgreso(100, 'Capacitación completada exitosamente')">
+              (click)="confirmarCompletar100(selectedTrainingForProgress)">
               <i class="fas fa-medal"></i>
               <span>Completar Capacitación</span>
               <small>100% completado</small>
@@ -401,5 +435,73 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal para subir certificado -->
+  <div class="modal-overlay" *ngIf="showCertificateModal" (click)="cerrarModalCertificado()">
+    <div class="progress-modal-content certificate-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          <i class="fas fa-certificate"></i>
+          {{ certificateModalMode === 'complete' ? 'Completar Capacitación con Certificado' : 'Subir Certificado' }}
+        </h3>
+        <button class="close-btn" (click)="cerrarModalCertificado()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="training-info" *ngIf="selectedTrainingForProgress">
+          <h4>{{ selectedTrainingForProgress.name }}</h4>
+          <p><strong>Progreso actual:</strong> {{ selectedTrainingForProgress.progreso || 0 }}%</p>
+        </div>
+
+        <div class="certificate-upload-section">
+          <div class="upload-instructions">
+            <i class="fas fa-file-pdf"></i>
+            <h5>{{ certificateModalMode === 'complete' ? 'Subir certificado y completar al 100%' : 'Subir certificado de la capacitación' }}</h5>
+            <p>Selecciona un archivo PDF con tu certificado de capacitación.</p>
+            <p class="text-muted">Tamaño máximo: 10MB</p>
+          </div>
+
+          <div class="file-input-wrapper">
+            <input type="file" 
+                   id="certificateFile" 
+                   accept=".pdf"
+                   (change)="onFileSelected($event)"
+                   style="display: none;">
+            <label for="certificateFile" class="file-input-label">
+              <i class="fas fa-cloud-upload-alt"></i>
+              {{ selectedCertificateFile ? selectedCertificateFile.name : 'Seleccionar archivo PDF' }}
+            </label>
+          </div>
+
+          <div class="selected-file-info" *ngIf="selectedCertificateFile">
+            <div class="file-info">
+              <i class="fas fa-file-pdf text-danger"></i>
+              <div class="file-details">
+                <span class="file-name">{{ selectedCertificateFile.name }}</span>
+                <span class="file-size">{{ (selectedCertificateFile.size / 1024 / 1024).toFixed(2) }} MB</span>
+              </div>
+              <button class="remove-file-btn" (click)="selectedCertificateFile = null">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="nav-button gray" (click)="cerrarModalCertificado()">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button class="nav-button primary" 
+                [disabled]="!selectedCertificateFile || isUploadingCertificate"
+                (click)="subirCertificado()">
+          <i class="fas fa-spinner fa-spin" *ngIf="isUploadingCertificate"></i>
+          <i class="fas fa-upload" *ngIf="!isUploadingCertificate"></i>
+          {{ certificateModalMode === 'complete' ? 'Subir y Completar' : 'Subir Certificado' }}
+        </button>
+      </div>
+    </div>
   </div>
 </main>

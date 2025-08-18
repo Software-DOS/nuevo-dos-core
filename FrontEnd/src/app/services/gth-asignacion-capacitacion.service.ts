@@ -40,6 +40,7 @@ export interface GTHAsignacionCapacitacionDetalladaModel {
   cedulaEmpleado?: string;
   fecha?: Date;
   progreso?: number;
+  certificadoUrl?: string; // Nueva propiedad para el certificado
   empleado: EmpleadoInfo;
   capacitacion: CapacitacionInfo;
 }
@@ -51,6 +52,15 @@ export interface GTHAsignacionCapacitacionModel {
   cedulaEmpleado?: string;
   fecha?: Date;
   progreso?: number;
+  certificadoUrl?: string; // Nueva propiedad para el certificado
+}
+
+export interface GTHSubirCertificadoResponse {
+  success: boolean;
+  mensaje: string;
+  certificadoUrl: string;
+  nombreArchivo: string;
+  tamanoArchivo: number;
 }
 
 @Injectable({
@@ -133,6 +143,25 @@ export class GthAsignacionCapacitacionService {
         }),
         catchError(this.handleError)
       );
+  }
+
+  /**
+   * Sube un certificado PDF para una asignación de capacitación específica.
+   * Sigue el mismo patrón que subir-foto-perfil del empleado.
+   */
+  subirCertificado(idEmpleado: number, idCapacitacion: number, archivo: File): Observable<GTHSubirCertificadoResponse> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+
+    return this.http.post<GTHSubirCertificadoResponse>(
+      environment.urlbackend + `api/GTHAsignacionCapacitacion/subir-certificado/${idEmpleado}/${idCapacitacion}`,
+      formData
+    ).pipe(
+      tap((response: GTHSubirCertificadoResponse) => {
+        console.log('Certificado subido exitosamente:', response);
+      }),
+      catchError(this.handleError)
+    );
   }
 
   private handleError(error: HttpErrorResponse) {

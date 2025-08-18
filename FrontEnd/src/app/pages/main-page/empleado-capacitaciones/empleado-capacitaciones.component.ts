@@ -21,6 +21,7 @@ interface Training {
   justification?: string;
   link?: string;
   progreso?: number; // Nuevo campo para el porcentaje de progreso
+  certificadoUrl?: string; // Nuevo campo para la URL del certificado
 }
 
 @Component({
@@ -45,6 +46,12 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   selectedTrainingForProgress: Training | null = null;
   progressHistory: any[] = [];
   isUpdatingProgress: boolean = false;
+
+  // Propiedades para el modal de subir certificado
+  showCertificateModal: boolean = false;
+  selectedCertificateFile: File | null = null;
+  isUploadingCertificate: boolean = false;
+  certificateModalMode: 'upload' | 'complete' = 'upload'; // 'upload' para subir, 'complete' para completar al 100%
 
   // NgModel properties for filters
   filtroEmpresa: string = '';
@@ -947,6 +954,183 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     this.selectedTrainingForProgress = null;
     this.progressHistory = [];
     this.isUpdatingProgress = false;
+  }
+
+  /**
+   * Abre el modal para subir certificado
+   */
+  abrirModalCertificado(training: Training, mode: 'upload' | 'complete' = 'upload'): void {
+    this.selectedTrainingForProgress = training;
+    this.certificateModalMode = mode;
+    this.showCertificateModal = true;
+    this.selectedCertificateFile = null;
+  }
+
+  /**
+   * Maneja la selección de archivo de certificado
+   */
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.selectedCertificateFile = file;
+    } else {
+      Swal.fire({
+        title: 'Archivo inválido',
+        text: 'Por favor, selecciona un archivo PDF válido.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#dc3545'
+      });
+      // Limpiar el input
+      event.target.value = '';
+    }
+  }
+
+  /**
+   * Sube el certificado al servidor
+   */
+  async subirCertificado(): Promise<void> {
+    if (!this.selectedTrainingForProgress || !this.selectedCertificateFile) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Selecciona un archivo PDF para subir.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#dc3545'
+      });
+      return;
+    }
+
+    this.isUploadingCertificate = true;
+
+    try {
+      const idEmpleado = this.sessionStorageService.getIdGthEmpleado();
+      
+      if (!idEmpleado) {
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo obtener el ID del empleado.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#dc3545'
+        });
+        return;
+      }
+
+      const response = await this.gthAsignacionCapacitacionService.subirCertificado(
+        idEmpleado,
+        this.selectedTrainingForProgress.id,
+        this.selectedCertificateFile
+      ).toPromise();
+
+      if (response?.success) {
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'Certificado subido correctamente',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#28a745',
+          timer: 2000,
+          timerProgressBar: true
+        });
+        
+        // Actualizar la capacitación con la URL del certificado
+        this.selectedTrainingForProgress.certificadoUrl = response.certificadoUrl;
+        
+        // Si era modal de completar al 100%, actualizar el progreso
+        if (this.certificateModalMode === 'complete') {
+          this.actualizarProgreso(100, 'Capacitación completada con certificado adjunto');
+        }
+        
+        this.cerrarModalCertificado();
+        
+        // Recargar las capacitaciones para reflejar los cambios
+        this.cargarCapacitacionesEnCurso();
+        this.cargarCapacitacionesCompletadas();
+        
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: response?.mensaje || 'Error al subir el certificado. Por favor, intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#dc3545'
+        });
+      }
+    } catch (error) {
+      console.error('Error uploading certificate:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Error al subir el certificado. Por favor, intenta nuevamente.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#dc3545'
+      });
+    } finally {
+      this.isUploadingCertificate = false;
+    }
+  }
+
+  /**
+   * Cierra el modal de certificado
+   */
+  cerrarModalCertificado(): void {
+    this.showCertificateModal = false;
+    this.selectedTrainingForProgress = null;
+    this.selectedCertificateFile = null;
+    this.certificateModalMode = 'upload';
+    this.isUploadingCertificate = false;
+  }
+
+  /**
+   * Ver/Descargar certificado existente
+   */
+  verCertificado(certificadoUrl: string): void {
+    if (certificadoUrl) {
+      // Abrir en nueva ventana para ver o descargar
+      window.open(certificadoUrl, '_blank');
+    } else {
+      Swal.fire({
+        title: 'Sin certificado',
+        text: 'Esta capacitación no tiene certificado subido.',
+        icon: 'info',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#17a2b8'
+      });
+    }
+  }
+
+  /**
+   * Confirma si el usuario quiere completar la capacitación al 100%
+   */
+  confirmarCompletar100(training: Training): void {
+    if (training.certificadoUrl) {
+      // Si ya tiene certificado, completar directamente
+      this.actualizarProgreso(100, 'Capacitación completada');
+    } else {
+      // Si no tiene certificado, preguntar si quiere subirlo
+      Swal.fire({
+        title: '¿Completar Capacitación?',
+        text: 'Para completar la capacitación al 100% se recomienda subir el certificado.',
+        icon: 'question',
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: 'Subir Certificado',
+        denyButtonText: 'Completar sin Certificado',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#28a745',
+        denyButtonColor: '#ffc107',
+        cancelButtonColor: '#6c757d'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Abrir modal para subir certificado y completar
+          this.abrirModalCertificado(training, 'complete');
+        } else if (result.isDenied) {
+          // Completar sin certificado
+          this.actualizarProgreso(100, 'Capacitación completada');
+        }
+      });
+    }
   }
 
   /**

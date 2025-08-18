@@ -470,3 +470,238 @@
     gap: 0.25rem;
   }
 }
+
+/* Estilos para el modal de certificado */
+.certificate-modal {
+  max-width: 500px;
+  min-height: auto;
+}
+
+.certificate-upload-section {
+  margin: 1rem 0;
+}
+
+.upload-instructions {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.upload-instructions i {
+  font-size: 3rem;
+  color: #dc3545;
+  margin-bottom: 1rem;
+}
+
+.upload-instructions h5 {
+  color: #495057;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.upload-instructions p {
+  margin: 0.5rem 0;
+  color: #6c757d;
+}
+
+.file-input-wrapper {
+  position: relative;
+  margin: 1rem 0;
+}
+
+.file-input-label {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  background: #fff;
+  color: #495057;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.file-input-label:hover {
+  border-color: #007bff;
+  background: #f8f9ff;
+  color: #007bff;
+}
+
+.file-input-label i {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.selected-file-info {
+  margin-top: 1rem;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+}
+
+.file-info i {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+}
+
+.file-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.25rem;
+}
+
+.file-size {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.remove-file-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.remove-file-btn:hover {
+  background-color: #f5c6cb;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #dee2e6;
+  text-align: right;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.training-info {
+  background: #e3f2fd;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #2196f3;
+}
+
+.training-info h4 {
+  color: #1976d2;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.training-info p {
+  margin: 0;
+  color: #424242;
+}
+
+/* Responsive para modal de certificado */
+@media (max-width: 576px) {
+  .certificate-modal {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+  }
+  
+  .modal-footer .nav-button {
+    width: 100%;
+    margin: 0.25rem 0;
+  }
+}
+
+/* Estilos para los botones de certificado en las tablas */
+.certificate-cell {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.cert-btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.cert-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.cert-btn.view {
+  background: #17a2b8;
+  color: white;
+}
+
+.cert-btn.view:hover {
+  background: #138496;
+}
+
+.cert-btn.upload {
+  background: #28a745;
+  color: white;
+}
+
+.cert-btn.upload:hover {
+  background: #218838;
+}
+
+.cert-btn.complete {
+  background: #ffc107;
+  color: #212529;
+}
+
+.cert-btn.complete:hover {
+  background: #e0a800;
+}
+
+.cert-btn i {
+  font-size: 0.9rem;
+}
+
+/* Responsive para botones de certificado */
+@media (max-width: 768px) {
+  .cert-btn span {
+    display: none;
+  }
+  
+  .cert-btn {
+    padding: 0.5rem;
+    min-width: 40px;
+    justify-content: center;
+  }
+  
+  .certificate-cell {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
