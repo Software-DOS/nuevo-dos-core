@@ -6,6 +6,7 @@ import { SessionStorageService } from 'src/app/services/session-storage.service'
 import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
 import { LoginService } from 'src/app/services/login.service';
 import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
+import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 
 interface Training {
@@ -269,7 +270,8 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
           certification: asignacion.capacitacion?.titulo || asignacion.capacitacion?.nombre || 'Sin certificación',
           company: 'N/A', // Mantenemos N/A como se usa actualmente
           status: 'En Curso',
-          progreso: asignacion.progreso || 0
+          progreso: asignacion.progreso || 0,
+          certificadoUrl: asignacion.certificadoUrl || '' // Incluir URL del certificado si existe
         }));
 
         console.log('[EmpleadoCapacitaciones] Capacitaciones en curso cargadas para el empleado:', this.inProgressTrainings);
@@ -308,7 +310,8 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
           completionDate: asignacion.fecha ? new Date(asignacion.fecha).toLocaleDateString('es-ES') : 'N/A',
           certification: asignacion.capacitacion?.titulo || asignacion.capacitacion?.nombre || 'Sin certificación',
           company: 'N/A', // Mantenemos N/A como se usa actualmente
-          progreso: asignacion.progreso || 100 // Asegurar que sea al menos 100%
+          progreso: asignacion.progreso || 100, // Asegurar que sea al menos 100%
+          certificadoUrl: asignacion.certificadoUrl || '' // Incluir URL del certificado
         }));
 
         console.log('[EmpleadoCapacitaciones] Capacitaciones completadas cargadas para el empleado:', this.completedTrainings);
@@ -1026,7 +1029,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
       if (response?.success) {
         Swal.fire({
           title: '¡Éxito!',
-          text: 'Certificado subido correctamente',
+          text: 'Certificado subido correctamente. Capacitación completada al 100%.',
           icon: 'success',
           confirmButtonText: 'Aceptar',
           confirmButtonColor: '#28a745',
@@ -1034,19 +1037,20 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
           timerProgressBar: true
         });
         
-        // Actualizar la capacitación con la URL del certificado
+        // Actualizar la capacitación con la URL del certificado y progreso 100%
         this.selectedTrainingForProgress.certificadoUrl = response.certificadoUrl;
-        
-        // Si era modal de completar al 100%, actualizar el progreso
-        if (this.certificateModalMode === 'complete') {
-          this.actualizarProgreso(100, 'Capacitación completada con certificado adjunto');
-        }
+        this.selectedTrainingForProgress.progreso = 100; // El backend ya lo actualiza a 100%
         
         this.cerrarModalCertificado();
         
         // Recargar las capacitaciones para reflejar los cambios
         this.cargarCapacitacionesEnCurso();
         this.cargarCapacitacionesCompletadas();
+        
+        // Cambiar a la pestaña completadas para mostrar el resultado
+        setTimeout(() => {
+          this.switchTab('completado');
+        }, 500);
         
       } else {
         Swal.fire({
@@ -1087,8 +1091,20 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
    */
   verCertificado(certificadoUrl: string): void {
     if (certificadoUrl) {
+      // Construir la URL completa del certificado
+      let urlCompleta = certificadoUrl;
+      
+      // Si la URL no incluye el dominio, agregarle la URL base del backend
+      if (!certificadoUrl.startsWith('http')) {
+        // Remover la barra inicial si existe para evitar doble barra
+        const rutaCertificado = certificadoUrl.startsWith('/') ? certificadoUrl.substring(1) : certificadoUrl;
+        urlCompleta = environment.urlbackend + rutaCertificado;
+      }
+      
+      console.log('[EmpleadoCapacitaciones] Abriendo certificado:', urlCompleta);
+      
       // Abrir en nueva ventana para ver o descargar
-      window.open(certificadoUrl, '_blank');
+      window.open(urlCompleta, '_blank');
     } else {
       Swal.fire({
         title: 'Sin certificado',
@@ -1108,26 +1124,25 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
       // Si ya tiene certificado, completar directamente
       this.actualizarProgreso(100, 'Capacitación completada');
     } else {
-      // Si no tiene certificado, preguntar si quiere subirlo
+      // Si no tiene certificado, solo mostrar opción de subir certificado
       Swal.fire({
         title: '¿Completar Capacitación?',
-        text: 'Para completar la capacitación al 100% se recomienda subir el certificado.',
+        html: `
+          <p>Para completar la capacitación al 100% es necesario subir el certificado.</p>
+          <p style="color: #28a745; font-size: 0.9rem;">
+            ✓ Al subir el certificado, la capacitación se completará automáticamente al 100%
+          </p>
+        `,
         icon: 'question',
         showCancelButton: true,
-        showDenyButton: true,
         confirmButtonText: 'Subir Certificado',
-        denyButtonText: 'Completar sin Certificado',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#28a745',
-        denyButtonColor: '#ffc107',
         cancelButtonColor: '#6c757d'
       }).then((result) => {
         if (result.isConfirmed) {
-          // Abrir modal para subir certificado y completar
+          // Abrir modal para subir certificado (automáticamente completa al 100%)
           this.abrirModalCertificado(training, 'complete');
-        } else if (result.isDenied) {
-          // Completar sin certificado
-          this.actualizarProgreso(100, 'Capacitación completada');
         }
       });
     }

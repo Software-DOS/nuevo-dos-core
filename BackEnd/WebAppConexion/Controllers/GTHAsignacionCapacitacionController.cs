@@ -266,9 +266,11 @@ namespace WebAppConexion.Controllers
                     await archivo.CopyToAsync(stream);
                 }
 
-                // Actualizar la URL en la base de datos
+                // Actualizar la URL en la base de datos Y completar al 100%
                 var certificadoUrl = $"/certificados/{nombreArchivo}";
                 asignacion.CertificadoUrl = certificadoUrl;
+                asignacion.Progreso = 100; // COMPLETAR al 100% al subir certificado
+                asignacion.Fecha = DateTime.Now; // Actualizar fecha de completado
                 asignacion.Tipo = 1; // Tipo 1 para actualizar
 
                 await _repository.Gestionar(asignacion.Tipo, asignacion, empleado.Cedula);
