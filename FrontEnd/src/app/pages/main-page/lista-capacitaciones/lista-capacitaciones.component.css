@@ -663,3 +663,56 @@
   font-size: 1rem;
   resize: vertical;
 }
+
+/* Estilos para botones de certificado */
+.cert-btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.cert-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cert-btn.view {
+  background: #17a2b8;
+  color: white;
+}
+
+.cert-btn.view:hover {
+  background: #138496;
+}
+
+.cert-btn i {
+  font-size: 0.9rem;
+}
+
+.certificate-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive para botones de certificado */
+@media (max-width: 768px) {
+  .cert-btn span {
+    display: none;
+  }
+  
+  .cert-btn {
+    padding: 0.5rem;
+    min-width: 40px;
+    justify-content: center;
+  }
+}

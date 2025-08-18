@@ -4,14 +4,12 @@
     <div class="subcategory-link" [class.active]="activeTab === 'solicitadas'" (click)="setActiveTab('solicitadas')">Solicitadas</div>
     <div class="subcategory-link" [class.active]="activeTab === 'disponible'" (click)="setActiveTab('disponible')">Disponibles</div>
     <div class="subcategory-link" [class.active]="activeTab === 'pendiente'" (click)="setActiveTab('pendiente')">Pendientes</div>
+    <div class="subcategory-link" [class.active]="activeTab === 'completadas'" (click)="setActiveTab('completadas')">Completadas</div>
   </div>
 
   <!-- EN CURSO -->
   <div id="curso" class="subcategory-section" [class.active]="activeTab === 'curso'">
     <div class="mb-3 text-right" *ngIf="!cargandoAsignaciones">
-      <button class="btn btn-sm btn-outline-primary" (click)="refrescarAsignacionesEnCurso()">
-        <i class="fas fa-sync-alt"></i> Actualizar
-      </button>
     </div>
     
     <div *ngIf="cargandoAsignaciones" class="text-center p-3">
@@ -208,9 +206,6 @@
         <i class="fas fa-clock" style="color: #ffc107; margin-right: 8px;"></i>
         Capacitaciones Pendientes
       </h4>
-      <button class="btn btn-sm btn-outline-warning" (click)="refrescarAsignacionesPendientes()" [disabled]="cargandoAsignacionesPendientes">
-        <i class="fas fa-sync-alt" [class.fa-spin]="cargandoAsignacionesPendientes"></i> Actualizar
-      </button>
     </div>
     
     <div class="alert alert-info" style="font-size: 0.9rem;">
@@ -253,6 +248,69 @@
 
     <div *ngIf="!cargandoAsignacionesPendientes && asignacionesPendientes.length === 0" class="text-center p-3" style="color: #6c757d;">
       <i class="fas fa-check-circle" style="color: #28a745;"></i> No hay capacitaciones pendientes. Todos los empleados han iniciado sus capacitaciones asignadas.
+    </div>
+  </div>
+
+  <!-- COMPLETADAS -->
+  <div id="completadas" class="subcategory-section" [class.active]="activeTab === 'completadas'">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h4 style="color: #495057; margin: 0; font-size: 1.2rem; font-weight: 600;">
+        <i class="fas fa-medal" style="color: #28a745; margin-right: 8px;"></i>
+        Capacitaciones Completadas
+      </h4>
+    </div>
+    
+    <div class="alert alert-success" style="font-size: 0.9rem;">
+      <i class="fas fa-info-circle"></i>
+      <strong>Información:</strong> Aquí puedes ver todas las capacitaciones que han sido completadas por los empleados. 
+      Puedes visualizar los certificados subidos por cada empleado.
+    </div>
+
+    <div *ngIf="cargandoCompletadas" class="text-center p-3">
+      <i class="fas fa-spinner fa-spin"></i> Cargando capacitaciones completadas...
+    </div>
+
+    <div *ngIf="!cargandoCompletadas && capacitacionesCompletadas.length > 0" class="cap-table">
+      <div class="cap-header">
+        <div class="empleado-row">Empleado</div>
+        <div>Capacitación</div>
+        <div>Duración (h)</div>
+        <div>Fecha Completado</div>
+        <div>Certificación</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 10px;">Certificado</div>
+      </div>
+      <div class="cap-row" *ngFor="let completada of capacitacionesCompletadas">
+        <div class="empleado-info-column">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+               [alt]="completada.empleado?.nombreCompleto"
+               class="employee-photo">
+          <span>{{ completada.empleado?.nombreCompleto || 'N/A' }}</span>
+        </div>
+        <div>{{ completada.capacitacion?.nombre || completada.capacitacion?.titulo || 'N/A' }}</div>
+        <div>{{ completada.capacitacion?.duracion || 'N/A' }}</div>
+        <div>{{ completada.fecha | date:'dd/MM/yyyy' }}</div>
+        <div>{{ completada.capacitacion?.titulo || completada.capacitacion?.nombre || 'N/A' }}</div>
+        <div class="certificate-cell" style="text-align: center;">
+          <button *ngIf="completada.certificadoUrl" 
+                  class="cert-btn view" 
+                  (click)="verCertificado(completada.certificadoUrl)"
+                  title="Ver certificado">
+            <i class="fas fa-eye"></i>
+            <span>Ver</span>
+          </button>
+          <span *ngIf="!completada.certificadoUrl" 
+                class="text-muted small"
+                style="color: #6c757d; font-style: italic;">
+            Sin certificado
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!cargandoCompletadas && capacitacionesCompletadas.length === 0" class="text-center p-3" style="color: #6c757d;">
+      <i class="fas fa-medal" style="color: #ffc107; font-size: 2rem; margin-bottom: 1rem;"></i>
+      <p style="margin: 0; font-size: 1.1rem; font-weight: 500;">No hay capacitaciones completadas aún.</p>
+      <p style="margin: 0.5rem 0 0 0; color: #868e96;">Las capacitaciones aparecerán aquí cuando los empleados completen el 100% de progreso y suban sus certificados.</p>
     </div>
   </div>
 </main>

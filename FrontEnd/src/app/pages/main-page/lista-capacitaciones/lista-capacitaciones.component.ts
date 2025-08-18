@@ -5,6 +5,7 @@ import { GthAsignacionCapacitacionService, GTHAsignacionCapacitacionDetalladaMod
 import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
 import { iGTHCapacitacion } from 'src/app/interface/ight-capacitacion';
 import { iGTHEmpleado } from 'src/app/interface/igth-empleado';
+import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 
 interface Empleado {
@@ -187,6 +188,10 @@ export class ListaCapacitacionesComponent implements OnInit {
   asignacionesPendientes: GTHAsignacionCapacitacionDetalladaModel[] = [];
   cargandoAsignacionesPendientes: boolean = false;
 
+  // Nuevas propiedades para capacitaciones completadas (vista admin)
+  capacitacionesCompletadas: GTHAsignacionCapacitacionDetalladaModel[] = [];
+  cargandoCompletadas: boolean = false;
+
   // Nuevas propiedades para cargar empleados GTH
   empleadosGTH: iGTHEmpleado[] = [];
   cargandoEmpleadosGTH: boolean = false;
@@ -204,6 +209,7 @@ export class ListaCapacitacionesComponent implements OnInit {
     this.cargarSolicitudesCapacitacion();
     this.cargarAsignacionesEnCurso();
     this.cargarAsignacionesPendientes(); // Cargar asignaciones pendientes
+    this.cargarCapacitacionesCompletadas(); // Cargar capacitaciones completadas
   }
 
   private cargarSolicitudesCapacitacion(): void {
@@ -338,6 +344,44 @@ export class ListaCapacitacionesComponent implements OnInit {
   public refrescarAsignacionesPendientes(): void {
     console.log('[ListaCapacitaciones] Refrescando asignaciones pendientes...');
     this.cargarAsignacionesPendientes();
+  }
+
+  /**
+   * Carga las capacitaciones completadas desde el backend
+   */
+  private cargarCapacitacionesCompletadas(): void {
+    this.cargandoCompletadas = true;
+    console.log('[ListaCapacitaciones] Cargando capacitaciones completadas...');
+
+    // Usar mostrarAsignacionesEnCurso() para obtener todas las asignaciones y filtrar las completadas
+    this.gthAsignacionCapacitacionService.mostrarAsignacionesEnCurso().subscribe({
+      next: (todasAsignaciones: GTHAsignacionCapacitacionDetalladaModel[]) => {
+        console.log('[ListaCapacitaciones] Todas las asignaciones obtenidas:', todasAsignaciones);
+        
+        // Filtrar solo las que tienen progreso >= 100%
+        this.capacitacionesCompletadas = (todasAsignaciones || []).filter(asignacion => 
+          asignacion.progreso !== null && 
+          asignacion.progreso !== undefined && 
+          asignacion.progreso >= 100
+        );
+
+        console.log('[ListaCapacitaciones] Capacitaciones completadas filtradas:', this.capacitacionesCompletadas.length, 'registros');
+        this.cargandoCompletadas = false;
+      },
+      error: (error) => {
+        console.error('[ListaCapacitaciones] Error al cargar capacitaciones completadas:', error);
+        this.capacitacionesCompletadas = []; // Limpiar en caso de error
+        this.cargandoCompletadas = false;
+      }
+    });
+  }
+
+  /**
+   * Refresca la lista de capacitaciones completadas
+   */
+  public refrescarCapacitacionesCompletadas(): void {
+    console.log('[ListaCapacitaciones] Refrescando capacitaciones completadas...');
+    this.cargarCapacitacionesCompletadas();
   }
 
   setActiveTab(tab: string): void {
@@ -979,6 +1023,36 @@ export class ListaCapacitacionesComponent implements OnInit {
       case 'Completada': return 'estado-completada';
       case 'Solicitada': return 'estado-solicitada';
       default: return '';
+    }
+  }
+
+  /**
+   * Ver/Descargar certificado existente
+   */
+  verCertificado(certificadoUrl: string): void {
+    if (certificadoUrl) {
+      // Construir la URL completa del certificado
+      let urlCompleta = certificadoUrl;
+      
+      // Si la URL no incluye el dominio, agregarle la URL base del backend
+      if (!certificadoUrl.startsWith('http')) {
+        // Remover la barra inicial si existe para evitar doble barra
+        const rutaCertificado = certificadoUrl.startsWith('/') ? certificadoUrl.substring(1) : certificadoUrl;
+        urlCompleta = environment.urlbackend + rutaCertificado;
+      }
+      
+      console.log('[ListaCapacitaciones] Abriendo certificado:', urlCompleta);
+      
+      // Abrir en nueva ventana para ver o descargar
+      window.open(urlCompleta, '_blank');
+    } else {
+      Swal.fire({
+        title: 'Sin certificado',
+        text: 'Esta capacitación no tiene certificado subido.',
+        icon: 'info',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#17a2b8'
+      });
     }
   }
 }
