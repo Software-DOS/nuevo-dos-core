@@ -289,5 +289,210 @@ namespace WebAppConexion.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Descarga el acuerdo plantilla para capacitaciones
+        /// </summary>
+        /// <returns>Archivo XLS del acuerdo plantilla</returns>
+        [HttpGet("descargar-acuerdo")]
+        public IActionResult DescargarAcuerdo()
+        {
+            try
+            {
+                var archivoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "archivos_estaticos", "acuerdo_capacitacion.xls");
+                
+                if (!System.IO.File.Exists(archivoPath))
+                {
+                    return NotFound(new { mensaje = "El archivo del acuerdo no se encontró" });
+                }
+
+                var fileBytes = System.IO.File.ReadAllBytes(archivoPath);
+                var fileName = "acuerdo_capacitacion.xls";
+                
+                return File(fileBytes, "application/vnd.ms-excel", fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al descargar el acuerdo", detalle = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Sube el acuerdo firmado por el empleado para una solicitud de capacitación creada
+        /// </summary>
+        /// <param name="idEmpleado">ID del empleado</param>
+        /// <param name="tituloCapacitacion">Título de la capacitación para nombrar el archivo</param>
+        /// <param name="archivo">Archivo XLS del acuerdo firmado</param>
+        /// <returns>Información del acuerdo subido</returns>
+        [HttpPost("subir-acuerdo-capacitacion/{idEmpleado}/{tituloCapacitacion}")]
+        public async Task<IActionResult> SubirAcuerdoCapacitacion(long idEmpleado, string tituloCapacitacion, IFormFile archivo)
+        {
+            try
+            {
+                // Validar que se haya enviado un archivo
+                if (archivo == null || archivo.Length == 0)
+                {
+                    return BadRequest(new { mensaje = "No se ha enviado ningún archivo" });
+                }
+
+                // Validar el tipo de archivo (solo XLS)
+                var extension = Path.GetExtension(archivo.FileName).ToLowerInvariant();
+                if (extension != ".xls" && extension != ".xlsx")
+                {
+                    return BadRequest(new { mensaje = "Tipo de archivo no permitido. Solo se permiten archivos XLS o XLSX" });
+                }
+
+                // Validar tamaño del archivo (10MB máximo)
+                if (archivo.Length > 10 * 1024 * 1024)
+                {
+                    return BadRequest(new { mensaje = "El archivo es demasiado grande. Tamaño máximo: 10MB" });
+                }
+
+                // Verificar que el empleado existe
+                var empleados = await _empleadoRepository.Mostrar(1, (int)idEmpleado);
+                var empleado = empleados.FirstOrDefault();
+                
+                if (empleado == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró el empleado especificado" });
+                }
+
+                // Crear el directorio si no existe
+                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "acuerdo_capacitaciones");
+                if (!Directory.Exists(uploadsPath))
+                {
+                    Directory.CreateDirectory(uploadsPath);
+                }
+
+                // Limpiar el título para usarlo en el nombre del archivo
+                var tituloLimpio = string.Join("_", tituloCapacitacion.Split(Path.GetInvalidFileNameChars()))
+                                        .Replace(" ", "_")
+                                        .ToLowerInvariant();
+
+                // Usar nombre descriptivo con empleado, título y timestamp
+                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                var nombreArchivo = $"empleado_{idEmpleado}_acuerdo_{tituloLimpio}_{timestamp}{extension}";
+                var rutaCompleta = Path.Combine(uploadsPath, nombreArchivo);
+
+                // LIMPIEZA: Eliminar acuerdos anteriores del mismo empleado para esta capacitación
+                var patronBusqueda = $"empleado_{idEmpleado}_acuerdo_{tituloLimpio}_*.*";
+                var archivosAEliminar = Directory.GetFiles(uploadsPath, patronBusqueda);
+                
+                foreach (var archivoAEliminar in archivosAEliminar)
+                {
+                    try
+                    {
+                        System.IO.File.Delete(archivoAEliminar);
+                        Console.WriteLine($"Acuerdo anterior eliminado: {Path.GetFileName(archivoAEliminar)}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al eliminar acuerdo {Path.GetFileName(archivoAEliminar)}: {ex.Message}");
+                    }
+                }
+
+                // Guardar el archivo
+                using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+                {
+                    await archivo.CopyToAsync(stream);
+                }
+
+                return Ok(new 
+                { 
+                    Success = true,
+                    Mensaje = "Acuerdo de capacitación subido exitosamente",
+                    NombreArchivo = nombreArchivo,
+                    TamanoArchivo = archivo.Length,
+                    FechaSubida = DateTime.Now,
+                    TituloCapacitacion = tituloCapacitacion
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Sube el acuerdo firmado por el empleado para una capacitación específica
+        /// </summary>
+        /// <param name="idEmpleado">ID del empleado</param>
+        /// <param name="idCapacitacion">ID de la capacitación</param>
+        /// <param name="archivo">Archivo XLS del acuerdo firmado</param>
+        /// <returns>Información del acuerdo subido</returns>
+        [HttpPost("subir-acuerdo/{idEmpleado}/{idCapacitacion}")]
+        public async Task<IActionResult> SubirAcuerdo(long idEmpleado, long idCapacitacion, IFormFile archivo)
+        {
+            try
+            {
+                // Validar que se haya enviado un archivo
+                if (archivo == null || archivo.Length == 0)
+                {
+                    return BadRequest(new { mensaje = "No se ha enviado ningún archivo" });
+                }
+
+                // Validar el tipo de archivo (solo XLS)
+                var extension = Path.GetExtension(archivo.FileName).ToLowerInvariant();
+                if (extension != ".xls" && extension != ".xlsx")
+                {
+                    return BadRequest(new { mensaje = "Tipo de archivo no permitido. Solo se permiten archivos XLS o XLSX" });
+                }
+
+                // Validar tamaño del archivo (10MB máximo)
+                if (archivo.Length > 10 * 1024 * 1024)
+                {
+                    return BadRequest(new { mensaje = "El archivo es demasiado grande. Tamaño máximo: 10MB" });
+                }
+
+                // Verificar que el empleado existe
+                var empleados = await _empleadoRepository.Mostrar(1, (int)idEmpleado);
+                var empleado = empleados.FirstOrDefault();
+                
+                if (empleado == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró el empleado especificado" });
+                }
+
+                // Verificar que la capacitación existe
+                var capacitaciones = await _capacitacionRepository.Mostrar(1, (int)idCapacitacion);
+                var capacitacion = capacitaciones.FirstOrDefault();
+                
+                if (capacitacion == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró la capacitación especificada" });
+                }
+
+                // Crear el directorio si no existe
+                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "acuerdo_capacitaciones");
+                if (!Directory.Exists(uploadsPath))
+                {
+                    Directory.CreateDirectory(uploadsPath);
+                }
+
+                // Usar nombre con timestamp para mantener historial de acuerdos
+                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                var nombreArchivo = $"empleado_{idEmpleado}_acuerdo_{timestamp}{extension}";
+                var rutaCompleta = Path.Combine(uploadsPath, nombreArchivo);
+
+                // Guardar el archivo
+                using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+                {
+                    await archivo.CopyToAsync(stream);
+                }
+
+                return Ok(new 
+                { 
+                    Success = true,
+                    Mensaje = "Acuerdo subido exitosamente",
+                    NombreArchivo = nombreArchivo,
+                    TamanoArchivo = archivo.Length,
+                    FechaSubida = DateTime.Now
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
     }
 }

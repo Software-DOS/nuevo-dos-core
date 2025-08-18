@@ -63,6 +63,14 @@ export interface GTHSubirCertificadoResponse {
   tamanoArchivo: number;
 }
 
+export interface GTHSubirAcuerdoResponse {
+  success: boolean;
+  mensaje: string;
+  nombreArchivo: string;
+  tamanoArchivo: number;
+  fechaSubida: Date;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -159,6 +167,78 @@ export class GthAsignacionCapacitacionService {
     ).pipe(
       tap((response: GTHSubirCertificadoResponse) => {
         console.log('Certificado subido exitosamente:', response);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Descarga el acuerdo plantilla para capacitaciones
+   */
+  descargarAcuerdo(): Observable<Blob> {
+    return this.http.get(
+      environment.urlbackend + 'api/GTHAsignacionCapacitacion/descargar-acuerdo',
+      { responseType: 'blob' }
+    ).pipe(
+      tap(() => {
+        console.log('Acuerdo descargado exitosamente');
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Sube el acuerdo firmado por el empleado para una capacitación creada con título específico
+   */
+   subirAcuerdoCapacitacion(idEmpleado: number, tituloCapacitacion: string, archivo: File): Observable<GTHSubirAcuerdoResponse> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+
+    // Codificar el título para la URL
+    const tituloEncoded = encodeURIComponent(tituloCapacitacion);
+
+    return this.http.post<GTHSubirAcuerdoResponse>(
+      environment.urlbackend + `api/GTHAsignacionCapacitacion/subir-acuerdo-capacitacion/${idEmpleado}/${tituloEncoded}`,
+      formData
+    ).pipe(
+      tap((response: GTHSubirAcuerdoResponse) => {
+        console.log('Acuerdo de capacitación subido exitosamente:', response);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Sube el acuerdo firmado por el empleado para una solicitud de capacitación
+   */
+  subirAcuerdoSolicitud(idEmpleado: number, archivo: File): Observable<GTHSubirAcuerdoResponse> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+
+    return this.http.post<GTHSubirAcuerdoResponse>(
+      environment.urlbackend + `api/GTHAsignacionCapacitacion/subir-acuerdo-solicitud/${idEmpleado}`,
+      formData
+    ).pipe(
+      tap((response: GTHSubirAcuerdoResponse) => {
+        console.log('Acuerdo de solicitud subido exitosamente:', response);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Sube el acuerdo firmado por el empleado para una capacitación específica
+   */
+  subirAcuerdo(idEmpleado: number, idCapacitacion: number, archivo: File): Observable<GTHSubirAcuerdoResponse> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+
+    return this.http.post<GTHSubirAcuerdoResponse>(
+      environment.urlbackend + `api/GTHAsignacionCapacitacion/subir-acuerdo/${idEmpleado}/${idCapacitacion}`,
+      formData
+    ).pipe(
+      tap((response: GTHSubirAcuerdoResponse) => {
+        console.log('Acuerdo subido exitosamente:', response);
       }),
       catchError(this.handleError)
     );

@@ -54,6 +54,11 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   isUploadingCertificate: boolean = false;
   certificateModalMode: 'upload' | 'complete' = 'upload'; // 'upload' para subir, 'complete' para completar al 100%
 
+  // Propiedades para el manejo del acuerdo de capacitación
+  selectedAgreementFile: File | null = null;
+  isUploadingAgreement: boolean = false;
+  agreementUploaded: boolean = false;
+
   // NgModel properties for filters
   filtroEmpresa: string = '';
   filtroRoadmap: string = '';
@@ -489,7 +494,7 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
           // Crear la solicitud
           this.gthSolicitudCapacitacionService.crearSolicitudCapacitacion(solicitudData).subscribe({
-            next: (responseSolicitud: any) => {
+            next: async (responseSolicitud: any) => {
               console.log('Solicitud de capacitación creada:', responseSolicitud);
               
               // Agregar a la lista local para mostrar inmediatamente
@@ -508,6 +513,11 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
               this.requestedTrainings.push({ training: newRequest, solicitudCapacitacion: responseSolicitud });
               this.saveRequestedTrainings();
+              
+              // Paso 3: Si hay acuerdo seleccionado, subirlo DESPUÉS de crear la solicitud
+              if (this.selectedAgreementFile) {
+                await this.subirAcuerdoCapacitacion(idEmpleadoLogueado, this.certificacionCapacitacion);
+              }
               
               // Mostrar mensaje de éxito
               this.showSuccessMessage();
@@ -564,6 +574,12 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     this.precioCapacitacion = '';
     this.justificacionCapacitacion = '';
     this.enlaceCapacitacion = '';
+    
+    // Limpiar datos del acuerdo
+    this.selectedAgreementFile = null;
+    this.isUploadingAgreement = false;
+    this.agreementUploaded = false;
+    this.contractAccepted = false;
   }
 
   private loadRequestedTrainings(): void {
@@ -598,9 +614,13 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
 
   // Métodos para mostrar mensajes con SweetAlert2
   private showSuccessMessage(): void {
+    const mensajeCompleto = this.selectedAgreementFile ? 
+      'Tu capacitación ha sido registrada en el sistema con estado "Solicitada" y el acuerdo firmado ha sido adjuntado exitosamente.' :
+      'Tu capacitación ha sido registrada en el sistema con estado "Solicitada".';
+      
     Swal.fire({
       title: '¡Solicitud enviada exitosamente!',
-      text: 'Tu capacitación ha sido registrada en el sistema con estado "Solicitada".',
+      text: mensajeCompleto,
       icon: 'success',
       confirmButtonText: 'Aceptar',
       confirmButtonColor: '#28a745'
@@ -1245,6 +1265,129 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
         this.isUpdatingProgress = false;
       }
     });
+  }
+
+  // Métodos para el manejo del acuerdo de capacitación
+
+  /**
+   * Descarga el acuerdo plantilla para capacitaciones
+   */
+  async descargarAcuerdo(): Promise<void> {
+    try {
+      const blob = await this.gthAsignacionCapacitacionService.descargarAcuerdo().toPromise();
+      
+      if (blob) {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'acuerdo_capacitacion.xls';
+        link.click();
+        window.URL.revokeObjectURL(url);
+
+        Swal.fire({
+          title: 'Descarga Completada',
+          text: 'El acuerdo de capacitación se ha descargado exitosamente.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#28a745'
+        });
+      }
+    } catch (error) {
+      console.error('[EmpleadoCapacitaciones] Error al descargar acuerdo:', error);
+      
+      Swal.fire({
+        title: 'Error al Descargar',
+        text: 'Hubo un problema al descargar el acuerdo. Por favor, intenta nuevamente.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#dc3545'
+      });
+    }
+  }
+
+  /**
+   * Maneja la selección del archivo de acuerdo (no lo sube inmediatamente)
+   */
+  onAgreementFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Validar tipo de archivo
+      const extension = file.name.toLowerCase().split('.').pop();
+      if (extension !== 'xls' && extension !== 'xlsx') {
+        Swal.fire({
+          title: 'Tipo de archivo no válido',
+          text: 'Solo se permiten archivos XLS o XLSX.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#ffc107'
+        });
+        return;
+      }
+
+      // Validar tamaño (10MB máximo)
+      if (file.size > 10 * 1024 * 1024) {
+        Swal.fire({
+          title: 'Archivo demasiado grande',
+          text: 'El archivo no puede superar los 10MB.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#ffc107'
+        });
+        return;
+      }
+
+      this.selectedAgreementFile = file;
+      
+      Swal.fire({
+        title: 'Archivo Seleccionado',
+        text: 'El acuerdo se subirá automáticamente después de crear la solicitud de capacitación.',
+        icon: 'info',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#17a2b8'
+      });
+    }
+  }
+
+  /**
+   * Sube el acuerdo firmado al servidor para una capacitación específica
+   */
+  async subirAcuerdoCapacitacion(idEmpleado: number, tituloCapacitacion: string): Promise<void> {
+    if (!this.selectedAgreementFile) {
+      console.log('No hay archivo de acuerdo seleccionado para subir');
+      return;
+    }
+
+    this.isUploadingAgreement = true;
+
+    try {
+      // Usar el endpoint específico que incluye el título de la capacitación
+      const response = await this.gthAsignacionCapacitacionService.subirAcuerdoCapacitacion(
+        idEmpleado,
+        tituloCapacitacion,
+        this.selectedAgreementFile
+      ).toPromise();
+
+      if (response && response.success) {
+        this.agreementUploaded = true;
+        
+        console.log('Acuerdo subido exitosamente:', response);
+        
+        // No mostrar modal aquí porque ya se mostrará el de éxito de la solicitud
+        // Solo actualizar el estado interno
+      }
+    } catch (error) {
+      console.error('[EmpleadoCapacitaciones] Error al subir acuerdo:', error);
+      
+      Swal.fire({
+        title: 'Advertencia',
+        text: 'La solicitud se creó exitosamente, pero hubo un problema al subir el acuerdo. Puedes subirlo más tarde.',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#ffc107'
+      });
+    } finally {
+      this.isUploadingAgreement = false;
+    }
   }
 
 }

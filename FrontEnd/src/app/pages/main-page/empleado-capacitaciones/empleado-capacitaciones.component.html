@@ -232,6 +232,49 @@
         </p>
       </div>
       
+      <!-- Sección de Acuerdo de Capacitación -->
+      <div class="agreement-section mt-3">
+        <h4>5. Acuerdo de Capacitación</h4>
+        <p class="mb-3">
+          Descargue, complete y firme el acuerdo de capacitación, luego súbalo como parte de su solicitud.
+        </p>
+        
+        <div class="agreement-actions">
+          <button class="nav-button secondary" (click)="descargarAcuerdo()">
+            <i class="fas fa-download"></i> Descargar Acuerdo
+          </button>
+          
+          <div class="agreement-upload mt-2">
+            <input type="file" 
+                   id="agreementFile" 
+                   accept=".xls,.xlsx"
+                   (change)="onAgreementFileSelected($event)"
+                   style="display: none;">
+            <label for="agreementFile" class="nav-button" 
+                   [class.success]="selectedAgreementFile"
+                   [class.disabled]="false">
+              <i class="fas fa-upload" *ngIf="!selectedAgreementFile"></i>
+              <i class="fas fa-check" *ngIf="selectedAgreementFile"></i>
+              {{ selectedAgreementFile ? 'Acuerdo Seleccionado' : 'Seleccionar Acuerdo Firmado' }}
+            </label>
+            <small class="form-text text-muted">El acuerdo se subirá automáticamente después de crear la solicitud</small>
+          </div>
+          
+          <div class="selected-agreement-info" *ngIf="selectedAgreementFile">
+            <div class="file-info">
+              <i class="fas fa-file-excel text-success"></i>
+              <div class="file-details">
+                <span class="file-name">{{ selectedAgreementFile.name }}</span>
+                <span class="file-size">{{ (selectedAgreementFile.size / 1024 / 1024).toFixed(2) }} MB</span>
+              </div>
+              <button class="remove-file-btn" (click)="selectedAgreementFile = null">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div class="form-group mt-3">
         <label class="flex-gap">
           <input type="checkbox" [(ngModel)]="contractAccepted" (change)="onContractAcceptedChange()">
