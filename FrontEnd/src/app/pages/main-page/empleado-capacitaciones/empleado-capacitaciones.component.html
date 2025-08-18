@@ -267,7 +267,7 @@
                 <span class="file-name">{{ selectedAgreementFile.name }}</span>
                 <span class="file-size">{{ (selectedAgreementFile.size / 1024 / 1024).toFixed(2) }} MB</span>
               </div>
-              <button class="remove-file-btn" (click)="selectedAgreementFile = null">
+              <button class="remove-file-btn" (click)="removeAgreementFile()">
                 <i class="fas fa-times"></i>
               </button>
             </div>
@@ -277,9 +277,13 @@
       
       <div class="form-group mt-3">
         <label class="flex-gap">
-          <input type="checkbox" [(ngModel)]="contractAccepted" (change)="onContractAcceptedChange()">
+          <input type="checkbox" [(ngModel)]="contractAccepted" (change)="onContractAcceptedChange()"
+                 [disabled]="!selectedAgreementFile">
           <span>He leído y acepto los términos y condiciones para la solicitud de capacitación.</span>
         </label>
+        <small class="form-text text-muted" *ngIf="!selectedAgreementFile">
+          <i class="fas fa-info-circle"></i> Debes seleccionar el acuerdo firmado antes de aceptar los términos.
+        </small>
       </div>
       
       <div class="edit-controls">

@@ -350,7 +350,10 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
   }
 
   onContractAcceptedChange(): void {
-    // contractAccepted is already bound via [(ngModel)]
+    // Si no hay archivo seleccionado, no permitir aceptar
+    if (!this.selectedAgreementFile) {
+      this.contractAccepted = false;
+    }
   }
 
   signContract(): void {
@@ -575,11 +578,8 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
     this.justificacionCapacitacion = '';
     this.enlaceCapacitacion = '';
     
-    // Limpiar datos del acuerdo
-    this.selectedAgreementFile = null;
-    this.isUploadingAgreement = false;
-    this.agreementUploaded = false;
-    this.contractAccepted = false;
+    // Limpiar datos del acuerdo y términos
+    this.removeAgreementFile();
   }
 
   private loadRequestedTrainings(): void {
@@ -1303,6 +1303,15 @@ export class EmpleadoCapacitacionesComponent implements OnInit {
         confirmButtonColor: '#dc3545'
       });
     }
+  }
+
+  /**
+   * Remueve el archivo de acuerdo seleccionado y desmarca la aceptación de términos
+   */
+  removeAgreementFile(): void {
+    this.selectedAgreementFile = null;
+    this.contractAccepted = false;
+    this.agreementUploaded = false;
   }
 
   /**
