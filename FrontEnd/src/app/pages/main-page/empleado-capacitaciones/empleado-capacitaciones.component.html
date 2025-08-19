@@ -31,6 +31,12 @@
 
     <!-- EN CURSO -->
     <div id="curso" class="subcategory-section" [class.active]="activeTab === 'curso'">
+      <div class="alert alert-info" style="font-size: 0.9rem;">
+        <i class="fas fa-info-circle"></i>
+        <strong>Información:</strong> Aquí encuentras las capacitaciones que tienes actualmente en progreso. 
+        Puedes subir certificados y actualizar tu avance conforme completes cada capacitación.
+      </div>
+
       <div class="cap-table">
         <div class="cap-header">
           <div>Nombre</div>
@@ -80,6 +86,12 @@
 
     <!-- DISPONIBLES -->
     <div id="disponible" class="subcategory-section" [class.active]="activeTab === 'disponible'">
+      <div class="alert alert-success" style="font-size: 0.9rem;">
+        <i class="fas fa-info-circle"></i>
+        <strong>Información:</strong> Catálogo de capacitaciones disponibles para solicitar. 
+        Haz clic en cualquier capacitación para ver más detalles y suscribirte.
+      </div>
+
       <div class="cap-table">
         <div class="cap-header">
           <div>Nombre</div>
@@ -109,6 +121,12 @@
 
     <!-- COMPLETADAS -->
     <div id="completado" class="subcategory-section" [class.active]="activeTab === 'completado'">
+      <div class="alert alert-info" style="font-size: 0.9rem;">
+        <i class="fas fa-info-circle"></i>
+        <strong>Información:</strong> Registro de todas las capacitaciones que has completado exitosamente. 
+        Aquí puedes visualizar los certificados de tus logros académicos.
+      </div>
+
       <div class="cap-table">
         <div class="cap-header">
           <div>Nombre</div>
@@ -150,12 +168,10 @@
 
   <!-- SOLICITADAS -->
   <div id="solicitadas" class="subcategory-section" [class.active]="activeTab === 'solicitadas'">
-    <!-- Información del flujo para el usuario (solo si hay solicitudes o puede hacer solicitudes) -->
-    <div class="alert alert-info mb-3" *ngIf="requestedTrainings.length > 0 || showRequestButton">
+    <div class="alert alert-success" style="font-size: 0.9rem;">
       <i class="fas fa-info-circle"></i>
-      <strong>¿Cómo funciona?</strong> Las capacitaciones solicitadas pasan por un proceso de aprobación. 
-      Una vez <span class="badge-success" style="padding: 0.15em 0.3em; border-radius: 0.2em;">Aprobadas</span> por el administrador, 
-      pasarán automáticamente a tu sección "En Curso".
+      <strong>Información:</strong> Capacitaciones que has solicitado y están en proceso de aprobación. 
+      Una vez aprobadas por el administrador, aparecerán automáticamente en tu sección "En Curso".
     </div>
     
     <div class="cap-table">
