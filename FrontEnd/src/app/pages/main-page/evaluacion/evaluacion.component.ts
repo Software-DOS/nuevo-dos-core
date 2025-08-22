@@ -7,7 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EvaluacionComponent implements OnInit {
 
-  activeSection: string = 'hoja-ruta';
+  // Variable para el menú principal (superior)
+  activeSection: string = 'hoja-ruta'; // Siempre inicia en hoja de ruta
+  
+  // Variable para el timeline (sub-menú cuando está en hoja-ruta)
+  activeTimelineStep: string = 'Captura-Resultados'; // Por defecto la primera sección
+
 
   // Employee Information
   employee = {
@@ -38,12 +43,73 @@ export class EvaluacionComponent implements OnInit {
 
   // Timeline Steps
   timelineSteps = [
-    { number: 1, label: 'Inicio', completed: true, icon: 'fas fa-check' },
-    { number: 2, label: 'Revisión Inicial', completed: false },
-    { number: 3, label: 'Evaluación Intermedia', completed: false },
-    { number: 4, label: 'Retroalimentación', completed: false },
-    { number: 5, label: 'Cierre', completed: false }
+    { 
+      number: 1, 
+      label: 'Captura de Resultados', 
+      completed: true, 
+      icon: 'fas fa-check',
+      pngIcon: 'assets/img/iconos/iconos mycollection/png/062-reloj-de-arena.png',
+      sectionId: 'Captura-Resultados'
+    },
+    { 
+      number: 2, 
+      label: 'Revisión Inicial', 
+      completed: false,
+      pngIcon: 'assets/img/iconos/iconos mycollection/png/035-retroalimentacion-7.png',
+      sectionId: 'Revision-Inicial'
+    },
+    { 
+      number: 3, 
+      label: 'Evaluación Intermedia', 
+      completed: false,
+      pngIcon: 'assets/img/iconos/iconos mycollection/png/051-lista-de-verificacion.png',
+      sectionId: 'Evaluacion-Intermedia'
+    },
+    { 
+      number: 4, 
+      label: 'Retroalimentación', 
+      completed: false,
+      pngIcon: 'assets/img/iconos/iconos mycollection/png/028-grafico.png',
+      sectionId: 'Retroalimentacion'
+    },
+    { 
+      number: 5, 
+      label: 'Cierre', 
+      completed: false,
+      pngIcon: 'assets/img/iconos/iconos mycollection/png/056-alcanzando-objetivos.png',
+      sectionId: 'Cierre'
+    }
   ];
+
+  // Método para cambiar la sección activa
+  onStepKeyDown(event: KeyboardEvent, step: any): void {
+  // Activar con Enter o Espacio
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault(); // Prevenir scroll con espacio
+    this.onStepClick(step);
+  }
+}
+  // Método para el timeline (solo funciona cuando está en hoja-ruta)
+  onStepClick(step: any): void {
+    // Solo cambiar el step si estamos en la sección hoja-ruta
+    if (this.activeSection === 'hoja-ruta') {
+      this.activeTimelineStep = step.sectionId;
+      console.log('Timeline step seleccionado:', this.activeTimelineStep);
+    }
+  }
+  // Método para verificar si un step del timeline está activo
+  isTimelineStepActive(sectionId: string): boolean {
+    return this.activeSection === 'hoja-ruta' && this.activeTimelineStep === sectionId;
+  }
+
+  // Método para verificar si estamos en la sección hoja-ruta
+  isInHojaRuta(): boolean {
+    return this.activeSection === 'hoja-ruta';
+  }
+
+
+
+
 
   // Objectives (KPIs)
   objectives = [
@@ -77,13 +143,28 @@ export class EvaluacionComponent implements OnInit {
     }
   ];
 
+
+
+
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  // showSection(targetId: string): void {
+  //   this.activeSection = targetId;
+  // }
+  // Método para el menú principal
   showSection(targetId: string): void {
     this.activeSection = targetId;
+    
+    // Si selecciona "hoja-ruta", resetea al primer paso del timeline
+    if (targetId === 'hoja-ruta') {
+      this.activeTimelineStep = 'Captura-Resultados';
+    }
+    
+    console.log('Sección principal activa:', this.activeSection);
+    console.log('Step del timeline activo:', this.activeTimelineStep);
   }
 
   toggleDropdown(): void {

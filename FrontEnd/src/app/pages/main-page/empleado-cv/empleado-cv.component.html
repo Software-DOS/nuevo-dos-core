@@ -249,35 +249,47 @@
 
               <!-- Dependientes -->
               <h3 class="subtitulo-etiquetas" style="margin-top: 2rem;">Dependientes</h3>
+                <div *ngFor="let dependiente of dependientesDisplay; let i = index" class="dependent-card">
+                  <h5>Dependiente {{i + 1}}</h5>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <div class="span-etiquetas"><span class="label-form">Nombre:</span></div>
+                      <div class="span-etiquetasRespuesta" style="width: 60%;">
+                        <span class="value">{{ dependiente.nombre || '' }}</span>
+                      </div>                    
+                    </div>
+                    <div class="info-item">
+                      <div class="span-etiquetas"><span class="label-form">Fecha de Nacimiento:</span></div>
+                      <div class="span-etiquetasRespuesta" style="width: 60%;">
+                        <span class="value">{{ dependiente.fechaNacimiento || '' }}</span>
+                      </div>                    
+                    </div>
+                  </div>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <div class="span-etiquetas"><span class="label-form">Discapacidad:</span></div>
+                      <div class="span-etiquetasRespuesta" style="width: 60%;">
+                        <span class="value">{{ dependiente.discapacidad || 'Ninguna' }}</span>
+                      </div>                    
+                    </div>
+                    <div class="info-item">
+                      <div class="span-etiquetas"><span class="label-form">Relación:</span></div>
+                      <div class="span-etiquetasRespuesta" style="width: 60%;">
+                        <span class="value">{{ dependiente.relacion || '' }}</span>
+                      </div>                    
+                    </div>
+                  </div>
+                  <div class="info-grid" *ngIf="dependiente.documentoBase64">
+                    <div class="info-item">
+                      <div class="span-etiquetas"><span class="label-form">Documentos:</span></div>
+                      <span class="value">[Archivo adjunto]</span>
+                    </div>
+                  </div>
+                </div>
 
-              <div class="dependent-card">
-                <div class="info-grid">
-                  <div class="info-item">
-                    <div class="span-etiquetas"><span class="label-form">Nombre:</span></div>
-                    <div class="span-etiquetasRespuesta" style="width: 60%;">
-                      <span class="value">{{ nombreDepDisplay || '' }}</span>
-                    </div>                    
-                  </div>
-                  <div class="info-item">
-                    <div class="span-etiquetas"><span class="label-form">Fecha de Nacimiento:</span></div>
-                    <div class="span-etiquetasRespuesta" style="width: 60%;">
-                      <span class="value">{{ fechaNacimientoDepDisplay || '' }}</span>
-                    </div>                    
-                  </div>
+                <div *ngIf="dependientesDisplay.length === 0" class="dependent-card">
+                  <p class="text-muted">No hay dependientes registrados</p>
                 </div>
-                <div class="info-grid">
-                  <div class="info-item">
-                    <div class="span-etiquetas"><span class="label-form">Discapacidad:</span></div>
-                    <div class="span-etiquetasRespuesta" style="width: 60%;">
-                      <span class="value">{{ discapacidadDepDisplay || '' }}</span>
-                    </div>                    
-                  </div>
-                  <div class="info-item">
-                    <div class="span-etiquetas"><span class="label-form">Documentos:</span></div>
-                    <span class="value">[Archivo adjunto]</span>
-                  </div>
-                </div>
-              </div>
             </section>
 
             <!-- Dependientes -->
@@ -1132,18 +1144,35 @@
 
       <!-- Dependientes -->
       <h4 class="form-section-subtitle mt-4">Dependientes</h4>
-      <div *ngFor="let dependiente of dependientes; let i = index" class="form-group-box">
-        <div class="form-row">
-          <input type="text" [(ngModel)]="dependientes[i].nombre" placeholder="Nombre" class="form-input">
-          <input type="date" [(ngModel)]="dependientes[i].fechaNacimiento" class="form-input">
+        <div *ngFor="let dependiente of dependientes; let i = index" class="form-group-box">
+          <div class="form-row">
+            <input type="text" [(ngModel)]="dependientes[i].nombre" placeholder="Nombre completo" class="form-input" required>
+            <input type="date" [(ngModel)]="dependientes[i].fechaNacimiento" class="form-input">
+          </div>
+          <div class="form-row">
+            <input type="text" [(ngModel)]="dependientes[i].discapacidad" placeholder="Discapacidad (opcional)" class="form-input">
+            <select [(ngModel)]="dependientes[i].relacion" class="form-input">
+              <option value="">Seleccionar relación</option>
+              <option value="Hijo/a">Hijo/a</option>
+              <option value="Padre/Madre">Padre/Madre</option>
+              <option value="Hermano/a">Hermano/a</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <input type="file" class="form-input" accept=".pdf" 
+                  (change)="onFileSelectedDep($event, i)">
+            <button type="button" class="btn btn-danger btn-sm" 
+                    (click)="eliminarDependiente(i)" 
+                    *ngIf="dependientes.length > 1">
+              Eliminar
+            </button>
+          </div>
         </div>
-        <div class="form-row">
-          <input type="text" [(ngModel)]="dependientes[i].discapacidad" placeholder="Discapacidad" class="form-input">
-          <input type="file" class="form-input" accept=".pdf">
-        </div>
-      </div>
 
-      <button class="btn btn-secondary mt-2" (click)="agregarDependiente()">+ Añadir Dependiente</button>
+        <button class="btn btn-secondary mt-2" (click)="agregarDependiente()">
+          + Añadir Dependiente
+        </button>
     </div>
 
     <div class="modal-footer">
