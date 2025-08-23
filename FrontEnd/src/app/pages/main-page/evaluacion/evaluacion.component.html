@@ -376,7 +376,7 @@
         <!-- Botón Enviar -->
         <div style="">
           <button class="submit-btn" style="margin-left: 2rem;">Enviar</button>
-          <button class="revision-btn">Revisar</button>
+          <!-- <button class="revision-btn">Revisar</button> -->
         </div>
         
         
@@ -385,10 +385,161 @@
     </div><!-- fin Captura de datos -->
 
     <!-- Formulario: Evaluación Intermedia -->
-    <div class="evaluation-form" 
-        *ngIf="isTimelineStepActive('Evaluacion-Intermedia')">
-      <h3>Evaluación Intermedia</h3>
-      <div class="form-section">
+    <div class="evaluation-form" *ngIf="isTimelineStepActive('Evaluacion-Intermedia')">
+      <h4 class="titulos-pequeños">Evaluación Intermedia</h4>
+        <!-- Objetivo Área -->
+        <div class="form-section">          
+          <div class="section-title" style="display:flex; gap:1rem;">
+            <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena" class="icono-normal">
+            Objetivo Área
+          </div>
+          <div class="form-row" style="margin-left: 2rem; margin-right: 2rem;">
+            <span class="">Objetivo ingresado por el jefe del área: Optimizar los procesos internos de la organización mediante la implementación, gestión y soporte de soluciones tecnológicas innovadoras, seguras y eficientes, que permitan mejorar la productividad, garantizar la continuidad operativa y apoyar la toma de decisiones estratégicas. </span>
+            <!-- <input type="date" class="date-input"> -->
+          </div>
+        </div>
+
+        <!-- Objetivos -->
+        <div class="form-section" style="margin-left: 2rem;">
+          <div style="display:flex; justify-content: space-between;" >
+            <div class="section-title" style="color:#064eb4">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor">
+                  Objetivos: 
+              </div>                
+            </div>
+            <div style="align-content: center;">
+              <span class="titulos-pequeños-columna" style="margin-right: 1rem;">Calificación</span>
+              <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Reconsiderar</span>
+              <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha estimada</span>
+            </div>              
+          </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
+                <span class="item-number">1.</span>                
+              </div>                
+                <input type="text" class="text-input" placeholder="Objetivo 1">
+                <input type="number" class="number-input" min="0" max="100" value="0">
+                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
+                <span class="item-number">2.</span>                
+              </div>                  
+                <input type="text" class="text-input" placeholder="Objetivo 2">
+                <input type="number" class="number-input" min="0" max="100" value="0">
+                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
+                <span class="item-number">3.</span>                
+              </div>   
+                <input type="text" class="text-input" placeholder="Objetivo 3">
+                <input type="number" class="number-input" min="0" max="100" value="0">
+                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
+                <span class="item-number">4.</span>                
+              </div>                  
+                <input type="text" class="text-input" placeholder="Objetivo 4">
+                <input type="number" class="number-input" min="0" max="100" value="0">
+                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
+                <span class="item-number">5.</span>                
+              </div>                  
+                <input type="text" class="text-input" placeholder="Objetivo 5">
+                <input type="number" class="number-input" min="0" max="100" value="0">
+                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="percentage-display">60%</div>
+        </div>
+
+        <!-- Competencias -->
+        <div class="form-section" style="margin-left: 2rem;">
+            <div class="section-title purple">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj" class="icono-menor">
+                Competencias: 
+              </div>
+            </div>
+              
+            <div class="form-row">
+              <span class="item-number">1.</span>
+              <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
+              <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de liderazgo y comunicación efectiva</span>
+              <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
+                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+              <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">2.</span>
+                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia técnica especializada</span>
+                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
+                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">3.</span>
+                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de trabajo en equipo</span>
+                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
+                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">4.</span>
+                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de resolución de problemas</span>
+                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
+                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">5.</span>
+                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de adaptabilidad</span>
+                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
+                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="percentage-display">40%</div>
+        </div>
+
+        <!-- Total -->
+        <!-- <div class="total-percentage">100%</div> -->
+          
+        <!-- Botón Enviar -->
+        <div style="">
+          <button class="submit-btn" style="margin-left: 2rem;">Enviar</button>
+        </div>
+        <div style="clear: both;"></div>
+
+              <div class="form-section">
         <div class="section-title">Progreso Intermedio</div>
         <div class="form-row">
           <input type="text" class="text-input" placeholder="Evaluación del progreso">
