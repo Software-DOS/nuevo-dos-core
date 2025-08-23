@@ -275,5 +275,26 @@ export class GthEmpleadoService {
       {}
     );
   }
+
+  /**
+   * Guardar o actualizar dependiente
+   */
+  GuardarDependiente(data: Idependiente) {
+    return this.http.post(environment.urlbackend + "api/GTHDependiente/Gestionar", data);
+  }
+
+  /**
+   * Obtener dependientes por cédula del empleado
+   */
+  ObtenerDependientes(cedulaEmpleado: string) {
+    return this.http.get(environment.urlbackend + `api/GTHDependiente/ObtenerPorEmpleado/${cedulaEmpleado}`);
+  }
+
+  /**
+   * Eliminar dependiente
+   */
+  EliminarDependiente(cedulaEmpleado: string, nombreDependiente: string) {
+    return this.http.delete(environment.urlbackend + `api/GTHDependiente/Eliminar/${cedulaEmpleado}/${nombreDependiente}`);
+  }
  
 }
