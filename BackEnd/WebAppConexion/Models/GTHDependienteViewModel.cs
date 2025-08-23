@@ -12,7 +12,7 @@ namespace WebAppConexion.Models
         public int IdDependiente { get; set; }
         public string CedulaEmpleado { get; set; }
         public string DepNombre { get; set; }
-        public DateTime? DepFechaNacimiento { get; set; }
+        public string DepFechaNacimiento { get; set; }
         public bool? DepDiscapacidad { get; set; }
         public string DepDocumentoUrl { get; set; }
         public string DepRelacion { get; set; }

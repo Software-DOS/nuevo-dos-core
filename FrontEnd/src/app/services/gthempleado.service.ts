@@ -4,6 +4,7 @@ import {environment} from 'src/environments/environment';
 import { map, tap, catchError } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 import { iGTHEmpleado } from '../interface/igth-empleado';
+import { Idependiente} from '../interface/idependiente';
 
 @Injectable({
   providedIn: 'root'
