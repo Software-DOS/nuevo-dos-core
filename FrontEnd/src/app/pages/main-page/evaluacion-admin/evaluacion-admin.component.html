@@ -1,0 +1,438 @@
+<!-- Tarjeta del Empleado -->
+<div class="employe-card">
+  <h1 style="color: lightslategray;">Evaluación de Desempeño 2025 - Vista Administrativa</h1>
+  <div class="employee-card2">
+    <img [src]="employee.avatar" alt="Foto del Empleado" class="employee-image">
+    <div class="employee-personal-info">
+      <h2>{{ employee.name }}</h2>
+      <div class="info-field">
+        <i class="info-icon far fa-envelope"></i>
+        <p>{{ employee.email }}</p>
+      </div>
+      <div class="info-field">
+        <i class="info-icon far fa-gem"></i>
+        <p class="employee-position">{{ employee.position }}</p>
+      </div>      
+    </div>
+  </div>
+  
+</div>
+
+<div class="main-card">
+  <div class="category-index2">
+    <ul>
+      <li>
+        <div class="category-link2" [class.selected]="activeSection === 'hoja-ruta'" (click)="showSection('hoja-ruta')">
+          Hoja de Ruta
+        </div>
+      </li>
+      <li>
+        <div class="category-link2" [class.selected]="activeSection === 'info-colaborador'" (click)="showSection('info-colaborador')">
+          Información del Colaborador
+        </div>
+      </li>
+      <li>
+        <div class="category-link2" [class.selected]="activeSection === 'fechas-revision'" (click)="showSection('fechas-revision')">
+          Fechas de Revisión
+        </div>
+      </li>
+      <li>
+        <div class="category-link2" [class.selected]="activeSection === 'objetivos'" (click)="showSection('objetivos')">
+          Objetivos
+        </div>
+      </li>
+      <li>
+        <div class="category-link2" [class.selected]="activeSection === 'competencias'" (click)="showSection('competencias')">
+          Competencias
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="content-area">
+    <!-- Hoja de Ruta -->
+    <div id="hoja-ruta" class="content-section" [class.active]="activeSection === 'hoja-ruta'">
+      <h2>Hoja de Ruta de Formulario</h2>
+      <!-- Timeline con eventos de click -->
+      <div class="timeline">
+        <div *ngFor="let step of timelineSteps" type="button" class="timeline-step" 
+          [class.completed]="step.completed"
+          [class.active]="isTimelineStepActive(step.sectionId)"
+          (click)="onStepClick(step)">  
+
+          <div class="circle">
+            <!-- Icono de check cuando está completado -->
+            <i *ngIf="step.completed && step.icon" [class]="step.icon"></i>
+            <!-- Número cuando no está completado -->
+            <span *ngIf="!step.completed">{{ step.number }}</span>
+          </div>
+          
+          <div class="label">
+            <!-- Icono PNG a la izquierda del texto -->
+            <img [src]="step.pngIcon" alt="icono" class="step-icon">
+            <span class="step-text">{{ step.label }}</span>
+          </div>
+        </div>
+      </div>  
+
+    </div>     
+
+
+    <!-- Formulario revisado -->
+    <div class="evaluation-form" *ngIf="isTimelineStepActive('Revision-Inicial')">
+      <h4 class="titulos-pequeños">Revisión Inicial - Vista Administrador</h4>
+        <!-- Objetivo Área -->
+        <div class="form-section">          
+          <div class="section-title" style="display:flex; gap:1rem;">
+            <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena" class="icono-normal">
+            Objetivo Área
+          </div>
+          <div class="form-row" style="margin-left: 2rem; margin-right: 2rem;">
+            <span class="">Objetivo ingresado por el jefe del área: Optimizar los procesos internos de la organización mediante la implementación, gestión y soporte de soluciones tecnológicas innovadoras, seguras y eficientes, que permitan mejorar la productividad, garantizar la continuidad operativa y apoyar la toma de decisiones estratégicas. </span>
+            <!-- <input type="date" class="date-input"> -->
+          </div>
+        </div>
+
+        <!-- Objetivos -->
+        <div class="form-section" style="margin-left: 2rem;">
+          <div style="display:flex; justify-content: space-between;" >
+            <div class="section-title" style="color:#064eb4">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor">
+                  Objetivos: 
+              </div>                
+            </div>
+            <div style="align-content: center;">
+              <span class="titulos-pequeños-columna" style="margin-right: 2rem; color: #000;">Valor</span>
+              <span class="titulos-pequeños-columna" style="margin-right: 2rem; color: #3b82f6;">Reconsiderar</span>
+              <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha estimada</span>
+            </div>              
+          </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <span class="item-number">1.</span>                
+              </div>                
+                <input type="text" class="text-input" placeholder="Objetivo 1">
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <span class="item-number">2.</span>                
+              </div>                  
+                <input type="text" class="text-input" placeholder="Objetivo 2">
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <span class="item-number">3.</span>                
+              </div>   
+                <input type="text" class="text-input" placeholder="Objetivo 3">
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <span class="item-number">4.</span>                
+              </div>                  
+                <input type="text" class="text-input" placeholder="Objetivo 4">
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <span class="item-number">5.</span>                
+              </div>                  
+                <input type="text" class="text-input" placeholder="Objetivo 5">
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="percentage-display">60%</div>
+        </div>
+
+        <!-- Competencias -->
+        <div class="form-section" style="margin-left: 2rem;">
+            <div class="section-title purple">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj" class="icono-menor">
+                Competencias: 
+              </div>
+            </div>
+              
+            <div class="form-row">
+              <span class="item-number">1.</span>
+              <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de liderazgo y comunicación efectiva</span>
+              <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+              <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+              <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">2.</span>
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia técnica especializada</span>
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">3.</span>
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de trabajo en equipo</span>
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">4.</span>
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de resolución de problemas</span>
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">5.</span>
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de adaptabilidad</span>
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="percentage-display">40%</div>
+        </div>
+          
+        <!-- Botón Aprobar -->
+        <div>
+          <button class="approve-btn" style="margin-left: 2rem;">Aprobar</button>
+        </div>
+        
+        <div style="clear: both;"></div>
+
+    </div><!-- fin Revisión Inicial Admin -->
+
+    <!-- -----------      --------------          -------------             ------------ --> -->
+    
+    <!-- Retroalimentación Admin -->
+    <div class="evaluation-form" *ngIf="isTimelineStepActive('Retroalimentacion')">
+      <h4 class="titulos-pequeños">Retroalimentación - Vista Administrador</h4>
+        <!-- Objetivo Área -->
+        <div class="form-section">          
+          <div class="section-title" style="display:flex; gap:1rem;">
+            <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena" class="icono-normal">
+            Objetivo Área
+          </div>
+          <div class="form-row" style="margin-left: 2rem; margin-right: 2rem;">
+            <span class="">Objetivo ingresado por el jefe del área: Optimizar los procesos internos de la organización mediante la implementación, gestión y soporte de soluciones tecnológicas innovadoras, seguras y eficientes, que permitan mejorar la productividad, garantizar la continuidad operativa y apoyar la toma de decisiones estratégicas. </span>
+            <!-- <input type="date" class="date-input"> -->
+          </div>
+        </div>
+
+        <!-- Objetivos -->
+        <div class="form-section" style="margin-left: 2rem;">
+          <div style="display:flex; justify-content: space-between;" >
+            <div class="section-title" style="color:#064eb4">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor">
+                  Objetivos: 
+              </div>                
+            </div>
+            <div style="align-content: center;">
+              <span class="titulos-pequeños-columna" style="margin-right: 2rem; color: #000;">Valor</span>
+              <span class="titulos-pequeños-columna" style="margin-right: 2rem; color: #3b82f6;">Reconsiderar</span>
+              <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha estimada</span>
+            </div>              
+          </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <span class="item-number">1.</span>                
+              </div>                
+                <input type="text" class="text-input" placeholder="Objetivo 1">
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <span class="item-number">2.</span>                
+              </div>                  
+                <input type="text" class="text-input" placeholder="Objetivo 2">
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <span class="item-number">3.</span>                
+              </div>   
+                <input type="text" class="text-input" placeholder="Objetivo 3">
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <span class="item-number">4.</span>                
+              </div>                  
+                <input type="text" class="text-input" placeholder="Objetivo 4">
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <span class="item-number">5.</span>                
+              </div>                  
+                <input type="text" class="text-input" placeholder="Objetivo 5">
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="percentage-display">60%</div>
+        </div>
+
+        <!-- Competencias -->
+        <div class="form-section" style="margin-left: 2rem;">
+            <div class="section-title purple">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj" class="icono-menor">
+                Competencias: 
+              </div>
+            </div>
+              
+            <div class="form-row">
+              <span class="item-number">1.</span>
+              <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de liderazgo y comunicación efectiva</span>
+              <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+              <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+              <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">2.</span>
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia técnica especializada</span>
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">3.</span>
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de trabajo en equipo</span>
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">4.</span>
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de resolución de problemas</span>
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="form-row">
+                <span class="item-number">5.</span>
+                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de adaptabilidad</span>
+                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
+                <input type="date" class="date-input">
+            </div>
+              
+            <div class="percentage-display">40%</div>
+        </div>
+          
+        <!-- Botón Aprobar -->
+        <div>
+          <button class="approve-btn" style="margin-left: 2rem;">Aprobar</button>
+        </div>
+        
+        <div style="clear: both;"></div>
+
+              <div class="form-section">
+        <div class="section-title">Comentarios y Sugerencias</div>
+        <div class="form-row">
+          <textarea class="text-input" rows="4" placeholder="Ingrese retroalimentación detallada"></textarea>
+          <input type="date" class="date-input">
+        </div>
+      </div>
+
+    </div><!-- fin Retroalimentación Admin -->
+
+    <!-- -----------      --------------          -------------             ------------ --> -->
+    
+
+    <!-- Información del Colaborador -->
+    <div id="info-colaborador" class="content-section" [class.active]="activeSection === 'info-colaborador'">
+      <h2>Información del Colaborador</h2>
+      <div class="info-grid">
+        <div class="info-item"><span class="label">Nombres:</span> {{ collaboratorInfo.firstName }}</div>
+        <div class="info-item"><span class="label">Apellidos:</span> {{ collaboratorInfo.lastName }}</div>
+        <div class="info-item"><span class="label">Cargo:</span> {{ collaboratorInfo.position }}</div>
+        <div class="info-item"><span class="label">Supervisor:</span> {{ collaboratorInfo.supervisor }}</div>
+        <div class="info-item"><span class="label">Fecha de Ingreso:</span> {{ collaboratorInfo.startDate }}</div>
+        <div class="info-item"><span class="label">Departamento:</span> {{ collaboratorInfo.department }}</div>
+      </div>
+    </div>
+
+    <!-- Fechas de Revisión -->
+    <div id="fechas-revision" class="content-section" [class.active]="activeSection === 'fechas-revision'">
+      <h2>Fechas de Revisión</h2>
+      <div class="info-grid">
+        <div class="info-item"><span class="label">Evaluador:</span> {{ reviewDates.evaluator }}</div>
+        <div class="info-item"><span class="label">Periodo:</span> {{ reviewDates.period }}</div>  
+        <div class="info-item"><span class="label">Fecha Límite:</span> {{ reviewDates.deadline }}</div>
+      </div>
+    </div>
+
+    <!-- Objetivos -->
+    <div id="objetivos" class="content-section" [class.active]="activeSection === 'objetivos'">
+      <h2>Objetivos (KPIs)</h2>
+      <div class="cap-table">
+        <div class="cap-header">
+          <div>Nombre</div><div>Peso (%)</div><div>Inicio</div><div>Fin</div><div>Descripción</div>
+        </div>
+        <div *ngFor="let objective of objectives" class="cap-row">
+          <div>{{ objective.name }}</div>
+          <div style="align-items: center;">{{ objective.weight }}</div>
+          <div>{{ objective.startDate }}</div>
+          <div>{{ objective.endDate }}</div>
+          <div>{{ objective.description }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Competencias -->
+    <div id="competencias" class="content-section" [class.active]="activeSection === 'competencias'">
+      <h2>Competencias</h2>
+      <div class="cap-table">
+        <div class="cap-header">
+          <div>Competencia</div><div>Descripción</div><div>Calificación</div>
+        </div>
+        <div *ngFor="let competency of competencies" class="cap-row">
+          <div>{{ competency.name }}</div>
+          <div>{{ competency.description }}</div>
+          <div>{{ competency.rating }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
