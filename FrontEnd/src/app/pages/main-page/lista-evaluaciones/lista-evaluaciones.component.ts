@@ -31,6 +31,7 @@ export class ListaEvaluacionesComponent implements OnInit {
 
   // NgModel properties for filters
   filtroDepartamento: string = '';
+  filtroNombre: string = '';
   filtroCalificado: string = '';
   filtroUbicacion: string = '';
   filtroIdioma: string = '';
@@ -186,19 +187,27 @@ export class ListaEvaluacionesComponent implements OnInit {
 
   aplicarFiltros(): void {
     this.empleadosFiltrados = this.empleados.filter(empleado => {
-      const coincideDepto = !this.filtros.departamento || 
-        empleado.departamento.toLowerCase() === this.filtros.departamento.toLowerCase();
+      // Filtro de departamento como búsqueda de texto (case insensitive)
+      const coincideDepto = !this.filtroDepartamento || 
+        empleado.departamento.toLowerCase().includes(this.filtroDepartamento.toLowerCase());
       
-      const coincideCalif = !this.filtros.calificado || 
-        empleado.calificado.toLowerCase() === this.filtros.calificado.toLowerCase();
+      // Filtro de nombre como búsqueda de texto (case insensitive)
+      const coincideNombre = !this.filtroNombre || 
+        empleado.nombre.toLowerCase().includes(this.filtroNombre.toLowerCase());
       
-      const coincideUbicacion = !this.filtros.ubicacion || 
-        empleado.ubicacion?.toLowerCase() === this.filtros.ubicacion.toLowerCase();
+      // Filtro de calificado (exacto)
+      const coincideCalif = !this.filtroCalificado || 
+        empleado.calificado.toLowerCase() === this.filtroCalificado.toLowerCase();
       
-      const coincideIdioma = !this.filtros.idioma || 
-        empleado.idioma?.toLowerCase() === this.filtros.idioma.toLowerCase();
+      // Filtro de ubicación (exacto)
+      const coincideUbicacion = !this.filtroUbicacion || 
+        empleado.ubicacion?.toLowerCase() === this.filtroUbicacion.toLowerCase();
+      
+      // Filtro de idioma (exacto)
+      const coincideIdioma = !this.filtroIdioma || 
+        empleado.idioma?.toLowerCase() === this.filtroIdioma.toLowerCase();
 
-      return coincideDepto && coincideCalif && coincideUbicacion && coincideIdioma;
+      return coincideDepto && coincideNombre && coincideCalif && coincideUbicacion && coincideIdioma;
     });
   }
 

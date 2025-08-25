@@ -3,12 +3,24 @@
   <aside class="filter-sidebar">
     <h3>FILTROS</h3>
     <div class="filter-group">
-      <label for="filtroDepartamento">Departamento:</label>
-      <select id="filtroDepartamento" [(ngModel)]="filtroDepartamento" (change)="aplicarFiltros()">
-        <option value="">Todos</option>
-        <option value="Desarrollo">Desarrollo</option>
-        <option value="Recursos Humanos">Recursos Humanos</option>
-      </select>
+      <label for="filtroDepartamento">Area:</label>
+      <input 
+        type="text" 
+        id="filtroDepartamento" 
+        [(ngModel)]="filtroDepartamento" 
+        (input)="aplicarFiltros()" 
+        placeholder="Buscar area..."
+        class="filter-input">
+    </div>
+    <div class="filter-group">
+      <label for="filtroNombre">Empleado:</label>
+      <input 
+        type="text" 
+        id="filtroNombre" 
+        [(ngModel)]="filtroNombre" 
+        (input)="aplicarFiltros()" 
+        placeholder="Buscar empleado..."
+        class="filter-input">
     </div>
     <div class="filter-group">
       <label for="filtroCalificado">Calificado:</label>
@@ -16,24 +28,6 @@
         <option value="">Todos</option>
         <option value="Si">Sí</option>
         <option value="No">No</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label for="filtroUbicacion">Lugar de Residencia:</label>
-      <select id="filtroUbicacion" [(ngModel)]="filtroUbicacion" (change)="aplicarFiltros()">
-        <option value="">Todos</option>
-        <option value="Quito">Quito</option>
-        <option value="Guayaquil">Guayaquil</option>
-        <option value="Cuenca">Cuenca</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label for="filtroIdioma">Idiomas:</label>
-      <select id="filtroIdioma" [(ngModel)]="filtroIdioma" (change)="aplicarFiltros()">
-        <option value="">Todos</option>
-        <option value="Inglés">Inglés</option>
-        <option value="Español">Español</option>
-        <option value="Francés">Francés</option>
       </select>
     </div>
   </aside>
@@ -49,7 +43,7 @@
       <div class="cap-table">
         <div class="cap-header">
           <div class="empleado-row">Empleado</div>
-          <div>Departamento</div>
+          <div>Area</div>
           <div>Fecha Incorporacion</div>
           <div>Calificado</div>
         </div>
