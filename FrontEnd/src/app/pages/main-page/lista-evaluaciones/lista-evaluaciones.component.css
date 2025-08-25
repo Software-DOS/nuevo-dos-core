@@ -1,0 +1,144 @@
+/* Estilos para la tabla de empleados */
+.cap-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cap-header {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+  gap: 20px;
+  padding: 18px 25px;
+  background-color: #e91e63;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cap-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+  gap: 20px;
+  padding: 20px 25px;
+  border-bottom: 1px solid #e0e0e0;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 70px;
+}
+
+.cap-row:hover {
+  background-color: #f8f9fa;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cap-row:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.cap-row:nth-child(even):hover {
+  background-color: #f0f2f5;
+}
+
+.cap-row:last-child {
+  border-bottom: none;
+}
+
+/* Columna de empleado con foto y nombre */
+.empleado-info-column {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-align: left;
+}
+
+.employee-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f0f0f0;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.cap-row:hover .employee-photo {
+  transform: scale(1.05);
+  border-color: #e91e63;
+}
+
+.empleado-info-column span {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Centrar contenido de las otras columnas */
+.cap-row > div:not(.empleado-info-column) {
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Alineación del header */
+.cap-header > div.empleado-row {
+  text-align: center;
+  padding-left: 80px; /* Alineado con el inicio de las fotos de perfil */
+  display: flex;
+  align-items: center;
+}
+
+.cap-header > div:not(.empleado-row) {
+  text-align: center;
+}
+
+/* Mejoras adicionales */
+.content-wrapper-tight {
+  padding: 0 10px;
+}
+
+.subcategory-nav {
+  margin-bottom: 15px;
+}
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 768px) {
+  .cap-header,
+  .cap-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 15px 20px;
+  }
+  
+  .empleado-info-column {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .cap-row > div:not(.empleado-info-column) {
+    text-align: center;
+    padding: 5px 0;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 5px;
+    padding-top: 8px;
+  }
+  
+  .cap-header {
+    display: none; /* Ocultar header en móvil para mejor UX */
+  }
+  
+  .cap-row > div:not(.empleado-info-column):before {
+    content: attr(data-label) ": ";
+    font-weight: bold;
+    color: #333;
+  }
+}
