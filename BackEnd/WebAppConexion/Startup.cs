@@ -66,6 +66,13 @@ namespace WebAppConexion
             services.AddScoped<GTHIdiomaInfoRepository>();
             services.AddScoped<GTHLogroRepository>();
             services.AddScoped<GTHProyectoRepository>();
+            
+            // Nuevos repositorios para el sistema de evaluación
+            services.AddScoped<GTHCompetenciaRepository>();
+            services.AddScoped<GTHNivelCompetenciaRepository>();
+            services.AddScoped<GTHEvaluacionRepository>();
+            services.AddScoped<GTHAsignacionCompetenciaRepository>();
+            services.AddScoped<GTHObjetivoRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
