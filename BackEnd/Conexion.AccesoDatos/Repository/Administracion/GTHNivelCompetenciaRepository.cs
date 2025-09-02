@@ -32,12 +32,12 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             };
 
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
-            cmd.Parameters.Add(new SqlParameter("@ID_NIVEL", (object)nivelCompetencia.IdNivelCompetencia ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@ID_NIVEL_COMPETENCIA", (object)nivelCompetencia.IdNivelCompetencia ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@ID_COMPETENCIA", (object)nivelCompetencia.IdCompetencia ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@NIVEL", (object)nivelCompetencia.Nivel ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@DESCRIPCION", nivelCompetencia.Descripcion ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@ESTADO", nivelCompetencia.Estado ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@USUARIO_CREACION", "SISTEMA"));
+            // cmd.Parameters.Add(new SqlParameter("@USUARIO_CREACION", "SISTEMA")); // TEMPORAL: Comentado hasta actualizar el SP
 
             await sql.OpenAsync();
             var response = new List<Generica>();
@@ -46,8 +46,8 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             {
                 response.Add(new Generica
                 {
-                    valor1 = Convert.ToInt16(reader["Codigo"]),
-                    valor2 = reader["Mensaje"].ToString()
+                    valor1 = Convert.ToInt16(reader["valor1"]),
+                    valor2 = reader["valor2"].ToString()
                 });
             }
             return response;
