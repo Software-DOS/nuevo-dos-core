@@ -74,7 +74,7 @@ namespace WebAppConexion
             services.AddScoped<GTHAsignacionCompetenciaRepository>();
             services.AddScoped<GTHObjetivoRepository>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddMvc();
 
             services.AddCors(options => {
                 options.AddPolicy("Todos",
