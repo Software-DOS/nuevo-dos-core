@@ -109,58 +109,33 @@
               
             </div>
           
-              
-            <div class="form-row">
+            <!-- Objetivos dinámicos -->  
+            <div *ngFor="let objetivo of objetivos; let i = index" class="form-row">
               <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">1.</span>                
+                <span class="item-number">{{ i + 1 }}.</span>                
               </div>                
-                <input type="text" class="text-input" placeholder="Objetivo 1">
-                <input type="number" class="number-input" min="0" max="100" value="" placeholder="/100">
-                <input type="date" class="date-input">
+                <input 
+                  type="text" 
+                  class="text-input" 
+                  [placeholder]="'Objetivo ' + (i + 1)"
+                  [(ngModel)]="objetivo.texto"
+                  (ngModelChange)="actualizarTextoObjetivo(i, $event)">
+                <input 
+                  type="number" 
+                  class="number-input" 
+                  min="0" 
+                  max="100" 
+                  placeholder="/100"
+                  [(ngModel)]="objetivo.valor"
+                  (ngModelChange)="actualizarValorObjetivo(i, $event)">
+                <input 
+                  type="date" 
+                  class="date-input"
+                  [(ngModel)]="objetivo.fecha"
+                  (ngModelChange)="actualizarFechaObjetivo(i, $event)">
             </div>
               
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">2.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 2">
-                <input type="number" class="number-input" min="0" max="100" value="" placeholder="/100">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">3.</span>                
-              </div>   
-                <input type="text" class="text-input" placeholder="Objetivo 3">
-                <input type="number" class="number-input" min="0" max="100" value="" placeholder="/100">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">4.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 4">
-                <input type="number" class="number-input" min="0" max="100" value="" placeholder="/100">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">5.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 5">
-                <input type="number" class="number-input" min="0" max="100" value="" placeholder="/100">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="percentage-display">60%</div>
+            <div class="percentage-display">{{ calcularPorcentajeTotal() }}%</div>
         </div>
 
         <!-- Competencias -->
@@ -171,45 +146,30 @@
                 Competencias: 
               </div>
             </div>
-              
-            <div class="form-row">
-              <span class="item-number">1.</span>
-              <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-              <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de liderazgo y comunicación efectiva</span>
-              <input type="number" class="number-input" min="0" max="100" value="" style="border-color: #7c3aed; color: #7c3aed;" placeholder="/100">
+
+            <!-- Mostrar estado de carga -->
+            <div *ngIf="loadingCompetencies" class="form-row">
+              <span class="text-input" style="background: #f0f0f0; border-color: #ccc; color: #666;">
+                Cargando competencias...
+              </span>
+            </div>
+
+            <!-- Mostrar competencias cargadas desde el backend -->
+            <div *ngFor="let competency of competencies; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>
+              <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">
+                {{ competency.name }}
+              </span>
+              <input type="number" class="number-input" min="0" max="100" value="" 
+                     style="border-color: #7c3aed; color: #7c3aed;" placeholder="/100">
               <input type="date" class="date-input">
             </div>
-              
-            <div class="form-row">
-                <span class="item-number">2.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia técnica especializada</span>
-                <input type="number" class="number-input" min="0" max="100" value="" style="border-color: #7c3aed; color: #7c3aed;" placeholder="/100">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-                <span class="item-number">3.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de trabajo en equipo</span>
-                <input type="number" class="number-input" min="0" max="100" value="" style="border-color: #7c3aed; color: #7c3aed;" placeholder="/100">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-                <span class="item-number">4.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de resolución de problemas</span>
-                <input type="number" class="number-input" min="0" max="100" value="" style="border-color: #7c3aed; color: #7c3aed;" placeholder="/100">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-                <span class="item-number">5.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de adaptabilidad</span>
-                <input type="number" class="number-input" min="0" max="100" value="" style="border-color: #7c3aed; color: #7c3aed;" placeholder="/100">
-                <input type="date" class="date-input">
+
+            <!-- Mensaje si no hay competencias -->
+            <div *ngIf="!loadingCompetencies && competencies.length === 0" class="form-row">
+              <span class="text-input" style="background: #ffe6e6; border-color: #ff4444; color: #cc0000;">
+                No se pudieron cargar las competencias
+              </span>
             </div>
               
             <div class="percentage-display">40%</div>
@@ -255,59 +215,27 @@
             </div>              
           </div>
               
-            <div class="form-row">
+            <!-- Objetivos dinámicos para Revision-Inicial -->
+            <div *ngFor="let objetivo of objetivos; let i = index" class="form-row">
               <div class="" style="display:flex; gap:0.2rem;">
                 <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">1.</span>                
+                <span class="item-number">{{ i + 1 }}.</span>                
               </div>                
-                <input type="text" class="text-input" placeholder="Objetivo 1">
-                <input type="number" class="number-input" min="0" max="100" value="0">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">2.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 2">
-                <input type="number" class="number-input" min="0" max="100" value="0">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">3.</span>                
-              </div>   
-                <input type="text" class="text-input" placeholder="Objetivo 3">
-                <input type="number" class="number-input" min="0" max="100" value="0">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">4.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 4">
-                <input type="number" class="number-input" min="0" max="100" value="0">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">5.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 5">
-                <input type="number" class="number-input" min="0" max="100" value="0">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
+                <input type="text" class="text-input" [placeholder]="'Objetivo ' + (i + 1)"
+                       [(ngModel)]="objetivo.texto"
+                       [disabled]="sonCamposObjetivosDeshabilitados()"
+                       style="background-color: #f5f5f5; color: #666;">
+                <input type="number" class="number-input" min="0" max="100" 
+                       [(ngModel)]="objetivo.valor"
+                       [disabled]="sonCamposObjetivosDeshabilitados()"
+                       style="background-color: #f5f5f5; color: #666;">
+                <input type="number" class="number-input-rev" min="0" max="100" 
+                       [(ngModel)]="objetivo.reconsiderar"
+                       (ngModelChange)="actualizarReconsiderarObjetivo(i, $event)">
+                <input type="date" class="date-input"
+                       [(ngModel)]="objetivo.fecha"
+                       [disabled]="sonCamposObjetivosDeshabilitados()"
+                       style="background-color: #f5f5f5; color: #666;">
             </div>
               
             <div class="percentage-display">60%</div>
@@ -321,50 +249,31 @@
                 Competencias: 
               </div>
             </div>
-              
-            <div class="form-row">
-              <span class="item-number">1.</span>
-              <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-              <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de liderazgo y comunicación efectiva</span>
-              <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+
+            <!-- Mostrar estado de carga -->
+            <div *ngIf="loadingCompetencies" class="form-row">
+              <span class="text-input" style="background: #f0f0f0; border-color: #ccc; color: #666;">
+                Cargando competencias...
+              </span>
+            </div>
+
+            <!-- Mostrar competencias cargadas desde el backend -->
+            <div *ngFor="let competency of competencies; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>
+              <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">
+                {{ competency.name }}
+              </span>
+              <input type="number" class="number-input" min="0" max="100" value="0" 
+                     style="border-color: #7c3aed; color: #7c3aed;">
+              <input type="number" class="number-input-rev" min="0" max="100" value="0">
               <input type="date" class="date-input">
             </div>
-              
-            <div class="form-row">
-                <span class="item-number">2.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia técnica especializada</span>
-                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-                <span class="item-number">3.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de trabajo en equipo</span>
-                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-                <span class="item-number">4.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de resolución de problemas</span>
-                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-                <span class="item-number">5.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de adaptabilidad</span>
-                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
+
+            <!-- Mensaje si no hay competencias -->
+            <div *ngIf="!loadingCompetencies && competencies.length === 0" class="form-row">
+              <span class="text-input" style="background: #ffe6e6; border-color: #ff4444; color: #cc0000;">
+                No se pudieron cargar las competencias
+              </span>
             </div>
               
             <div class="percentage-display">40%</div>
@@ -415,59 +324,37 @@
             </div>              
           </div>
               
-            <div class="form-row">
+            <!-- Objetivos dinámicos para Evaluacion-Intermedia -->
+            <div *ngFor="let objetivo of objetivos; let i = index" class="form-row">
               <div class="" style="display:flex; gap:0.2rem;">
                 <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">1.</span>                
+                <span class="item-number">{{ i + 1 }}.</span>                
               </div>                
-                <input type="text" class="text-input" placeholder="Objetivo 1">
-                <input type="number" class="number-input" min="0" max="100" value="0">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">2.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 2">
-                <input type="number" class="number-input" min="0" max="100" value="0">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">3.</span>                
-              </div>   
-                <input type="text" class="text-input" placeholder="Objetivo 3">
-                <input type="number" class="number-input" min="0" max="100" value="0">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">4.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 4">
-                <input type="number" class="number-input" min="0" max="100" value="0">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
-                <span class="item-number">5.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 5">
-                <input type="number" class="number-input" min="0" max="100" value="0">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
+                <input type="text" class="text-input" [placeholder]="'Objetivo ' + (i + 1)"
+                       [(ngModel)]="objetivo.texto"
+                       [disabled]="sonCamposObjetivosDeshabilitados()"
+                       [style.background-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fff7ed' : '#f5f5f5'"
+                       [style.border-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fb923c' : '#d1d5db'"
+                       [style.color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#ea580c' : '#666'">
+                <input type="number" class="number-input" min="0" max="100" 
+                       [(ngModel)]="objetivo.valor"
+                       [disabled]="!(objetivo.reconsiderar && objetivo.reconsiderar > 0) || sonCamposObjetivosDeshabilitados()"
+                       [style.background-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fff7ed' : '#f5f5f5'"
+                       [style.border-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fb923c' : '#d1d5db'"
+                       [style.color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#ea580c' : '#666'">
+                <span *ngIf="objetivo.reconsiderar && objetivo.reconsiderar > 0" class="reconsider-badge" 
+                      style="background: #fb923c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px;">
+                  {{ objetivo.reconsiderar }}
+                </span>
+                <span *ngIf="!objetivo.reconsiderar || objetivo.reconsiderar === 0" style="color: #999; font-size: 12px; padding: 2px 6px;">
+                  -
+                </span>
+                <input type="date" class="date-input"
+                       [(ngModel)]="objetivo.fecha"
+                       [disabled]="!(objetivo.reconsiderar && objetivo.reconsiderar > 0) || sonCamposObjetivosDeshabilitados()"
+                       [style.background-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fff7ed' : '#f5f5f5'"
+                       [style.border-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fb923c' : '#d1d5db'"
+                       [style.color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#ea580c' : '#666'">
             </div>
               
             <div class="percentage-display">60%</div>
@@ -481,50 +368,31 @@
                 Competencias: 
               </div>
             </div>
-              
-            <div class="form-row">
-              <span class="item-number">1.</span>
-              <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-              <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de liderazgo y comunicación efectiva</span>
-              <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
+
+            <!-- Mostrar estado de carga -->
+            <div *ngIf="loadingCompetencies" class="form-row">
+              <span class="text-input" style="background: #f0f0f0; border-color: #ccc; color: #666;">
+                Cargando competencias...
+              </span>
+            </div>
+
+            <!-- Mostrar competencias cargadas desde el backend -->
+            <div *ngFor="let competency of competencies; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>
+              <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">
+                {{ competency.name }}
+              </span>
+              <input type="number" class="number-input" min="0" max="100" value="0" 
+                     style="border-color: #7c3aed; color: #7c3aed;">
+              <input type="number" class="number-input-rev" min="0" max="100" value="0">
               <input type="date" class="date-input">
             </div>
-              
-            <div class="form-row">
-                <span class="item-number">2.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia técnica especializada</span>
-                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-                <span class="item-number">3.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de trabajo en equipo</span>
-                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-                <span class="item-number">4.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de resolución de problemas</span>
-                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-                <span class="item-number">5.</span>
-                <!-- <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono comp" class="icono-menor"> -->
-                <span class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;">Competencia de adaptabilidad</span>
-                <input type="number" class="number-input" min="0" max="100" value="0" style="border-color: #7c3aed; color: #7c3aed;">
-                <input type="number" class="number-input-rev" min="0" max="100" value="0">
-                <input type="date" class="date-input">
+
+            <!-- Mensaje si no hay competencias -->
+            <div *ngIf="!loadingCompetencies && competencies.length === 0" class="form-row">
+              <span class="text-input" style="background: #ffe6e6; border-color: #ff4444; color: #cc0000;">
+                No se pudieron cargar las competencias
+              </span>
             </div>
               
             <div class="percentage-display">40%</div>

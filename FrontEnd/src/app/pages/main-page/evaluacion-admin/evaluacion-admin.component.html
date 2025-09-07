@@ -109,57 +109,25 @@
             </div>              
           </div>
               
-            <div class="form-row">
+            <!-- Objetivos dinámicos cargados del empleado - Revision Inicial Admin -->
+            <div *ngFor="let objetivo of objetivos; let i = index" class="form-row">
               <div class="" style="display:flex; gap:0.2rem;">
-                <span class="item-number">1.</span>                
+                <span class="item-number">{{ i + 1 }}.</span>                
               </div>                
-                <input type="text" class="text-input" placeholder="Objetivo 1">
-                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
-                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
-                <input type="date" class="date-input">
+                <input type="text" class="text-input" [value]="objetivo.texto" 
+                       readonly style="background-color: #f0f8ff; color: #333; border-color: #b0d4f1;">
+                <input type="number" class="number-input-admin-black" min="0" max="100" 
+                       [value]="objetivo.valor" readonly 
+                       style="background-color: #f0f8ff; color: #333;">
+                <input type="number" class="number-input-admin-blue" min="0" max="100" 
+                       [(ngModel)]="objetivo.reconsiderar"
+                       (ngModelChange)="actualizarReconsiderarAdmin(i, $event)"
+                       placeholder="0-100">
+                <input type="date" class="date-input" [value]="objetivo.fecha" readonly
+                       style="background-color: #f0f8ff; color: #333;">
             </div>
               
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <span class="item-number">2.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 2">
-                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
-                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <span class="item-number">3.</span>                
-              </div>   
-                <input type="text" class="text-input" placeholder="Objetivo 3">
-                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
-                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <span class="item-number">4.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 4">
-                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
-                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <span class="item-number">5.</span>                
-              </div>                  
-                <input type="text" class="text-input" placeholder="Objetivo 5">
-                <input type="number" class="number-input-admin-black" min="0" max="100" value="0">
-                <input type="number" class="number-input-admin-blue" min="0" max="100" value="0">
-                <input type="date" class="date-input">
-            </div>
-              
-            <div class="percentage-display">60%</div>
+            <div class="percentage-display">{{ calcularPorcentajeEmpleado() }}%</div>
         </div>
 
         <!-- Competencias -->
@@ -429,9 +397,9 @@
           <div>Competencia</div><div>Descripción</div><div>Calificación</div>
         </div>
         <div *ngFor="let competency of competencies" class="cap-row">
-          <div>{{ competency.name }}</div>
-          <div>{{ competency.description }}</div>
-          <div>{{ competency.rating }}</div>
+          <div>{{ competency.nombreCompetencia }}</div>
+          <div>{{ competency.descripcion }}</div>
+          <div>N/A</div>
         </div>
       </div>
     </div>

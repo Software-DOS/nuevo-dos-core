@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { GthCompetenciaService } from '../../../services/gth-competencia.service';
+import { IGTHCompetenciaViewModel } from '../../../interface/ight-competencia';
 
 @Component({
   selector: 'app-evaluacion-admin',
@@ -90,7 +92,7 @@ export class EvaluacionAdminComponent implements OnInit {
 
 
 
-  // Objectives (KPIs)
+  // Objectives (KPIs) - Objetivos precargados del empleado
   objectives = [
     {
       name: 'Entrega de Proyectos',
@@ -108,26 +110,160 @@ export class EvaluacionAdminComponent implements OnInit {
     }
   ];
 
-  // Competencies
-  competencies = [
+  // Competencias dinámicas - Se cargarán desde el backend
+  competencies: IGTHCompetenciaViewModel[] = [];
+  loadingCompetencies: boolean = false;
+
+  // Objetivos del empleado - Precargados desde el sistema
+  objetivos = [
     {
-      name: 'Trabajo en Equipo',
-      description: 'Colabora de manera efectiva con su equipo de trabajo.',
-      rating: '⭐⭐⭐⭐'
+      id: 1,
+      texto: 'Implementar sistema de gestión de documentos',
+      valor: 85,
+      fecha: '2025-03-15',
+      reconsiderar: null as number | null,
+      valorAdmin: null as number | null, // Valor asignado por el administrador
+      fechaAdmin: '' as string // Fecha de retroalimentación del admin
     },
     {
-      name: 'Resolución de Problemas',
-      description: 'Capacidad para resolver incidencias técnicas.',
-      rating: '⭐⭐⭐'
+      id: 2,
+      texto: 'Optimizar rendimiento de aplicaciones existentes',
+      valor: 75,
+      fecha: '2025-04-20',
+      reconsiderar: null as number | null,
+      valorAdmin: null as number | null,
+      fechaAdmin: ''
+    },
+    {
+      id: 3,
+      texto: 'Capacitar al equipo en nuevas tecnologías',
+      valor: 90,
+      fecha: '2025-05-10',
+      reconsiderar: null as number | null,
+      valorAdmin: null as number | null,
+      fechaAdmin: ''
+    },
+    {
+      id: 4,
+      texto: 'Desarrollar módulo de reportes automatizados',
+      valor: 60,
+      fecha: '2025-06-30',
+      reconsiderar: null as number | null,
+      valorAdmin: null as number | null,
+      fechaAdmin: ''
+    },
+    {
+      id: 5,
+      texto: 'Establecer protocolo de respaldo de datos',
+      valor: 95,
+      fecha: '2025-02-28',
+      reconsiderar: null as number | null,
+      valorAdmin: null as number | null,
+      fechaAdmin: ''
     }
   ];
 
 
 
 
-  constructor() { }
+  constructor(private gthCompetenciaService: GthCompetenciaService) { }
 
   ngOnInit(): void {
+    // Cargar las primeras 5 competencias al inicializar el componente
+    this.cargarCompetenciasAdmin();
+  }
+
+  /**
+   * Carga las primeras 5 competencias desde el backend para la vista administrativa
+   */
+  cargarCompetenciasAdmin(): void {
+    console.log('🚀 Iniciando carga de competencias para administrador...');
+    this.loadingCompetencies = true;
+    
+    this.gthCompetenciaService.obtenerPrimeras5Competencias()
+      .subscribe({
+        next: (competencias: IGTHCompetenciaViewModel[]) => {
+          console.log('📊 Competencias obtenidas para admin:', competencias);
+          
+          this.competencies = competencias;
+          this.loadingCompetencies = false;
+          
+          console.log('✅ Competencias cargadas exitosamente para administrador');
+        },
+        error: (error) => {
+          console.error('❌ Error al cargar competencias para administrador:', error);
+          this.loadingCompetencies = false;
+          this.competencies = [];
+        }
+      });
+  }
+
+  /**
+   * Actualiza el valor de "reconsiderar" asignado por el administrador
+   * @param index - Índice del objetivo (0-4)
+   * @param valor - Valor de reconsideración asignado por el admin
+   */
+  actualizarReconsiderarAdmin(index: number, valor: number): void {
+    if (index >= 0 && index < this.objetivos.length) {
+      if (!isNaN(valor) && valor >= 0 && valor <= 100) {
+        this.objetivos[index].reconsiderar = valor;
+        console.log(`🔄 Admin - Reconsiderar objetivo ${index + 1}:`, valor, this.objetivos[index]);
+      }
+    }
+  }
+
+  /**
+   * Actualiza el valor asignado por el administrador
+   * @param index - Índice del objetivo (0-4)
+   * @param valor - Valor asignado por el admin
+   */
+  actualizarValorAdmin(index: number, valor: number): void {
+    if (index >= 0 && index < this.objetivos.length) {
+      if (!isNaN(valor) && valor >= 0 && valor <= 100) {
+        this.objetivos[index].valorAdmin = valor;
+        console.log(`📊 Admin - Valor objetivo ${index + 1}:`, valor, this.objetivos[index]);
+      }
+    }
+  }
+
+  /**
+   * Actualiza la fecha de retroalimentación asignada por el administrador
+   * @param index - Índice del objetivo (0-4)
+   * @param fecha - Fecha de retroalimentación
+   */
+  actualizarFechaAdmin(index: number, fecha: string): void {
+    if (index >= 0 && index < this.objetivos.length) {
+      this.objetivos[index].fechaAdmin = fecha;
+      console.log(`📅 Admin - Fecha objetivo ${index + 1}:`, fecha, this.objetivos[index]);
+    }
+  }
+
+  /**
+   * Calcula el porcentaje promedio basado en las evaluaciones del empleado
+   * @returns Porcentaje promedio de los objetivos del empleado
+   */
+  calcularPorcentajeEmpleado(): number {
+    const objetivosConValor = this.objetivos.filter(obj => obj.valor !== null && obj.valor > 0);
+    if (objetivosConValor.length === 0) return 0;
+    
+    const suma = objetivosConValor.reduce((acc, obj) => acc + obj.valor, 0);
+    const promedio = suma / objetivosConValor.length;
+    
+    return Math.round(promedio);
+  }
+
+  /**
+   * Calcula el porcentaje promedio basado en las evaluaciones del administrador
+   * @returns Porcentaje promedio de la evaluación administrativa
+   */
+  calcularPorcentajeAdmin(): number {
+    const objetivosConValorAdmin = this.objetivos.filter(obj => obj.valorAdmin !== null && obj.valorAdmin > 0);
+    if (objetivosConValorAdmin.length === 0) return 0;
+    
+    const suma = objetivosConValorAdmin.reduce((acc, obj) => acc + (obj.valorAdmin || 0), 0);
+    const promedio = suma / objetivosConValorAdmin.length;
+    
+    return Math.round(promedio);
   }
 
   // showSection(targetId: string): void {
