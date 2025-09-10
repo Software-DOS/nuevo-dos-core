@@ -12,6 +12,7 @@ namespace Conexion.Entidad.Administracion
         public int IdCompetencia { get; set; }
         public string NombreCompetencia { get; set; }
         public string Descripcion { get; set; }
+        public string TipoCompetencia { get; set; }
         public string Estado { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }

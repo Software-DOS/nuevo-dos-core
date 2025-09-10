@@ -25,17 +25,18 @@ namespace WebAppConexion.Controllers
 
         /// <summary>
         /// Devuelve la lista de competencias según los filtros proporcionados.
-        /// Tipos: 0=Todas, 1=Por ID, 2=Por Estado, 3=Por Nombre
+        /// Tipos: 0=Todas, 1=Por ID, 2=Por Estado, 3=Por Nombre, 4=Por Tipo Competencia, 5=Filtros Combinados
         /// </summary>
         [HttpGet("[action]")]
         public async Task<IEnumerable<GTHCompetenciaViewModel>> Mostrar(
             [FromQuery] int tipo,
             [FromQuery] int? idCompetencia = null,
             [FromQuery] string estado = null,
-            [FromQuery] string nombreCompetencia = null)
+            [FromQuery] string nombreCompetencia = null,
+            [FromQuery] string tipoCompetencia = null)
         {
             // Llamamos al repositorio con los filtros
-            var entidades = await _repository.Mostrar(tipo, idCompetencia, estado, nombreCompetencia);
+            var entidades = await _repository.Mostrar(tipo, idCompetencia, estado, nombreCompetencia, tipoCompetencia);
 
             // Mapear cada GTHCompetencia a su ViewModel
             return entidades.Select(e => new GTHCompetenciaViewModel
@@ -43,6 +44,7 @@ namespace WebAppConexion.Controllers
                 IdCompetencia = e.IdCompetencia,
                 NombreCompetencia = e.NombreCompetencia,
                 Descripcion = e.Descripcion,
+                TipoCompetencia = e.TipoCompetencia,
                 Estado = e.Estado,
                 FechaCreacion = e.FechaCreacion,
                 FechaModificacion = e.FechaModificacion,
@@ -64,6 +66,7 @@ namespace WebAppConexion.Controllers
                 IdCompetencia = model.IdCompetencia,
                 NombreCompetencia = model.NombreCompetencia,
                 Descripcion = model.Descripcion,
+                TipoCompetencia = model.TipoCompetencia,
                 Estado = model.Estado ?? "ACTIVO",
                 FechaCreacion = model.FechaCreacion,
                 FechaModificacion = model.FechaModificacion,
@@ -108,6 +111,7 @@ namespace WebAppConexion.Controllers
                     IdCompetencia = competencia.IdCompetencia,
                     NombreCompetencia = competencia.NombreCompetencia,
                     Descripcion = competencia.Descripcion,
+                    TipoCompetencia = competencia.TipoCompetencia,
                     Estado = competencia.Estado,
                     FechaCreacion = competencia.FechaCreacion,
                     FechaModificacion = competencia.FechaModificacion,
@@ -120,6 +124,28 @@ namespace WebAppConexion.Controllers
             {
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
             }
+        }
+
+        /// <summary>
+        /// Obtiene competencias por tipo (ORGANIZACIONAL, COMPORTAMENTAL, GERENCIAL).
+        /// </summary>
+        [HttpGet("tipo/{tipoCompetencia}")]
+        public async Task<IEnumerable<GTHCompetenciaViewModel>> ObtenerPorTipo(string tipoCompetencia)
+        {
+            // Usar tipo 4 para búsqueda por tipo de competencia
+            var entidades = await _repository.Mostrar(4, null, null, null, tipoCompetencia);
+
+            return entidades.Select(e => new GTHCompetenciaViewModel
+            {
+                IdCompetencia = e.IdCompetencia,
+                NombreCompetencia = e.NombreCompetencia,
+                Descripcion = e.Descripcion,
+                TipoCompetencia = e.TipoCompetencia,
+                Estado = e.Estado,
+                FechaCreacion = e.FechaCreacion,
+                FechaModificacion = e.FechaModificacion,
+                UsuarioCreacion = e.UsuarioCreacion
+            });
         }
 
         /// <summary>
@@ -136,6 +162,7 @@ namespace WebAppConexion.Controllers
                 IdCompetencia = e.IdCompetencia,
                 NombreCompetencia = e.NombreCompetencia,
                 Descripcion = e.Descripcion,
+                TipoCompetencia = e.TipoCompetencia,
                 Estado = e.Estado,
                 FechaCreacion = e.FechaCreacion,
                 FechaModificacion = e.FechaModificacion,
