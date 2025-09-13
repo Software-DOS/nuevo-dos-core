@@ -3,11 +3,11 @@ import { GthCompetenciaService } from '../../../services/gth-competencia.service
 import { IGTHCompetenciaViewModel } from '../../../interface/ight-competencia';
 
 @Component({
-  selector: 'app-evaluacion-admin',
-  templateUrl: './evaluacion-admin.component.html',
-  styleUrls: ['./evaluacion-admin.component.css']
+  selector: 'app-jefe-evaluacion',
+  templateUrl: './jefe-evaluacion.component.html',
+  styleUrls: ['./jefe-evaluacion.component.css']
 })
-export class EvaluacionAdminComponent implements OnInit {
+export class JefeEvaluacionComponent implements OnInit {
 
   // Variable para el menú principal (superior)
   activeSection: string = 'hoja-ruta'; // Siempre inicia en hoja de ruta
