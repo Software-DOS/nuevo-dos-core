@@ -131,9 +131,6 @@ export class EvaluacionComponent implements OnInit {
     }
   ];
 
-  // Competencies - Se cargarán desde el backend
-  competencies: any[] = [];
-
   // Variable para controlar el estado de carga
   loadingCompetencies: boolean = false;
 
@@ -145,6 +142,7 @@ export class EvaluacionComponent implements OnInit {
       valor: null as number | null,
       fecha: '',
       reconsiderar: null as number | null,
+      calificacionFinal: null as number | null,
       isEditing: false
     },
     {
@@ -153,6 +151,7 @@ export class EvaluacionComponent implements OnInit {
       valor: null as number | null,
       fecha: '',
       reconsiderar: null as number | null,
+      calificacionFinal: null as number | null,
       isEditing: false
     },
     {
@@ -161,6 +160,7 @@ export class EvaluacionComponent implements OnInit {
       valor: null as number | null,
       fecha: '',
       reconsiderar: null as number | null,
+      calificacionFinal: null as number | null,
       isEditing: false
     },
     {
@@ -169,6 +169,7 @@ export class EvaluacionComponent implements OnInit {
       valor: null as number | null,
       fecha: '',
       reconsiderar: null as number | null,
+      calificacionFinal: null as number | null,
       isEditing: false
     },
     {
@@ -177,6 +178,56 @@ export class EvaluacionComponent implements OnInit {
       valor: null as number | null,
       fecha: '',
       reconsiderar: null as number | null,
+      calificacionFinal: null as number | null,
+      isEditing: false
+    }
+  ];
+
+  // Competencias del empleado - se mantienen en memoria durante la sesión (similar a objetivos)
+  competencias = [
+    {
+      id: 1,
+      name: '',
+      valor: null as number | null,
+      fecha: '',
+      reconsiderar: null as number | null,
+      calificacionFinal: null as number | null,
+      isEditing: false
+    },
+    {
+      id: 2,
+      name: '',
+      valor: null as number | null,
+      fecha: '',
+      reconsiderar: null as number | null,
+      calificacionFinal: null as number | null,
+      isEditing: false
+    },
+    {
+      id: 3,
+      name: '',
+      valor: null as number | null,
+      fecha: '',
+      reconsiderar: null as number | null,
+      calificacionFinal: null as number | null,
+      isEditing: false
+    },
+    {
+      id: 4,
+      name: '',
+      valor: null as number | null,
+      fecha: '',
+      reconsiderar: null as number | null,
+      calificacionFinal: null as number | null,
+      isEditing: false
+    },
+    {
+      id: 5,
+      name: '',
+      valor: null as number | null,
+      fecha: '',
+      reconsiderar: null as number | null,
+      calificacionFinal: null as number | null,
       isEditing: false
     }
   ];
@@ -192,10 +243,19 @@ export class EvaluacionComponent implements OnInit {
   }
 
   /**
-   * Carga las primeras 5 competencias desde el backend para mostrar en la hoja de ruta
+   * Carga las primeras 5 competencias desde el backend para poblar las competencias fijas
+   * Solo carga los nombres si las competencias están vacías
    */
   cargarCompetenciasHojaRuta(): void {
-    console.log('🚀 Iniciando carga de competencias...');
+    console.log('🔍 Verificando competencias fijas:', this.competencias);
+    
+    // Si ya hay nombres en las competencias fijas, no volver a cargar
+    if (this.competencias[0].name !== '') {
+      console.log('✅ Competencias fijas ya tienen nombres, preservando valores existentes');
+      return;
+    }
+
+    console.log('🚀 Iniciando carga de nombres de competencias...');
     this.loadingCompetencies = true;
     
     this.gthCompetenciaService.obtenerPrimeras5Competencias()
@@ -203,35 +263,29 @@ export class EvaluacionComponent implements OnInit {
         next: (competencias: IGTHCompetenciaViewModel[]) => {
           console.log('📊 Competencias obtenidas del servicio:', competencias);
           
-          // Mapear las competencias del backend al formato esperado por el frontend
-          this.competencies = competencias.map((comp, index) => ({
-            id: comp.idCompetencia,
-            name: comp.nombreCompetencia || `Competencia ${index + 1}`,
-            description: comp.descripcion || 'Sin descripción disponible',
-            rating: '⭐⭐⭐⭐', // Rating por defecto, se puede personalizar según el backend
-            estado: comp.estado,
-            fechaCreacion: comp.fechaCreacion
-          }));
+          // Poblar solo los nombres en las competencias fijas
+          competencias.forEach((comp, index) => {
+            if (index < this.competencias.length) {
+              this.competencias[index].name = comp.nombreCompetencia || `Competencia ${index + 1}`;
+              // Mantener los valores existentes (valor, fecha, reconsiderar)
+            }
+          });
           
           this.loadingCompetencies = false;
-          console.log('✅ Competencias mapeadas correctamente:', this.competencies);
-          console.log('🔢 Total de competencias cargadas:', this.competencies.length);
+          console.log('✅ Competencias fijas pobladas:', this.competencias);
         },
         error: (error) => {
           console.error('❌ Error al cargar competencias:', error);
           this.loadingCompetencies = false;
           
-          // En caso de error, usar datos de respaldo
-          this.competencies = [
-            {
-              id: 0,
-              name: 'Error al cargar competencias',
-              description: 'No se pudieron cargar las competencias desde el servidor.',
-              rating: '❌',
-              estado: 'ERROR'
+          // En caso de error, usar nombres por defecto
+          this.competencias.forEach((comp, index) => {
+            if (comp.name === '') {
+              comp.name = `Competencia ${index + 1}`;
             }
-          ];
-          console.log('🔄 Usando datos de respaldo por error');
+          });
+          
+          console.log('🔄 Usando nombres por defecto por error');
         }
       });
   }
@@ -302,6 +356,75 @@ export class EvaluacionComponent implements OnInit {
     if (index >= 0 && index < this.objetivos.length) {
       this.objetivos[index].fecha = nuevaFecha;
       console.log(`📅 Fecha del objetivo ${index + 1} actualizada:`, this.objetivos[index]);
+    }
+  }
+
+  /**
+   * Actualiza el nombre de una competencia específica (array fijo)
+   * @param index - Índice de la competencia (0-4)
+   * @param valor - Nuevo nombre (puede ser Event o string)
+   */
+  actualizarNombreCompetenciaFija(index: number, valor: any): void {
+    let nuevoNombre: string;
+    
+    if (valor && typeof valor === 'object' && valor.target) {
+      // Es un evento
+      nuevoNombre = (valor.target as HTMLInputElement).value;
+    } else {
+      // Es un string directo
+      nuevoNombre = String(valor);
+    }
+
+    if (index >= 0 && index < this.competencias.length) {
+      this.competencias[index].name = nuevoNombre;
+      console.log(`📝 Nombre competencia ${index + 1}:`, nuevoNombre, this.competencias[index]);
+    }
+  }
+
+  /**
+   * Actualiza el valor numérico de una competencia específica (array fijo)
+   * @param index - Índice de la competencia (0-4)
+   * @param valor - Valor numérico (puede ser Event o number)
+   */
+  actualizarValorCompetenciaFija(index: number, valor: any): void {
+    let nuevoValor: number;
+    
+    if (valor && typeof valor === 'object' && valor.target) {
+      // Es un evento
+      nuevoValor = Number((valor.target as HTMLInputElement).value);
+    } else {
+      // Es un número directo
+      nuevoValor = Number(valor);
+    }
+
+    if (index >= 0 && index < this.competencias.length) {
+      // Validar que el valor esté entre 0 y 100
+      if (!isNaN(nuevoValor) && nuevoValor >= 0 && nuevoValor <= 100) {
+        this.competencias[index].valor = nuevoValor;
+        console.log(`📊 Valor competencia ${index + 1}:`, nuevoValor, this.competencias[index]);
+      }
+    }
+  }
+
+  /**
+   * Actualiza la fecha de una competencia específica (array fijo)
+   * @param index - Índice de la competencia (0-4)
+   * @param fecha - Nueva fecha (puede ser Event o string)
+   */
+  actualizarFechaCompetenciaFija(index: number, fecha: any): void {
+    let nuevaFecha: string;
+    
+    if (fecha && typeof fecha === 'object' && fecha.target) {
+      // Es un evento
+      nuevaFecha = (fecha.target as HTMLInputElement).value;
+    } else {
+      // Es una fecha directa
+      nuevaFecha = String(fecha);
+    }
+
+    if (index >= 0 && index < this.competencias.length) {
+      this.competencias[index].fecha = nuevaFecha;
+      console.log(`📅 Fecha competencia ${index + 1}:`, nuevaFecha, this.competencias[index]);
     }
   }
 
