@@ -43,6 +43,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@CALIFICACION_FINAL", (object)evaluacion.CalificacionFinal ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@OBSERVACIONES", evaluacion.Observaciones ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@USUARIO_CREACION", "SISTEMA"));
+            cmd.Parameters.Add(new SqlParameter("@FASE", (object)evaluacion.Fase ?? DBNull.Value));
 
             await sql.OpenAsync();
             var response = new List<Generica>();
@@ -120,10 +121,42 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     FechaModificacion = reader["FECHA_MODIFICACION"] != DBNull.Value
                                           ? Convert.ToDateTime(reader["FECHA_MODIFICACION"])
                                           : (DateTime?)null,
-                    UsuarioCreacion = reader["USUARIO_CREACION"]?.ToString()
+                    UsuarioCreacion = reader["USUARIO_CREACION"]?.ToString(),
+                    Fase = reader["FASE"] != DBNull.Value
+                                          ? Convert.ToInt32(reader["FASE"])
+                                          : (int?)null
                 });
             }
             return list;
+        }
+
+        /// <summary>
+        /// Ejecuta SP para cambiar la fase de una evaluación específica.
+        /// </summary>
+        public async Task<IEnumerable<Generica>> CambiarFase(int idEvaluacion, int fase)
+        {
+            using var sql = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SP_Gestionar_GTH_EVALUACION", sql)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.Add(new SqlParameter("@Tipo", 5)); // Tipo 5 = Cambiar Fase
+            cmd.Parameters.Add(new SqlParameter("@ID_EVALUACION", idEvaluacion));
+            cmd.Parameters.Add(new SqlParameter("@FASE", fase));
+
+            await sql.OpenAsync();
+            var response = new List<Generica>();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                response.Add(new Generica
+                {
+                    valor1 = Convert.ToInt16(reader["Codigo"]),
+                    valor2 = reader["Mensaje"].ToString()
+                });
+            }
+            return response;
         }
     }
 }
