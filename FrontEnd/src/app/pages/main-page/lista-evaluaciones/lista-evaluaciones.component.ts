@@ -7,6 +7,7 @@ import { environment } from '../../../../environments/environment';
 interface Empleado {
   id: number;
   nombre: string;
+  sexo: string; 
   departamento: string;
   fechaIncorporacion: string;
   calificado: string;
@@ -29,6 +30,69 @@ interface Filtros {
 })
 export class ListaEvaluacionesComponent implements OnInit {
 
+  activeSubcategory: string = 'curso'; // Sección de pestaña activa por defecto
+
+  // =====================
+  // 📌 Datos para filtros
+  // =====================
+  filtroArea: string = '';
+  filtroEmpleado: string = '';
+
+  // Aquí puedes cargar la lista real desde tu API
+  empleados: any[] = [
+    { id: 1, nombre: 'Juan Pérez', area: 'Finanzas', estado: 'PENDIENTE' },
+    { id: 2, nombre: 'Ana Torres', area: 'Talento Humano', estado: 'COMPLETA' },
+    { id: 3, nombre: 'Luis Gómez', area: 'Logística', estado: 'EN PROCESO' }
+  ];
+
+  //Variables para la pestaña Crear Evaluacion
+  // ==================================
+  // 📌 Selecciones del formulario
+  // ==================================
+  tipoCompetencia: string = '';
+  competenciaSeleccionada: string = '';
+  nivelSeleccionado: string = '';
+
+  // ==========================
+  // 📌 Competencias y niveles
+  // ==========================
+  tiposCompetencias: string[] = [
+    'Técnica',
+    'Conductual',
+    'Liderazgo',
+    'Trabajo en Equipo',
+    'Innovación'
+  ];
+
+  competencias: string[] = [
+    'Comunicación',
+    'Planificación',
+    'Resolución de Problemas',
+    'Orientación a Resultados',
+    'Adaptabilidad',
+    'Gestión del Tiempo',
+    'Trabajo bajo presión',
+    'Creatividad',
+    'Pensamiento Crítico',
+    'Delegación',
+    'Negociación',
+    'Gestión de Conflictos',
+    'Toma de Decisiones',
+    'Aprendizaje Continuo',
+    'Colaboración'
+  ];
+
+  niveles: string[] = [
+    'Nivel 1 - Básico',
+    'Nivel 2 - Intermedio',
+    'Nivel 3 - Avanzado',
+    'Nivel 4 - Experto',
+    'Nivel 5 - Referente'
+  ];
+
+
+  //-----------------------------         ------------------------------------        ---------------------------------
+
   // NgModel properties for filters
   filtroDepartamento: string = '';
   filtroNombre: string = '';
@@ -43,7 +107,7 @@ export class ListaEvaluacionesComponent implements OnInit {
     idioma: ''
   };
 
-  empleados: Empleado[] = [];
+  //empleados: Empleado[] = [];
 
   empleadosFiltrados: Empleado[] = [];
 
@@ -112,25 +176,48 @@ export class ListaEvaluacionesComponent implements OnInit {
    * Mapear datos del backend al formato requerido por el frontend
    */
   private mapearEmpleados(empleadosBackend: any[]): Empleado[] {
-    return empleadosBackend.map(emp => ({
+  return empleadosBackend.map(emp => {
+    // Validamos si viene sexo y lo mostramos en consola para debug
+    if (!emp.sexo) {
+      console.warn(`Empleado ${emp.idEmpleado || 'sin ID'} no tiene valor en 'sexo'`);
+    } else {
+      console.log(`Empleado ${emp.idEmpleado || 'sin ID'} - Sexo recibido: ${emp.sexo}`);
+    }
+
+    return {
       id: emp.idEmpleado || 0,
       nombre: `${emp.nombre || ''} ${emp.apellido || ''}`.trim() || 'N/A',
       departamento: emp.area || 'N/A',
       fechaIncorporacion: emp.fechaContratacion || 'N/A',
       calificado: 'N/A', // No existe en el backend
-      photo: this.construirUrlFoto(emp.fotoPerfilUrl),
+      sexo: emp.sexo || 'N/A', // fallback si no viene
+      // photo: this.construirUrlFoto(emp.fotoPerfilUrl, emp.sexo), 
+      photo: this.construirUrlFoto('', emp.sexo), // 👈 pasamos el valor real
       ubicacion: emp.ubicacion || 'N/A',
-      idioma: 'N/A' // No existe en el backend
-    }));
-  }
+      idioma: 'N/A', // No existe en el backend
+      estado: 'Pendiente'
+    };
+  });
+}
 
-  /**
-   * Construir la URL completa de la foto de perfil
-   */
-  private construirUrlFoto(fotoPerfilUrl: string): string {
-    // Si no hay URL de foto, usar imagen por defecto
+
+/**
+ * Construir la URL completa de la foto de perfil
+ */
+  private construirUrlFoto(fotoPerfilUrl: string, sexo: string): string {
+    // Normalizar sexo (maneja nulos, undefined y mayúsculas)
+    const sexoNormalizado = (sexo || '').toString().trim().toLowerCase();
+
+    // Si no hay URL de foto, usar imagen por defecto según sexo
     if (!fotoPerfilUrl) {
-      return 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+      if (sexoNormalizado === 'femenino' || sexoNormalizado === 'f') {
+        return 'https://cdn-icons-png.flaticon.com/512/2922/2922561.png'; // 👩
+      } else if (sexoNormalizado === 'masculino' || sexoNormalizado === 'm') {
+        return 'https://cdn-icons-png.flaticon.com/512/2922/2922510.png'; // 👨
+      } else {
+        // Imagen genérica si no se reconoce el valor
+        return 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+      }
     }
 
     // Si ya es una URL completa (http/https), devolverla tal como está
@@ -139,22 +226,18 @@ export class ListaEvaluacionesComponent implements OnInit {
     }
 
     // Si es una ruta relativa, construir URL completa con el backend
-    if (fotoPerfilUrl.startsWith('/')) {
-      // Remover la barra final del backend URL si existe
-      const baseUrl = environment.urlbackend.endsWith('/') 
-        ? environment.urlbackend.slice(0, -1) 
-        : environment.urlbackend;
-      
-      return `${baseUrl}${fotoPerfilUrl}`;
-    }
-
-    // Si no comienza con /, agregar la barra y el backend URL
     const baseUrl = environment.urlbackend.endsWith('/') 
       ? environment.urlbackend.slice(0, -1) 
       : environment.urlbackend;
-    
+
+    if (fotoPerfilUrl.startsWith('/')) {
+      return `${baseUrl}${fotoPerfilUrl}`;
+    }
+
     return `${baseUrl}/${fotoPerfilUrl}`;
   }
+
+
 
   /**
    * Cargar datos por defecto en caso de error
@@ -164,20 +247,20 @@ export class ListaEvaluacionesComponent implements OnInit {
       {
         id: 1,
         nombre: 'José Casas',
-        departamento: 'Desarrollo',
+        area: 'Desarrollo',
         fechaIncorporacion: '05/04/2025',
         calificado: 'Si',
-        photo: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+        photo: '',
         ubicacion: 'Quito',
         idioma: 'Inglés'
       },
       {
         id: 2,
         nombre: 'Juan Casas',
-        departamento: 'Recursos Humanos',
+        area: 'Recursos Humanos',
         fechaIncorporacion: '01/04/2025',
         calificado: 'No',
-        photo: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+        photo: '',
         ubicacion: 'Guayaquil',
         idioma: 'Español'
       }
@@ -215,5 +298,54 @@ export class ListaEvaluacionesComponent implements OnInit {
     // Navigate to evaluation page
     // Adjust the route path according to your routing configuration
     this.router.navigate(['/evaluacion', empleadoId]);
+  }
+
+  //Mostrar el contenido de las pestañas
+  showSubcategoryEval(tab: string): void {
+    this.activeSubcategory = tab;
+    console.log('Pestaña activa:', this.activeSubcategory);
+  }
+
+  // Damos color a la etiqueta de AREA
+  getAreaClass(area: string): string {
+    const areaKey = area.toLowerCase();
+    switch (areaKey) {
+      case 'tecnología':
+        return 'area-badge area-tecnologia';
+      case 'recursos humanos':
+        return 'area-badge area-talento';
+      case 'marketing':
+        return 'area-badge area-marketing';
+      case 'finanzas':
+        return 'area-badge area-finanzas';
+      case 'ingeniería':
+        return 'area-badge area-legal';
+      case 'operaciones':
+        return 'area-badge area-calidad';
+      default:
+        return 'area-badge';
+    }
+  }
+
+
+
+  //--------------------      ---------------------------------       ------------------------
+  // FUNCION PARA CREAR UNA NUEVA EVALUACION
+  // ===============================
+  // 📌 Función para guardar
+  // ===============================
+  guardarEvaluacion(): void {
+    const evaluacion = {
+      empleado: this.filtroEmpleado,
+      area: this.filtroArea,
+      tipoCompetencia: this.tipoCompetencia,
+      competencia: this.competenciaSeleccionada,
+      nivel: this.nivelSeleccionado
+    };
+
+    console.log('📌 Evaluación creada:', evaluacion);
+
+    // Aquí deberías llamar al servicio que guarde en tu backend
+    // this.evaluacionService.crearEvaluacion(evaluacion).subscribe(...)
   }
 }

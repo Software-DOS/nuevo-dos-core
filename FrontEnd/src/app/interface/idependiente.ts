@@ -1,8 +1,11 @@
 export interface Idependiente {
-  CedulaEmpleado: string; 
-  DepNombre: string; 
-  DepFechaNacimiento: string;  
-  DepDiscapacidad?: boolean | "";   // <-- ahora acepta vacío también
-  DepDocumentoUrl: string; 
-  DepRelacion: string; 
+  IdDependiente?: number;
+  CedulaEmpleado: string;
+  depNombre?: string;
+  depFechaNacimiento?: string;
+  depDiscapacidad?: number | string; 
+  depDocumentoUrl?: string;
+  depRelacion?: string;
+
+  // Tipo?: number;
 }

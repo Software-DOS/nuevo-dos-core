@@ -1,8 +1,52 @@
+/* ===========================================================================
+                        Estilos para las pestañas
+=============================================================================*/
+
+.subcategory-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.subcategory-link:hover {
+  color: var(--page-primary);
+  background-color: var(--page-primary-light);
+}
+.subcategory-link.active {
+  background-color: #e91e63;
+  color: #fff; /* letras blancas */
+}
+
+/* --- Botón de crear evaluación --- */
+.subcategory-link.crear-btn {
+  margin-left: auto; /* lo manda a la derecha */
+  background-color: #6598bd; /* azulado verdoso */
+  color: #fff;
+}
+.subcategory-link.crear-btn:hover {
+  background-color: #00cad8; /* un tono más oscuro */
+}
+
+
+
+/* ===========================================================================
+                Estilos para la Seccion de filtro y lista
+=============================================================================*/
+
+.curso-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr; /* filtros a la izquierda, tabla a la derecha */
+  gap: 1.5rem;
+}
+
+
+
+
+
 /* Estilos para la tabla de empleados */
 .cap-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
@@ -10,7 +54,7 @@
 
 .cap-header {
   display: grid;
-  grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1fr 1fr;
   gap: 20px;
   padding: 18px 25px;
   background-color: #e91e63;
@@ -23,24 +67,26 @@
 
 .cap-row {
   display: grid;
-  grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1fr 1fr;
   gap: 20px;
   padding: 20px 25px;
   border-bottom: 1px solid #e0e0e0;
   align-items: center;
-  cursor: pointer;
   transition: all 0.2s ease;
   min-height: 70px;
-}
-
-.cap-row:hover {
-  background-color: #f8f9fa;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
 .cap-row:nth-child(even) {
-  background-color: #fafafa;
+  /* background-color: var(--color-very-light-gray);  */
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.cap-row:hover {
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+  border-color: #06b6d4;
 }
 
 .cap-row:nth-child(even):hover {
@@ -55,8 +101,8 @@
 .empleado-info-column {
   display: flex;
   align-items: center;
-  gap: 15px;
-  text-align: left;
+  font-weight: 500;
+  color: #333;
 }
 
 .employee-photo {
@@ -80,6 +126,109 @@
   font-size: 14px;
   line-height: 1.4;
 }
+
+
+/*  *******    Estilos para los ESTADOS   *******  */
+.estado-badge {
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.estado-badge.pendiente {
+  background: linear-gradient(135deg, #c12bc6 0%, #f80077 100%);
+  box-shadow: 0 2px 4px rgba(222, 74, 151, 0.3);
+}
+
+.estado-badge.completada {
+  background: linear-gradient(135deg, #03d34f 0%, #00b3de 100%);
+  box-shadow: 0 2px 4px rgba(74, 222, 128, 0.3);
+}
+
+.estado-badge.en-proceso {
+  background: linear-gradient(135deg, #00bcf5 0%, #3550f5 100%);
+  box-shadow: 0 2px 4px rgba(74, 155, 222, 0.3);
+}
+
+.certifications-count {
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #4ade80 0%, #06b6d4 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 4px rgba(74, 222, 128, 0.3);
+}
+
+/*  *****      Estilos para dar color a las etiquetas de AREA     *******+   */
+.area-badge {
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  border-radius: 999px;
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-align: center;
+  /* margin-left: 1rem;
+  margin-right: 2rem; */
+  max-width: fit-content;
+}
+
+.area-tecnologia {
+  background-color: #d6e4ff;
+  color: #1a237e;
+}
+
+.area-talento {
+  background-color: #fce4ec;
+  color: #880e4f;
+}
+
+.area-marketing {
+  background-color: #fff3cd;
+  color: #b37400;
+}
+
+.area-finanzas {
+  background-color: #d0f0d0;
+  color: #2e7d32;
+}
+
+.area-legal {
+  background-color: #ede7f6;
+  color: #512da8;
+}
+
+.area-calidad {
+  background-color: #e0f7fa;
+  color: #006064;
+}
+
+
+
+/* ======================================================================
+                Estilos para cada columna de la tabla
+=========================================================================*/
+
+/* Columna: Nombre (más énfasis) */
+.cap-header > div:nth-child(1){
+  flex: 2;
+  font-weight: bold;
+  /* color: #2a2a2a; */
+}
+.cap-row > div:nth-child(1) {
+  flex: 2;
+  font-weight: bold;
+  /* color: #2a2a2a; */
+}
+
+
+
 
 /* Centrar contenido de las otras columnas */
 .cap-row > div:not(.empleado-info-column) {

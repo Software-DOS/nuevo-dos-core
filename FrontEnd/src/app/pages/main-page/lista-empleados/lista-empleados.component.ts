@@ -41,7 +41,7 @@ export class ListaEmpleadosComponent implements OnInit {
     {
       id: 3,
       nombre: 'María Fernanda Cordero',
-      cedula: '1723456789',
+      cedula: '1809988776',
       cargo: 'Analista de Recursos Humanos',
       area: 'Talento Humano',
       certificaciones: 5,

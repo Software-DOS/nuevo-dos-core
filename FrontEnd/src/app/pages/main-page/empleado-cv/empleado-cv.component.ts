@@ -5,25 +5,39 @@ import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
 import { alerts } from 'src/app/helpers/alerts';
 import { ElementRef, ViewChild } from '@angular/core';
 
+// Usar forkJoin para manejar múltiples observables
+import { forkJoin } from 'rxjs';
+import { Idependiente } from 'src/app/interface/idependiente';
+
+import { firstValueFrom } from 'rxjs';
+
 declare var Swal: any;
-// Variables adicionales para mostrar los dependientes guardados
-//dependientesDisplay: any[] = [];
+
+// Agregar esta interfaz al inicio de tu componente
+interface DependienteFormulario {
+  nombre: string;
+  fechaNacimiento: string;
+  discapacidad: string;
+  documentoBase64: string;
+  relacion: string;
+}
 
 @Component({
   selector: 'app-empleado-cv',
   templateUrl: './empleado-cv.component.html',
   styleUrls: ['./empleado-cv.component.css']
 })
+
 export class EmpleadoCvComponent implements OnInit {
   
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-  // Variables adicionales para mostrar los dependientes guardados
-  dependientesDisplay: any[] = [];
-  
+  cargandoDependientes: boolean = false;
 
   activeSection: string = 'datos-personales';
-  activeSubcategory: string = 'info-organizacional';
+  activeSubcategory: string = ''; // Sección activa por defecto
+  activeSubcategoryAcad: string = ''; // Sección activa por defecto
+
   isEditing: boolean = false;
   sectionEditStates: { [key: string]: boolean } = {
     'datos-personales': false,
@@ -96,20 +110,33 @@ export class EmpleadoCvComponent implements OnInit {
   public fechaMatrimonio: string = '';
   public discapacidadConyuge?: boolean;
   public documentosConyuge: string = '';
-
-  // // Variables adicionales para mostrar los dependientes guardados
-  // dependientesDisplay: any[] = [];
+ 
 
   // Array de dependientes para el formulario
-  dependientes = [
+  dependientesInsert = [
     {
-      nombre: '',
-      fechaNacimiento: '',
-      discapacidad: '',
+      // idDependiente: '',
+      depNombreMdl: '',
+      depFechaNacimientoMdl: '',
+      depDiscapacidadMdl: '',
       documentoBase64: '',
-      relacion: ''
+      depRelacionMdl: ''
     }
-  ];
+  ];  
+
+  dependientes: Idependiente[] = [];
+
+  // Dependientes para mosytrar en el Front
+  employeeData: {
+      family: {
+        children: Idependiente[];
+      };
+    } = {
+      family: {
+        children: []
+      }
+    };
+
 
   // Additional missing properties for identity documents
   public numeroCedula: string = '';
@@ -211,6 +238,47 @@ export class EmpleadoCvComponent implements OnInit {
   discapacidadDepDisplay: string = '';
   relacionDepDisplay: string = '';
 
+  // Informacion Laboral
+  cargoActualLabDisplay: string = '';
+  fechaInicioLabDisplay: string = '';
+  empresaLabDisplay: string = '';
+  areaLaboralDisplay: string = '';
+  subareaLaboralDisplay: string = '';
+
+  jefeDirectoDisplay: string = '';
+  tipoContratoDisplay: string = '';
+  ubicacionDisplay: string = '';
+
+  cargoHistorialDisplay: string = '';
+  empresaHistorialDisplay: string = '';
+  fechasHistorialDisplay: string = '';
+  funcionesHistorialDisplay: string = '';
+
+
+  // Informacion academica
+  carreraTercerNivelDisplay: string = '';
+  institucionTercerNivelDisplay: string = '';
+
+  masterCuartoNivelDisplay: string = '';
+  institucionCuartoNivelDisplay: string = '';
+
+  tituloEspecialidadDisplay: string = '';
+  institucionEspecialidadDisplay: string = '';
+  fechaEspecialidadDisplay: string = '';
+  certificadoEspecialidadDisplay: string = '';
+
+  // Idioma
+  idiomaDisplay: string = '';
+  nivelIdiomaDisplay: string = '';
+  certificacionIdiomaDisplay: string = '';
+
+  // Proyecto
+  tituloProyectoDisplay: string = '';
+  especialidadProyectoDisplay: string = '';
+  anoProyectoDisplay: string = '';
+
+
+
   //
   public generica: any = [];
   public cargaInicial: any = [];
@@ -247,7 +315,7 @@ export class EmpleadoCvComponent implements OnInit {
     } else {
       console.warn('No se encontró ID de empleado en sessionStorage, usando cédula de prueba');
       // Fallback: usar cédula hardcoded para testing
-      this.buscarEmpleadoPorCedula('1206039933001');
+      this.buscarEmpleadoPorCedula('1809988776');
     }
   }
 
@@ -308,7 +376,7 @@ export class EmpleadoCvComponent implements OnInit {
   /**
    * Mapea los datos del empleado a las variables de visualización
    */
-  private mapearDatosParaMostrar(): void {
+  private async mapearDatosParaMostrar(): Promise<void>  {
     if (this.empleado) {
       // Guardar ID del empleado para usar en subida de fotos
       this.idEmpleadoActual = this.empleado.idEmpleado;
@@ -357,10 +425,118 @@ export class EmpleadoCvComponent implements OnInit {
       this.discapacidadConyugeDisplay = this.empleado.discapacidadConyuge === true ? 'Sí' : this.empleado.discapacidadConyuge === false 
       ? 'No' : 'No registrado'; //Asignamos por defecto
 
-      
+      await this.cargarDependientes();   //lugar para cargar dependientes
+
+      this.showSubcategory('info-organizacional');
+      this.showSubcategoryAcad('estudios');
+
+      this.carreraTercerNivelDisplay = this.carreraTercerNivel;
+      this.institucionTercerNivelDisplay = this.institucionTercerNivel;
+
+      this.masterCuartoNivelDisplay = this.masterCuartoNivel;
+      this.institucionCuartoNivelDisplay = this.institucionCuartoNivel;
+
 
     }
   }  
+
+
+  /*#=========================================================================
+                        Cargar datos de dependientes desde la base 
+  ============================================================================*/
+   private async cargarDependientes(): Promise<void> {
+      // Verificar que empleado existe y tiene cédula
+      if (!this.empleado?.cedula) {
+        console.warn('No se puede cargar dependientes: empleado o cédula no disponible ->', this.empleado?.cedula); //-->borrar
+        return;
+      }
+  
+      try {
+        this.cargandoDependientes = true;
+        console.log('Cargando dependientes para empleado con cédula:', this.empleado.cedula); //-->borrar
+  
+        // Llamada al servicio usando firstValueFrom
+        const response: any = await firstValueFrom(
+          this.gthEmpleadoService.MostrarDependientesPorEmpleado(this.empleado.cedula)
+        );
+  
+        console.log('Respuesta del servicio dependientes:', response); //-->borrar
+  
+        // Si la respuesta tiene $values, tomar esos datos
+        if (response && response.$values && Array.isArray(response.$values)) {
+          this.dependientes = response.$values;
+        } else if (Array.isArray(response)) {
+          this.dependientes = response;
+        } else {
+          this.dependientes = [];
+        }
+  
+        // Mapear y enriquecer los datos para la UI
+        this.employeeData = {
+          family: {
+            children: this.dependientes.map(dep => this.enriquecerDependiente(dep))
+          }
+        };
+  
+        console.log('Dependientes cargados y enriquecidos:', this.employeeData.family.children); //-->borrar
+  
+      } catch (error) {
+        console.error('Error al cargar dependientes:', error);
+        this.dependientes = [];
+        this.employeeData = { family: { children: [] } };
+      } finally {
+        this.cargandoDependientes = false;
+        console.log('Finalizó la carga de dependientes');
+      }
+  }
+
+   /**
+   * Enriquece el dependiente con campos adicionales para display
+   */
+  private enriquecerDependiente(dependiente: Idependiente): Idependiente {
+    // Convertir disability según el tipo de dato que viene desde la BD
+    let discapacidadBool: boolean | null = null;
+    
+    // Si viene como number (bit de la BD: 0 o 1)
+    if (typeof dependiente.depDiscapacidad === 'number') {
+      discapacidadBool = dependiente.depDiscapacidad === 1;
+    }
+    // Si viene como string
+    else if (typeof dependiente.depDiscapacidad === 'string') {
+      if (dependiente.depDiscapacidad === 'true' || dependiente.depDiscapacidad === '1') {
+        discapacidadBool = true;
+      } else if (dependiente.depDiscapacidad === 'false' || dependiente.depDiscapacidad === '0') {
+        discapacidadBool = false;
+      }
+    }
+    // Si ya viene como boolean
+    else if (typeof dependiente.depDiscapacidad === 'boolean') {
+      discapacidadBool = dependiente.depDiscapacidad;
+    }
+
+    return {
+      ...dependiente,
+      depNombre: dependiente.depNombre || 'No registrado',
+      depFechaNacimiento: dependiente.depFechaNacimiento ? 
+      this.formatearFecha(dependiente.depFechaNacimiento) : 'No registrado',
+      depDiscapacidad: this.mapearDiscapacidad(discapacidadBool),
+      depRelacion: dependiente.depRelacion || 'No especificado',
+      depDocumentoUrl: dependiente.depDocumentoUrl || ''
+    };
+  }
+  private tieneDocumentoValido(documentoUrl?: string): boolean {
+    return !!(documentoUrl && documentoUrl.trim() !== '');
+  }
+  private mapearDiscapacidad(discapacidad?: boolean | null): string {
+    if (discapacidad === true) return 'Sí';
+    if (discapacidad === false) return 'No';
+    return 'No registrado';
+  }
+
+
+
+
+
 
   /**
    * Actualiza los datos del empleado (útil para refrescar información)
@@ -453,64 +629,17 @@ export class EmpleadoCvComponent implements OnInit {
              valor1 = this.generica.valor1;
              valor2 = this.generica.valor2;
    
-             //guardar un nuevo empleado
-            if (valor1 == 1) {
-              // Después de guardar el empleado, guardar dependientes si existen
-              this.guardarDependientesAlFinal();
-              alerts.basicAlert('Excelente', valor2, 'success');
- 
-             }
-             //actualizar un empleado
-             else if (valor1 == 2) {
-               //this.loading = false;
-              // Después de guardar el empleado, guardar dependientes si existen
-              this.guardarDependientesAlFinal();
-              alerts.basicAlert('Excelente', valor2, 'success');
-             }
-             //existe el empleado
-             else if (valor1 == 4) {
-               //this.loading = false;
-               //alerts.basicAlert('Advertencia', valor2, 'warning');
-             }
            },
            (err) => {
              console.log('err', err);
            }
          );
   }
+ 
 
-  // Método para guardar dependientes después de guardar el empleado principal
-  private guardarDependientesAlFinal(): void {
-    const dependientesValidos = this.dependientes.filter(dep => 
-      dep.nombre && dep.nombre.trim() !== ''
-    );
-
-    if (dependientesValidos.length > 0) {
-      const dependientesParaGuardar = dependientesValidos.map(dep => ({
-        CedulaEmpleado: this.numeroCedula,
-        DepNombre: dep.nombre,
-        DepFechaNacimiento: dep.fechaNacimiento,
-        DepDiscapacidad: dep.discapacidad && dep.discapacidad.toLowerCase() !== 'ninguna',
-        DepDocumentoUrl: dep.documentoBase64,
-        DepRelacion: dep.relacion || 'Hijo/a'
-      }));
-
-      const promesasGuardado = dependientesParaGuardar.map(dependiente => 
-        this.gthEmpleadoService.GuardarDependiente(dependiente).toPromise()   //comentado
-      );
-
-      Promise.all(promesasGuardado)
-        .then(responses => {
-          console.log('Dependientes guardados:', responses);
-        })
-        .catch(error => {
-          console.error('Error al guardar dependientes:', error);
-        });
-    }
-  }
 
   // Form visibility states
-  showAddDependentForm: boolean = false;
+  // showAddDependentForm: boolean = false;
   showAddEducationForm: boolean = false;
   showAddCertificationForm: boolean = false;
   showAddLanguageForm: boolean = false;
@@ -530,6 +659,9 @@ export class EmpleadoCvComponent implements OnInit {
 
   showSubcategory(targetId: string): void {
     this.activeSubcategory = targetId;
+  }
+  showSubcategoryAcad(targetId: string): void {
+    this.activeSubcategoryAcad = targetId;
   }
 
   toggleEdit(): void {
@@ -557,7 +689,7 @@ export class EmpleadoCvComponent implements OnInit {
   // Form toggle methods
   // Método centralizado para cerrar todos los formularios emergentes
   private closeAllForms(): void {
-    this.showAddDependentForm = false;
+    // this.showAddDependentForm = false;
     this.showAddEducationForm = false;
     this.showAddCertificationForm = false;
     this.showAddLanguageForm = false;
@@ -602,19 +734,19 @@ export class EmpleadoCvComponent implements OnInit {
     this.nuevoHistorialFunciones = '';
   }
 
-  toggleAddDependentForm(): void {
-    // Si el formulario está cerrado, cerrar todos los demás primero
-    if (!this.showAddDependentForm) {
-      this.closeAllForms();
-      this.showAddDependentForm = true;
-    } else {
-      // Si ya está abierto, solo cerrarlo
-      this.showAddDependentForm = false;
-      this.nuevoDependienteNombre = '';
-      this.nuevoDependienteFechaNacimiento = '';
-      this.nuevoDependienteDiscapacidad = '';
-    }
-  }
+  // toggleAddDependentForm(): void {
+  //   // Si el formulario está cerrado, cerrar todos los demás primero
+  //   if (!this.showAddDependentForm) {
+  //     this.closeAllForms();
+  //     this.showAddDependentForm = true;
+  //   } else {
+  //     // Si ya está abierto, solo cerrarlo
+  //     this.showAddDependentForm = false;
+  //     this.nuevoDependienteNombre = '';
+  //     this.nuevoDependienteFechaNacimiento = '';
+  //     this.nuevoDependienteDiscapacidad = '';
+  //   }
+  // }
 
   toggleAddEducationForm(): void {
     // Si el formulario está cerrado, cerrar todos los demás primero
@@ -688,27 +820,27 @@ export class EmpleadoCvComponent implements OnInit {
   }
 
   // Add methods
-  addDependent(): void {
-    if (!this.newDependent.name || !this.newDependent.birthdate || !this.newDependent.disability) {
-      Swal.fire({
-        title: 'Campos incompletos',
-        text: 'Por favor completa todos los campos del dependiente antes de guardar.',
-        icon: 'warning',
-        confirmButtonText: 'Ok'
-      });
-      return;
-    }
+  // addDependent(): void {
+  //   if (!this.newDependent.name || !this.newDependent.birthdate || !this.newDependent.disability) {
+  //     Swal.fire({
+  //       title: 'Campos incompletos',
+  //       text: 'Por favor completa todos los campos del dependiente antes de guardar.',
+  //       icon: 'warning',
+  //       confirmButtonText: 'Ok'
+  //     });
+  //     return;
+  //   }
 
-    Swal.fire({
-      title: 'Dependiente añadido',
-      html: `<strong>${this.newDependent.name}</strong><br>Fecha de Nacimiento: ${this.newDependent.birthdate}<br>Discapacidad: ${this.newDependent.disability}`,
-      icon: 'success',
-      confirmButtonText: 'Aceptar'
-    });
+  //   Swal.fire({
+  //     title: 'Dependiente añadido',
+  //     html: `<strong>${this.newDependent.name}</strong><br>Fecha de Nacimiento: ${this.newDependent.birthdate}<br>Discapacidad: ${this.newDependent.disability}`,
+  //     icon: 'success',
+  //     confirmButtonText: 'Aceptar'
+  //   });
 
-    this.newDependent = { name: '', birthdate: '', disability: '' };
-    this.toggleAddDependentForm();
-  }
+  //   this.newDependent = { name: '', birthdate: '', disability: '' };
+  //   this.toggleAddDependentForm();
+  // }
 
   addEducation(): void {
     if (!this.newEducation.career || !this.newEducation.institution) {
@@ -848,14 +980,17 @@ export class EmpleadoCvComponent implements OnInit {
     principal: false,
     secundarios: false,
     emergencia: false,
-    familiar: false
+    familiar: false,
+    empleo: false,
+    laboral: false
   };
+
 
   /* ========================================================================
     Funciones para abrir y cerrar modales de forma general
   ======================================================================== */
 
-  openModal(modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar') {
+  openModal(modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar' | 'empleo' | 'laboral') {
     
     if (modal === 'principal') this.cargarDatosPersonales();
     this.modalStates[modal] = true;
@@ -868,13 +1003,19 @@ export class EmpleadoCvComponent implements OnInit {
 
     if (modal === 'familiar') this.cargarDatosFamiliar();
     this.modalStates[modal] = true;
+
+    if (modal === 'empleo') this.cargarInfoEmpleoDisplay();
+    this.modalStates[modal] = true;
+
+    if (modal === 'laboral') this.cargarDatosFamiliar();
+    this.modalStates[modal] = true;
   }
 
-  closeModal(modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar') {
+  closeModal(modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar' | 'empleo' | 'laboral') {
     this.modalStates[modal] = false;
   }
 
-  closeModalOnOverlay(event: Event, modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar') {
+  closeModalOnOverlay(event: Event, modal: 'principal' | 'secundarios' | 'emergencia' | 'familiar' | 'empleo' | 'laboral') {
     if (event.target === event.currentTarget) {
       this.closeModal(modal);
     }
@@ -1190,17 +1331,17 @@ export class EmpleadoCvComponent implements OnInit {
 
   // Formatear fecha para mostrar
   formatearFecha(fecha: string): string {
-  if (!fecha) return '';
-  
-  // Añade hora media para evitar desfases por zona horaria
-  const date = new Date(fecha + 'T12:00:00');
-  
-  return date.toLocaleDateString('es-EC', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
-}
+    if (!fecha) return '';
+    
+    // Añade hora media para evitar desfases por zona horaria
+    const date = new Date(fecha + 'T12:00:00');
+    
+    return date.toLocaleDateString('es-EC', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
 
 
   /* ========================================================================
@@ -1232,21 +1373,13 @@ export class EmpleadoCvComponent implements OnInit {
     });
   }
 
+
+
   /* ========================================================================
-    Información Familiar
+                        Información Familiar
   ======================================================================== */
 
-  // dependientes = [
-  //   {
-  //     nombre: '',
-  //     fechaNacimiento: '',
-  //     discapacidad: '',
-  //     documentoBase64: '',
-  //     relacion: ''
-  //   }
-  // ];
-  
-  // Cargar datos al abrir modal Dependeientes familiares
+  // Cargar datos al abrir MODAL de familiares y Dependeientes 
   cargarDatosFamiliar(): void {
     this.estadoConyugal = this.estadoConyugalDisplay;
     this.nombreConyuge = this.nombreConyugeDisplay;
@@ -1256,50 +1389,101 @@ export class EmpleadoCvComponent implements OnInit {
                                this.discapacidadConyugeDisplay?.toLowerCase() === 'si');
     
     // Cargar dependientes existentes
-    this.cargarDependientesExistentes();
+    // this.cargarDependientesExistentes();
+    this.cargarDependientesDesdeDisplay();
   }
 
-  // Método para cargar dependientes existentes desde el backend
-  cargarDependientesExistentes(): void {
-    if (this.numeroCedula) {
-      this.gthEmpleadoService.ObtenerDependientes(this.numeroCedula).subscribe({
-        next: (response: any) => {
-          if (response && response.length > 0) {
-            this.dependientes = response.map((dep: any) => ({
-              nombre: dep.DepNombre || '',
-              fechaNacimiento: dep.DepFechaNacimiento || '',
-              discapacidad: dep.DepDiscapacidad || '',
-              documentoBase64: dep.DepDocumentoUrl || '',
-              relacion: dep.DepRelacion || ''
-            }));
-          } else {
-            // Si no hay dependientes, inicializar con un registro vacío
-            this.dependientes = [{
-              nombre: '',
-              fechaNacimiento: '',
-              discapacidad: '',
-              documentoBase64: '',
-              relacion: ''
-            }];
-          }
-        },
-        error: (error) => {
-          console.error('Error al cargar dependientes:', error);
-          // Inicializar con registro vacío en caso de error
-          this.dependientes = [{
-            nombre: '',
-            fechaNacimiento: '',
-            discapacidad: '',
-            documentoBase64: '',
-            relacion: ''
-          }];
-        }
-      });
+  // Cargar dependientes desde los datos ya existentes en el componente
+  cargarDependientesDesdeDisplay(): void {
+    if (this.employeeData?.family?.children && this.employeeData.family.children.length > 0) {
+      this.dependientesInsert = this.employeeData.family.children.map((dep: Idependiente) => ({
+        IdDependiente: dep.IdDependiente || null,
+        depNombreMdl: dep.depNombre || '',
+        depFechaNacimientoMdl: dep.depFechaNacimiento ? this.formatearFechaParaInput(dep.depFechaNacimiento) : '',
+        depDiscapacidadMdl: this.normalizarDiscapacidad(dep.depDiscapacidad),
+        depRelacionMdl: dep.depRelacion || '',
+        documentoBase64: dep.depDocumentoUrl || ''
+      }));
+    } else {
+      this.inicializarDependientesVacios();
     }
   }
 
+  // Método auxiliar para normalizar el valor de discapacidad
+  private normalizarDiscapacidad(discapacidad: any): string {
+    if (discapacidad === null || discapacidad === undefined || discapacidad === '') {
+      return '';
+    }
+    
+    // Si viene como number (bit de la BD: 0 o 1)
+    if (typeof discapacidad === 'number') {
+      return discapacidad === 1 ? 'si' : 'no';
+    }
+    
+    // Si viene como string
+    if (typeof discapacidad === 'string') {
+      const valor = discapacidad.toLowerCase();
+      if (valor === 'true' || valor === '1' || valor === 'si' || valor === 'sí') {
+        return 'si';
+      } else if (valor === 'false' || valor === '0' || valor === 'no') {
+        return 'no';
+      }
+      return valor;
+    }
+    
+    // Si viene como boolean
+    if (typeof discapacidad === 'boolean') {
+      return discapacidad ? 'si' : 'no';
+    }
+    
+    return '';
+  }
+
+// Método auxiliar para inicializar dependientes vacíos
+private inicializarDependientesVacios(): void {
+  this.dependientesInsert = [{
+    // IdDependiente: null,
+    depNombreMdl: '',
+    depFechaNacimientoMdl: '',
+    depDiscapacidadMdl: '',
+    depRelacionMdl: '',
+    documentoBase64: '',
+    // archivoOriginal: null
+  }];
+}
+
+// Función auxiliar para formatear fecha para input date
+  private formatearFechaParaInput(fecha: string | null | undefined): string {
+    if (!fecha) return '';
+
+    try {
+      // Caso: la fecha ya está en formato YYYY-MM-DD → la dejamos igual
+      if (/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+        return fecha;
+      }
+
+      // Caso: la fecha viene en formato DD/MM/YYYY → convertir a YYYY-MM-DD
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(fecha)) {
+        const [dia, mes, anio] = fecha.split('/');
+        return `${anio}-${mes}-${dia}`;
+      }
+
+      // Intentar parsear cualquier otro formato con Date()
+      const fechaObj = new Date(fecha);
+      if (!isNaN(fechaObj.getTime())) {
+        return fechaObj.toISOString().split('T')[0];
+      }
+
+      return '';
+    } catch (error) {
+      console.error('Error al formatear fecha:', error);
+      return '';
+    }
+  }
+
+
   // Guardar información familiar incluyendo dependientes
-  guardarInformacionFamiliar() {
+  async guardarInformacionFamiliar() {
     // Guardar información del cónyuge
     this.estadoConyugalDisplay = this.estadoConyugal;  
     this.nombreConyugeDisplay = this.nombreConyuge;
@@ -1308,96 +1492,151 @@ export class EmpleadoCvComponent implements OnInit {
     
     // Guardar dependientes
     this.guardarDependientes();
+
+    // Luego eliminar los dependientes que fueron eliminados en la UI
+    this.eliminarDependientesGuardados();
+
+    await this.cargarDependientes();   //lugar para cargar dependientes
   }
 
   //Método específico para guardar dependientes
   guardarDependientes(): void {
     // Filtrar dependientes que tengan al menos el nombre completo
-    const dependientesValidos = this.dependientes.filter(dep => 
-      dep.nombre && dep.nombre.trim() !== ''
+    const dependientesValidos = this.dependientesInsert.filter(dep => {
+      const ok = !!dep.depNombreMdl && dep.depNombreMdl.trim() !== '';
+      if (!ok) {
+        console.warn('⚠️ Dependiente descartado por nombre vacío:', dep);
+      }
+      return ok;
+    });
+    
+    console.log(`✅ ${dependientesValidos.length} dependiente(s) válidos para guardar`);
+    console.table(
+      dependientesValidos.map((d, i) => ({
+        i,
+        nombre: d.depNombreMdl,
+        fechaMdl: d.depFechaNacimientoMdl,
+        discapacidadMdl: d.depDiscapacidadMdl,
+        relacionMdl: d.depRelacionMdl,
+        docCargado: !!d.documentoBase64
+      }))
     );
-
+    
     if (dependientesValidos.length > 0) {
+      // Función auxiliar para manejar la discapacidad
+      const determinarDiscapacidad = (discapacidad: string | null): boolean | null => {
+        if (!discapacidad || discapacidad.trim() === '') return null;
+
+        const valor = discapacidad.toLowerCase();
+        if (valor === 'sí' || valor === 'si' || valor === 'true' || valor === '1') {
+          return true;
+        }
+        if (valor === 'no' || valor === 'false' || valor === '0') {
+          return false;
+        }
+        return null;
+      };
+
       // Preparar datos para enviar al backend
-      const dependientesParaGuardar = dependientesValidos.map(dep => ({
-        CedulaEmpleado: this.numeroCedula,
-        DepNombre: dep.nombre,
-        DepFechaNacimiento: dep.fechaNacimiento,
-        DepDiscapacidad: dep.discapacidad && dep.discapacidad.toLowerCase() !== 'ninguna',
-        DepDocumentoUrl: dep.documentoBase64,
-        DepRelacion: dep.relacion || 'Hijo/a' // Valor por defecto
-      }));
+      const dependientesParaGuardar = dependientesValidos.map((dep, i) => {
+        const discapacidadNormalizada = determinarDiscapacidad(dep.depDiscapacidadMdl);
+
+        console.log(
+          `🧩 Dependiente ${i}`,
+          'Nombre:', dep.depNombreMdl,
+          '| Fecha:', dep.depFechaNacimientoMdl,
+          '| Discapacidad raw:', dep.depDiscapacidadMdl,
+          '| Discapacidad normalizada:', discapacidadNormalizada,
+          '| Tipo:', typeof discapacidadNormalizada
+        );
+
+        return {
+          CedulaEmpleado: this.numeroCedulaDisplay ?? '',
+          DepNombre: dep.depNombreMdl?.trim() ?? '',
+          DepFechaNacimiento: dep.depFechaNacimientoMdl ?? '',
+          DepDiscapacidad: discapacidadNormalizada,   // 👈 aquí ya va como boolean/null
+          DepDocumentoUrl: dep.documentoBase64 ?? '',
+          DepRelacion: dep.depRelacionMdl ?? ''
+        };
+      });
 
       // Llamar al servicio para guardar cada dependiente
       const promesasGuardado = dependientesParaGuardar.map(dependiente => 
-        this.gthEmpleadoService.GuardarDependiente(dependiente).toPromise()  //comentado
+        this.gthEmpleadoService.GuardarDependiente(dependiente).toPromise()
       );
 
       Promise.all(promesasGuardado)
         .then(responses => {
           // Actualizar la visualización de dependientes
-          this.dependientesDisplay = dependientesValidos;
-          this.actualizarDisplayDependientes();
+          // this.dependientesDisplay = dependientesValidos;
           
           this.closeModal('familiar');
-          Swal.fire({
-            icon: 'success',
-            title: 'Información familiar actualizada correctamente',
-            text: `Se guardaron ${dependientesValidos.length} dependiente(s)`,
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-          });
+
+          this.mostrarMensajeExitoPersonalizado(
+            'Información familiar actualizada correctamente',
+            `Se guardaron ${dependientesValidos.length} dependiente(s)`
+          );
+
         })
         .catch(error => {
           console.error('Error al guardar dependientes:', error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error al guardar',
-            text: 'Hubo un problema al guardar la información de los dependientes'
-          });
+          this.mostrarMensajeErrorPersonalizado(
+            'Error al guardar',
+            'Hubo un problema al guardar la información de los dependientes'
+          );
         });
     } else {
       // Si no hay dependientes válidos, solo cerrar el modal
       this.closeModal('familiar');
-      Swal.fire({
-        icon: 'info',
-        title: 'Información familiar actualizada',
-        text: 'No se encontraron dependientes para guardar',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-      });
-    }
-  }
-  
-  //Actualizar las variables de display para mostrar los dependientes
-  actualizarDisplayDependientes(): void {
-    if (this.dependientesDisplay.length > 0) {
-      // Mostrar el primer dependiente (puedes modificar esto según tus necesidades)
-      const primerDependiente = this.dependientesDisplay[0];
-      this.nombreDepDisplay = primerDependiente.nombre;
-      this.fechaNacimientoDepDisplay = primerDependiente.fechaNacimiento;
-      this.discapacidadDepDisplay = primerDependiente.discapacidad;
-      this.relacionDepDisplay = primerDependiente.relacion;
+
+      this.mostrarMensajeExitoPersonalizado(
+        'Información familiar actualizada',
+        'No se encontraron dependientes para guardar'
+      );
     }
   }
 
-  // Método para eliminar un dependiente
+  dependientesEliminados: { cedulaEmpleado: string; depNombre: string }[] = [];
+
+  
   eliminarDependiente(index: number): void {
-    if (this.dependientes.length > 1) {
-      this.dependientes.splice(index, 1);
+    if (this.dependientesInsert.length > 1) {
+      const dependiente = this.dependientesInsert[index];
+
+      // Guardar la información necesaria para eliminar después
+      if (dependiente.depNombreMdl && this.numeroCedulaDisplay) {
+        this.dependientesEliminados.push({
+          cedulaEmpleado: this.numeroCedulaDisplay,
+          depNombre: dependiente.depNombreMdl
+        });
+      }
+
+      // Quitar de la lista visible
+      this.dependientesInsert.splice(index, 1);
     }
   }
+
+  eliminarDependientesGuardados(): void {
+    this.dependientesEliminados.forEach(dep => {
+      this.gthEmpleadoService.EliminarDependiente(this.numeroCedulaDisplay, dep.depNombre)
+      
+        .subscribe({
+          next: () => console.log(`Dependiente ${dep.depNombre} eliminado correctamente`),
+          error: err => console.error('Error al eliminar dependiente', err)
+        });
+    });
+  
+    // Limpiar array después de procesar
+    this.dependientesEliminados = [];
+  }
+
   // Método para manejar la selección de archivos
   onFileSelectedDep(event: any, index: number): void {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.dependientes[index].documentoBase64 = e.target.result;
+        // this.dependientes[index].documentoBase64 = e.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -1405,12 +1644,118 @@ export class EmpleadoCvComponent implements OnInit {
 
   // Agregar dependiente (método existente mejorado)
   agregarDependiente() { 
-    this.dependientes.push({
-      nombre: '',
-      fechaNacimiento: '',
-      discapacidad: '',
+    this.dependientesInsert.push({
+      depNombreMdl: '',
+      depFechaNacimientoMdl: '',
+      depDiscapacidadMdl: '',
       documentoBase64: '',
-      relacion: ''
+      depRelacionMdl: ''
+    });
+  }
+
+ 
+  /* ========================================================================
+                        Información de Empleo
+  ======================================================================== */
+
+  // Cargar datos al abrir MODAL de familiares y Dependeientes 
+  cargarInfoEmpleoDisplay(): void {
+
+    this.showSubcategory('info-organizacional');
+    this.showSubcategory('estudios');
+
+    this.carreraTercerNivel = this.carreraTercerNivelDisplay;
+    this.institucionTercerNivel = this.institucionTercerNivelDisplay;
+
+    this.masterCuartoNivel = this.masterCuartoNivelDisplay;
+    this.institucionCuartoNivel = this.institucionCuartoNivelDisplay;
+    
+
+
+    // this.cargarDependientesExistentes();
+    // this.cargarDependientesDesdeDisplay();
+  }
+
+  
+  // Guardar información familiar incluyendo dependientes
+  async guardarInformacionEmpleo() {
+    // Guardar información del cónyuge
+    this.estadoConyugalDisplay = this.estadoConyugal;  
+    this.nombreConyugeDisplay = this.nombreConyuge;
+    this.fechaMatrimonioDisplay = this.fechaMatrimonio;
+    this.discapacidadConyugeDisplay = this.discapacidadConyuge ? 'Sí' : 'No';
+    
+    // Guardar dependientes
+    this.guardarDependientes();
+
+    // Luego eliminar los dependientes que fueron eliminados en la UI
+    this.eliminarDependientesGuardados();
+
+    await this.cargarDependientes();   //lugar para cargar dependientes
+  }
+  
+
+  
+
+  //----------------------  Mensajes POPup  --------------------------
+  mostrarMensajeError(mensaje: string): void {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: 'Error',
+        text: mensaje,
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    } else {
+      alert(mensaje);
+    }
+  }
+
+  mostrarMensajeErrorPersonalizado(titulo: string, mensaje: string ): void {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: titulo,
+        text: mensaje,
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    } else {
+      alert(mensaje);
+    }
+  }
+
+  mostrarMensajeExito(mensaje: string): void {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: 'Éxito',
+        text: mensaje,
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      });
+    } else {
+      alert(mensaje);
+    }
+  }
+
+  mostrarMensajeExitoPersonalizado(titulo: string, mensaje: string ): void {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: titulo,
+        text: mensaje,
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      });
+    } else {
+      alert(mensaje);
+    }
+  }
+
+  alerta(mensaje: string): void {    
+    Swal.fire({
+      title: 'Advertencia...!!!',
+      text: mensaje,
+      icon: 'info',
+      confirmButtonText: 'Aceptar'
     });
   }
 

@@ -29,6 +29,7 @@ export class GthEmpleadoService {
    * @param tipo - Tipo de consulta (0 = Todos, 1 = Por ID/Cédula, 2 = Por Célula, 3 = Por Estado, 4 = Por Cédula exclusiva)
    * @param idEmpleado - ID del empleado específico
    * @param idCelula - ID de la célula
+   * @param sexo
    * @param estadoEmpleado - Estado del empleado
    * @param cedulaEmpleado - Cédula del empleado
    */
@@ -276,12 +277,31 @@ export class GthEmpleadoService {
     );
   }
 
+
+  // -----------------------   ------------------------   ----------------------------------
+
+
   /**
    * Guardar o actualizar dependiente
    */
   GuardarDependiente(data: Idependiente) {
     return this.http.post(environment.urlbackend + "api/GTHDependiente/Gestionar", data);
   }
+
+  /**
+   * Obtener todos los dependientes GTH
+   */
+  MostrarDependientesPorEmpleado(cedulaEmpleado: string) {
+  return this.http.get<Idependiente[]>(
+    environment.urlbackend + 'api/GTHDependiente/Mostrar',
+    {
+      params: {
+        tipo: '1',
+        cedulaEmpleado: cedulaEmpleado
+      }
+    }
+  );
+}
 
   /**
    * Obtener dependientes por cédula del empleado
@@ -293,8 +313,17 @@ export class GthEmpleadoService {
   /**
    * Eliminar dependiente
    */
-  EliminarDependiente(cedulaEmpleado: string, nombreDependiente: string) {
-    return this.http.delete(environment.urlbackend + `api/GTHDependiente/Eliminar/${cedulaEmpleado}/${nombreDependiente}`);
+  EliminarDependiente( cedulaEmpleado: string, nombreDependiente: string) {
+    const body = {
+      tipo: 2,
+      cedulaEmpleado,
+      depNombre: nombreDependiente
+    };
+
+    return this.http.post(
+      `${environment.urlbackend}api/GTHDependiente/Gestionar`, 
+      body
+    );
   }
  
 }
