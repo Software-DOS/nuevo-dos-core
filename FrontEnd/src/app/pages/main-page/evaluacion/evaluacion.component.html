@@ -335,12 +335,10 @@
             </div>
             <div style="align-content: center;">
               <span class="titulos-pequeños-columna" style="margin-right: 1rem;">Calificación</span>
-              <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Reconsiderar</span>
               <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha estimada</span>
             </div>              
           </div>
               
-            <!-- Objetivos dinámicos para Evaluacion-Intermedia -->
             <div *ngFor="let objetivo of objetivos; let i = index" class="form-row">
               <div class="" style="display:flex; gap:0.2rem;">
                 <!-- <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"> -->
@@ -349,26 +347,15 @@
                 <input type="text" class="text-input" [placeholder]="'Objetivo ' + (i + 1)"
                        [(ngModel)]="objetivo.texto"
                        [disabled]="sonCamposObjetivosDeshabilitados()"
-                       [style.background-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fff7ed' : '#f5f5f5'"
-                       [style.border-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fb923c' : '#d1d5db'"
-                       [style.color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#ea580c' : '#666'">
+                       style="background-color: #f5f5f5; border-color: #d1d5db; color: #666;">
                 <input type="number" class="number-input" min="0" max="100" 
                        [(ngModel)]="objetivo.valor"
-                       [disabled]="!(objetivo.reconsiderar && objetivo.reconsiderar > 0) || sonCamposObjetivosDeshabilitados()"
-                       [style.background-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fff7ed' : '#f5f5f5'"
-                       [style.border-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fb923c' : '#d1d5db'"
-                       [style.color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#ea580c' : '#666'">
-                <input type="number" class="number-input-rev" min="0" max="100" 
-                       [(ngModel)]="objetivo.reconsiderar"
-                       [disabled]="true"
-                       style="background-color: #f5f5f5; color: #666; border-color: #d1d5db;"
-                       placeholder="0">
+                       [disabled]="false"
+                       placeholder="0-100">
                 <input type="date" class="date-input"
                        [(ngModel)]="objetivo.fecha"
-                       [disabled]="!(objetivo.reconsiderar && objetivo.reconsiderar > 0) || sonCamposObjetivosDeshabilitados()"
-                       [style.background-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fff7ed' : '#f5f5f5'"
-                       [style.border-color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#fb923c' : '#d1d5db'"
-                       [style.color]="objetivo.reconsiderar && objetivo.reconsiderar > 0 ? '#ea580c' : '#666'">
+                       [disabled]="sonCamposObjetivosDeshabilitados()"
+                       style="background-color: #f5f5f5; border-color: #d1d5db; color: #666;">
             </div>
               
             <div class="percentage-display">60%</div>
@@ -376,12 +363,18 @@
 
         <!-- Competencias -->
         <div class="form-section" style="margin-left: 2rem;">
+          <div style="display:flex; justify-content: space-between;" >
             <div class="section-title purple">
               <div class="" style="display:flex; gap:0.2rem;">
                 <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj" class="icono-menor">
                 Competencias: 
               </div>
             </div>
+            <div style="align-content: center;">
+              <span class="titulos-pequeños-columna" style="margin-right: 1rem;">Calificación</span>
+              <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha estimada</span>
+            </div>              
+          </div>
 
             <!-- Mostrar estado de carga -->
             <div *ngIf="loadingCompetencies" class="form-row">
@@ -400,12 +393,8 @@
               <input type="number" class="number-input" min="0" max="100"
                      [(ngModel)]="competencia.valor"
                      (ngModelChange)="actualizarValorCompetenciaFija(i, $event)"
-                     [disabled]="true"
-                     style="border-color: #ccc; color: #666; background-color: #f5f5f5;">
-              <input type="number" class="number-input-rev" min="0" max="100"
-                     [(ngModel)]="competencia.reconsiderar"
-                     [disabled]="true"
-                     style="border-color: #ccc; color: #666; background-color: #f5f5f5;">
+                     [disabled]="false"
+                     placeholder="0-100">
               <input type="date" class="date-input"
                      [(ngModel)]="competencia.fecha"
                      (ngModelChange)="actualizarFechaCompetenciaFija(i, $event)"
@@ -530,7 +519,7 @@
 
         <!-- Comentarios y Sugerencias -->
         <div class="form-section" style="margin-left: 2rem;">
-          <div class="section-title">Comentarios y Sugerencias del Supervisor</div>
+          <div class="section-title">Retroalimentación</div>
           <div class="form-row">
             <textarea class="text-input" rows="4" 
                       placeholder="Comentarios del supervisor sobre el desempeño..."

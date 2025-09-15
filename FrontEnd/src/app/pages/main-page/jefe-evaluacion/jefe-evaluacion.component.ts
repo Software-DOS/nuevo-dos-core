@@ -199,6 +199,18 @@ export class JefeEvaluacionComponent implements OnInit {
   }
 
   /**
+   * Actualiza el texto del objetivo por parte del administrador
+   * @param index - Índice del objetivo (0-4)
+   * @param texto - Nuevo texto del objetivo
+   */
+  actualizarTextoObjetivoAdmin(index: number, texto: string): void {
+    if (index >= 0 && index < this.objetivos.length) {
+      this.objetivos[index].texto = texto;
+      console.log(`📝 Admin - Texto objetivo ${index + 1}:`, texto, this.objetivos[index]);
+    }
+  }
+
+  /**
    * Actualiza el valor de "reconsiderar" asignado por el administrador
    * @param index - Índice del objetivo (0-4)
    * @param valor - Valor de reconsideración asignado por el admin
@@ -292,6 +304,30 @@ export class JefeEvaluacionComponent implements OnInit {
   logout(): void {
     // Logout logic will be implemented later
     console.log('Logout clicked');
+  }
+
+  /**
+   * Aprueba la evaluación del empleado
+   */
+  aprobarEvaluacion(): void {
+    console.log('✅ Evaluación aprobada por el administrador');
+    // Aquí se implementará la lógica para aprobar la evaluación
+    // Por ejemplo, cambiar el estado de la evaluación, enviar notificaciones, etc.
+    alert('Evaluación aprobada exitosamente');
+  }
+
+  /**
+   * Rechaza la evaluación del empleado
+   */
+  rechazarEvaluacion(): void {
+    console.log('❌ Evaluación rechazada por el administrador');
+    // Aquí se implementará la lógica para rechazar la evaluación
+    // Por ejemplo, solicitar comentarios del rechazo, cambiar estado, etc.
+    const motivo = prompt('Ingrese el motivo del rechazo:');
+    if (motivo) {
+      console.log('Motivo del rechazo:', motivo);
+      alert('Evaluación rechazada. Motivo: ' + motivo);
+    }
   }
 
 }
