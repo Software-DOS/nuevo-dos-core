@@ -53,7 +53,8 @@ namespace WebAppConexion.Controllers
                 Observaciones = e.Observaciones,
                 FechaCreacion = e.FechaCreacion,
                 FechaModificacion = e.FechaModificacion,
-                UsuarioCreacion = e.UsuarioCreacion
+                UsuarioCreacion = e.UsuarioCreacion,
+                Fase = e.Fase
             });
         }
 
@@ -80,7 +81,8 @@ namespace WebAppConexion.Controllers
                 Observaciones = model.Observaciones,
                 FechaCreacion = model.FechaCreacion,
                 FechaModificacion = model.FechaModificacion,
-                UsuarioCreacion = model.UsuarioCreacion
+                UsuarioCreacion = model.UsuarioCreacion,
+                Fase = model.Fase
             };
 
             var responseResult = await _repository.Gestionar(db.Tipo, db);
@@ -130,7 +132,8 @@ namespace WebAppConexion.Controllers
                     Observaciones = evaluacion.Observaciones,
                     FechaCreacion = evaluacion.FechaCreacion,
                     FechaModificacion = evaluacion.FechaModificacion,
-                    UsuarioCreacion = evaluacion.UsuarioCreacion
+                    UsuarioCreacion = evaluacion.UsuarioCreacion,
+                    Fase = evaluacion.Fase
                 };
 
                 return Ok(viewModel);
@@ -164,42 +167,39 @@ namespace WebAppConexion.Controllers
                 Observaciones = e.Observaciones,
                 FechaCreacion = e.FechaCreacion,
                 FechaModificacion = e.FechaModificacion,
-                UsuarioCreacion = e.UsuarioCreacion
+                UsuarioCreacion = e.UsuarioCreacion,
+                Fase = e.Fase
             });
         }
 
         /// <summary>
-        /// Cambia el estado de una evaluación específica.
+        /// Cambia la fase de una evaluación específica.
         /// </summary>
-        [HttpPut("{id}/estado")]
-        public async Task<IActionResult> CambiarEstado(int id, [FromBody] CambiarEstadoRequest request)
+        [HttpPut("{id}/fase")]
+        public async Task<IActionResult> CambiarFase(int id, [FromBody] CambiarFaseRequest request)
         {
             try
             {
-                var model = new GTHEvaluacionViewModel
+                if (id <= 0)
                 {
-                    Tipo = 4, // Tipo 4 = Cambiar Estado
-                    IdEvaluacion = id,
-                    Estado = request.Estado
-                };
+                    return BadRequest(new { mensaje = "ID de evaluación inválido" });
+                }
 
-                var db = new GTHEvaluacion
+                if (request.Fase < 1 || request.Fase > 5)
                 {
-                    Tipo = model.Tipo,
-                    IdEvaluacion = model.IdEvaluacion,
-                    Estado = model.Estado
-                };
+                    return BadRequest(new { mensaje = "Fase debe estar entre 1 y 5 (1=Captura-Resultados, 2=Revision-Inicial, 3=Evaluacion-Intermedia, 4=Retroalimentacion, 5=Cierre)" });
+                }
 
-                var result = await _repository.Gestionar(db.Tipo, db);
+                var result = await _repository.CambiarFase(id, request.Fase);
                 var response = result.FirstOrDefault();
 
                 if (response != null && response.valor1 > 0)
                 {
-                    return Ok(new { mensaje = response.valor2 });
+                    return Ok(new { mensaje = response.valor2, fase = request.Fase });
                 }
                 else
                 {
-                    return BadRequest(new { mensaje = response?.valor2 ?? "Error al cambiar estado" });
+                    return BadRequest(new { mensaje = response?.valor2 ?? "Error al cambiar fase" });
                 }
             }
             catch (Exception ex)
@@ -208,7 +208,62 @@ namespace WebAppConexion.Controllers
             }
         }
 
+        /// <summary>
+        /// Obtiene la fase actual de una evaluación específica.
+        /// </summary>
+        [HttpGet("{id}/fase")]
+        public async Task<IActionResult> ObtenerFase(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest(new { mensaje = "ID de evaluación inválido" });
+                }
+
+                // Usar tipo 1 para búsqueda por ID
+                var evaluaciones = await _repository.Mostrar(1, id);
+                var evaluacion = evaluaciones.FirstOrDefault();
+
+                if (evaluacion == null)
+                {
+                    return NotFound(new { mensaje = "No se encontró la evaluación especificada" });
+                }
+
+                var resultado = new
+                {
+                    idEvaluacion = evaluacion.IdEvaluacion,
+                    fase = evaluacion.Fase ?? 1,
+                    faseDescripcion = ObtenerDescripcionFase(evaluacion.Fase ?? 1),
+                    estado = evaluacion.Estado,
+                    fechaModificacion = evaluacion.FechaModificacion
+                };
+
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
         #region Métodos auxiliares
+
+        /// <summary>
+        /// Obtiene el nombre descriptivo de una fase.
+        /// </summary>
+        private string ObtenerDescripcionFase(int? fase)
+        {
+            return fase switch
+            {
+                1 => "Captura-Resultados",
+                2 => "Revision-Inicial",
+                3 => "Evaluacion-Intermedia",
+                4 => "Retroalimentacion",
+                5 => "Cierre",
+                _ => "Sin Fase"
+            };
+        }
 
         private string ObtenerDescripcionEstado(string estado)
         {
@@ -241,9 +296,9 @@ namespace WebAppConexion.Controllers
         #endregion
     }
 
-    // Clase auxiliar para el request de cambio de estado
-    public class CambiarEstadoRequest
+    // Clase auxiliar para el request de cambio de fase
+    public class CambiarFaseRequest
     {
-        public string Estado { get; set; }
+        public int Fase { get; set; }
     }
 }

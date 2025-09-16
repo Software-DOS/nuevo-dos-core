@@ -22,6 +22,7 @@ namespace WebAppConexion.Models
         public string Observaciones { get; set; }
         public string UsuarioCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }
+        public int? Fase { get; set; }
         
         // Propiedades adicionales para información del empleado
         public string NombreEmpleado { get; set; }
