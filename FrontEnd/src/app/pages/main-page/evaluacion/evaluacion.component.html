@@ -2,18 +2,30 @@
 <div class="employe-card">
   <h1 style="color: lightslategray;">Evaluación de Desempeño 2025</h1>
   <div class="employee-card2">
-    <img [src]="employee.avatar" alt="Foto del Empleado" class="employee-image">
+    <!-- <img [src]="employee.avatar" alt="Foto del Empleado" class="employee-image"> -->
+    <div class="employee-image-container">
+      <img [src]="construirUrlFoto(this.empleado?.fotoPerfilUrl || '', this.empleado?.sexo || '')" class="employee-image" id="employeeImage"
+      [alt]="this.empleado?.nombre" (error)="onImageError($event, this.empleado?.sexo || 'M')">
+
+    </div> 
     <div class="employee-personal-info">
-      <h2>{{ employee.name }}</h2>
-      <div class="info-field">
-        <i class="info-icon far fa-envelope"></i>
-        <p>{{ employee.email }}</p>
-      </div>
-      <div class="info-field">
-        <i class="info-icon far fa-gem"></i>
-        <p class="employee-position">{{ employee.position }}</p>
-      </div>      
-    </div>
+          <div class="info-field">
+            <i class="info-icon-titulo fas fa-user"></i>
+            <h4 class="info-label">{{nombreCompletoDisplay || 'Nombre Completo'}}</h4>
+          </div>
+          
+          <div class="info-field">
+            <i class="info-icon far fa-envelope"></i>
+            <p class="info-value">{{correoElectronicoDisplay || 'Correo Electrónico'}}</p>
+          </div>
+          
+          <div class="info-field">
+            <i class="info-icon far fa-gem"></i>
+            <p class="info-value">{{posicionDisplay || 'Posición'}}</p> 
+          </div>
+                    
+        </div>
+        
   </div>
   
 </div>
@@ -154,13 +166,30 @@
               </span>
             </div>
 
-            <!-- Mostrar competencias cargadas desde el backend -->
-            <div *ngFor="let competencia of competencias; let i = index" class="form-row">
-              <span class="item-number">{{ i + 1 }}.</span>
-              <input type="text" class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;"
+            <!-- <input type="text" class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;"
                      [(ngModel)]="competencia.name"
                      (ngModelChange)="actualizarNombreCompetenciaFija(i, $event)"
-                     placeholder="Ingrese la competencia">
+                     placeholder="Ingrese la competencia"> -->
+
+            <!-- Mostrar competencias cargadas desde el backend -->
+            <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>              
+
+              <!-- Encabezado con tipo de competencia y nombre -->
+              <div class="competencia-container">
+                <!-- Encabezado con tipo de competencia y nombre -->
+                <div class="competencia-header">
+                  <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
+                  <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
+                </div>
+                <!-- Detalle con nivel y descripción -->
+                <div class="competencia-body">
+                  <p style="margin-bottom: 0;">
+                    <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
+                  </p>
+                </div>
+              </div>                    
+
               <input type="number" class="number-input" min="0" max="100"
                      [(ngModel)]="competencia.valor"
                      (ngModelChange)="actualizarValorCompetenciaFija(i, $event)"
@@ -263,12 +292,24 @@
             </div>
 
             <!-- Mostrar competencias cargadas desde el backend -->
-            <div *ngFor="let competencia of competencias; let i = index" class="form-row">
-              <span class="item-number">{{ i + 1 }}.</span>
-              <input type="text" class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;"
-                     [(ngModel)]="competencia.name"
-                     (ngModelChange)="actualizarNombreCompetenciaFija(i, $event)"
-                     placeholder="Ingrese la competencia">
+            <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>              
+
+              <!-- Encabezado con tipo de competencia y nombre -->
+              <div class="competencia-container">
+                <!-- Encabezado con tipo de competencia y nombre -->
+                <div class="competencia-header">
+                  <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
+                  <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
+                </div>
+                <!-- Detalle con nivel y descripción -->
+                <div class="competencia-body">
+                  <p style="margin-bottom: 0;">
+                    <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
+                  </p>
+                </div>
+              </div>   
+                     
               <input type="number" class="number-input" min="0" max="100" 
                      [(ngModel)]="competencia.valor"
                      (ngModelChange)="actualizarValorCompetenciaFija(i, $event)"
@@ -348,6 +389,7 @@
                        [(ngModel)]="objetivo.texto"
                        [disabled]="sonCamposObjetivosDeshabilitados()"
                        style="background-color: #f5f5f5; border-color: #d1d5db; color: #666;">
+                       
                 <input type="number" class="number-input" min="0" max="100" 
                        [(ngModel)]="objetivo.valor"
                        [disabled]="false"
@@ -384,14 +426,26 @@
             </div>
 
             <!-- Mostrar competencias cargadas desde el backend -->
-            <div *ngFor="let competencia of competencias; let i = index" class="form-row">
-              <span class="item-number">{{ i + 1 }}.</span>
-              <input type="text" class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;"
-                     [(ngModel)]="competencia.name"
-                     (ngModelChange)="actualizarNombreCompetenciaFija(i, $event)"
-                     placeholder="Ingrese la competencia">
+            <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>              
+
+              <!-- Encabezado con tipo de competencia y nombre -->
+              <div class="competencia-container">
+                <!-- Encabezado con tipo de competencia y nombre -->
+                <div class="competencia-header">
+                  <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
+                  <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
+                </div>
+                <!-- Detalle con nivel y descripción -->
+                <div class="competencia-body">
+                  <p style="margin-bottom: 0;">
+                    <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
+                  </p>
+                </div>
+              </div>   
+
               <input type="number" class="number-input" min="0" max="100"
-                     [(ngModel)]="competencia.valor"
+                     [(ngModel)]="competencia.calificacion"
                      (ngModelChange)="actualizarValorCompetenciaFija(i, $event)"
                      [disabled]="false"
                      placeholder="0-100">
@@ -491,13 +545,24 @@
             </div>
 
             <!-- Competencias para Retroalimentación (solo visualización) -->
-            <div *ngFor="let competencia of competencias; let i = index" class="form-row">
-              <span class="item-number">{{ i + 1 }}.</span>
-              <input type="text" class="text-input"
-                     [(ngModel)]="competencia.name"
-                     [disabled]="true"
-                     style="background-color: #faf5ff; border-color: #c084fc; color: #7c3aed; opacity: 0.7;"
-                     placeholder="Competencia">
+            <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>              
+
+              <!-- Encabezado con tipo de competencia y nombre -->
+              <div class="competencia-container">
+                <!-- Encabezado con tipo de competencia y nombre -->
+                <div class="competencia-header">
+                  <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
+                  <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
+                </div>
+                <!-- Detalle con nivel y descripción -->
+                <div class="competencia-body">
+                  <p style="margin-bottom: 0;">
+                    <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
+                  </p>
+                </div>
+              </div>   
+
               <input type="number" class="number-input" min="0" max="100" 
                      [(ngModel)]="competencia.valor"
                      [disabled]="true"

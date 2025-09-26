@@ -773,6 +773,28 @@
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
 
+
+/* Boton para Guardar */
+.save-btn {
+  background: linear-gradient(29deg, #00adcd 0% 0%, #2179ea 80%);
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(68, 159, 239, 0.3);
+  float: right;
+  width: 12rem;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(68, 196, 239, 0.4);
+}
+
 /* Textarea para comentarios de retroalimentación */
 .feedback-textarea {
   width: 100%;

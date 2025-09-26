@@ -292,16 +292,16 @@ export class GthEmpleadoService {
    * Obtener todos los dependientes GTH
    */
   MostrarDependientesPorEmpleado(cedulaEmpleado: string) {
-  return this.http.get<Idependiente[]>(
-    environment.urlbackend + 'api/GTHDependiente/Mostrar',
-    {
-      params: {
-        tipo: '1',
-        cedulaEmpleado: cedulaEmpleado
+    return this.http.get<Idependiente[]>(
+      environment.urlbackend + 'api/GTHDependiente/Mostrar',
+      {
+        params: {
+          tipo: '1',
+          cedulaEmpleado: cedulaEmpleado
+        }
       }
-    }
-  );
-}
+    );
+  }
 
   /**
    * Obtener dependientes por cédula del empleado

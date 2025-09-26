@@ -1,6 +1,32 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../../../environments/environment';
+
 import { GthCompetenciaService } from 'src/app/services/gth-competencia.service';
 import { IGTHCompetenciaViewModel } from 'src/app/interface/ight-competencia';
+
+import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
+import { iGTHEmpleado } from '../../../interface/igth-empleado';
+
+import { GthEvaluacionService } from '../../../services/gth-evaluacion.service';
+import { Ievaluacion } from '../../../interface/ievaluacion';
+
+import { alerts } from '../../../helpers/alerts';
+
+
+// Dentro de tu componente (por encima de los métodos, en el scope de la clase)
+interface NivelConCompetencia {
+  idCompetencia: number;
+  nivel: number;
+  descripcion: string;
+  nombreCompetencia: string;
+  tipoCompetencia: string;
+  valor: number;
+  fecha: string;
+  reconsiderar: number;
+  calificacion: number;  
+  calificacionFinal: number; 
+}
+
 
 @Component({
   selector: 'app-evaluacion',
@@ -9,6 +35,24 @@ import { IGTHCompetenciaViewModel } from 'src/app/interface/ight-competencia';
 })
 export class EvaluacionComponent implements OnInit {
 
+  constructor(
+    private gthEmpleadoService:GthEmpleadoService,
+    private gthEvaluacionServcie: GthEvaluacionService,
+    private gthCompetenciaService: GthCompetenciaService) {       
+  }
+
+  ngOnInit(): void {
+
+    this.cargarDatosEmpleado();
+
+    this.cargarEvaluaciones();
+
+    // Cargar las primeras 5 competencias al inicializar el componente
+    this.cargarCompetenciasHojaRuta();
+  }
+
+  
+
   // Variable para el menú principal (superior)
   activeSection: string = 'hoja-ruta'; // Siempre inicia en hoja de ruta
   
@@ -16,16 +60,38 @@ export class EvaluacionComponent implements OnInit {
   activeTimelineStep: string = 'Captura-Resultados'; // Por defecto la primera sección
 
 
+
+  // Variable para almacenar la información del empleado
+  empleado: iGTHEmpleado | null = null;
+  cedulaEmpleado: string = ''; // Cambia esto por la cédula real del empleado}
+
+  archivoSeleccionado: File | null = null;
+  idEmpleadoActual: number | null = null;
+  subiendoFoto: boolean = false;
+
+  /* -------------  Campos para mostrar en el HTML  ----------  */
+  // Variables para mostrar la información (solo lectura)
+
+  fotoPerfilUrl: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Imagen por defecto
+  fotoPerfilUrlDisplay: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+  nombreCompletoDisplay: string = ''; 
+  correoElectronicoDisplay: string = ''; 
+  posicionDisplay: string = ''; 
+
+
+
+  // nivelesCompetencia: IGTHNivelCompetenciaViewModel[] = []; // Niveles desde BD
+
+  // declara la propiedad global del componente
+  nivelesCompetencias: NivelConCompetencia[] = [];
+  
+
   // Employee Information
   employee = {
-    name: 'Juan Carlos Rodríguez Martínez',
-    email: 'juan.rodriguez@empresa.com',
-    position: 'Analista de Sistemas',
-    area: 'Tecnología de la Información',
-    subarea: 'Desarrollo de Aplicaciones',
-    avatar: 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
   };
 
+  //---------------------------   --------  BORRAR  ---- -----------------------  
   // Collaborator Information
   collaboratorInfo = {
     firstName: 'Juan Carlos',
@@ -42,6 +108,10 @@ export class EvaluacionComponent implements OnInit {
     period: 'Enero - Junio 2025',
     deadline: '30/06/2025'
   };
+
+  //---------------------------------------------------------------------------------
+
+
 
   // Timeline Steps
   timelineSteps = [
@@ -112,6 +182,230 @@ export class EvaluacionComponent implements OnInit {
 
 
 
+/*=======================================================================================
+                            fUNCIONES PARA CARGAR INFO DE COLABORADOR
+=========================================================================================*/
+
+cargarDatosEmpleado(): void {
+
+  console.log('Iniciando proceso de carga de informacion');
+    // Obtener ID del empleado del sessionStorage
+    const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+    
+    if (idEmpleado) {
+      this.idEmpleadoActual = idEmpleado;
+      this.buscarEmpleadoPorId(2); //Probando
+    } else {
+      console.warn('No se encontró ID de empleado en sessionStorage, usando cédula de prueba');
+      // Fallback: usar cédula hardcoded para testing
+      // this.buscarEmpleadoPorId(2);
+      // this.buscarEmpleadoPorCedula('1709876543');
+    }
+  }
+
+/**
+   * Busca un empleado específico por ID
+   * @param idEmpleado - ID del empleado a buscar
+   */
+  buscarEmpleadoPorId(idEmpleado: number): void {
+    console.log('Componente: ID enviado al servicio ->', idEmpleado);
+
+    this.gthEmpleadoService.MostrarConParametros(1, idEmpleado).subscribe({
+      next: (empleado: any) => {
+        console.log('Respuesta del backend ->', empleado);
+
+        const datosEmpleado = empleado?.$values?.[0];
+
+        if (datosEmpleado) {
+          this.empleado = datosEmpleado;
+          this.mapearDatosParaMostrar();
+        } else {
+          console.warn('No se encontró empleado con el ID:', idEmpleado);
+        }
+      },
+      error: (error) => {
+        console.error('Error al buscar empleado por ID:', error);
+      }
+    });
+  }
+
+/**
+   * Busca un empleado específico por cédula
+   * @param cedula - Cédula del empleado a buscar
+   */
+  buscarEmpleadoPorCedula(cedula: string): void {
+    console.log('Componente: cédula enviada al servicio ->', cedula); // 👈 AÑADIR ESTO
+
+    this.gthEmpleadoService.BuscarPorCedula(cedula).subscribe({
+      next: (empleado: any) => {
+        console.log('Respuesta del backend ->', empleado);
+
+        const datosEmpleado = empleado?.$values?.[0];
+
+        if (datosEmpleado) {
+          this.empleado = datosEmpleado;
+          this.mapearDatosParaMostrar();
+        } else {
+          console.warn('No se encontró empleado con la cédula:', cedula);
+        }
+      },
+      error: (error) => {
+        console.error('Error al buscar empleado por cédula:', error);
+      }
+    });
+  }
+
+private async mapearDatosParaMostrar(): Promise<void>  {
+    if (this.empleado) {
+      // Guardar ID del empleado para usar en subida de fotos
+      this.idEmpleadoActual = this.empleado.idEmpleado;
+
+      // this.construirUrlFoto(this.empleado.fotoPerfilUrl || '', this.empleado.sexo || ''),
+
+      this.nombreCompletoDisplay = `${this.empleado.nombre} ${this.empleado.apellido}`;
+      this.correoElectronicoDisplay = this.empleado.correo || this.empleado.correoCorporativo;
+      this.posicionDisplay = this.empleado.cargoActual;
+      // this.areaDisplay = this.empleado.area;
+
+    }
+  }    
+
+  construirUrlFoto(fotoPerfilUrl: string, sexo: string): string {
+    // Normalizar sexo
+    const sexoNormalizado = (sexo || '').toString().trim().toLowerCase();
+  
+    const defaultFemenino = 'assets/img/iconos/iconos mycollection/png/010-mujer-2.png';
+    const defaultMasculino = 'assets/img/iconos/iconos mycollection/png/028-hombre-2.png';
+    const defaultGenerico = 'assets/img/iconos/iconos mycollection/png/026-hombre-de-traje-y-corbata.png';
+  
+    // Determinar fallback según sexo
+    const fallback = sexoNormalizado === 'femenino' || sexoNormalizado === 'f'
+      ? defaultFemenino
+      : sexoNormalizado === 'masculino' || sexoNormalizado === 'm'
+        ? defaultMasculino
+        : defaultGenerico;
+  
+    // Si no hay URL, usar fallback directamente
+    if (!fotoPerfilUrl) return fallback;
+  
+    // Si es una URL completa (http/https), devolverla tal cual
+    if (fotoPerfilUrl.startsWith('http://') || fotoPerfilUrl.startsWith('https://')) {
+      return fotoPerfilUrl;
+    }
+  
+    // Si es una ruta relativa, construir con el backend
+    const baseUrl = environment.urlbackend.endsWith('/')
+      ? environment.urlbackend.slice(0, -1)
+      : environment.urlbackend;
+  
+    if (fotoPerfilUrl.startsWith('/')) {
+      return `${baseUrl}${fotoPerfilUrl}`;
+    }
+  
+    return `${baseUrl}/${fotoPerfilUrl}`;
+  }
+  
+  
+  onImageError(event: Event, sexo: string) {
+    const img = event.target as HTMLImageElement;
+    img.src = this.construirUrlFoto('', sexo); // 👉 fuerza a usar fallback según sexo
+  }
+  
+
+
+
+/*=======================================================================================
+                            fUNCIONES PARA CARGAR INFO DE EVALUACION
+=========================================================================================*/
+
+  cargarEvaluaciones(): void {
+    const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+
+    if (idEmpleado) {
+      this.idEmpleadoActual = 2; // pruebas
+      const anio = 2026;
+
+      this.gthEvaluacionServcie.MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual, anio).subscribe({
+        next: (response: any) => {
+          let evaluacionesData = response;
+          if (response && response.$values) evaluacionesData = response.$values;
+
+          if (evaluacionesData && evaluacionesData.length > 0) {
+            const idEvaluacion = evaluacionesData[0].idEvaluacion;
+
+            // inicializamos la colección
+            this.nivelesCompetencias = [];
+
+            this.gthCompetenciaService.obtenerAsignacionCompetenciaPorIdEvaluacion(idEvaluacion).subscribe({
+              next: (respAsigCompetencias: any) => {
+                let asignacionesCompetenciasData = respAsigCompetencias;
+                if (respAsigCompetencias && respAsigCompetencias.$values) {
+                  asignacionesCompetenciasData = respAsigCompetencias.$values;
+                }
+
+                asignacionesCompetenciasData.forEach((comp: any) => {
+                  const idNivelCompetencia = comp.idNivelCompetencia;
+
+                  this.gthCompetenciaService.mostrarNivelCompetencias(1, idNivelCompetencia).subscribe({
+                    next: (respNivelCompetencias: any) => {
+                      let nivelesCompetenciasData = respNivelCompetencias;
+                      if (respNivelCompetencias && respNivelCompetencias.$values) {
+                        nivelesCompetenciasData = respNivelCompetencias.$values;
+                      }
+
+                      nivelesCompetenciasData.forEach((nivel: any) => {
+                        this.gthCompetenciaService.mostrarCompetencias(1, nivel.idCompetencia).subscribe({
+                          next: (respCompetencia: any) => {
+                            let competenciaData = respCompetencia;
+                            if (respCompetencia && respCompetencia.$values) {
+                              competenciaData = respCompetencia.$values;
+                            }
+
+                            if (competenciaData.length > 0) {
+                              const competencia = competenciaData[0];
+
+                              const combinado: NivelConCompetencia = {
+                                idCompetencia: nivel.idCompetencia,
+                                nivel: nivel.nivel,
+                                descripcion: nivel.descripcion,
+                                nombreCompetencia: competencia.nombreCompetencia,
+                                tipoCompetencia: competencia.tipoCompetencia,
+                                valor:0,
+                                fecha:'',
+                                reconsiderar: 0,
+                                calificacion: 0,
+                                calificacionFinal: 0
+                              };
+
+                              this.nivelesCompetencias.push(combinado);
+
+                              // ✅ Log final para verificar la información combinada
+                              console.log('✅ Competencia con niveles:', combinado);
+                            }
+                          },
+                          error: (error) => console.error('Error al consultar competencia:', error)
+                        });
+                      });
+                    },
+                    error: (error) => console.error('Error al consultar niveles de competencias:', error)
+                  });
+                });
+              },
+              error: (error) => console.error('Error al consultar competencias asignadas:', error)
+            });
+          } else {
+            console.warn('⚠️ No se encontró ninguna evaluación para este empleado y año.');
+          }
+        },
+        error: (error) => console.error('Error al consultar evaluaciones:', error)
+      });
+    } else {
+      console.warn('No se encontró ID de empleado en sessionStorage');
+    }
+  }
+
+
+
 
   // Objectives (KPIs)
   objectives = [
@@ -134,7 +428,7 @@ export class EvaluacionComponent implements OnInit {
   // Variable para controlar el estado de carga
   loadingCompetencies: boolean = false;
 
-  // Objetivos del empleado - se mantienen en memoria durante la sesión
+  // Inicializamos los espacios para los Objetivos del empleado - se mantienen en memoria durante la sesión
   objetivos = [
     {
       id: 1,
@@ -232,15 +526,20 @@ export class EvaluacionComponent implements OnInit {
     }
   ];
 
+  // competencias: { idCompetencia: number, tipo: string, NombreCompetencia: string }[] = [];  
+  // competenciasFiltradas: { idCompetencia: number, tipo: string, NombreCompetencia: string }[] = [];
+  // tiposCompetencia: string[] = [];
+
+  // tipoCompetencia: string | null = null;
+  // competenciaSeleccionada: string | null = null;
+  // nivelSeleccionado: string | null = null;
+
+  // // Agregar estas variables (mantén las existentes)
+  // nivelesCompetencia: IGTHNivelCompetenciaViewModel[] = []; // Niveles desde BD
+  // nivelesDisponibles: string[] = []; // Niveles filtrados para mostrar en el select
 
 
 
-  constructor(private gthCompetenciaService: GthCompetenciaService) { }
-
-  ngOnInit(): void {
-    // Cargar las primeras 5 competencias al inicializar el componente
-    this.cargarCompetenciasHojaRuta();
-  }
 
   /**
    * Carga las primeras 5 competencias desde el backend para poblar las competencias fijas

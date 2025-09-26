@@ -8,7 +8,7 @@ namespace WebAppConexion.Models
 {
     public class GTHEvaluacionViewModel
     {
-        public int Tipo { get; set; }
+        public int Tipo { get; set; } = 1;
         public int IdEvaluacion { get; set; }
         public long IdEmpleado { get; set; }
         public long? IdJefe { get; set; }

@@ -38,7 +38,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                         //Cargar subMenu
 
                     }
-                    return CargarSubMenu(response);
+                    return response;
                 }
             }
         }

@@ -8,7 +8,7 @@ namespace WebAppConexion.Models
 {
     public class GTHAsignacionCompetenciaViewModel
     {
-        public int Tipo { get; set; }
+        public int Tipo { get; set; } = 1;
         public int IdAsignacion { get; set; }
         public int IdEvaluacion { get; set; }
         public int IdNivelCompetencia { get; set; }

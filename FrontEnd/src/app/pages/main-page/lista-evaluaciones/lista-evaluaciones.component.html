@@ -1,25 +1,24 @@
 <main class="main-flex-evaluacion">
-  
+
 
   <!-- Contenido principal a la derecha -->
   <div class="content-wrapper-tight">
-    <div class="subcategory-nav" id="categoriaTabs">   
-      <div class="subcategory-link" 
-          [class.active]="activeSubcategory === 'curso'" 
-          (click)="showSubcategoryEval('curso')">
+
+    <div class="subcategory-nav" id="categoriaTabs">
+      <div class="subcategory-link" [class.active]="activeSubcategory === 'curso'"
+        (click)="showSubcategoryEval('curso')">
         Lista de Evaluaciones
       </div>
 
-      <div class="subcategory-link" 
+      <!-- <div class="subcategory-link" 
           [class.active]="activeSubcategory === 'competencias'" 
           (click)="showSubcategoryEval('competencias')">
         Competencias
-      </div>
+      </div> -->
 
       <!-- Botón especial -->
-      <div class="subcategory-link crear-btn" 
-          [class.active]="activeSubcategory === 'crearEvaluacion'" 
-          (click)="showSubcategoryEval('crearEvaluacion')">
+      <div class="subcategory-link crear-btn" [class.active]="activeSubcategory === 'crearEvaluacion'"
+        (click)="showSubcategoryEval('crearEvaluacion')">
         + Crear Evaluación
       </div>
     </div>
@@ -31,24 +30,14 @@
         <aside class="filter-sidebar">
           <h3>FILTROS</h3>
           <div class="filter-group">
-            <label for="filtroDepartamento">Area:</label>
-            <input 
-              type="text" 
-              id="filtroDepartamento" 
-              [(ngModel)]="filtroDepartamento" 
-              (input)="aplicarFiltros()" 
-              placeholder="Buscar area..."
-              class="filter-input">
+            <label for="filtroArea">Area:</label>
+            <input type="text" id="filtroArea" [(ngModel)]="filtroArea" (input)="aplicarFiltros()"
+              placeholder="Buscar area..." class="filter-input">
           </div>
           <div class="filter-group">
             <label for="filtroNombre">Empleado:</label>
-            <input 
-              type="text" 
-              id="filtroNombre" 
-              [(ngModel)]="filtroNombre" 
-              (input)="aplicarFiltros()" 
-              placeholder="Buscar empleado..."
-              class="filter-input">
+            <input type="text" id="filtroNombre" [(ngModel)]="filtroNombre" (input)="aplicarFiltros()"
+              placeholder="Buscar empleado..." class="filter-input">
           </div>
           <div class="filter-group">
             <label for="filtroCalificado">Calificado:</label>
@@ -60,107 +49,268 @@
           </div>
         </aside>
 
-        <!-- Tabla a la derecha -->
+        <!-- Tabla a la derecha --> <!-- Console log BORRAR -->
         <div class="cap-table">
           <div class="cap-header">
             <div class="empleado-row">Empleado</div>
             <div>Area</div>
-            <div>Fecha Incorporacion</div>
+            <div>Fecha Creación</div>
             <div>Calificado</div>
             <div>ESTADO</div>
           </div>
           <div class="cap-row" *ngFor="let empleado of empleadosFiltrados" (click)="navigateToEvaluacion(empleado.id)">
             <div class="empleado-info-column">
               <!-- <img [src]="empleado.photo" [alt]="empleado.nombre" class="employee-photo"> -->
-              <div><img [src]="empleado.photo" class="employee-photo" [alt]="empleado.nombre"></div>
+              <div>
+                <img [src]="construirUrlFoto(empleado.photo || '', empleado.sexo || '')" class="employee-photo"
+                  [alt]="empleado.nombre" (error)="onImageError($event, empleado.sexo)">
+              </div>
               <span>{{ empleado.nombre }}</span>
             </div>
-            <div [ngClass]="getAreaClass(empleado.departamento)" class="area-badge">{{ empleado.departamento.toUpperCase() }}</div>
+            <div [ngClass]="getAreaClass(empleado.area)" class="area-badge"> {{ empleado.area.toUpperCase() }}</div>
             <!-- <div>{{ empleado.departamento }}</div> -->
-            <div>{{ empleado.fechaIncorporacion }}</div>
+            <div>{{ empleado.fechaInicio }}</div>
             <div>{{ empleado.calificado }}</div>
-            <div><span class="estado-badge completada">En Proceso</span>
-              <!-- <div><span class="estado-badge" 
-                      [ngClass]="{ 'pendiente': empleado.estado === 'Pendiente', 
-                                   'completada': empleado.estado === 'Completada', 
-                                   'en-proceso': empleado.estado === 'En Proceso' }">
-                    {{ empleado.estado }}
-                  </span>
-            </div> -->
-          </div>
+            <div><span class="estado-badge" [ngClass]="{
+                          'pendiente': empleado.estado === 'PENDIENTE',
+                          'completada': empleado.estado === 'COMPLETADA', 
+                          'en-proceso': empleado.estado === 'EN PROCESO'
+                        }">
+                {{ empleado.estado }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- LISTA DE EVALUACIONES DE EMPLEADOS -->
-     <div id="crearEvaluacion" class="subcategory-section" [class.active]="activeSubcategory === 'crearEvaluacion'">
+    <!-- CREAR UNA EVALUACIÓN PARA UN EMPLEADO -->
+    <div id="crearEvaluacion" class="subcategory-section" [class.active]="activeSubcategory === 'crearEvaluacion'">
       <div style="margin-bottom: 2rem;">
-      <!-- Crear Evaluación -->
-      <h4 class="form-section-subtitle">Crear Evaluación</h4>
 
-      <div style="position: relative; border: 1px solid #ddd; border-radius: 8px; padding: 0.75rem; margin-bottom: 1.5rem; background: #fff;">
+        <!-- PASO 1: BUSCAR Y SELECCIONAR EMPLEADO -->
+        <h4 class="form-section-subtitle">Crear Evaluación</h4>
 
-        <!-- Línea decorativa superior -->
-        <div class="linea-decorativa-sup"></div>   
+        <div
+          style="position: relative; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; background: #fff;">
+          <!-- Línea decorativa superior -->
+          <div class="linea-decorativa-sup"></div>
 
-        <!-- Selección de Empleado -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.5rem;">
-          <div class="form-group">
-            <label class="form-label">Área:</label>
-            <input type="text" [(ngModel)]="filtroArea" placeholder="Buscar área..." class="form-input">
+          <h5 style="color: #2c3e50; margin-bottom: 1rem; font-size: 1.1rem;">
+            <i class="fas fa-search" style="margin-right: 0.5rem; color: #3498db;"></i>
+            Paso 1: Seleccionar Empleado
+          </h5>
+
+          <!-- Búsqueda de Empleado -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Área:</label>
+              <input type="text" [(ngModel)]="filtroArea" placeholder="Buscar área..." class="form-input"
+                (input)="filtrarEmpleadosParaEvaluacion()" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Empleado:</label>
+              <select [(ngModel)]="empleadoBuscado" (ngModelChange)="onEmpleadoBuscadoSeleccionado()" class="form-input"
+                [compareWith]="compareEmpleados" [disabled]="empleadosFiltrados2.length === 0">
+                <option [ngValue]="null">
+                  {{ empleadosFiltrados2.length === 0 ? '- No hay empleados disponibles -' : '- Seleccionar empleado -'
+                  }}
+                </option>
+                <option *ngFor="let empleado of empleadosFiltrados2; trackBy: trackByEmpleadoId" [ngValue]="empleado">
+                  {{empleado.nombre}} - {{empleado.area}}
+                </option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Empleado:</label>
-            <input type="text" [(ngModel)]="filtroEmpleado" placeholder="Buscar empleado..." class="form-input">
+
+          <!-- Información del empleado seleccionado -->
+          <div *ngIf="empleadoBuscado"
+            style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+            <h6 style="color: #28a745; margin: 0 0 1rem 0; font-size: 1rem;">
+              <i class="fas fa-user-check" style="margin-right: 0.5rem;"></i>
+              Empleado Seleccionado
+            </h6>
+
+            <!-- Información detallada en grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <label
+                  style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">NOMBRE
+                  COMPLETO:</label>
+                <span style="color: #2c3e50; font-weight: 500;">{{empleadoBuscado.nombre}}</span>
+              </div>
+              <div>
+                <label
+                  style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">ÁREA:</label>
+                <span style="color: #2c3e50; font-weight: 500;">{{empleadoBuscado.area}}</span>
+              </div>
+            </div>
           </div>
+
         </div>
 
-        <!-- Tipo de Competencia -->
-        <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 0.5rem;">
-          <div class="form-group">
-            <label class="form-label">Tipo de Competencia:</label>
-            <select [(ngModel)]="tipoCompetencia" class="form-input">
-              <option value="" disabled selected>- Seleccionar -</option>
-              <option *ngFor="let tipo of tiposCompetencias" [value]="tipo">{{tipo}}</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Competencia -->
-        <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 0.5rem;">
-          <div class="form-group">
-            <label class="form-label">Competencia:</label>
-            <select [(ngModel)]="competenciaSeleccionada" class="form-input">
-              <option value="" disabled selected>- Seleccionar -</option>
-              <option *ngFor="let comp of competencias" [value]="comp">{{comp}}</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Nivel -->
-        <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 0.5rem;">
-          <div class="form-group">
-            <label class="form-label">Nivel:</label>
-            <select [(ngModel)]="nivelSeleccionado" class="form-input">
-              <option value="" disabled selected>- Seleccionar -</option>
-              <option *ngFor="let nivel of niveles" [value]="nivel">{{nivel}}</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Botón Guardar -->
-        <div style="text-align: right; margin-top: 1rem;">
-          <button type="button" class="btn btn-primary" (click)="guardarEvaluacion()">
-            Guardar Evaluación
+        <!-- Botón Crear Evaluación -->
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-success" [disabled]="!empleadoBuscado"
+            (click)="mostrarSeccionCompetencias()" style="padding: 0.75rem 2rem; font-size: 1rem;">
+            <i class="fas fa-clipboard-list" style="margin-right: 0.5rem;"></i>
+            Crear Evaluación
           </button>
         </div>
 
+        <!-- PASO 2: SECCIÓN DE COMPETENCIAS (INICIALMENTE OCULTA) -->
+        <div *ngIf="mostrarCompetencias"
+          style="position: relative; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; background: #fff; animation: slideIn 0.3s ease-in-out;">
+
+          <!-- Línea decorativa superior -->
+          <div class="linea-decorativa-sup"></div>
+
+          <h5 style="color: #2c3e50; margin-bottom: 1rem; font-size: 1.1rem;">
+            <i class="fas fa-star" style="margin-right: 0.5rem; color: #f39c12;"></i>
+            Paso 2: Agregar Competencias ({{competenciasAgregadas.length}}/4)
+          </h5>
+
+          <!-- Progreso -->
+          <div style="background: #e9ecef; height: 8px; border-radius: 4px; margin-bottom: 1.5rem; overflow: hidden;">
+            <div
+              style="background: linear-gradient(90deg, #28a745, #20c997); height: 100%; transition: width 0.3s ease;"
+              [style.width.%]="(competenciasAgregadas.length / 4) * 100"></div>
+          </div>
+
+          <!-- Formulario de Competencias -->
+          <div
+            style="border: 2px dashed #dee2e6; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; background: #f8f9fa;">
+            <h6 style="color: #495057; margin-bottom: 1rem;">
+              <i class="fas fa-plus-circle" style="margin-right: 0.5rem; color: #007bff;"></i>
+              Agregar Nueva Competencia
+            </h6>
+
+            <!-- Tipo de Competencia -->
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div class="form-group">
+                <label class="form-label">Tipo de Competencia:</label>
+                <select [(ngModel)]="tipoCompetencia" (change)="onTipoCompetenciaChange()" class="form-input"
+                  [disabled]="maximoAlcanzado">
+                  <option [ngValue]="null" disabled>
+                    {{ maximoAlcanzado ? 'Completado' : '- Seleccionar tipo -' }}
+                  </option>
+                  <option *ngFor="let tipo of tiposCompetencia" [value]="tipo">{{ tipo }}</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Competencia -->
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div class="form-group">
+                <label class="form-label">Competencia:</label>
+                <select [(ngModel)]="competenciaSeleccionada" (change)="onCompetenciaSeleccionada()" class="form-input"
+                  [disabled]="maximoAlcanzado || !tipoCompetencia">
+                  <option [ngValue]="null" disabled>
+                    {{ maximoAlcanzado ? 'Completado' : '- Seleccionar competencia -' }}
+                  </option>
+                  <option *ngFor="let comp of competenciasFiltradas" [value]="comp.NombreCompetencia">
+                    {{ comp.NombreCompetencia }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Nivel -->
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div class="form-group">
+                <label class="form-label">Nivel Requerido:</label>
+                <select [(ngModel)]="nivelSeleccionado" class="form-input"
+                  [disabled]="maximoAlcanzado || !competenciaSeleccionada || nivelesDisponibles.length === 0">
+                  <option [ngValue]="null" disabled>
+                    {{ maximoAlcanzado ? 'Completado' :
+                    nivelesDisponibles.length === 0 ? 'Cargando niveles...' : '- Seleccionar nivel -' }}
+                  </option>
+                  <option *ngFor="let nivel of nivelesDisponibles" [value]="nivel">{{ nivel }}</option>
+                </select>
+                <!-- <select [(ngModel)]="nivelSeleccionado" class="form-input" [disabled]="!competenciaSeleccionada">
+                  <option [ngValue]="null" disabled>- Seleccionar nivel -</option>
+                  <option *ngFor="let n of nivelesDisponibles" [ngValue]="n">
+                    Nivel {{ n.nivel }} - {{ n.descripcion }}
+                  </option>
+                </select> -->
+              </div>
+            </div>
+
+            <!-- Botón Agregar Competencia -->
+            <div style="text-align: center;">
+              <button type="button" class="btn btn-primary"
+                [disabled]="!tipoCompetencia || !competenciaSeleccionada || !nivelSeleccionado || competenciasAgregadas.length >= 4"
+                (click)="agregarCompetencia()" style="padding: 0.5rem 1.5rem;">
+                <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>
+                Agregar Competencia
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista de Competencias Agregadas -->
+          <div *ngIf="competenciasAgregadas.length > 0" style="margin-bottom: 1.5rem;">
+            <h6 style="color: #495057; margin-bottom: 1rem;">
+              <i class="fas fa-list-check" style="margin-right: 0.5rem; color: #28a745;"></i>
+              Competencias Agregadas
+            </h6>
+
+            <div style="display: grid; gap: 0.75rem;">
+              <div *ngFor="let comp of competenciasAgregadas; let i = index"
+                style="background: white; border: 1px solid #dee2e6; border-radius: 6px; padding: 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+
+                <div style="flex: 1;">
+                  <div style="display: flex; align-items: center; margin-bottom: 0.25rem;">
+                    <span
+                      style="background: #007bff; color: white; padding: 0.2rem 0.5rem; border-radius: 12px; font-size: 0.75rem; margin-right: 0.5rem;">
+                      {{comp.tipo}}
+                    </span>
+                    <strong style="color: #2c3e50;">{{comp.competencia}}</strong>
+                  </div>
+                  <div style="color: #6c757d; font-size: 0.9rem;">
+                    Nivel: <strong>{{comp.nivel}}</strong>
+                  </div>
+                </div>
+
+                <button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarCompetencia(i)"
+                  style="margin-left: 1rem; padding: 0.25rem 0.5rem;">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alerta cuando se completen las 4 competencias -->
+          <div *ngIf="competenciasAgregadas.length === 4"
+            style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; text-align: center;">
+            <i class="fas fa-check-circle" style="margin-right: 0.5rem; color: #28a745;"></i>
+            <strong>¡Excelente! Has agregado las 4 competencias requeridas.</strong>
+            <br>
+            <small>Ahora puedes finalizar y guardar la evaluación.</small>
+          </div>
+
+          <!-- Botón Terminar -->
+          <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #dee2e6;">
+            <button type="button" class="btn btn-success btn-lg" [disabled]="competenciasAgregadas.length < 4"
+              (click)="terminarEvaluacion()" style="padding: 0.75rem 2rem; font-size: 1.1rem;">
+              <i class="fas fa-check-double" style="margin-right: 0.5rem;"></i>
+              Terminar y Guardar Evaluación
+            </button>
+          </div>
+        </div>
+
+        <!-- Mensaje de confirmación -->
+        <div *ngIf="evaluacionGuardada"
+          style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 1.5rem; border-radius: 8px; text-align: center; animation: slideIn 0.3s ease-in-out;">
+          <i class="fas fa-check-circle"
+            style="font-size: 2rem; color: #28a745; margin-bottom: 1rem; display: block;"></i>
+          <h5 style="margin-bottom: 0.5rem;">¡Evaluación Creada Exitosamente!</h5>
+          <p style="margin: 0; opacity: 0.8;">La evaluación para <strong>{{empleadoBuscado?.nombre}}</strong> ha sido
+            guardada con 4 competencias.</p>
+        </div>
+
       </div>
     </div>
 
-    </div>
-
-
   </div>
+
 </main>

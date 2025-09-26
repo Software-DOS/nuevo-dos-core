@@ -3,7 +3,11 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { environment } from 'src/environments/environment';
 import { map, tap, catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-import { IGTHCompetencia, IGTHCompetenciaViewModel } from '../interface/ight-competencia';
+import { 
+  IGTHCompetenciaViewModel, 
+  IGTHNivelCompetenciaViewModel, 
+  IGTHAsignacionCompetenciaViewModel
+} from '../interface/ight-competencia';
 
 @Injectable({
   providedIn: 'root'
@@ -164,4 +168,100 @@ export class GthCompetenciaService {
     
     return throwError(errorMessage);
   }
+
+
+  /* ===============================================================================================
+                               APIs de Nivel Competencias
+  =================================================================================================*/
+
+  /**
+   * Gestiona una Asignación de competencia (crear, actualizar, eliminar)
+   * @param nivelCompetencia - Datos de la Asignacion competencia
+   * @returns Observable con la respuesta del servidor
+   */
+  gestionarNivelCompetencia(nivelCompetencia: IGTHNivelCompetenciaViewModel): Observable<any> {
+    const url = `${this.baseUrl}api/GTHNivelCompetencia/Gestionar`;
+    
+    return this.http.post(url, nivelCompetencia, this.httpOptions)
+      .pipe(
+        tap((response: any) => {
+          console.log('🎯 Respuesta gestión Nivel competencia:', response);
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Obtiene todos los niveles de las competencias según los filtros proporcionados
+   * @param tipo - Tipo de búsqueda: 0=Todas, 1=Por ID, 2=Por Estado, 3=Por Nombre  
+   * @param idNivel - ID específico del nivel de competencia (opcional)
+   * @param estado - Estado de la competencia (opcional)
+   * @param idCompetencia - ID específico de competencia (opcional)
+   * @returns Observable con la lista de competencias
+   */
+  mostrarNivelCompetencias(
+    tipo: number = 0,
+    idNivel?: number,
+    idCompetencia?: number,
+    estado?: string
+  ): Observable<any> {
+    let url = `${this.baseUrl}api/GTHNivelCompetencia/Mostrar?tipo=${tipo}`;
+    
+    if (idCompetencia !== undefined) {
+      url += `&idCompetencia=${idCompetencia}`;
+    }
+    if (estado) {
+      url += `&estado=${estado}`;
+    }
+    if (idNivel !== undefined) {
+      url += `&idNivel=${idNivel}`;
+    }
+
+    return this.http.get<any>(url)
+      .pipe(
+        tap((response: any) => {
+          console.log('🎯 Competencias obtenidas del backend:', response);
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /* ===============================================================================================
+                               APIs de Asignacion Competencias
+  =================================================================================================*/
+
+  /**
+   * Gestiona una Asigancion_competencia (crear, actualizar, eliminar)
+   * @param Asig_competencia - Datos de la competencia
+   * @returns Observable con la respuesta del servidor
+   */
+  gestionarAsignacionCompetencia(Asig_competencia: IGTHAsignacionCompetenciaViewModel): Observable<any> {
+    const url = `${this.baseUrl}api/GTHAsignacionCompetencia/Gestionar`;
+    
+    return this.http.post(url, Asig_competencia, this.httpOptions)
+      .pipe(
+        tap((response: any) => {
+          console.log('🎯 Respuesta gestión competencia:', response);
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Obtiene una competencia específica por su ID
+   * @param id - ID de la evaluacion
+   * @returns Observable con la competencia específica
+   */
+  obtenerAsignacionCompetenciaPorIdEvaluacion(id: number): Observable<IGTHAsignacionCompetenciaViewModel> {
+    const url = `${this.baseUrl}api/GTHAsignacionCompetencia/evaluacion/${id}`;
+    
+    return this.http.get<IGTHAsignacionCompetenciaViewModel>(url)
+      .pipe(
+        tap((response: any) => {
+          console.log('🎯 Competencia obtenida por ID:', response);
+        }),
+        catchError(this.handleError)
+      );
+  }
+  
 }

@@ -49,7 +49,7 @@
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--color-pale-gray);
-    background-color: var(--color-light-gray);
+    background-color: #82b5b77a;
   }
   
   .employee-cell {

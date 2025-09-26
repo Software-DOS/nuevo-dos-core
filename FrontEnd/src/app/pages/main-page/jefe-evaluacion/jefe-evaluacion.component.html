@@ -22,6 +22,11 @@
   <div class="category-index2">
     <ul>
       <li>
+        <div class="category-link2" [class.selected]="activeSection === 'objetivo'" (click)="showSection('objetivo')">
+          Objetivo de Area
+        </div>
+      </li>
+      <li>
         <div class="category-link2" [class.selected]="activeSection === 'hoja-ruta'" (click)="showSection('hoja-ruta')">
           Hoja de Ruta
         </div>
@@ -50,6 +55,33 @@
   </div>
 
   <div class="content-area">
+
+    <!-- Hoja de Ruta -->
+    <div id="objetivo" class="content-section" [class.active]="activeSection === 'objetivo'">
+      <!-- <h2>Objetivo de area</h2> -->
+      <div class="evaluation-form">
+        <h4 class="titulos-pequeños">Objetivo de Área - Vista Administrador</h4>
+        <!-- Objetivo Área -->
+        <div class="form-section">          
+          <div class="section-title" style="display:flex; gap:1rem;">
+            <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena" class="icono-normal">
+            Objetivo Área
+          </div>
+          <div class="form-row" style="margin-left: 2rem; margin-right: 2rem;">
+            <textarea style="padding: 0.6rem; width: 100%;" placeholder="Ingrese aqui el objetivo de su área"></textarea>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div style="display: flex; justify-content: flex-end; margin-left: 2rem; margin-top: 1rem;">
+          <button class="save-btn" style="margin-right: 1rem;" (click)="guardarObjetivoArea()">
+            Guardar
+          </button>
+        </div>
+
+      </div>
+    </div>
+
     <!-- Hoja de Ruta -->
     <div id="hoja-ruta" class="content-section" [class.active]="activeSection === 'hoja-ruta'">
       <h2>Hoja de Ruta de Formulario</h2>
@@ -90,7 +122,8 @@
           <div class="form-row" style="margin-left: 2rem; margin-right: 2rem;">
             <span class="">Objetivo ingresado por el jefe del área: Optimizar los procesos internos de la organización mediante la implementación, gestión y soporte de soluciones tecnológicas innovadoras, seguras y eficientes, que permitan mejorar la productividad, garantizar la continuidad operativa y apoyar la toma de decisiones estratégicas. </span>
             <!-- <input type="date" class="date-input"> -->
-          </div>
+          </div>         
+
         </div>
 
         <!-- Objetivos -->
@@ -197,7 +230,7 @@
 
     </div><!-- fin Revisión Inicial Admin -->
 
-    <!-- -----------      --------------          -------------             ------------ --> -->
+    <!-- -----------      --------------          -------------             ------------ --> 
     
     <!-- Retroalimentación Admin -->
     <div class="evaluation-form" *ngIf="isTimelineStepActive('Retroalimentacion')">
@@ -323,7 +356,7 @@
 
     </div><!-- fin Retroalimentación Admin -->
 
-    <!-- -----------      --------------          -------------             ------------ --> -->
+    <!-- -----------      --------------          -------------             ------------ --> 
     
 
     <!-- Información del Colaborador -->

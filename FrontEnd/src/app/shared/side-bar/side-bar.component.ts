@@ -21,27 +21,6 @@ export class SideBarComponent implements OnInit {
 
   ngOnInit(): void {
 
-    const valor = sessionStorage.getItem('token');
-    if (typeof valor === 'string') {
-      var IdEmpleado =JSON.parse(atob(valor.split('.')[1]));
-      this.usuario = IdEmpleado['NombresApellidos'];
-      this.Imagen = "assets/img/" + IdEmpleado['Imagen'];
-      //console.log("this.Imagen:",this.Imagen);
-      this.menuService.cargarMenu(IdEmpleado['IdEmpleado']).subscribe(
-        (resp:any)=>{
-            this.menu=resp['$values'];
-            if (!localStorage.getItem('foo')) { 
-              localStorage.setItem('foo', 'no reload') 
-              location.reload() 
-            } else {
-              localStorage.removeItem('foo') 
-            }
-        },
-        (err)=>{
-          console.log("err:",err);
-        }
-      );
-    }
   }
 
 

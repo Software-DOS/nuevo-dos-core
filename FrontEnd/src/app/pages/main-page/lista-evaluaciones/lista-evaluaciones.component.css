@@ -1,3 +1,7 @@
+.main-flex-evaluacion{
+  max-width: none;
+}
+
 /* ===========================================================================
                         Estilos para las pestañas
 =============================================================================*/
@@ -38,8 +42,6 @@
   grid-template-columns: 250px 1fr; /* filtros a la izquierda, tabla a la derecha */
   gap: 1.5rem;
 }
-
-
 
 
 
@@ -106,9 +108,9 @@
 }
 
 .employee-photo {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  border-radius: 15%;
   object-fit: cover;
   border: 3px solid #f0f0f0;
   flex-shrink: 0;
@@ -121,8 +123,8 @@
 }
 
 .empleado-info-column span {
-  font-weight: 500;
-  color: #333;
+  font-weight: 700;
+  color: #272727;
   font-size: 14px;
   line-height: 1.4;
 }
@@ -140,17 +142,19 @@
 }
 
 .estado-badge.pendiente {
-  background: linear-gradient(135deg, #c12bc6 0%, #f80077 100%);
+  background: linear-gradient(135deg, #c0009c 0%, #f78d00 100%);
   box-shadow: 0 2px 4px rgba(222, 74, 151, 0.3);
 }
 
 .estado-badge.completada {
-  background: linear-gradient(135deg, #03d34f 0%, #00b3de 100%);
-  box-shadow: 0 2px 4px rgba(74, 222, 128, 0.3);
+  /* background: linear-gradient(135deg, #03d34f 0%, #00b3de 100%); */
+  box-shadow: 0 2px 4px rgb(4 90 200 / 29%);
+  color: black;
 }
 
 .estado-badge.en-proceso {
-  background: linear-gradient(135deg, #00bcf5 0%, #3550f5 100%);
+  background: linear-gradient(135deg, #03d34f 0%, #00b3de 100%);
+  /* background: linear-gradient(135deg, #00bcf5 0%, #3550f5 100%); */
   box-shadow: 0 2px 4px rgba(74, 155, 222, 0.3);
 }
 
@@ -241,8 +245,8 @@
 /* Alineación del header */
 .cap-header > div.empleado-row {
   text-align: center;
-  padding-left: 80px; /* Alineado con el inicio de las fotos de perfil */
-  display: flex;
+  /* padding-left: 80px; Alineado con el inicio de las fotos de perfil */
+  /* display: flex; */
   align-items: center;
 }
 
@@ -258,6 +262,66 @@
 .subcategory-nav {
   margin-bottom: 15px;
 }
+
+
+/* ============================================================
+                Estilos para Crear Evaluación                         
+===============================================================*/
+.linea-decorativa-sup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #007bff, #28a745, #ffc107, #dc3545);
+  border-radius: 8px 8px 0 0;
+}
+
+/* ----------   Estilos para las competencias   -------------------*/
+/* Estados visuales tipo semáforo */
+.estado-bloqueado {
+  border-left: 5px solid #6c757d; /* gris */
+  padding-left: 10px;
+  opacity: 0.6;
+}
+
+.estado-pendiente {
+  border-left: 5px solid #ffc107; /* amarillo */
+  padding-left: 10px;
+}
+
+.estado-ok {
+  border-left: 5px solid #28a745; /* verde */
+  padding-left: 10px;
+}
+
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  div[style*="grid-template-columns: 1fr 1fr"] {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Información del empleado en móvil */
+  div[style*="grid-template-columns: 1fr 1fr"]:has(label) {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+}
+
+
 
 /* Responsividad para pantallas pequeñas */
 @media (max-width: 768px) {

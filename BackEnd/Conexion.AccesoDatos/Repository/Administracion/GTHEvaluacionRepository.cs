@@ -23,7 +23,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// Ejecuta SP para insertar, actualizar o eliminar una evaluación.
         /// Tipos: 1=Insertar, 2=Actualizar, 3=Eliminar, 4=Cambiar Estado
         /// </summary>
-        public async Task<IEnumerable<Generica>> Gestionar(int tipo, GTHEvaluacion evaluacion)
+        public async Task<dynamic> Gestionar(int tipo, GTHEvaluacion evaluacion)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Gestionar_GTH_EVALUACION", sql)
@@ -33,9 +33,9 @@ namespace Conexion.AccesoDatos.Repository.Administracion
 
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
             cmd.Parameters.Add(new SqlParameter("@ID_EVALUACION", (object)evaluacion.IdEvaluacion ?? DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@ID_EMPLEADO", (object)evaluacion.IdEmpleado ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@ID_EMPLEADO", evaluacion.IdEmpleado));
             cmd.Parameters.Add(new SqlParameter("@ID_JEFE", (object)evaluacion.IdJefe ?? DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@ANIO", (object)evaluacion.Anio ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@ANIO", evaluacion.Anio));
             cmd.Parameters.Add(new SqlParameter("@ESTADO", evaluacion.Estado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@FECHA_INICIO", (object)evaluacion.FechaInicio ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@FECHA_LIMITE", (object)evaluacion.FechaLimite ?? DBNull.Value));
@@ -43,20 +43,40 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@CALIFICACION_FINAL", (object)evaluacion.CalificacionFinal ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@OBSERVACIONES", evaluacion.Observaciones ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@USUARIO_CREACION", "SISTEMA"));
-            cmd.Parameters.Add(new SqlParameter("@FASE", (object)evaluacion.Fase ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@FASE", evaluacion.Fase ?? 0));
 
             await sql.OpenAsync();
-            var response = new List<Generica>();
             using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+
+            if (await reader.ReadAsync())
             {
-                response.Add(new Generica
+                var codigo = Convert.ToInt32(reader["Codigo"]);
+                var mensaje = reader["Mensaje"].ToString();
+
+                // Verificar si tiene los campos adicionales (inserción exitosa)
+                if (tipo == 1 && codigo > 0 && reader.FieldCount > 2)
                 {
-                    valor1 = Convert.ToInt16(reader["Codigo"]),
-                    valor2 = reader["Mensaje"].ToString()
-                });
+                    return new
+                    {
+                        codigo = codigo,
+                        mensaje = mensaje,
+                        idEvaluacion = reader.IsDBNull("ID_EVALUACION") ? (int?)null : Convert.ToInt32(reader["ID_EVALUACION"]),
+                        idEmpleado = reader.IsDBNull("ID_EMPLEADO") ? (long?)null : Convert.ToInt64(reader["ID_EMPLEADO"]),
+                        estado = reader.IsDBNull("ESTADO") ? null : reader["ESTADO"].ToString(),
+                        fase = reader.IsDBNull("FASE") ? (int?)null : Convert.ToInt32(reader["FASE"]),
+                        anio = reader.IsDBNull("ANIO") ? (int?)null : Convert.ToInt32(reader["ANIO"])
+                    };
+                }
+
+                // Para otros casos
+                return new
+                {
+                    codigo = codigo,
+                    mensaje = mensaje
+                };
             }
-            return response;
+
+            return new { codigo = -999, mensaje = "Sin respuesta" };
         }
 
         /// <summary>
@@ -122,9 +142,9 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                                           ? Convert.ToDateTime(reader["FECHA_MODIFICACION"])
                                           : (DateTime?)null,
                     UsuarioCreacion = reader["USUARIO_CREACION"]?.ToString(),
-                    Fase = reader["FASE"] != DBNull.Value
-                                          ? Convert.ToInt32(reader["FASE"])
-                                          : (int?)null
+                    //Fase = reader["FASE"] != DBNull.Value
+                    //                      ? Convert.ToInt32(reader["FASE"])
+                    //                      : (int?)null
                 });
             }
             return list;

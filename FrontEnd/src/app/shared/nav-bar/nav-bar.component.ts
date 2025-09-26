@@ -67,12 +67,12 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
       this.menuService.cargarMenu(IdEmpleado['IdEmpleado']).subscribe(
         (resp:any)=>{
             this.menu=resp['$values'];
-            if (!localStorage.getItem('foo')) {
-              localStorage.setItem('foo', 'no reload')
-              location.reload()
-            } else {
-              localStorage.removeItem('foo')
-            }
+            // if (!localStorage.getItem('foo')) {
+            //   localStorage.setItem('foo', 'no reload')
+            //   location.reload()
+            // } else {
+            //   localStorage.removeItem('foo')
+            // }
         },
         (err)=>{
           console.log("err:",err);

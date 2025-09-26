@@ -2,6 +2,7 @@ using Conexion.AccesoDatos.Repository.Administracion;
 using Conexion.Entidad.Administracion;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace WebAppConexion.Controllers
                 FechaCreacion = e.FechaCreacion,
                 FechaModificacion = e.FechaModificacion,
                 UsuarioCreacion = e.UsuarioCreacion,
-                Fase = e.Fase
+                //Fase = e.Fase
             });
         }
 
@@ -62,37 +63,74 @@ namespace WebAppConexion.Controllers
         /// Ejecuta la operación de gestión de evaluación:
         /// 1 = Insertar, 2 = Actualizar, 3 = Eliminar, 4 = Cambiar Estado.
         /// </summary>
+        //[HttpPost("[action]")]
+        //public async Task<IEnumerable<Generica>> Gestionar([FromBody] GTHEvaluacionViewModel model)
+        //{
+        //    // Mapear ViewModel a la entidad GTHEvaluacion
+        //    var db = new GTHEvaluacion
+        //    {
+        //        Tipo = model.Tipo,
+        //        IdEvaluacion = model.IdEvaluacion,
+        //        IdEmpleado = model.IdEmpleado,
+        //        IdJefe = model.IdJefe,
+        //        Anio = model.Anio,
+        //        Estado = model.Estado ?? "PENDIENTE",
+        //        FechaInicio = model.FechaInicio,
+        //        FechaLimite = model.FechaLimite,
+        //        FechaFinalizacion = model.FechaFinalizacion,
+        //        CalificacionFinal = model.CalificacionFinal,
+        //        Observaciones = model.Observaciones,
+        //        FechaCreacion = model.FechaCreacion,
+        //        FechaModificacion = model.FechaModificacion,
+        //        UsuarioCreacion = model.UsuarioCreacion,
+        //        //Fase = model.Fase
+        //    };
+
+        //    var responseResult = await _repository.Gestionar(db.Tipo, db);
+
+        //    // Devolver la respuesta mapeada a Generica
+        //    return responseResult.Select(s => new Generica
+        //    {
+        //        valor1 = s.valor1,
+        //        valor2 = s.valor2
+        //    });
+        //}
         [HttpPost("[action]")]
-        public async Task<IEnumerable<Generica>> Gestionar([FromBody] GTHEvaluacionViewModel model)
+        public async Task<dynamic> Gestionar([FromBody] GTHEvaluacionViewModel model)
         {
-            // Mapear ViewModel a la entidad GTHEvaluacion
-            var db = new GTHEvaluacion
-            {
-                Tipo = model.Tipo,
-                IdEvaluacion = model.IdEvaluacion,
-                IdEmpleado = model.IdEmpleado,
-                IdJefe = model.IdJefe,
-                Anio = model.Anio,
-                Estado = model.Estado ?? "PENDIENTE",
-                FechaInicio = model.FechaInicio,
-                FechaLimite = model.FechaLimite,
-                FechaFinalizacion = model.FechaFinalizacion,
-                CalificacionFinal = model.CalificacionFinal,
-                Observaciones = model.Observaciones,
-                FechaCreacion = model.FechaCreacion,
-                FechaModificacion = model.FechaModificacion,
-                UsuarioCreacion = model.UsuarioCreacion,
-                Fase = model.Fase
-            };
+            Console.WriteLine("Raw model: " + JsonConvert.SerializeObject(model));
 
-            var responseResult = await _repository.Gestionar(db.Tipo, db);
-
-            // Devolver la respuesta mapeada a Generica
-            return responseResult.Select(s => new Generica
+            try
             {
-                valor1 = s.valor1,
-                valor2 = s.valor2
-            });
+                // ✅ TU CÓDIGO ORIGINAL PERO CORREGIDO
+                var db = new GTHEvaluacion
+                {
+                    IdEvaluacion = model.IdEvaluacion,
+                    IdEmpleado = model.IdEmpleado,
+                    IdJefe = model.IdJefe,
+                    Anio = model.Anio,
+                    Estado = model.Estado ?? "PENDIENTE",
+                    FechaInicio = model.FechaInicio,
+                    FechaLimite = model.FechaLimite,
+                    FechaFinalizacion = model.FechaFinalizacion,
+                    CalificacionFinal = model.CalificacionFinal,
+                    Observaciones = model.Observaciones,
+                    UsuarioCreacion = model.UsuarioCreacion ?? "SISTEMA",
+                    Fase = model.Fase ?? 0
+                };
+
+                Console.WriteLine($"Mapeando - IdEmpleado: {db.IdEmpleado}, Anio: {db.Anio}");
+
+                Console.WriteLine($"ID Empleado final: {db.IdEmpleado}");
+                Console.WriteLine($"Año final: {db.Anio}");
+
+                var responseResult = await _repository.Gestionar(model.Tipo, db);
+                return responseResult;
+            }
+            catch (Exception ex)
+            {
+                return new { Codigo = -999, Mensaje = $"Error: {ex.Message}" };
+            }
         }
 
         /// <summary>

@@ -173,6 +173,10 @@ export class JefeEvaluacionComponent implements OnInit {
     this.cargarCompetenciasAdmin();
   }
 
+  guardarObjetivoArea(): void {
+    console.log('🚀 Guardando Evaluacion...');
+  }
+
   /**
    * Carga las primeras 5 competencias desde el backend para la vista administrativa
    */

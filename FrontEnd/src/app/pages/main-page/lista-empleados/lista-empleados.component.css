@@ -1,6 +1,14 @@
+.container-main {
+  max-width: none;
+}
+.cap-table {
+  padding: 0 10px;
+}
+
 /* ===== Tabla: Lista de Empleados ===== */
 #lista-empleados .cap-table {
   box-shadow: #4ade80;
+  
 }
 
 #lista-empleados .cap-header,
