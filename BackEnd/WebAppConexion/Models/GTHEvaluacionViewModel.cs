@@ -24,23 +24,23 @@ namespace WebAppConexion.Models
         public DateTime? FechaModificacion { get; set; }
         public int? Fase { get; set; }
         
-        // Propiedades adicionales para información del empleado
-        public string NombreEmpleado { get; set; }
-        public string ApellidoEmpleado { get; set; }
-        public string AreaEmpleado { get; set; }
-        public string NombreCompleto => $"{NombreEmpleado} {ApellidoEmpleado}".Trim();
+        //// Propiedades adicionales para información del empleado
+        //public string NombreEmpleado { get; set; }
+        //public string ApellidoEmpleado { get; set; }
+        //public string AreaEmpleado { get; set; }
+        //public string NombreCompleto => $"{NombreEmpleado} {ApellidoEmpleado}".Trim();
         
-        // Propiedades adicionales para información del jefe
-        public string NombreJefe { get; set; }
-        public string ApellidoJefe { get; set; }
-        public string NombreCompletoJefe => $"{NombreJefe} {ApellidoJefe}".Trim();
+        //// Propiedades adicionales para información del jefe
+        //public string NombreJefe { get; set; }
+        //public string ApellidoJefe { get; set; }
+        //public string NombreCompletoJefe => $"{NombreJefe} {ApellidoJefe}".Trim();
         
-        // Estadísticas de la evaluación
-        public int? TotalObjetivos { get; set; }
-        public int? ObjetivosEvaluados { get; set; }
-        public decimal? PromedioObjetivos { get; set; }
-        public int? TotalCompetencias { get; set; }
-        public int? CompetenciasEvaluadas { get; set; }
-        public decimal? PromedioCompetencias { get; set; }
+        //// Estadísticas de la evaluación
+        //public int? TotalObjetivos { get; set; }
+        //public int? ObjetivosEvaluados { get; set; }
+        //public decimal? PromedioObjetivos { get; set; }
+        //public int? TotalCompetencias { get; set; }
+        //public int? CompetenciasEvaluadas { get; set; }
+        //public decimal? PromedioCompetencias { get; set; }
     }
 }

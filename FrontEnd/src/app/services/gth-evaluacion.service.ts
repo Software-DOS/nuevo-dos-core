@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { 
   Ievaluacion, 
   ICrearEvaluacionRequest, 
@@ -97,5 +98,68 @@ export class GthEvaluacionService {
   GuardarGthEvaluacion(data:Ievaluacion){
         return this.http.post(environment.urlbackend +"api/GTHEvaluacion/Gestionar",data);
     }
+
+  
+  /**
+   * Actualizar evaluación GTH
+   * @param evaluacion - Datos de la evaluación a gestionar
+   * @returns Observable con la respuesta del servidor
+   */
+  actualizarGthEvaluacion(evaluacion: Ievaluacion): Observable<any> {
+    const requestData: any = {
+      tipo: evaluacion.tipo || 2,
+      idEvaluacion: evaluacion.idEvaluacion || 0,
+      idEmpleado: evaluacion.idEmpleado,
+      idJefe: evaluacion.idJefe || null,
+      anio: evaluacion.anio || new Date().getFullYear(),
+      estado: evaluacion.estado || 'PENDIENTE',
+      fechaInicio: evaluacion.fechaInicio || null,
+      fechaLimite: evaluacion.fechaLimite || null,
+      fechaFinalizacion: evaluacion.fechaFinalizacion || null,
+      calificacionFinal: evaluacion.calificacionFinal || null,
+      observaciones: evaluacion.observaciones || null,
+      usuarioCreacion: evaluacion.usuarioCreacion || 'SISTEMA',
+      fase: evaluacion.fase !== undefined ? evaluacion.fase : 0
+    };
+
+    console.log('Datos enviados para gestionar evaluación:', requestData);
+    
+    return this.http.post(`${environment.urlbackend}api/GTHEvaluacion/Gestionar`, requestData)
+      .pipe(
+        tap((response: any) => {
+          console.log('Respuesta gestión evaluación:', response);
+        }),
+        catchError((error) => {
+          console.error('Error al gestionar evaluación:', error);
+          return throwError(() => error);
+        })
+      );
+  }
+
+
+
+  /**
+     * Manejo de errores
+     * @param error - Error HTTP
+     * @returns Observable con el error
+     */
+    private handleError(error: HttpErrorResponse): Observable<never> {
+      // console.error('❌ Error en el servicio de competencias:', error);
+  
+      let errorMessage = 'Ha ocurrido un error desconocido';
+  
+      if (error.error instanceof ErrorEvent) {
+        // Error del lado del cliente
+        errorMessage = `Error: ${error.error.message}`;
+      } else {
+        // Error del lado del servidor
+        errorMessage = `Código: ${error.status}, Mensaje: ${
+          error.error?.message || error.message
+        }`;
+      }
+  
+      return throwError(errorMessage);
+    }
+  
 
 }

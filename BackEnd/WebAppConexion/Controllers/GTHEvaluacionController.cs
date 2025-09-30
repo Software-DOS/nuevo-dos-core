@@ -55,7 +55,7 @@ namespace WebAppConexion.Controllers
                 FechaCreacion = e.FechaCreacion,
                 FechaModificacion = e.FechaModificacion,
                 UsuarioCreacion = e.UsuarioCreacion,
-                //Fase = e.Fase
+                Fase = e.Fase
             });
         }
 

@@ -31,6 +31,7 @@
 
 
 export interface Ievaluacion {
+  tipo?: number; 
   idEvaluacion?: number;
   idEmpleado: number;
   idJefe?: number | null;           // Permitir null explícitamente

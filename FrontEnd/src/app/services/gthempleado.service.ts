@@ -121,6 +121,7 @@ export class GthEmpleadoService {
     return id ? parseInt(id, 10) : null;
   }
 
+
   /**
    * Limpia el ID del empleado GTH del sessionStorage
    */

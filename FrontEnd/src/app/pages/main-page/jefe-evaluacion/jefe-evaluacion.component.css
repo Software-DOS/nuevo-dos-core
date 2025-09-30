@@ -834,3 +834,41 @@
     margin-right: 45%;
    }
 }
+
+/*---------------------------------------------------------
+            Estilos para mostrar las competencias
+----------------------------------------------------------*/
+/* Contenedor para las competencias */
+.competencia-container {
+  background: #faf5ff;
+  border: 2px solid #c084fc;
+  border-radius: 10px;
+  padding: 0.6rem;
+  flex: 1;
+}
+
+.competencia-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.tipo-competencia {
+  background: #3b82f6;
+  color: white;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+.nombre-competencia {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.competencia-body {
+  color: #6b7280;
+  font-size: 0.85rem;
+}

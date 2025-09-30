@@ -14,5 +14,6 @@ namespace WebAppConexion.Models
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public string Encargado { get; set; }
+        public string Objetivo { get; set; }
     }
 }

@@ -17,6 +17,7 @@ namespace WebAppConexion.Models
         public decimal? Peso { get; set; }
         public int? ValoracionEmpleado { get; set; }
         public int? ValoracionJefe { get; set; }
+        public int? CalificacionEmpleado { get; set; }
         public int? CalificacionFinal { get; set; }
         public DateTime? FechaLimite { get; set; }
         public string ComentariosEmpleado { get; set; }
@@ -26,13 +27,13 @@ namespace WebAppConexion.Models
         public DateTime? FechaModificacion { get; set; }
         
         // Propiedades calculadas
-        public string TipoObjetivoDescripcion => TipoObjetivo switch
-        {
-            "INDIVIDUAL" => "Objetivo Individual",
-            "AREA" => "Objetivo de Área",
-            "EMPRESA" => "Objetivo Empresarial",
-            _ => TipoObjetivo
-        };
+        //public string TipoObjetivoDescripcion => TipoObjetivo switch
+        //{
+        //    "INDIVIDUAL" => "Objetivo Individual",
+        //    "AREA" => "Objetivo de Área",
+        //    "EMPRESA" => "Objetivo Empresarial",
+        //    _ => TipoObjetivo
+        //};
         
         public string EstadoDescripcion => Estado switch
         {

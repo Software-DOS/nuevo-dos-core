@@ -40,6 +40,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@PESO", (object)objetivo.Peso ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@VALORACION_EMPLEADO", (object)objetivo.ValoracionEmpleado ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@VALORACION_JEFE", (object)objetivo.ValoracionJefe ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CALIFICACION_EMPLEADO", (object)objetivo.CalificacionEmpleado ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@CALIFICACION_FINAL", (object)objetivo.CalificacionFinal ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@FECHA_LIMITE", (object)objetivo.FechaLimite ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@COMENTARIOS_EMPLEADO", objetivo.ComentariosEmpleado ?? (object)DBNull.Value));
@@ -106,6 +107,9 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                                           : (int?)null,
                     ValoracionJefe = reader["VALORACION_JEFE"] != DBNull.Value
                                           ? Convert.ToInt32(reader["VALORACION_JEFE"])
+                                          : (int?)null,
+                    CalificacionEmpleado = reader["CALIFICACION_EMPLEADO"] != DBNull.Value
+                                          ? Convert.ToInt32(reader["CALIFICACION_EMPLEADO"])
                                           : (int?)null,
                     CalificacionFinal = reader["CALIFICACION_FINAL"] != DBNull.Value
                                           ? Convert.ToInt32(reader["CALIFICACION_FINAL"])

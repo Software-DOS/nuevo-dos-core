@@ -53,7 +53,7 @@ export class GthCompetenciaService {
     return this.http.get<any>(url)
       .pipe(
         tap((response: any) => {
-          console.log('🎯 Competencias obtenidas del backend:', response);
+          // console.log('🎯 Competencias obtenidas del backend:', response);
         }),
         catchError(this.handleError)
       );
@@ -69,7 +69,7 @@ export class GthCompetenciaService {
     return this.http.get<any>(url)
       .pipe(
         tap((response: any) => {
-          console.log('🎯 Respuesta cruda de competencias activas:', response);
+          // console.log('🎯 Respuesta cruda de competencias activas:', response);
         }),
         catchError(this.handleError)
       );
@@ -86,7 +86,7 @@ export class GthCompetenciaService {
     return this.http.get<IGTHCompetenciaViewModel>(url)
       .pipe(
         tap((response: any) => {
-          console.log('🎯 Competencia obtenida por ID:', response);
+          // console.log('🎯 Competencia obtenida por ID:', response);
         }),
         catchError(this.handleError)
       );
@@ -100,7 +100,7 @@ export class GthCompetenciaService {
     return this.obtenerCompetenciasActivas()
       .pipe(
         map((response: any) => {
-          console.log('🔍 Respuesta cruda del backend:', response);
+          // console.log('🔍 Respuesta cruda del backend:', response);
           
           // La respuesta viene encapsulada, necesitamos extraer el array
           let competencias: IGTHCompetenciaViewModel[] = [];
@@ -116,16 +116,16 @@ export class GthCompetenciaService {
             competencias = [];
           }
           
-          console.log('📋 Competencias extraídas:', competencias);
+          // console.log('📋 Competencias extraídas:', competencias);
           
           // Retorna solo las primeras 5 competencias
           const primeras5 = competencias.slice(0, 5);
-          console.log('🎯 Primeras 5 competencias seleccionadas:', primeras5);
+          // console.log('🎯 Primeras 5 competencias seleccionadas:', primeras5);
           
           return primeras5;
         }),
         tap((competencias: IGTHCompetenciaViewModel[]) => {
-          console.log('🎯 Primeras 5 competencias para hoja de ruta:', competencias);
+          // console.log('🎯 Primeras 5 competencias para hoja de ruta:', competencias);
         }),
         catchError(this.handleError)
       );
@@ -142,7 +142,7 @@ export class GthCompetenciaService {
     return this.http.post(url, competencia, this.httpOptions)
       .pipe(
         tap((response: any) => {
-          console.log('🎯 Respuesta gestión competencia:', response);
+          // console.log('🎯 Respuesta gestión competencia:', response);
         }),
         catchError(this.handleError)
       );
@@ -154,7 +154,7 @@ export class GthCompetenciaService {
    * @returns Observable con el error
    */
   private handleError(error: HttpErrorResponse): Observable<never> {
-    console.error('❌ Error en el servicio de competencias:', error);
+    // console.error('❌ Error en el servicio de competencias:', error);
     
     let errorMessage = 'Ha ocurrido un error desconocido';
     
@@ -185,7 +185,7 @@ export class GthCompetenciaService {
     return this.http.post(url, nivelCompetencia, this.httpOptions)
       .pipe(
         tap((response: any) => {
-          console.log('🎯 Respuesta gestión Nivel competencia:', response);
+          // console.log('🎯 Respuesta gestión Nivel competencia:', response);
         }),
         catchError(this.handleError)
       );
@@ -220,7 +220,7 @@ export class GthCompetenciaService {
     return this.http.get<any>(url)
       .pipe(
         tap((response: any) => {
-          console.log('🎯 Competencias obtenidas del backend:', response);
+          // console.log('🎯 Competencias obtenidas del backend:', response);
         }),
         catchError(this.handleError)
       );
@@ -241,7 +241,7 @@ export class GthCompetenciaService {
     return this.http.post(url, Asig_competencia, this.httpOptions)
       .pipe(
         tap((response: any) => {
-          console.log('🎯 Respuesta gestión competencia:', response);
+          // console.log('🎯 Respuesta gestión competencia:', response);
         }),
         catchError(this.handleError)
       );
@@ -258,7 +258,7 @@ export class GthCompetenciaService {
     return this.http.get<IGTHAsignacionCompetenciaViewModel>(url)
       .pipe(
         tap((response: any) => {
-          console.log('🎯 Competencia obtenida por ID:', response);
+          // console.log('🎯 Competencia obtenida por ID:', response);
         }),
         catchError(this.handleError)
       );

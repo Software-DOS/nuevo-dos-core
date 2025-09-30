@@ -42,7 +42,8 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                         : 0L,
                     Nombre = reader["CEL_NOMBRE"]?.ToString(),
                     Descripcion = reader["CEL_DESCRIPCION"]?.ToString(),
-                    Encargado = reader["CEL_ENCARGADO"]?.ToString()
+                    Encargado = reader["CEL_ENCARGADO"]?.ToString(),
+                    Objetivo = reader["CEL_OBJETIVO"]?.ToString()
                 });
             }
             return list;
@@ -62,6 +63,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@CEL_NOMBRE", celula.Nombre ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@CEL_DESCRIPCION", celula.Descripcion ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@CEL_ENCARGADO", celula.Encargado ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CEL_OBJETIVO", celula.Objetivo ?? (object)DBNull.Value));
 
             await sql.OpenAsync();
             var response = new List<Generica>();

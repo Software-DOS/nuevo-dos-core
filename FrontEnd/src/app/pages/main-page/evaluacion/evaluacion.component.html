@@ -90,133 +90,273 @@
     </div>     
 
 
-    <!-- Formulario inicial -->
+    <!-- Formulario Captura de Resultados -->
     <div class="evaluation-form" *ngIf="isTimelineStepActive('Captura-Resultados')">
       <h4 class="titulos-pequeños">Captura de Resultados</h4>
-        <!-- Objetivo Área -->
-        <div class="form-section">          
-          <div class="section-title" style="display:flex; gap:1rem;">
-            <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena" class="icono-normal">
-            Objetivo Área
+
+      <!-- Objetivo Área -->
+      <div class="form-section">
+        <div class="section-title" style="display: flex; gap: 1rem">
+          <img
+            src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png"
+            alt="reloj de arena"
+            class="icono-normal"
+          />
+          Objetivo Área
+        </div>
+        <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
+          <span class="">{{ objetivoAreaDisplay || "Objetivo de Área" }}
+          </span >          
+        </div>
+      </div>
+
+      <!-- Objetivos -->
+      <div class="form-section" style="margin-left: 2rem">
+        <div style="display: flex; justify-content: space-between">
+          <div class="section-title" style="color: #064eb4">
+            <div class="" style="display: flex; gap: 0.2rem">
+              <img
+                src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png"
+                alt="icono obj"
+                class="icono-menor"
+              />
+              Objetivos:
+            </div>
           </div>
-          <div class="form-row" style="margin-left: 2rem; margin-right: 2rem;">
-            <span class="">Objetivo ingresado por el jefe del área: Optimizar los procesos internos de la organización mediante la implementación, gestión y soporte de soluciones tecnológicas innovadoras, seguras y eficientes, que permitan mejorar la productividad, garantizar la continuidad operativa y apoyar la toma de decisiones estratégicas. </span>
-            <!-- <input type="date" class="date-input"> -->
+          <div style="align-content: center">
+            <span class="titulos-pequeños-columna" style="margin-right: 3.5rem"
+              >Valor</span
+            >
+            <span class="titulos-pequeños-columna" style="margin-right: 2.5rem"
+              >Fecha estimada</span
+            >
           </div>
         </div>
 
-        <!-- Objetivos -->
-        <div class="form-section" style="margin-left: 2rem;">
-            <div style="display:flex; justify-content: space-between;" >
-              <div class="section-title" style="color:#064eb4">
-                <div class="" style="display:flex; gap:0.2rem;">
-                  <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor">
-                  Objetivos: 
-                </div>                
-              </div>
-              <div style="align-content: center;">
-                <span class="titulos-pequeños-columna" style="margin-right: 3.5rem;">Valor</span>
-                <span class="titulos-pequeños-columna" style="margin-right: 2.5rem;">Fecha estimada</span>
-              </div>
-              
-            </div>
-          
-            <!-- Objetivos dinámicos -->  
-            <div *ngFor="let objetivo of objetivos; let i = index" class="form-row">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <span class="item-number">{{ i + 1 }}.</span>                
-              </div>                
-                <input 
-                  type="text" 
-                  class="text-input" 
-                  [placeholder]="'Objetivo ' + (i + 1)"
-                  [(ngModel)]="objetivo.texto"
-                  (ngModelChange)="actualizarTextoObjetivo(i, $event)">
-                <input 
-                  type="number" 
-                  class="number-input" 
-                  min="0" 
-                  max="100" 
-                  placeholder="/100"
-                  [(ngModel)]="objetivo.valor"
-                  (ngModelChange)="actualizarValorObjetivo(i, $event)">
-                <input 
-                  type="date" 
-                  class="date-input"
-                  [(ngModel)]="objetivo.fecha"
-                  (ngModelChange)="actualizarFechaObjetivo(i, $event)">
-            </div>
-              
-            <div class="percentage-display">60%</div>
+        <div class="">
+          <!-- Los 5 objetivos siempre visibles -->
+          <div class="form-row">
+            <span class="item-number">1.</span>
+            <input
+              type="text"
+              class="text-input"
+              placeholder="Objetivo 1"
+              [(ngModel)]="objetivosIndividuales[0].titulo"
+            />
+            <input
+              type="number"
+              class="number-input"
+              min="0"
+              max="100"
+              placeholder="/100"
+              [(ngModel)]="objetivosIndividuales[0].valoracionEmpleado"
+            />
+            <input
+              type="date"
+              class="date-input"
+              [(ngModel)]="objetivosIndividuales[0].fechaLimite"
+            />
+          </div>
+
+          <div class="form-row">
+            <span class="item-number">2.</span>
+            <input
+              type="text"
+              class="text-input"
+              placeholder="Objetivo 2"
+              [(ngModel)]="objetivosIndividuales[1].titulo"
+            />
+            <input
+              type="number"
+              class="number-input"
+              min="0"
+              max="100"
+              placeholder="/100"
+              [(ngModel)]="objetivosIndividuales[1].valoracionEmpleado"
+            />
+            <input
+              type="date"
+              class="date-input"
+              [(ngModel)]="objetivosIndividuales[1].fechaLimite"
+            />
+          </div>
+
+          <div class="form-row">
+            <span class="item-number">3.</span>
+            <input
+              type="text"
+              class="text-input"
+              placeholder="Objetivo 3"
+              [(ngModel)]="objetivosIndividuales[2].titulo"
+            />
+            <input
+              type="number"
+              class="number-input"
+              min="0"
+              max="100"
+              placeholder="/100"
+              [(ngModel)]="objetivosIndividuales[2].valoracionEmpleado"
+            />
+            <input
+              type="date"
+              class="date-input"
+              [(ngModel)]="objetivosIndividuales[2].fechaLimite"
+            />
+          </div>
+
+          <div class="form-row">
+            <span class="item-number">4.</span>
+            <input
+              type="text"
+              class="text-input"
+              placeholder="Objetivo 4"
+              [(ngModel)]="objetivosIndividuales[3].titulo"
+            />
+            <input
+              type="number"
+              class="number-input"
+              min="0"
+              max="100"
+              placeholder="/100"
+              [(ngModel)]="objetivosIndividuales[3].valoracionEmpleado"
+            />
+            <input
+              type="date"
+              class="date-input"
+              [(ngModel)]="objetivosIndividuales[3].fechaLimite"
+            />
+          </div>
+
+          <div class="form-row">
+            <span class="item-number">5.</span>
+            <input
+              type="text"
+              class="text-input"
+              placeholder="Objetivo 5"
+              [(ngModel)]="objetivosIndividuales[4].titulo"
+            />
+            <input
+              type="number"
+              class="number-input"
+              min="0"
+              max="100"
+              placeholder="/100"
+              [(ngModel)]="objetivosIndividuales[4].valoracionEmpleado"
+            />
+            <input
+              type="date"
+              class="date-input"
+              [(ngModel)]="objetivosIndividuales[4].fechaLimite"
+            />
+          </div>
         </div>
 
-        <!-- Competencias -->
-        <div class="form-section" style="margin-left: 2rem;">
-            <div class="section-title purple">
-              <div class="" style="display:flex; gap:0.2rem;">
-                <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj" class="icono-menor">
-                Competencias: 
-              </div>
-            </div>
+        <div class="percentage-display">60%</div>
+      </div>
 
-            <!-- Mostrar estado de carga -->
-            <div *ngIf="loadingCompetencies" class="form-row">
-              <span class="text-input" style="background: #f0f0f0; border-color: #ccc; color: #666;">
-                Cargando competencias...
-              </span>
-            </div>
+      <!-- Competencias -->
+      <div class="form-section" style="margin-left: 2rem">
+        <div class="section-title purple">
+          <div class="" style="display: flex; gap: 0.2rem">
+            <img
+              src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png"
+              alt="icono obj"
+              class="icono-menor"
+            />
+            Competencias:
+          </div>
+        </div>
 
-            <!-- <input type="text" class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;"
+        <!-- Mostrar estado de carga -->
+        <div *ngIf="loadingCompetencies" class="form-row">
+          <span
+            class="text-input"
+            style="background: #f0f0f0; border-color: #ccc; color: #666"
+          >
+            Cargando competencias...
+          </span>
+        </div>
+
+        <!-- <input type="text" class="text-input" style="background: #faf5ff; border-color: #c084fc; color: #7c3aed;"
                      [(ngModel)]="competencia.name"
                      (ngModelChange)="actualizarNombreCompetenciaFija(i, $event)"
                      placeholder="Ingrese la competencia"> -->
 
-            <!-- Mostrar competencias cargadas desde el backend -->
-            <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row">
-              <span class="item-number">{{ i + 1 }}.</span>              
+        <!-- Mostrar competencias cargadas desde el backend -->
+        <div
+          *ngFor="let competencia of nivelesCompetencias; let i = index"
+          class="form-row"
+        >
+          <span class="item-number">{{ i + 1 }}.</span>
 
-              <!-- Encabezado con tipo de competencia y nombre -->
-              <div class="competencia-container">
-                <!-- Encabezado con tipo de competencia y nombre -->
-                <div class="competencia-header">
-                  <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
-                  <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
-                </div>
-                <!-- Detalle con nivel y descripción -->
-                <div class="competencia-body">
-                  <p style="margin-bottom: 0;">
-                    <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
-                  </p>
-                </div>
-              </div>                    
-
-              <input type="number" class="number-input" min="0" max="100"
-                     [(ngModel)]="competencia.valor"
-                     (ngModelChange)="actualizarValorCompetenciaFija(i, $event)"
-                     style="border-color: #7c3aed; color: #7c3aed;" placeholder="/100">
-              <input type="date" class="date-input"
-                     [(ngModel)]="competencia.fecha"
-                     (ngModelChange)="actualizarFechaCompetenciaFija(i, $event)">
+          <!-- Encabezado con tipo de competencia y nombre -->
+          <div class="competencia-container">
+            <!-- Encabezado con tipo de competencia y nombre -->
+            <div class="competencia-header">
+              <span class="tipo-competencia">{{
+                competencia.tipoCompetencia
+              }}</span>
+              <span class="nombre-competencia">{{
+                competencia.nombreCompetencia
+              }}</span>
             </div>
-
-            <!-- Mensaje si no hay competencias -->
-            <div *ngIf="!loadingCompetencies && competencias.length === 0" class="form-row">
-              <span class="text-input" style="background: #ffe6e6; border-color: #ff4444; color: #cc0000;">
-                No se pudieron cargar las competencias
-              </span>
+            <!-- Detalle con nivel y descripción -->
+            <div class="competencia-body">
+              <p style="margin-bottom: 0">
+                <strong>Nivel {{ competencia.nivel }}</strong> -
+                {{ competencia.descripcion }}
+              </p>
             </div>
-              
-            <div class="percentage-display">40%</div>
+          </div>
+
+          <input
+            type="number"
+            class="number-input"
+            min="0"
+            max="100"
+            [(ngModel)]="competencia.valor"
+            (ngModelChange)="actualizarValorCompetenciaFija(i, $event)"
+            style="border-color: #7c3aed; color: #7c3aed"
+            placeholder="/100"
+          />
+          <input
+            type="date"
+            class="date-input"
+            [(ngModel)]="competencia.fecha"
+            (ngModelChange)="actualizarFechaCompetenciaFija(i, $event)"
+          />
         </div>
 
-        <!-- Total -->
-        <!-- <div class="total-percentage">100%</div> -->
-          
-        <!-- Botón Enviar -->
-        <button class="submit-btn" style="margin-right: 1rem;">Enviar</button>
-        <div style="clear: both;"></div>
+        <!-- Mensaje si no hay competencias -->
+        <div
+          *ngIf="!loadingCompetencies && competencias.length === 0"
+          class="form-row"
+        >
+          <span
+            class="text-input"
+            style="background: #ffe6e6; border-color: #ff4444; color: #cc0000"
+          >
+            No se pudieron cargar las competencias
+          </span>
+        </div>
 
-    </div><!-- fin Captura de datos -->
+        <div class="percentage-display">40%</div>
+      </div>
+
+      <!-- Total -->
+      <!-- <div class="total-percentage">100%</div> -->
+
+      <!-- Botón Enviar -->
+      <div>
+        <button class="submit-btn" style="margin-right: 1rem" (click)="guardarDatosEvaluacion()">
+          Enviar
+        </button>
+      </div>
+      
+    </div>
+    <!-- fin Captura de Resultados -->
+
+
 
     <!-- Formulario revisado -->
     <div class="evaluation-form" *ngIf="isTimelineStepActive('Revision-Inicial')">
