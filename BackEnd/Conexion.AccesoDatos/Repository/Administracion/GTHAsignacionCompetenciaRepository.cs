@@ -37,7 +37,9 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@ID_NIVEL_COMPETENCIA", (object)asignacionCompetencia.IdNivelCompetencia ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@VALORACION_EMPLEADO", (object)asignacionCompetencia.ValoracionEmpleado ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@VALORACION_JEFE", (object)asignacionCompetencia.ValoracionJefe ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@CALIFICACION_EMPLEADO", (object)asignacionCompetencia.CalificacionEmpleado ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@CALIFICACION_FINAL", (object)asignacionCompetencia.CalificacionFinal ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@FECHA_LIMITE", (object)asignacionCompetencia.FechaLimite ?? DBNull.Value));            
             cmd.Parameters.Add(new SqlParameter("@COMENTARIOS_EMPLEADO", asignacionCompetencia.ComentariosEmpleado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@COMENTARIOS_JEFE", asignacionCompetencia.ComentariosJefe ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@ESTADO", asignacionCompetencia.Estado ?? (object)DBNull.Value));
@@ -100,11 +102,17 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     ValoracionJefe = reader["VALORACION_JEFE"] != DBNull.Value
                                           ? Convert.ToInt32(reader["VALORACION_JEFE"])
                                           : (int?)null,
+                    CalificacionEmpleado = reader["CALIFICACION_EMPLEADO"] != DBNull.Value
+                                          ? Convert.ToInt32(reader["CALIFICACION_EMPLEADO"])
+                                          : (int?)null,
                     CalificacionFinal = reader["CALIFICACION_FINAL"] != DBNull.Value
                                           ? Convert.ToInt32(reader["CALIFICACION_FINAL"])
                                           : (int?)null,
                     ComentariosEmpleado = reader["COMENTARIOS_EMPLEADO"]?.ToString(),
                     ComentariosJefe = reader["COMENTARIOS_JEFE"]?.ToString(),
+                    FechaLimite = reader["FECHA_LIMITE"] != DBNull.Value
+                                          ? Convert.ToDateTime(reader["FECHA_LIMITE"])
+                                          : (DateTime?)null,
                     FechaAutoevaluacion = reader["FECHA_AUTOEVALUACION"] != DBNull.Value
                                           ? Convert.ToDateTime(reader["FECHA_AUTOEVALUACION"])
                                           : (DateTime?)null,

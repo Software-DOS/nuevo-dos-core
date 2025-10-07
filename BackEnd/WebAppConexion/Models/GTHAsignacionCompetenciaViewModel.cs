@@ -14,7 +14,9 @@ namespace WebAppConexion.Models
         public int IdNivelCompetencia { get; set; }
         public int? ValoracionEmpleado { get; set; }
         public int? ValoracionJefe { get; set; }
+        public int? CalificacionEmpleado { get; set; }
         public int? CalificacionFinal { get; set; }
+        public DateTime? FechaLimite { get; set; }
         public string ComentariosEmpleado { get; set; }
         public string ComentariosJefe { get; set; }
         public DateTime? FechaAutoevaluacion { get; set; }

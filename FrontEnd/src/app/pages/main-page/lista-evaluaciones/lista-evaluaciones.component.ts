@@ -7,6 +7,7 @@ import { GthEvaluacionService } from '../../../services/gth-evaluacion.service';
 import { GthCompetenciaService } from 'src/app/services/gth-competencia.service';
 
 import { iGTHEmpleado } from '../../../interface/igth-empleado';
+import { IgthObjetivo } from '../../../interface/igth-objetivo';
 import { Ievaluacion } from '../../../interface/ievaluacion';
 import { IGTHNivelCompetenciaViewModel, 
   IGTHAsignacionCompetenciaViewModel } 
@@ -33,6 +34,21 @@ interface Filtros {
   calificado: string;
 }
 
+// Interface utilizada para almacenar todos los datos necesarios
+interface NivelConCompetencia {
+  idAsignacionCompetencia: number; // ✅ AGREGAR ESTO
+  idCompetencia: number;
+  nivel: number;
+  descripcion: string;
+  nombreCompetencia: string;
+  tipoCompetencia: string;
+  valor: number;
+  fecha: string;
+  reconsiderar: number;
+  calificacion: number;  
+  calificacionFinal: number; 
+  FechaLimite?: Date;
+}
 
 @Component({
   selector: 'app-lista-evaluaciones',
@@ -54,6 +70,67 @@ export class ListaEvaluacionesComponent implements OnInit {
 
   niveles: string[] = [
   ];
+
+
+  // Variables usadas para el Modal    ----------------------------------------
+  mostrarModalEvaluacion = false;
+  fase: number = 2;
+  // objetivos: IgthObjetivo[] = [];
+  // tiempoPlan: string = '';
+
+  // currentPhase: number = 2; // Fase inicial
+
+  // Variable para almacenar la información del empleado
+  empleadoModal: iGTHEmpleado | null = null;
+  empleadoSeleccionadoId: number = 2;
+
+  showModal: boolean = false;
+  selectedEmpleadoId: number | null = null;
+
+  objetivoAreaDisplay: string = 'El objetivo de un área de TI es gestionar la infraestructura tecnológica, mantener las operaciones de la empresa y, al mismo tiempo, apoyar los objetivos comerciales del negocio, ya sea mediante la mejora de la eficiencia, la innovación y la protección de los datos, adaptándose a las necesidades y nueva estrategia';
+
+  // declara la propiedad global del componente
+  // nivelesCompetencias: NivelConCompetencia[] = [];
+
+    /* -------------  Campos para mostrar en el MODAL  ----------  */
+  // Variables para mostrar la información (solo lectura)
+
+  fotoPerfilUrlModal: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Imagen por defecto
+  fotoPerfilUrlDisplayModal: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+  nombreCompletoDisplayModal: string = ''; 
+  correoElectronicoDisplayModal: string = ''; 
+  posicionDisplayModal: string = ''; 
+
+  // EJEMPLO DESPUES TOCA BORRAR  
+  objetivosIndividuales = [
+    { titulo: 'Reducir tiempos de entrega', descripcion: 'Optimizar el flujo de trabajo', peso: 20, valoracionEmpleado: 90, valoracionJefe: 4, calificacionFinal: 88, fechaLimite: '2025-12-15' },
+    { titulo: 'Aumentar satisfacción del cliente', descripcion: 'Mejorar atención postventa', peso: 25, valoracionEmpleado: 95, valoracionJefe: 5, calificacionFinal: 92, fechaLimite: '2025-11-20' },
+    { titulo: 'Capacitar al personal', descripcion: 'Implementar programa trimestral', peso: 15, valoracionEmpleado: 80, valoracionJefe: 3, calificacionFinal: 75, fechaLimite: '2025-10-30' },
+    { titulo: 'Reducir costos operativos', descripcion: 'Control de inventarios', peso: 25, valoracionEmpleado: 85, valoracionJefe: 4, calificacionFinal: 82, fechaLimite: '2025-12-01' },
+    { titulo: 'Implementar mejoras tecnológicas', descripcion: 'Adoptar herramientas digitales', peso: 15, valoracionEmpleado: 90, valoracionJefe: 5, calificacionFinal: 89, fechaLimite: '2025-11-10' },
+  ];
+
+  nivelesCompetencias = [
+    { tipoCompetencia: 'Organizacional', nombreCompetencia: 'Comprensión Interpersonal', nivel: 2, descripcion: 'Conoce y maneja sus emociones.', valor: 85, fecha: '2025-11-15' },
+    { tipoCompetencia: 'Comportamental', nombreCompetencia: 'Comunicación Asertiva', nivel: 3, descripcion: 'Escucha e implementa canales de comunicación efectiva.', valor: 90, fecha: '2025-12-10' },
+    { tipoCompetencia: 'Técnica', nombreCompetencia: 'Gestión de Proyectos', nivel: 3, descripcion: 'Administra recursos y tareas efectivamente.', valor: 88, fecha: '2025-11-25' },
+    { tipoCompetencia: 'Liderazgo', nombreCompetencia: 'Trabajo en Equipo', nivel: 2, descripcion: 'Colabora y motiva a su equipo.', valor: 92, fecha: '2025-12-20' },
+    { tipoCompetencia: 'Innovación', nombreCompetencia: 'Pensamiento Creativo', nivel: 3, descripcion: 'Propone ideas y mejoras continuas.', valor: 87, fecha: '2025-10-30' },
+  ];
+
+  retroalimentacion = 'El desempeño del empleado fue sobresaliente en la mayoría de los objetivos.';
+  planAccion = 'Reforzar habilidades de liderazgo mediante talleres trimestrales.';
+  tiempoPlan = '3_meses';
+
+    // Puedes usar: 'sm', 'lg', 'xl', o 'full'
+  modalSize: 'sm' | 'lg' | 'xl' | 'full' = 'xl';
+
+  // Cambiar tamaño desde un botón o lógica
+  setModalSize(size: 'sm' | 'lg' | 'xl' | 'full') {
+    this.modalSize = size;
+  }
+
 
   
   // =================================================
@@ -490,11 +567,23 @@ onImageError(event: Event, sexo: string) {
     });
   }
 
+  // navigateToEvaluacion(empleadoId: number): void {
+  //   // Navigate to evaluation page
+  //   // Adjust the route path according to your routing configuration
+  //   this.router.navigate(['/evaluacion', empleadoId]);
+  // }
   navigateToEvaluacion(empleadoId: number): void {
-    // Navigate to evaluation page
-    // Adjust the route path according to your routing configuration
-    this.router.navigate(['/evaluacion', empleadoId]);
+    console.log('➡️ Entró en navigateToEvaluacion con empleadoId:', empleadoId);
+    this.selectedEmpleadoId = empleadoId;
+    this.fase = 2; // o 4, según la que quieras mostrar
+    this.showModal = true;
   }
+
+  cerrarModal(): void {
+    this.showModal = false;
+  }
+
+
 
   //Mostrar el contenido de las pestañas
   showSubcategoryEval(tab: string): void {

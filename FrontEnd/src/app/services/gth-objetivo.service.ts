@@ -22,11 +22,7 @@ export class GthObjetivoService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Gestiona una Asigancion_competencia (crear, actualizar, eliminar)
-   * @param Objetivo - Datos de la competencia
-   * @returns Observable con la respuesta del servidor
-   */
+  
   // gestionarObjetivo(Objetivo: IgthObjetivo): Observable<any> {
   //   const url = `${this.baseUrl}api/GTHObjetivo/Gestionar`;
     

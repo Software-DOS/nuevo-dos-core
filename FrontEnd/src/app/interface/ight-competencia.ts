@@ -37,7 +37,9 @@ export interface IGTHAsignacionCompetenciaViewModel{
   IdNivelCompetencia?: number;
   ValoracionEmpleado?: number;
   ValoracionJefe?: number;
+  CalificacionEmpleado?: number;
   CalificacionFinal?: number;
+  FechaLimite?: Date;
   ComentariosEmpleado?: string;
   ComentariosJefe?: string;
   FechaAutoevaluacion?: Date;

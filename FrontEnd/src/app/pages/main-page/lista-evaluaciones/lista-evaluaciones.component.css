@@ -355,3 +355,513 @@
     color: #333;
   }
 }
+
+
+/* ============================================================
+                Estilos para el Modal de la Evaluación                        
+===============================================================*/
+
+.modal-dialog.modal-resizable {
+  width: 80vw;
+  max-width: 90vw;
+  min-width: 500px;
+  resize: both; /* 👈 permite redimensionar */
+  overflow: auto;
+  height: -webkit-fill-available;
+  min-height: 500px;
+}
+
+.modal-evaluacion {
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/*      ========    ÁREA DE CONTENIDO    =============      */
+
+.employee-card3 { 
+    display: flex;
+    align-items: center;  
+    gap:2rem;
+}
+
+.employee-image-Modal {
+    width: 100px;
+    height: 100px;
+    border-radius: var(--radius-full);
+    margin-left: 2rem;
+}
+
+.info-field {
+  display: flex;
+  align-items: center;
+  
+}
+.info-icon-titulo {
+  font-size: 20px; /* Aumenta el tamaño aquí */
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  color: #333; /* opcional */
+  justify-content: center;
+}
+.info-icon {
+  font-size: 18px;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+  color: #555; /* gris medio oscuro */
+  justify-content: center;
+}
+
+/*  Estilos para los iconos */
+.icono-normal {
+  width: 30px;
+  height: 30px;
+}
+.icono-menor {
+  width: 25px;
+  height: 25px;
+}
+
+
+.content-area {
+  padding: 0;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+/*      ========    Diseño para el Formulario inicial    =============      */
+.evaluation-form {
+   background: linear-gradient(135deg, #f8fafb 0%, #f1f5f9 100%);
+   border-radius: 16px;
+   padding: 30px;
+   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+   border: 1px solid #e2e8f0;
+   margin: 20px 0.5rem;
+}
+
+.form-section {
+   margin-bottom: 25px;
+   margin-left: 1rem;
+   margin-right: 0.5rem;
+}
+
+.section-title {
+   font-size: 16px;
+   font-weight: 600;
+   color: #374151;
+   margin-bottom: 15px;
+   border-bottom: 3px solid #3b82f6;
+   padding-bottom: 5px;
+   display: inline-block;
+}
+
+.section-title.purple {
+   color: #7c3aed;
+   border-bottom-color: #7c3aed;
+}
+
+.form-row {
+   display: flex;
+   align-items: center;
+   margin-bottom: 12px;
+   gap: 10px;
+   margin-left: 0;
+}
+
+.titulos-pequeños-columna {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3b3b3b;
+}
+
+.item-number {
+   font-weight: 600;
+   color: #6b7280;
+   min-width: 20px;
+}
+
+.objetivo-container {
+  background: #e7eff7;
+  border: 2px solid #002d7f80;
+  border-radius: 10px;
+  padding: 0.5rem;
+  flex: 1;
+  display: flex; 
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 0.1rem;
+}
+/* Contenedor para las competencias */
+.competencia-container {
+  background: #faf5ff;
+  border: 2px solid #c084fc;
+  border-radius: 10px;
+  padding: 0.6rem;
+  flex: 1;
+  display: flex; 
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 0.1rem;
+}
+
+.text-input {
+   flex: 1;
+   padding: 5px 10px;
+   border: 2px solid #d1d5db;
+   border-radius: 8px;
+   font-size: 14px;
+   transition: all 0.3s ease;
+   background: white;
+}
+.number-input {
+  /* width: 80px; */
+  padding: 4px;
+  text-align: end;
+  font-weight:500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border-radius: 8px;  
+}
+.date-input {
+  padding: 4px;  
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+}
+
+.text-input-objetivo {
+  color: #0b1e3d;
+  background: white;  
+}
+.number-input-objetivo {  
+   border: 2px solid #6a8bbc;   
+   color: #0b1e3d;
+   background: white;   
+}
+.date-input-objetivo {
+  border: 2px solid #8baad7;
+  color: #0b1e3d;
+  background: white;  
+}
+
+.number-input-competencia {
+   border: 2px solid #ae96d7;   
+   color: #39147a;
+   background: white;   
+}
+.date-input-competencia {
+  border: 2px solid #ae96d7;
+  color: #39147a;
+  background: white;  
+}
+
+
+.text-input:focus {
+   outline: none;
+   border-color: #2276c5;
+   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.number-input:focus {
+   outline: none;
+   border-color: #187ddb;
+   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+.date-input:focus {
+   outline: none;
+   border-color: #187ddb;
+   background: white;
+}
+
+
+.number-input-rev {
+  border: 2px solid #aaaaaa;
+  color: #3c3e61;
+  background: #f6f6f6;
+}
+
+.text-input-rev {
+  border: 2px solid #aaaaaa;  
+  color: #3c3e61;
+  background: #f6f6f6;
+}
+.date-input-rev {
+  border: 2px solid #aaaaaa; 
+  color: #3c3e61;
+  background: #f6f6f6;
+}
+
+
+/* Revisar o borrar */
+.percentage-display {
+  text-align: right;
+  font-size: 18px;
+  font-weight: 700;
+  color: #f17f00;
+  margin-right: 11.5rem;
+}
+
+.total-percentage {
+   text-align: right;
+   margin-top: 20px;
+   font-size: 24px;
+   font-weight: 700;
+   color: #dc2626;
+}
+
+.submit-btn {
+   background: linear-gradient(29deg, #00b5e1 0% 0%, #0090d1 80%);
+   color: white;
+   border: none;
+   padding: 10px 30px;
+   border-radius: 10px;
+   font-weight: 700;
+   font-size: 16px;
+   cursor: pointer;
+   transition: all 0.3s ease;
+   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+   margin-top: 20px;
+   float: right;
+   width: 12rem;
+}
+
+.submit-btn:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Estilos para campos deshabilitados */
+input:disabled {
+  cursor: not-allowed;
+  /* opacity: 0.9; */
+}
+
+
+/*---------------------------------------------------------
+            Estilos para mostrar las competencias
+----------------------------------------------------------*/
+.competencia-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.tipo-competencia {
+  background: #3b82f6;
+  color: white;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+.nombre-competencia {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.competencia-body {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+
+
+/* Ocultar labels en desktop (por defecto) */
+.label-mobile {
+  display: none;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 3px;
+  font-weight: 500;
+}
+
+.input-wrapper-mobile {
+  display: contents; /* No afecta el layout en desktop */
+}
+
+/* === MEDIA QUERIES === */
+
+/* Tablets y dispositivos medianos (máximo 992px) */
+@media (max-width: 992px) {
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  /* OCULTAR títulos de columnas superiores */
+  .titulos-pequeños-columna {
+    display: none !important;
+  }
+  
+  /* MOSTRAR labels móviles */
+  .label-mobile {
+    display: block;
+    text-align: left;
+  }
+  
+  /* Contenedores de objetivos */
+  .objetivo-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  /* TODOS los wrappers: misma configuración */
+  .input-wrapper-mobile {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  /* Input de texto (objetivo) - mismo comportamiento que los demás */
+  .objetivo-container .input-wrapper-mobile:first-child {
+    flex: 0 0 100%;
+    width: 100%;
+  }
+  
+  .text-input-objetivo,
+  .text-input-rev {
+    width: 100% !important;
+  }
+  
+  /* Anchos específicos para los inputs numéricos y de fecha */
+  .number-input-objetivo,
+  .number-input-rev {
+    width: 100px !important;
+  }
+  
+  .date-input-objetivo,
+  .date-input-rev {
+    width: 180px !important;
+  }
+  
+  /* Contenedores de competencias */
+  .competencia-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .competencia-container > div:last-child {
+    flex-direction: row;
+    gap: 10px;
+    width: auto;
+  }
+  
+  .competencia-container > div:last-child > div {
+    flex: 0 0 auto;
+  }
+  
+  .nombre-competencia {
+    font-size: 0.9rem;
+  }
+  
+  .competencia-body {
+    font-size: 0.8rem;
+  }
+}
+
+/* Tablets pequeñas (máximo 768px) */
+@media (max-width: 768px) {
+  .date-input {
+    min-width: auto;
+  }
+  
+  .percentage-display {
+    margin-right: 45%;
+  }
+}
+
+/* Móviles (máximo 576px) */
+@media (max-width: 576px) {
+  .form-section {
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+  }
+  
+  .section-title {
+    font-size: 0.95rem;
+  }
+  
+  .item-number {
+    font-size: 0.9rem;
+  }
+  
+  /* Objetivos apilados verticalmente en móviles */
+  .objetivo-container {
+    flex-direction: column;
+    padding: 0.6rem;
+    gap: 8px;
+  }
+  
+  .input-wrapper-mobile {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .text-input-objetivo,
+  .number-input-objetivo,
+  .date-input-objetivo {
+    width: 100% !important;
+    margin: 0;
+  }
+  
+  /* Competencias apiladas verticalmente */
+  .competencia-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .competencia-header {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .tipo-competencia {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+  }
+  
+  .nombre-competencia {
+    font-size: 0.85rem;
+  }
+  
+  .competencia-body {
+    font-size: 0.75rem;
+  }
+  
+  /* Inputs de competencias apilados */
+  .competencia-container > div:last-child {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .competencia-container > div:last-child > div {
+    width: 100% !important;
+    text-align: left;
+  }
+  
+  .percentage-display {
+    margin-right: 0;
+    text-align: center;
+  }
+  
+  /* Botones */
+  .submit-btn {
+    width: 100%;
+    float: none;
+  }
+}
+

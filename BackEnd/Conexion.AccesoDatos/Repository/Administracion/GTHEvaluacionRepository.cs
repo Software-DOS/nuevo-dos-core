@@ -142,9 +142,9 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                                           ? Convert.ToDateTime(reader["FECHA_MODIFICACION"])
                                           : (DateTime?)null,
                     UsuarioCreacion = reader["USUARIO_CREACION"]?.ToString(),
-                    //Fase = reader["FASE"] != DBNull.Value
-                    //                      ? Convert.ToInt32(reader["FASE"])
-                    //                      : (int?)null
+                    Fase = reader["FASE"] != DBNull.Value
+                                          ? Convert.ToInt32(reader["FASE"])
+                                          : (int?)null
                 });
             }
             return list;

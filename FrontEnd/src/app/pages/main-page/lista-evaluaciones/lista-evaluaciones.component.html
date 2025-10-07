@@ -59,6 +59,7 @@
             <div>ESTADO</div>
           </div>
           <div class="cap-row" *ngFor="let empleado of empleadosFiltrados" (click)="navigateToEvaluacion(empleado.id)">
+
             <div class="empleado-info-column">
               <!-- <img [src]="empleado.photo" [alt]="empleado.nombre" class="employee-photo"> -->
               <div>
@@ -310,6 +311,186 @@
 
       </div>
     </div>
+
+
+    <!-- Modal Evaluación de Empleado -->
+<div
+  class="modal fade"
+  tabindex="-1"
+  [ngClass]="{ show: showModal }"
+  [ngStyle]="{ display: showModal ? 'block' : 'none' }"
+  aria-modal="true"
+  role="dialog"
+>
+  <div class="modal-dialog modal-resizable" role="document">
+    <div class="modal-content modal-evaluacion">
+      <div class="modal-header">
+        <!-- Tarjeta del Empleado -->
+        <div class="employe-card">
+          <h2 style="color: lightslategray;">Evaluación de Desempeño 2025</h2>
+          <div class="employee-card3">
+            <!-- <img [src]="employee.avatar" alt="Foto del Empleado" class="employee-image"> -->
+            <div class="employee-image-container">
+              <img [src]="construirUrlFoto(this.empleadoModal?.fotoPerfilUrl || '', this.empleadoModal?.sexo || '')" class="employee-image-Modal" id="employee-image-Modal"
+              [alt]="this.empleadoModal?.nombre" (error)="onImageError($event, this.empleadoModal?.sexo || 'M')">
+
+            </div> 
+            <div class="employee-personal-info">
+                  <div class="info-field">
+                    <i class="info-icon-titulo fas fa-user"></i>
+                    <h4 class="info-label">{{nombreCompletoDisplayModal || 'Nombre Completo'}}</h4>
+                  </div>
+                  
+                  <div class="info-field">
+                    <i class="info-icon far fa-envelope"></i>
+                    <p class="info-value">{{correoElectronicoDisplayModal || 'Correo Electrónico'}}</p>
+                  </div>
+                  
+                  <div class="info-field">
+                    <i class="info-icon far fa-gem"></i>
+                    <p class="info-value">{{posicionDisplayModal || 'Posición'}}</p> 
+                  </div>
+                            
+                </div>
+                
+          </div>
+          
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <!-- === CONTENIDO ORIGINAL FASE 1 === -->
+        <div class="evaluation-form" >
+          <h4 class="titulos-pequeños">Revisión Inicial</h4>
+
+          <!-- Objetivo Área -->
+          <div class="form-section">          
+            <div class="section-title" style="display: flex; gap: 1rem">
+              <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena" class="icono-normal">
+              Objetivo Área
+            </div>
+            <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
+              <span>{{ objetivoAreaDisplay || "Objetivo de Área" }}</span>          
+            </div>
+          </div>
+
+          <!-- Objetivos -->
+          <div class="form-section" style="margin-right: 0;">
+            <div style="display:flex; justify-content: space-between; margin-left: 1rem;" >
+              <div class="section-title" style="color:#064eb4">
+                <div style="display:flex; gap:0.2rem;">
+                  <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor">
+                  Objetivos:
+                </div>                
+              </div>
+              <div style="align-content: center;">
+                <span class="titulos-pequeños-columna" style="margin-right: 3.2rem;">Valor</span>
+                <span class="titulos-pequeños-columna" style="margin-right: 3.3rem;">Revisado</span>
+                <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha estimada</span>
+              </div>              
+            </div>
+      
+            <div *ngFor="let objetivo of objetivosIndividuales; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>
+              <div class="objetivo-container">
+                <div class="input-wrapper-mobile">
+                  <label class="label-mobile">Objetivo</label>
+                  <input type="text" class="text-input text-input-objetivo" 
+                        placeholder="Objetivo"
+                        [(ngModel)]="objetivo.titulo">
+                </div>
+                
+                <div class="input-wrapper-mobile">
+                  <label class="label-mobile">Valor</label>
+                  <input type="number" class="number-input number-input-objetivo" 
+                        min="0" max="100"
+                        [(ngModel)]="objetivo.valoracionEmpleado">
+                </div>
+                
+                <div class="input-wrapper-mobile">
+                  <label class="label-mobile">Revisado</label>
+                  <input type="number" class="number-input number-input-rev" 
+                        min="0" max="100"
+                        [(ngModel)]="objetivo.valoracionJefe"
+                        placeholder="-"
+                        [disabled]="true">
+                </div>
+                
+                <div class="input-wrapper-mobile">
+                  <label class="label-mobile">Fecha estimada</label>
+                  <input type="date" class="date-input date-input-objetivo"
+                        [(ngModel)]="objetivo.fechaLimite">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Competencias -->
+          <div class="form-section" style="margin-top: 3rem; margin-left: 2rem">
+            <div class="section-title purple">
+              <div style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj" class="icono-menor">
+                Competencias:
+              </div>
+            </div>
+
+            <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row" style="display: flex; gap: 10px;">  
+              <span class="item-number" style="flex-shrink: 0;">{{ i + 1 }}.</span>
+              
+              <div class="competencia-container">
+                <div style="flex: 1; min-width: 0;">
+                  <div class="competencia-header">
+                    <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
+                    <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
+                  </div>
+                  <div class="competencia-body">
+                    <p style="margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;">
+                      <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
+                    </p>
+                  </div>
+                </div>
+                
+                <div style="display: flex;">
+                  <div style="text-align: center;">
+                    <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Valor</label>
+                    <input type="number" class="number-input number-input-competencia" 
+                      min="0" max="100"
+                      [(ngModel)]="competencia.valor"
+                      placeholder="/100"
+                    />
+                  </div>
+
+                  <div style="text-align: center; margin-right: 0; margin-left: 10px;">
+                    <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Revisado</label>
+                    <input type="number" class="number-input number-input-rev" min="0" max="100" 
+                        [(ngModel)]="competencia.valor"
+                        [disabled]="true">
+                  </div>              
+                  
+                  <div style="margin-right: 0; margin-left: 10px; text-align: center;">
+                    <label style="display: block; font-size: 12px; color:  #707070; margin-bottom: 4px;">Fecha</label>
+                    <input
+                      type="date"
+                      class="date-input date-input-competencia"
+                      [(ngModel)]="competencia.fecha"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
   </div>
 

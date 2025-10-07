@@ -231,7 +231,7 @@ export class GthCompetenciaService {
   =================================================================================================*/
 
   /**
-   * Gestiona una Asigancion_competencia (crear, actualizar, eliminar)
+   * Gestiona una Asigancion_competencia: 1 = Insertar, 2 = Actualizar, 3 = Eliminar.
    * @param Asig_competencia - Datos de la competencia
    * @returns Observable con la respuesta del servidor
    */
@@ -253,15 +253,20 @@ export class GthCompetenciaService {
    * @returns Observable con la competencia específica
    */
   obtenerAsignacionCompetenciaPorIdEvaluacion(id: number): Observable<IGTHAsignacionCompetenciaViewModel> {
-    const url = `${this.baseUrl}api/GTHAsignacionCompetencia/evaluacion/${id}`;
-    
-    return this.http.get<IGTHAsignacionCompetenciaViewModel>(url)
-      .pipe(
-        tap((response: any) => {
-          // console.log('🎯 Competencia obtenida por ID:', response);
-        }),
-        catchError(this.handleError)
-      );
-  }
+  const url = `${this.baseUrl}api/GTHAsignacionCompetencia/evaluacion/${id}`;
+  
+  return this.http.get<IGTHAsignacionCompetenciaViewModel>(url)
+    .pipe(
+      tap((response: any) => {
+        console.log('🎯 SERVICIO - Respuesta completa:', response);
+        console.log('🎯 SERVICIO - Tipo:', typeof response);
+        console.log('🎯 SERVICIO - Es array?:', Array.isArray(response));
+        if (response?.$values) {
+          console.log('🎯 SERVICIO - $values:', response.$values);
+        }
+      }),
+      catchError(this.handleError)
+    );
+}
   
 }
