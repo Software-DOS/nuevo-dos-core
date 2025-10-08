@@ -65,8 +65,6 @@ export class EvaluacionComponent implements OnInit {
 
     this.cargarEvaluaciones();
 
-    // Cargar las primeras 5 competencias al inicializar el componente
-    // this.cargarCompetenciasHojaRuta();
   }
 
   
@@ -86,7 +84,7 @@ export class EvaluacionComponent implements OnInit {
   faseEvaluacion: number | null = null;   
 
   // Variable para controlar la fase actual
-  faseActual: number = 1; 
+  // faseActual: number = 1; 
 
   /* -------------  Campos para mostrar en el HTML  ----------  */
   // Variables para mostrar la información (solo lectura)
@@ -105,28 +103,30 @@ export class EvaluacionComponent implements OnInit {
   activeSection: string = 'hoja-ruta'; 
 
   // Fase actual (esto vendrá del backend)
-  currentPhase: number = 1; 
+  // currentPhase: number = 1; 
 
   // Lista de pasos (sin isActive ni completed, se calculan dinámicamente)
-  steps = [
-  { label: 'Captura de Resultados', sectionId: 'Captura-Resultados', phase: 0 },
-  { label: 'Revisión Inicial', sectionId: 'Revision-Inicial', phase: 1 },
-  { label: 'Evaluación Intermedia', sectionId: 'Evaluacion-Intermedia', phase: 2 },
-  { label: 'Retroalimentación', sectionId: 'Retroalimentacion', phase: 4 },
-  { label: 'Cierre', sectionId: 'Cierre', phase: 5 }
-];
+//   steps = [
+//   { label: 'Captura de Resultados', sectionId: 'Captura-Resultados', phase: 0 },
+//   { label: 'Revisión Inicial', sectionId: 'Revision-Inicial', phase: 1 },
+//   { label: 'Evaluación Intermedia', sectionId: 'Evaluacion-Intermedia', phase: 2 },
+//   { label: 'Retroalimentación', sectionId: 'Retroalimentacion', phase: 4 },
+//   { label: 'Cierre', sectionId: 'Cierre', phase: 5 }
+// ];
 
-  // Solo para desarrollo (simular cambio de step)
-  onStepClick(step: any): void {
-    if (this.activeSection === 'hoja-ruta') {
-      this.currentPhase = step.phase;  // ✅ Usa step.phase
+//   // Solo para desarrollo (simular cambio de step)
+//   onStepClick(step: any): void {
+//     if (this.activeSection === 'hoja-ruta') {
+//       // this.currentPhase = step.phase;  // ✅ Usa step.phase
+//       // this.faseEvaluacion = step.phase; 
+
+//       // Actualizar visualmente el timeline
+//       // this.actualizarTimelinePorFase(this.currentPhase);
+//       this.actualizarTimelinePorFase(this.faseEvaluacion!);
       
-      // Actualizar visualmente el timeline
-      this.actualizarTimelinePorFase(this.currentPhase);
-      
-      console.log('✅ Navegando a fase:', step.phase, '-', step.sectionId);
-    }
-  }  
+//       console.log('✅ Navegando a fase:', step.phase, '-', step.sectionId);
+//     }
+//   }  
 
   //------------------------------------------------------------------------------------------------------
 
@@ -227,7 +227,7 @@ timelineSteps = [
   // Activar con Enter o Espacio
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault(); // Prevenir scroll con espacio
-    this.onStepClick(step);
+    // this.onStepClick(step);
   }
 }
 
@@ -301,7 +301,7 @@ cargarDatosEmpleado(): void {
     });
   }
 
-private async mapearDatosParaMostrar(): Promise<void>  {
+  private async mapearDatosParaMostrar(): Promise<void>  {
     if (this.empleado) {
       // Guardar ID del empleado para usar en subida de fotos
       this.idEmpleadoActual = this.empleado.idEmpleado;
@@ -350,8 +350,7 @@ private async mapearDatosParaMostrar(): Promise<void>  {
     }
   
     return `${baseUrl}/${fotoPerfilUrl}`;
-  }
-  
+  }  
   
   onImageError(event: Event, sexo: string) {
     const img = event.target as HTMLImageElement;
@@ -407,12 +406,12 @@ actualizarTimelinePorFase(fase: number): void {
 }
 
 obtenerFaseActual(): void {
-  console.log('=== OBTENIENDO FASE ACTUAL ===');
+  // console.log('=== OBTENIENDO FASE ACTUAL ===');
   const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
   
   if (!idEmpleado) {
     console.error('No se pudo obtener ID del empleado');
-    this.currentPhase = 1;
+    // this.currentPhase = 1;
     return;
   }
 
@@ -427,17 +426,17 @@ obtenerFaseActual(): void {
         
         if (evaluacionesData && evaluacionesData.length > 0) {
           const evaluacion = evaluacionesData[0];
-          this.currentPhase = evaluacion.fase || 0;
+          this.faseEvaluacion = evaluacion.fase || 0;
           
           // Actualizar el timeline con la fase real
-          this.actualizarTimelinePorFase(this.currentPhase);
+          this.actualizarTimelinePorFase(this.faseEvaluacion!);
         } else {
-          this.currentPhase = 6;
+          this.faseEvaluacion = 6;
         }
       },
       error: (error) => {
         // console.error('❌ Error al obtener fase de evaluación:');
-        this.currentPhase = 0;
+        this.faseEvaluacion = 0;
       }
     });
 }
@@ -466,7 +465,7 @@ obtenerFaseActual(): void {
             if (evaluacionesData && evaluacionesData.length > 0) {
               const idEvaluacion = evaluacionesData[0].idEvaluacion;
 
-              this.faseEvaluacion = evaluacionesData[0].fase;
+              // this.faseEvaluacion = evaluacionesData[0].fase;
               // console.log('fase que llega de la evaluacion', this.faseEvaluacion);
 
               // Usamos el id de la evaluacion para saber que objetivos tiene
@@ -484,21 +483,21 @@ obtenerFaseActual(): void {
                 .obtenerAsignacionCompetenciaPorIdEvaluacion(idEvaluacion)
                 .subscribe({
                   next: (respAsigCompetencias: any) => {
-                    console.log('\n📦 COMPONENTE - Respuesta recibida:', respAsigCompetencias);
-                    console.log('📦 COMPONENTE - Tiene $values?:', !!respAsigCompetencias?.$values);
+                    // console.log('\n📦 COMPONENTE - Respuesta recibida:', respAsigCompetencias);
+                    // console.log('📦 COMPONENTE - Tiene $values?:', !!respAsigCompetencias?.$values);
 
                     let asignacionesCompetenciasData = respAsigCompetencias;
                     if (respAsigCompetencias && respAsigCompetencias.$values) {
                       asignacionesCompetenciasData = respAsigCompetencias.$values;
-                      console.log('✅ Usando $values');
+                      // console.log('✅ Usando $values');
                     }
                     
-                    console.log('📊 Total asignaciones:', asignacionesCompetenciasData?.length);
+                    // console.log('📊 Total asignaciones:', asignacionesCompetenciasData?.length);
                     
-                    if (asignacionesCompetenciasData && asignacionesCompetenciasData.length > 0) {
-                      console.log('📝 Primera competencia completa:', asignacionesCompetenciasData[0]);
-                      console.log('📅 fechaLimite de la primera:', asignacionesCompetenciasData[0].fechaLimite);
-                    }         
+                    // if (asignacionesCompetenciasData && asignacionesCompetenciasData.length > 0) {
+                    //   console.log('📝 Primera competencia completa:', asignacionesCompetenciasData[0]);
+                    //   console.log('📅 fechaLimite de la primera:', asignacionesCompetenciasData[0].fechaLimite);
+                    // }         
 
                     asignacionesCompetenciasData.forEach((competencia: any) => {
                       const idAsignacionCompetencia = competencia.idAsignacion;
@@ -511,13 +510,13 @@ obtenerFaseActual(): void {
                         : '';
                       const valoracionJefe = competencia.valoracionJefe || null;
 
-                      console.log('✅ Valores capturados:', {
-                        valoracion: valoracionExistente,
-                        fecha: fechaExistente,
-                        idAsignacion: idAsignacionCompetencia
-                      });
+                      // console.log('✅ Valores capturados:', {
+                      //   valoracion: valoracionExistente,
+                      //   fecha: fechaExistente,
+                      //   idAsignacion: idAsignacionCompetencia
+                      // });
                       
-                      console.log('✅ Valores capturados - Valoración:', valoracionExistente, 'Fecha:', fechaExistente);
+                      // console.log('✅ Valores capturados - Valoración:', valoracionExistente, 'Fecha:', fechaExistente);
 
                       // Buscamos los datos de esa competencia Asignada ya que solo sabemos el id 
                       this.gthCompetenciaService
@@ -692,18 +691,19 @@ obtenerFaseActual(): void {
   ];
 
   guardarDatosEvaluacion(): void {
-    let fase = 2; // Cambiar según la fase actual
+    let fase = this.faseEvaluacion!; // Cambiar según la fase actual
+    console.log('fase de guardado', fase);
 
     // VALIDACIÓN 1: Objetivos completos (según la fase)
     let objetivosVacios;
     
     if (fase === 0) {
       objetivosVacios = this.objetivosIndividuales.filter(obj => 
-        !obj.titulo?.trim() || obj.valoracionEmpleado == null
+        !obj.titulo?.trim() || obj.valoracionEmpleado == null || !obj.fechaLimite
       );
     } else if (fase === 1) {
       objetivosVacios = this.objetivosIndividuales.filter(obj => 
-        !obj.titulo?.trim() || obj.valoracionEmpleado == null || obj.fechaLimite
+        !obj.titulo?.trim() || obj.valoracionEmpleado == null || !obj.fechaLimite
       );
     } else if (fase === 2) {
       objetivosVacios = this.objetivosIndividuales.filter(obj => 

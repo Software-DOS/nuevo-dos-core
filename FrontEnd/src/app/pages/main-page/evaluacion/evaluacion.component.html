@@ -70,9 +70,9 @@
         <div *ngFor="let step of timelineSteps" 
           class="timeline-step"
           [class.completed]="step.completed"
-          [class.active]="step.isActive"
-          (click)="onStepClick(step)"
+          [class.active]="step.isActive"          
           tabindex="0"> 
+          <!-- (click)="onStepClick(step)" -->
 
           <div class="circle">
             <!-- Si el step está completado y NO es el activo, mostrar check -->
@@ -98,7 +98,7 @@
                                         <!--       ----------------- FORMULARIOS ---------------------------      -->
 
     <!-- Formulario Captura de Resultados  1 -->
-    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && currentPhase === 0">
+    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 0">
       <h4 class="titulos-pequeños">Captura de Resultados</h4>
 
       <!-- Objetivo Área -->
@@ -133,7 +133,7 @@
         </div>
 
         <!-- FASE 0: Crear objetivos (Valor + Fecha límite) -->
-        <div class="form-section" *ngIf="currentPhase === 0">
+        <div class="form-section" *ngIf="faseEvaluacion === 0">
           <div *ngFor="let objetivo of objetivosIndividuales; let i = index" class="form-row">
             <span class="item-number">{{ i + 1 }}.</span>
             <div class="objetivo-container">
@@ -235,7 +235,7 @@
 
 
     <!-- Formulario revisado  2 -->
-    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && currentPhase === 1">
+    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 1">
       <h4 class="titulos-pequeños">Revisión Inicial</h4>
         <!-- Objetivo Área -->
         <div class="form-section">          
@@ -249,7 +249,7 @@
         </div>
 
         <!-- Objetivos -->
-        <div class="form-section" style="margin-right: 0;">
+        <div class="form-section" style="margin-right: 0;" >
           <div style="display:flex; justify-content: space-between; margin-left: 1rem;" >
             <div class="section-title" style="color:#064eb4">
               <div class="" style="display:flex; gap:0.2rem;">
@@ -265,7 +265,7 @@
           </div>
     
           <!-- FASE 1: Ver + Reconsiderar (Valor Empleado + Valor Jefe + Fecha) -->
-          <div class="form-section" *ngIf="currentPhase === 1">                  
+          <div class="form-section" *ngIf="faseEvaluacion === 1">                  
             <div *ngFor="let objetivo of objetivosIndividuales; let i = index" class="form-row">
               <span class="item-number">{{ i + 1 }}.</span>
               <div class="objetivo-container">
@@ -312,11 +312,11 @@
             </div>
 
             <!-- Mostrar estado de carga -->
-            <div *ngIf="loadingCompetencies" class="form-row">
+            <!-- <div *ngIf="loadingCompetencies" class="form-row">
               <span class="text-input" style="background: #f0f0f0; border-color: #ccc; color: #666;">
                 Cargando competencias...
               </span>
-            </div>
+            </div> -->
 
             <!-- Mostrar competencias cargadas desde el backend -->            
           
@@ -386,7 +386,7 @@
 
 
     <!-- Formulario: Evaluación Intermedia  3 -->
-    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && currentPhase === 2">
+    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 2">
       <h4 class="titulos-pequeños">Evaluación Intermedia</h4>
         <!-- Objetivo Área -->
         <div class="form-section">          
@@ -415,7 +415,7 @@
           </div>                            
 
           <!-- FASE 2: Calificación Empleado -->
-          <div class="form-section" *ngIf="currentPhase === 2">
+          <div class="form-section" *ngIf="faseEvaluacion === 2">
             <div *ngFor="let objetivo of objetivosIndividuales; let i = index" class="form-row">
               <span class="item-number">{{ i + 1 }}.</span>
               <div class="objetivo-container">
@@ -523,7 +523,7 @@
 
 
     <!-- Formulario: Retroalimentación  4 -->
-    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && currentPhase === 4">
+    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 4">
       <h4 class="titulos-pequeños">Retroalimentación</h4>
         <!-- Objetivo Área -->
         <div class="form-section">          
@@ -554,7 +554,7 @@
           
           <!-- Objetivos -->
           <!-- FASE 4: Calificación Personal + Final (solo lectura) -->
-          <div class="form-section" *ngIf="currentPhase === 4">
+          <div class="form-section">
             <div *ngFor="let objetivo of objetivosIndividuales; let i = index" class="form-row">
               <span class="item-number">{{ i + 1 }}.</span>
               <div class="objetivo-container">
@@ -671,7 +671,7 @@
             <!-- <div class="percentage-display">40%</div> -->
         </div>
 
-        <!-- Comentarios y Sugerencias -->
+        <!-- Retroalimentación y Plan de acción -->
         <div class="form-section" style="margin-left: 2rem;">
 
           <div class="section-title">Retroalimentación</div>
@@ -698,7 +698,7 @@
 
     
     <!-- Formulario: Cierre  5 -->
-    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && currentPhase === 5">
+    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 5">
       <h3>Cierre</h3>
       <div class="form-section">
         <div class="section-title">Resultados Finales</div>

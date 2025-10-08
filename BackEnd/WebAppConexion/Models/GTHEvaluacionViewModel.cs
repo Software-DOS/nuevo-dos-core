@@ -19,6 +19,8 @@ namespace WebAppConexion.Models
         public DateTime? FechaLimite { get; set; }
         public DateTime? FechaFinalizacion { get; set; }
         public decimal? CalificacionFinal { get; set; }
+        public string Retroalimentacion { get; set; }
+        public string PlanAccion { get; set; }
         public string Observaciones { get; set; }
         public string UsuarioCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }

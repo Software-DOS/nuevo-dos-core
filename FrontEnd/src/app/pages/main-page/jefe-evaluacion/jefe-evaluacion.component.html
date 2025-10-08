@@ -1082,7 +1082,7 @@
         </div>
 
         <!-- Objetivos -->
-        <div class="form-section" style="margin-right: 0;" *ngIf="currentPhaseColab === 1"> <!-- Validamos que se muestre solo en la fase 1 --> 
+        <div class="form-section" style="margin-right: 0;" *ngIf="faseEvaluacionColab === 1"> <!-- Validamos que se muestre solo en la fase 1 --> 
           <div style="display:flex; justify-content: space-between; margin-left: 1rem;" >
             <div class="section-title" style="color:#064eb4">
               <div class="" style="display:flex; gap:0.2rem;">
@@ -1137,7 +1137,7 @@
         </div>
 
         <!-- Competencias -->
-        <div class="form-section" style="margin-top: 3rem; margin-left: 2rem" *ngIf="currentPhaseColab === 1"> <!-- Validamos que se muestre solo en la fase 1 --> 
+        <div class="form-section" style="margin-top: 3rem; margin-left: 2rem" *ngIf="faseEvaluacionColab === 1"> <!-- Validamos que se muestre solo en la fase 1 --> 
             <div class="section-title purple">
               <div class="" style="display:flex; gap:0.2rem;">
                 <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj" class="icono-menor">
@@ -1199,7 +1199,7 @@
         </div>
 
         <!-- Botónes -->
-        <div class="buttons-container" *ngIf="currentPhaseColab === 1"> <!-- Validamos que se muestre solo en la fase 1 -->         
+        <div class="buttons-container" *ngIf="faseEvaluacionColab === 1"> <!-- Validamos que se muestre solo en la fase 1 -->         
           <ng-container *ngIf="faseEvaluacionColab === 1">
             <button class="revision-btn" (click)="guardarRevision()">Revisar</button>
             <button class="submit-btn" style="margin-left: 2rem;" (click)="enviarAvance()">Enviar</button>
@@ -1224,7 +1224,7 @@
         </div>
 
         <!-- Objetivos -->
-        <div class="form-section" style="margin-right: 0;" *ngIf="currentPhaseColab === 3"> <!-- Validamos que se muestre solo en la fase 3 -->
+        <div class="form-section" style="margin-right: 0;" *ngIf="faseEvaluacionColab === 3"> <!-- Validamos que se muestre solo en la fase 3 -->
           <div style="display:flex; justify-content: space-between; margin-left: 1rem;" >
             <div class="section-title" style="color:#064eb4">
               <div class="" style="display:flex; gap:0.2rem;">
@@ -1264,7 +1264,7 @@
                   <input type="number" class="number-input number-input-objetivo" 
                         min="0" max="100"
                         [(ngModel)]="objetivoColab.calificacionFinal"
-                        placeholder="-">
+                        placeholder="/100">
                 </div>
                 
                 <div class="input-wrapper-mobile">
@@ -1279,7 +1279,7 @@
         </div>
 
         <!-- Competencias -->
-        <div class="form-section" style="margin-top: 3rem; margin-left: 2rem" *ngIf="currentPhaseColab === 3"> <!-- Validamos que se muestre solo en la fase 3 -->
+        <div class="form-section" style="margin-top: 3rem; margin-left: 2rem" *ngIf="faseEvaluacionColab === 3"> <!-- Validamos que se muestre solo en la fase 3 -->
           
           <div class="section-title purple">
             <div class="" style="display: flex; gap: 0.2rem">
@@ -1331,7 +1331,7 @@
 
                 <div style="text-align: center; margin-right: 0; margin-left: 10px;">
                   <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Revisado</label>
-                  <input type="number" class="number-input number-input-competencia" min="0" max="100" 
+                  <input type="number" class="number-input number-input-competencia" min="0" max="100" placeholder="/100" 
                       [(ngModel)]="competenciaColab.CalificacionFinal">
                 </div>              
                 
@@ -1342,6 +1342,7 @@
                     class="date-input date-input-competencia"
                     [(ngModel)]="competenciaColab.FechaLimite"
                     (ngModelChange)="actualizarFechaCompetenciaFija(i, $event)"
+                    [disabled]="true"
                   />
                 </div>
               </div>
@@ -1350,8 +1351,29 @@
 
         </div>
 
+        <!-- Retroalimentación y Plan de acción -->
+        <div class="form-section" style="margin-left: 2rem;" *ngIf="faseEvaluacionColab === 3">
+
+          <div class="section-title">Retroalimentación</div>
+            <div class="form-row">
+              <textarea class="text-input" rows="4" 
+                        placeholder="Retroalimentación del supervisor sobre el desempeño..."
+                        [(ngModel)]="retroalimentacion">
+              </textarea>
+            </div>
+
+            <div class="section-title">Plan de Acción</div>
+            <div class="form-row">
+              <textarea class="text-input" rows="4" 
+                        placeholder="Plan de acción a llevar a cabo..."
+                        [(ngModel)]="planAccion">
+              </textarea>
+            </div>
+
+        </div>
+
         <!-- Botónes -->
-        <div class="buttons-container" *ngIf="currentPhaseColab === 3"> <!-- Validamos que se muestre solo en la fase 3 -->
+        <div class="buttons-container" *ngIf="faseEvaluacionColab === 3"> <!-- Validamos que se muestre solo en la fase 3 -->
           <!-- Botón para FASE 3 -->
           <button *ngIf="faseEvaluacionColab === 3" class="finalizar-btn" (click)="enviarRetroalimentacion()">
             Finalizar

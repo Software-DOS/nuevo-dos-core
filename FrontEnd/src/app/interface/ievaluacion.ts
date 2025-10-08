@@ -46,6 +46,8 @@ export interface Ievaluacion {
   fechaModificacion?: string | null; // Permitir null
   usuarioCreacion?: string;
   fase?: number;
+  retroalimentacion?: string;  // Agregado
+  planAccion?: string;          // Agregado
 }
 
 export interface ICrearEvaluacionRequest {

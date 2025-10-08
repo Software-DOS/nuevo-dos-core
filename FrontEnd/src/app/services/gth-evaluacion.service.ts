@@ -119,7 +119,9 @@ export class GthEvaluacionService {
       calificacionFinal: evaluacion.calificacionFinal || null,
       observaciones: evaluacion.observaciones || null,
       usuarioCreacion: evaluacion.usuarioCreacion || 'SISTEMA',
-      fase: evaluacion.fase !== undefined ? evaluacion.fase : 0
+      fase: evaluacion.fase !== undefined ? evaluacion.fase : 0,
+      retroalimentacion: evaluacion.retroalimentacion || null,
+      planAccion: evaluacion.planAccion || null
     };
 
     console.log('Datos enviados para gestionar evaluación:', requestData);

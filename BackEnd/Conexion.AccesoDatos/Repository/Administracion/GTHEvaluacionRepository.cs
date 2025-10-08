@@ -41,6 +41,8 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@FECHA_LIMITE", (object)evaluacion.FechaLimite ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@FECHA_FINALIZACION", (object)evaluacion.FechaFinalizacion ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@CALIFICACION_FINAL", (object)evaluacion.CalificacionFinal ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@RETROALIMENTACION", evaluacion.Retroalimentacion ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@PLAN_ACCION", evaluacion.PlanAccion ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@OBSERVACIONES", evaluacion.Observaciones ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@USUARIO_CREACION", "SISTEMA"));
             cmd.Parameters.Add(new SqlParameter("@FASE", evaluacion.Fase ?? 0));
@@ -134,6 +136,8 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     CalificacionFinal = reader["CALIFICACION_FINAL"] != DBNull.Value
                                           ? Convert.ToDecimal(reader["CALIFICACION_FINAL"])
                                           : (decimal?)null,
+                    Retroalimentacion = reader["RETROALIMENTACION"]?.ToString(),
+                    PlanAccion = reader["PLAN_ACCION"]?.ToString(),
                     Observaciones = reader["OBSERVACIONES"]?.ToString(),
                     FechaCreacion = reader["FECHA_CREACION"] != DBNull.Value
                                           ? Convert.ToDateTime(reader["FECHA_CREACION"])
