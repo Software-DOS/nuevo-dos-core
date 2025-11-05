@@ -34,20 +34,24 @@ export interface Ievaluacion {
   tipo?: number; 
   idEvaluacion?: number;
   idEmpleado: number;
-  idJefe?: number | null;           // Permitir null explícitamente
+  idJefe?: number | null;          
   anio?: number;
   estado?: string;
   fechaInicio?: string;
   fechaLimite?: string;
   fechaFinalizacion?: string | null; // Permitir null
-  calificacionFinal?: number | null; // ✅ CORREGIDO: Permitir null
-  observaciones?: string | null;     // Permitir null
+  calificacionFinal?: number | null; 
+  observaciones?: string | null;     
   fechaCreacion?: string;
-  fechaModificacion?: string | null; // Permitir null
+  fechaModificacion?: string | null; 
   usuarioCreacion?: string;
   fase?: number;
-  retroalimentacion?: string;  // Agregado
-  planAccion?: string;          // Agregado
+  retroalimentacion?: string;  
+  planAccion?: string;    
+  fechaRegObj?: string;
+  fechaRegJefe?: string;
+  fechaAutoevaluacion?: string;
+  fechaEvaluacionJefe?: string;     
 }
 
 export interface ICrearEvaluacionRequest {

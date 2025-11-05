@@ -65,7 +65,8 @@ namespace WebAppConexion.Controllers
             return Ok(resultado.Select(r => new Generica
             {
                 valor1 = r.valor1,
-                valor2 = r.valor2
+                valor2 = r.valor2,
+                valor3 = r.valor3
             }));
         }
     }

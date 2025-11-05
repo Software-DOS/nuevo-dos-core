@@ -26,58 +26,118 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    // Set initial page data attribute for colors
+    // ════════════════════════════════════════════════════════════════════
+    // 🎨 CONFIGURACIÓN INICIAL DE PÁGINA
+    // ════════════════════════════════════════════════════════════════════
+    
+    // Establecer atributos de datos de la página para colores
     this.setPageDataAttribute();
     
-    // Listen to route changes to update page colors
+    // Escuchar cambios de ruta para actualizar colores de página
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       this.setPageDataAttribute();
     });
-
-    // Escuchar cambios en la foto de perfil desde otros componentes
+    
+    // ════════════════════════════════════════════════════════════════════
+    // 📸 ESCUCHAR CAMBIOS EN LA FOTO DE PERFIL
+    // ════════════════════════════════════════════════════════════════════
+    
     this.gthEmpleadoService.fotoPerfilCambiada$.subscribe({
       next: (cambio) => {
-        console.log('NavBar: Recibido cambio de foto de perfil:', cambio);
+        //BORRAR - PRODUCCIÓN: console.log('NavBar: Recibido cambio de foto de perfil:', cambio);
         this.Imagen = cambio.nuevaUrl;
       },
       error: (error) => {
         console.error('NavBar: Error al recibir cambio de foto:', error);
       }
     });
-
-    const valor = sessionStorage.getItem('token');
-    if (typeof valor === 'string') {
-      var IdEmpleado =JSON.parse(atob(valor.split('.')[1]));
-      this.usuario = IdEmpleado['NombresApellidos'];
+    
+    // ════════════════════════════════════════════════════════════════════
+    // 🔐 OBTENER Y PROCESAR TOKEN
+    // ════════════════════════════════════════════════════════════════════
+    
+    const token = sessionStorage.getItem('token');
+    
+    if (!token) {
+      console.warn('NavBar: No se encontró token en sessionStorage');
+      return;
+    }
+    
+    try {
+      // ──────────────────────────────────────────────────────────────────
+      // 🔓 DECODIFICAR TOKEN JWT
+      // ──────────────────────────────────────────────────────────────────
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
       
-      // Cargar foto de perfil del empleado usando el mismo método que empleado-cv
-      const idEmpleadoFromService = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
-      console.log('NavBar: ID desde service ->', idEmpleadoFromService);
-      console.log('NavBar: ID desde token manual ->', IdEmpleado['IdEmpleado']);
+      //BORRAR - PRODUCCIÓN: console.log("=" .repeat(60));
+      //BORRAR - PRODUCCIÓN: console.log("🔍 [DEBUG] VERIFICACIÓN COMPLETA DEL TOKEN");
+      //BORRAR - PRODUCCIÓN: console.log("=" .repeat(60));
+      //BORRAR - PRODUCCIÓN: console.log("\n📋 [DEBUG] CONTENIDO COMPLETO DEL TOKEN:");
+      //BORRAR - PRODUCCIÓN: console.log(JSON.stringify(tokenData, null, 2));
       
-      if (idEmpleadoFromService) {
-        this.cargarFotoPerfilEmpleado(idEmpleadoFromService);
-      } else {
-        // Fallback al método manual si el servicio no funciona
-        this.cargarFotoPerfilEmpleado(IdEmpleado['IdEmpleado']);
+      // ──────────────────────────────────────────────────────────────────
+      // 📧 EXTRAER EMAIL DEL TOKEN (en diferentes formatos posibles)
+      // ──────────────────────────────────────────────────────────────────
+      const email = tokenData['email'] || 
+                    tokenData['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ||
+                    tokenData['Email'];
+      
+      //BORRAR - PRODUCCIÓN: console.log("📧 Email extraído:", email);
+      
+      // ──────────────────────────────────────────────────────────────────
+      // 🆔 EXTRAER ID EMPLEADO DEL TOKEN
+      // ──────────────────────────────────────────────────────────────────
+      const idEmpleado = tokenData['IdEmpleado'] || 
+                        tokenData['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+      
+      //BORRAR - PRODUCCIÓN: console.log("🆔 IdEmpleado extraído:", idEmpleado);
+      //BORRAR - PRODUCCIÓN: console.log("👤 NombresApellidos:", tokenData['NombresApellidos']);
+      //BORRAR - PRODUCCIÓN: console.log("🏢 IdEmpresa:", tokenData['IdEmpresa']);
+      
+      // ──────────────────────────────────────────────────────────────────
+      // 👤 ASIGNAR NOMBRE DEL USUARIO
+      // ──────────────────────────────────────────────────────────────────
+      this.usuario = tokenData['NombresApellidos'] || email || 'Usuario';
+      
+      // ──────────────────────────────────────────────────────────────────
+      // 📸 CARGAR FOTO DE PERFIL
+      // ──────────────────────────────────────────────────────────────────
+      
+      // Intentar obtener ID desde el servicio primero
+      const idFromService = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+      //BORRAR - PRODUCCIÓN: console.log('NavBar: ID desde service:', idFromService);
+      //BORRAR - PRODUCCIÓN: console.log('NavBar: ID desde token:', idEmpleado);
+      
+      // Usar ID del servicio si existe, sino usar del token
+      const idParaCargar = idFromService || idEmpleado;
+      
+      if (idParaCargar) {
+        this.cargarFotoPerfilEmpleado(idParaCargar);
       }
       
-      this.menuService.cargarMenu(IdEmpleado['IdEmpleado']).subscribe(
-        (resp:any)=>{
-            this.menu=resp['$values'];
-            // if (!localStorage.getItem('foo')) {
-            //   localStorage.setItem('foo', 'no reload')
-            //   location.reload()
-            // } else {
-            //   localStorage.removeItem('foo')
-            // }
+      // ──────────────────────────────────────────────────────────────────
+      // 📋 CARGAR MENÚ DEL EMPLEADO
+      // ──────────────────────────────────────────────────────────────────
+      
+      if (!idEmpleado) {
+        console.error('NavBar: No se pudo obtener IdEmpleado del token');
+        return;
+      }
+      
+      this.menuService.cargarMenu(idEmpleado).subscribe({
+        next: (resp: any) => {
+          this.menu = resp['$values'] || resp || [];
+          //BORRAR - PRODUCCIÓN: console.log('NavBar: Menú cargado exitosamente. Items:', this.menu.length);
         },
-        (err)=>{
-          console.log("err:",err);
+        error: (err) => {
+          console.error('NavBar: Error al cargar menú:', err);
         }
-      );
+      });
+      
+    } catch (error) {
+      console.error('NavBar: Error al procesar token:', error);
     }
   }
 

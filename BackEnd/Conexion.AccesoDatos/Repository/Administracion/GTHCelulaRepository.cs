@@ -68,12 +68,14 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             await sql.OpenAsync();
             var response = new List<Generica>();
             using var reader = await cmd.ExecuteReaderAsync();
+
             while (await reader.ReadAsync())
             {
                 response.Add(new Generica
                 {
                     valor1 = reader["Codigo"] != DBNull.Value ? Convert.ToInt32(reader["Codigo"]) : 0,
-                    valor2 = reader["Mensaje"]?.ToString()
+                    valor2 = reader["Mensaje"]?.ToString(),
+                    valor3 = reader["IdCelula"] != DBNull.Value ? Convert.ToInt32(reader["IdCelula"]) : 0  // 👈 AGREGAR
                 });
             }
             return response;

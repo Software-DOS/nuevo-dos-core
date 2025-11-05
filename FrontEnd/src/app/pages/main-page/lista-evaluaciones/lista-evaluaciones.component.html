@@ -10,11 +10,11 @@
         Lista de Evaluaciones
       </div>
 
-      <!-- <div class="subcategory-link" 
-          [class.active]="activeSubcategory === 'competencias'" 
-          (click)="showSubcategoryEval('competencias')">
-        Competencias
-      </div> -->
+      <div class="subcategory-link" 
+          [class.active]="activeSubcategory === 'gestAreas'" 
+          (click)="showSubcategoryEval('gestAreas')">
+        Gestionar Áreas
+      </div>
 
       <!-- Botón especial -->
       <div class="subcategory-link crear-btn" [class.active]="activeSubcategory === 'crearEvaluacion'"
@@ -92,63 +92,117 @@
         <!-- PASO 1: BUSCAR Y SELECCIONAR EMPLEADO -->
         <h4 class="form-section-subtitle">Crear Evaluación</h4>
 
+        <!-- NUEVO: Selector de Jefe -->
         <div
-          style="position: relative; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; background: #fff;">
-          <!-- Línea decorativa superior -->
-          <div class="linea-decorativa-sup"></div>
+  style="position: relative; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; background: #fff;">
+  <!-- Línea decorativa superior -->
+  <div class="linea-decorativa-sup"></div>
 
-          <h5 style="color: #2c3e50; margin-bottom: 1rem; font-size: 1.1rem;">
-            <i class="fas fa-search" style="margin-right: 0.5rem; color: #3498db;"></i>
-            Paso 1: Seleccionar Empleado
-          </h5>
+  <h5 style="color: #2c3e50; margin-bottom: 1rem; font-size: 1.1rem;">
+    <i class="fas fa-search" style="margin-right: 0.5rem; color: #3498db;"></i>
+    Paso 1: Seleccionar Empleado
+  </h5>
 
-          <!-- Búsqueda de Empleado -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-            <div class="form-group">
-              <label class="form-label">Área:</label>
-              <input type="text" [(ngModel)]="filtroArea" placeholder="Buscar área..." class="form-input"
-                (input)="filtrarEmpleadosParaEvaluacion()" autocomplete="off">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Empleado:</label>
-              <select [(ngModel)]="empleadoBuscado" (ngModelChange)="onEmpleadoBuscadoSeleccionado()" class="form-input"
-                [compareWith]="compareEmpleados" [disabled]="empleadosFiltrados2.length === 0">
-                <option [ngValue]="null">
-                  {{ empleadosFiltrados2.length === 0 ? '- No hay empleados disponibles -' : '- Seleccionar empleado -'
-                  }}
-                </option>
-                <option *ngFor="let empleado of empleadosFiltrados2; trackBy: trackByEmpleadoId" [ngValue]="empleado">
-                  {{empleado.nombre}} - {{empleado.area}}
-                </option>
-              </select>
-            </div>
+  <!-- Búsqueda de Empleado -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+    <div class="form-group">
+      <label class="form-label">Área:</label>
+      <input type="text" [(ngModel)]="filtroArea" placeholder="Buscar área..." class="form-input"
+        (input)="filtrarEmpleadosParaEvaluacion()" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Empleado:</label>
+      <select [(ngModel)]="empleadoBuscado" (ngModelChange)="onEmpleadoBuscadoSeleccionado()" class="form-input"
+        [compareWith]="compareEmpleados" [disabled]="empleadosFiltrados2.length === 0">
+        <option [ngValue]="null">
+          {{ empleadosFiltrados2.length === 0 ? '- No hay empleados disponibles -' : '- Seleccionar empleado -' }}
+        </option>
+        <option *ngFor="let empleado of empleadosFiltrados2; trackBy: trackByEmpleadoId" [ngValue]="empleado">
+          {{empleado.nombre}} - {{empleado.area}}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Información del empleado seleccionado -->
+  <div *ngIf="empleadoBuscado"
+    style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+    <h6 style="color: #28a745; margin: 0 0 1rem 0; font-size: 1rem;">
+      <i class="fas fa-user-check" style="margin-right: 0.5rem;"></i>
+      Empleado Seleccionado
+    </h6>
+
+    <!-- Información detallada en grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+      <div>
+        <label
+          style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">NOMBRE
+          COMPLETO:</label>
+        <span style="color: #2c3e50; font-weight: 500;">{{empleadoBuscado.nombre}}</span>
+      </div>
+      <div>
+        <label
+          style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">ÁREA:</label>
+        <span style="color: #2c3e50; font-weight: 500;">{{empleadoBuscado.area}}</span>
+      </div>
+    </div>
+
+    <!-- SELECTOR DE JEFE (DENTRO DEL MISMO DIV) -->
+    <div style="background: #e8f4f8; padding: 1.5rem; border-radius: 6px; margin-top: 1rem; border-left: 4px solid #3498db;">
+      <h6 style="color: #3498db; margin: 0 0 1rem 0; font-size: 1rem;">
+        <i class="fas fa-user-tie" style="margin-right: 0.5rem;"></i>
+        Seleccionar Jefe Evaluador
+      </h6>
+
+      <div class="form-group">
+        <label class="form-label">Buscar Jefe (mínimo 3 letras):</label>
+        <input 
+          type="text" 
+          [(ngModel)]="filtroJefeEvaluacion" 
+          placeholder="Ingrese al menos 3 letras para buscar..." 
+          class="form-input"
+          (input)="filtrarJefesEvaluacion()" 
+          autocomplete="off">
+      </div>
+
+      <div class="form-group" *ngIf="filtroJefeEvaluacion && filtroJefeEvaluacion.length >= 3">
+        <label class="form-label">Jefe:</label>
+        <select [(ngModel)]="jefeSeleccionadoEvaluacion" class="form-input"
+          [compareWith]="compareEmpleados" [disabled]="jefesFiltradosEvaluacion.length === 0">
+          <option [ngValue]="null">
+            {{ jefesFiltradosEvaluacion.length === 0 ? '- No se encontraron resultados -' : '- Seleccionar jefe -' }}
+          </option>
+          <option *ngFor="let jefe of jefesFiltradosEvaluacion; trackBy: trackByEmpleadoId" [ngValue]="jefe">
+            {{jefe.nombre}} - {{jefe.area}}
+          </option>
+        </select>
+      </div>
+
+      <!-- Mostrar jefe seleccionado -->
+      <div *ngIf="jefeSeleccionadoEvaluacion"
+        style="background: #fff; padding: 1rem; border-radius: 6px; margin-top: 1rem; border: 1px solid #3498db;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">
+              JEFE ASIGNADO:
+            </label>
+            <span style="color: #2c3e50; font-weight: 500;">{{jefeSeleccionadoEvaluacion.nombre}}</span>
           </div>
-
-          <!-- Información del empleado seleccionado -->
-          <div *ngIf="empleadoBuscado"
-            style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px; margin-bottom: 1rem; border-left: 4px solid #28a745;">
-            <h6 style="color: #28a745; margin: 0 0 1rem 0; font-size: 1rem;">
-              <i class="fas fa-user-check" style="margin-right: 0.5rem;"></i>
-              Empleado Seleccionado
-            </h6>
-
-            <!-- Información detallada en grid -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-              <div>
-                <label
-                  style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">NOMBRE
-                  COMPLETO:</label>
-                <span style="color: #2c3e50; font-weight: 500;">{{empleadoBuscado.nombre}}</span>
-              </div>
-              <div>
-                <label
-                  style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">ÁREA:</label>
-                <span style="color: #2c3e50; font-weight: 500;">{{empleadoBuscado.area}}</span>
-              </div>
-            </div>
+          <div>
+            <label style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">
+              ÁREA:
+            </label>
+            <span style="color: #2c3e50; font-weight: 500;">{{jefeSeleccionadoEvaluacion.area}}</span>
           </div>
-
         </div>
+      </div>
+    </div>
+    <!-- FIN SELECTOR DE JEFE -->
+
+  </div>
+  <!-- FIN empleadoBuscado -->
+
+</div>
 
         <!-- Botón Crear Evaluación -->
         <div style="text-align: center; margin-top: 1.5rem;">
@@ -308,6 +362,186 @@
           <p style="margin: 0; opacity: 0.8;">La evaluación para <strong>{{empleadoBuscado?.nombre}}</strong> ha sido
             guardada con 4 competencias.</p>
         </div>
+
+      </div>
+    </div>
+
+
+    <!-- GESTIONAR EL PERSONAL DEL AREA -->
+    <div id="gestAreas" class="subcategory-section" [class.active]="activeSubcategory === 'gestAreas'">
+      <div class="container"> 
+      <div style="margin-bottom: 2rem;">
+
+        <!-- PASO 1: BUSCAR Y SELECCIONAR EMPLEADO -->
+        <!-- <h4 class="form-section-subtitle">Gestión de Áreas</h4>         -->
+
+                 
+
+          <div class="page-header">
+              <h2 class="page-title">Gestionar Área</h2>
+              <p class="page-subtitle">Configure la información del área y asigne empleados</p>
+          </div>
+
+          <!-- ESTADO 1: PASO 2 BLOQUEADO -->
+          <div class="demo-state-1">
+              <div class="form-card">
+                  <!-- Progress Steps -->
+                  <!-- <div class="wizard-progress">
+                      <div class="progress-step active">
+                          <div class="step-circle">1</div>
+                          <div class="step-label">Información del Área</div>
+                      </div>
+                      <div class="progress-step">
+                          <div class="step-circle">2</div>
+                          <div class="step-label">Asignar Empleados</div>
+                      </div>
+                  </div> -->
+
+                  <form>
+                      <!-- PASO 1: Información del Área -->
+                      <div class="form-section">
+                        <!-- Línea decorativa superior -->
+                        <div class="linea-decorativa-sup"></div>
+                          <div class="section-header">
+                              <div class="section-number" style="margin-top: 3rem;">1</div>
+                              <div class="section-title" style="margin-top: 3rem;">Información del Área</div>
+                          </div>
+
+                          <!-- <div class="form-group">
+                              <label class="form-label">Nombre del Área *</label>
+                              <input type="text" class="form-input" 
+                              name="nombreArea"
+                              [(ngModel)]="nombreArea" (ngModelChange)="onInputChange()"                              
+                              placeholder="Ej: Tecnología, Marketing, Recursos Humanos...">
+                          </div> -->
+
+                          <!-- (input)="filtrarEmpleadosParaEvaluacion()" autocomplete="off"  -->
+
+                          <div class="form-group" style="position: relative;">
+                            <label class="form-label">Nombre de la Célula *</label>
+                            <input type="text" 
+                                  class="form-input" 
+                                  name="nombreCelula"
+                                  [(ngModel)]="nombreCelula" 
+                                  (input)="onCelulaInput()"
+                                  (blur)="cerrarSugerencias()"
+                                  placeholder="Escribe al menos 3 letras..."
+                                  autocomplete="off">
+                            
+                            <!-- Dropdown de sugerencias -->
+                            <div *ngIf="mostrarSugerencias" class="celulas-dropdown">
+                                <div *ngFor="let celula of celulasFiltradas" 
+                                    class="celula-item"
+                                    (mousedown)="seleccionarCelula(celula)">
+                                    <div class="celula-nombre">{{celula.nombre}}</div>
+                                    <div class="celula-desc" *ngIf="celula.descripcion">
+                                        {{celula.descripcion}}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Mensaje si no hay coincidencias -->
+                            <!-- <div *ngIf="nombreCelula.length >= 3 && celulasFiltradas.length === 0 && !mostrarSugerencias" 
+                                class="nueva-celula-msg">
+                                ✨ Se creará una nueva célula: <strong>{{nombreCelula}}</strong>
+                            </div> -->
+                            <div *ngIf="esCelulaNueva && nombreCelula.length >= 3" class="nueva-celula-msg">
+                                ✨ Se creará una nueva célula: <strong>{{nombreCelula}}</strong>
+                            </div>
+                        </div>
+
+                          <div class="form-group">
+                              <label class="form-label">Jefe del Área *</label>
+                              <select [(ngModel)]="jefeSeleccionado" (ngModelChange)="onInputChange()" class="form-input" name="jefeSeleccionado"
+                                [compareWith]="compareEmpleados" [disabled]="empleadosFiltrados2.length === 0">
+                                <option [ngValue]="null">
+                                  {{ empleadosFiltrados2.length === 0 ? '- No hay empleados disponibles -' : '- Seleccionar empleado -'
+                                  }}
+                                </option>
+                                <option *ngFor="let empleado of empleadosFiltrados2; trackBy: trackByEmpleadoId" [ngValue]="empleado">
+                                  {{empleado.nombre}} - {{empleado.area}}
+                                </option>
+                              </select>
+                          </div>
+                      </div>
+
+                      <!-- PASO 2: Empleados -->
+                      <div class="form-section" [class.locked]="!paso2Habilitado">
+                          <div class="section-header">
+                              <div class="section-number">2</div>
+                              <div class="section-title">Asignar Empleados</div>
+                          </div>
+
+                          <div class="empleados-container">
+                            <div class="empleados-selector">
+                              <div class="selector-title">
+                                  <span>➕</span>
+                                  Agregar Empleado
+                              </div>
+                              <select name="empleadoSeleccionado" 
+                                      [(ngModel)]="empleadoSeleccionado" 
+                                      class="form-select">
+                                  <option [ngValue]="null">Seleccione un empleado...</option>
+                                  <option *ngFor="let emp of empleadosFiltrados2" [ngValue]="emp">
+                                      {{emp.nombre}} - {{emp.area}}
+                                  </option>
+                              </select>
+                              <button type="button" 
+                                      class="btn-agregar" 
+                                      (click)="agregarEmpleado()"
+                                      [disabled]="!empleadoSeleccionado">
+                                  Agregar →
+                              </button>
+                              
+                              <!-- 👇 MENSAJE DE FEEDBACK -->
+                              <div *ngIf="mensajeEmpleado" 
+                                  [class]="'mensaje-feedback mensaje-' + tipoMensaje">
+                                  <span *ngIf="tipoMensaje === 'error'">⚠️</span>
+                                  <span *ngIf="tipoMensaje === 'success'">✓</span>
+                                  {{mensajeEmpleado}}
+                              </div>
+                          </div>
+
+                          <div class="empleados-list">
+                              <div class="list-header">
+                                  <div class="list-title">Empleados Asignados</div>
+                                  <div class="list-counter">{{empleadosAsignados.length}}</div>
+                              </div>
+                              
+                              <div *ngIf="empleadosAsignados.length === 0" class="empty-state">
+                                  <div class="empty-state-icon">👥</div>
+                                  <div class="empty-state-text">No hay empleados asignados aún</div>
+                              </div>
+
+                              <div *ngFor="let empleado of empleadosAsignados" class="empleado-item">
+                                  <div class="empleado-info">
+                                      <div class="empleado-name">{{empleado.nombre}}</div>
+                                      <span *ngIf="empleado.id === jefeSeleccionado?.id" class="empleado-badge">Jefe</span>
+                                  </div>
+                                  <button type="button" class="empleado-remove" (click)="removerEmpleado(empleado)">✕</button>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+
+                      <div class="form-actions">
+                        <button type="button" class="btn btn-cancel" (click)="limpiarFormulario()">
+                            Cancelar
+                        </button>
+                        <button type="button" 
+                                class="btn btn-submit" 
+                                [disabled]="!formularioValido()"
+                                (click)="guardarArea()">
+                            Crear Área
+                        </button>
+                    </div>
+
+                  </form>
+              </div>
+          </div>
+
+          
+      </div>
 
       </div>
     </div>

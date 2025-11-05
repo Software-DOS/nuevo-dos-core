@@ -448,6 +448,28 @@
   transform: scale(1.05);
 }
 
+/* Estado ACTIVO (fase actual - verde con número blanco) */
+.timeline-step.active .circle {
+  background: linear-gradient(135deg, #0cc17f 0%, #039f56 100%);
+  color: white;
+  box-shadow: 0 8px 25px rgba(13, 181, 91, 0.6);
+  animation: pulse 2s infinite;
+}
+
+.timeline-step.active .label {
+  color: #018145;
+  font-weight: 700;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 8px 25px rgba(13, 181, 91, 0.6);
+  }
+  50% {
+    box-shadow: 0 8px 25px rgba(13, 181, 91, 0.9);
+  }
+}
+
 /* Responsive mejorado */
 @media (max-width: 768px) {
   .timeline {
@@ -573,6 +595,17 @@
 .objetivo-container {
   background: #e7eff7;
   border: 2px solid #002d7f80;
+  border-radius: 10px;
+  padding: 0.5rem;
+  flex: 1;
+  display: flex; 
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 0.1rem;
+}
+.objetivo-container-area {
+  background: #f0e7f7;
+  border: 2px solid #0e007f80;
   border-radius: 10px;
   padding: 0.5rem;
   flex: 1;
@@ -854,6 +887,13 @@ input:disabled {
   
   /* Contenedores de objetivos */
   .objetivo-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  /* Contenedores de objetivo relacionado al AREA */
+  .objetivo-container-area {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;

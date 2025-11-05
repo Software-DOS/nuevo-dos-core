@@ -16,4 +16,6 @@ export interface IgthObjetivo {
   estado?: string;
   fechaCreacion?: string;
   fechaModificacion?: string;
+  calificacionPonderada?: number | null; 
+  resultadoPonderado?: number | null;
 }

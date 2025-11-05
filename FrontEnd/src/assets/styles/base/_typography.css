@@ -17,6 +17,7 @@ html {
 body {
   font-family: var(--font-primary);
   font-weight: var(--font-weight-regular);
+  /* font-weight: var(--font-weight-light); */
   color: var(--color-text-primary);
   line-height: 1.6;
   background: var(--color-gray-50);
@@ -89,7 +90,7 @@ ul, ol {
 
 /* === FORM ELEMENTS === */
 input, textarea, select, button {
-  font-family: inherit;
+  font-family: var(--font-heading);
   font-size: inherit;
   line-height: inherit;
 }

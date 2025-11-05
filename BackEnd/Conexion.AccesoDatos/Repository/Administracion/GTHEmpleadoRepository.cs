@@ -31,10 +31,9 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             };
 
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
-            //cmd.Parameters.Add(new SqlParameter("@ID_EMPLEADO", empleado.IdEmpleado));
+            cmd.Parameters.Add(new SqlParameter("@ID_EMPLEADO", empleado.IdEmpleado)); // ✅ DESCOMENTAR
             cmd.Parameters.Add(new SqlParameter("@ID_PERFIL", empleado.IdPerfil ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@ID_CELULA", empleado.IdCelula ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@EMP_CEDULA", empleado.Cedula ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_NOMBRE", empleado.Nombre ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_APELLIDO", empleado.Apellido ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@EMP_FECHANACIMIENTO", empleado.FechaNacimiento ?? (object)DBNull.Value));

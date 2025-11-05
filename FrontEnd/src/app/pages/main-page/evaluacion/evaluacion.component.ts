@@ -19,7 +19,7 @@ import { alerts } from '../../../helpers/alerts';
 
 // Interface utilizada para almacenar todos los datos necesarios
 interface NivelConCompetencia {
-  idAsignacionCompetencia: number; // ✅ AGREGAR ESTO
+  idAsignacionCompetencia: number;
   idCompetencia: number;
   nivel: number;
   descripcion: string;
@@ -53,11 +53,11 @@ export class EvaluacionComponent implements OnInit {
 
     // Inicializar los 5 objetivos
     this.objetivosIndividuales = [
-      { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
-      { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
-      { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
-      { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
-      { titulo: '', valoracionEmpleado: null, fechaLimite: '' }
+      { titulo: '', valoracionEmpleado: null, fechaLimite: '', calificacionPonderada: null },
+      { titulo: '', valoracionEmpleado: null, fechaLimite: '', calificacionPonderada: null },
+      { titulo: '', valoracionEmpleado: null, fechaLimite: '', calificacionPonderada: null },
+      { titulo: '', valoracionEmpleado: null, fechaLimite: '', calificacionPonderada: null },
+      { titulo: '', valoracionEmpleado: null, fechaLimite: '', calificacionPonderada: null }
     ];
 
     // Obtener fase actual de la evaluación
@@ -140,6 +140,11 @@ export class EvaluacionComponent implements OnInit {
 
   // declara la propiedad global del componente
   nivelesCompetencias: NivelConCompetencia[] = [];
+
+  // En la clase del componente, agrega estas propiedades
+    fechaRegObj: string = '';
+    retroalimentacion: string = '';
+    planAccion: string = '';
   
 
   // Employee Information
@@ -187,7 +192,7 @@ timelineSteps = [
     pngIcon: 'assets/img/iconos/iconos mycollection/png/035-retroalimentacion-7.png',
     sectionId: 'Revision-Inicial',
     isActive: false,
-    phase: 1 
+    phase: 6 
   },
   { 
     number: 3, 
@@ -375,7 +380,7 @@ actualizarTimelinePorFase(fase: number): void {
     case 0:
       maxPaso = 1; // solo Captura de Resultados
       break;
-    case 1:
+    case 6:
       maxPaso = 2; // Captura + Revisión Inicial
       break;
     case 2:
@@ -430,8 +435,9 @@ obtenerFaseActual(): void {
           
           // Actualizar el timeline con la fase real
           this.actualizarTimelinePorFase(this.faseEvaluacion!);
+          // console.log('fase de evaluación: ', this.faseEvaluacion!);
         } else {
-          this.faseEvaluacion = 6;
+          this.faseEvaluacion = 7;
         }
       },
       error: (error) => {
@@ -440,6 +446,14 @@ obtenerFaseActual(): void {
       }
     });
 }
+
+  obtenerFechaActual(): string {
+    const hoy = new Date();
+    const year = hoy.getFullYear();
+    const month = String(hoy.getMonth() + 1).padStart(2, '0');
+    const day = String(hoy.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
 
 /*=======================================================================================
@@ -464,7 +478,19 @@ obtenerFaseActual(): void {
 
             if (evaluacionesData && evaluacionesData.length > 0) {
               const idEvaluacion = evaluacionesData[0].idEvaluacion;
+              const retro = evaluacionesData[0].retroalimentacion || null;
+              const plan = evaluacionesData[0].planAccion || null;
+              const fechaRegObjetivos = evaluacionesData[0].fechaRegObj || null;
 
+              
+              this.retroalimentacion = retro;
+              this.planAccion = plan;
+
+              if(this.faseEvaluacion! == 0){
+                this.fechaRegObj = this.obtenerFechaActual();
+              } else {
+                this.fechaRegObj = fechaRegObjetivos;
+              }
               // this.faseEvaluacion = evaluacionesData[0].fase;
               // console.log('fase que llega de la evaluacion', this.faseEvaluacion);
 
@@ -490,33 +516,20 @@ obtenerFaseActual(): void {
                     if (respAsigCompetencias && respAsigCompetencias.$values) {
                       asignacionesCompetenciasData = respAsigCompetencias.$values;
                       // console.log('✅ Usando $values');
-                    }
-                    
-                    // console.log('📊 Total asignaciones:', asignacionesCompetenciasData?.length);
-                    
-                    // if (asignacionesCompetenciasData && asignacionesCompetenciasData.length > 0) {
-                    //   console.log('📝 Primera competencia completa:', asignacionesCompetenciasData[0]);
-                    //   console.log('📅 fechaLimite de la primera:', asignacionesCompetenciasData[0].fechaLimite);
-                    // }         
+                    }                           
 
                     asignacionesCompetenciasData.forEach((competencia: any) => {
                       const idAsignacionCompetencia = competencia.idAsignacion;
                       const idNivelCompetencia = competencia.idNivelCompetencia;
                       
                       // ✅ Usar camelCase y manejar null
-                      const valoracionExistente = competencia.valoracionEmpleado || null;
+                      // const valoracionExistente = competencia.valoracionEmpleado || null;                      
+                      const valoracionJefe = competencia.valoracionJefe || null;
+                      const califEmpleado = competencia.calificacionEmpleado || null;
+                      const califFinal = competencia.calificacionFinal || null;
                       const fechaExistente = competencia.fechaLimite 
                         ? new Date(competencia.fechaLimite).toISOString().split('T')[0] 
                         : '';
-                      const valoracionJefe = competencia.valoracionJefe || null;
-
-                      // console.log('✅ Valores capturados:', {
-                      //   valoracion: valoracionExistente,
-                      //   fecha: fechaExistente,
-                      //   idAsignacion: idAsignacionCompetencia
-                      // });
-                      
-                      // console.log('✅ Valores capturados - Valoración:', valoracionExistente, 'Fecha:', fechaExistente);
 
                       // Buscamos los datos de esa competencia Asignada ya que solo sabemos el id 
                       this.gthCompetenciaService
@@ -548,11 +561,11 @@ obtenerFaseActual(): void {
                                         descripcion: nivel.descripcion,
                                         nombreCompetencia: competencia.nombreCompetencia,
                                         tipoCompetencia: competencia.tipoCompetencia,
-                                        ValoracionEmpleado: valoracionExistente,
+                                        // ValoracionEmpleado: valoracionExistente,
                                         FechaLimite: fechaExistente, // String en formato YYYY-MM-DD
                                         ValoracionJefe: valoracionJefe,
-                                        CalificacionEmpleado: competencia.calificacionEmpleado || null,
-                                        CalificacionFinal: competencia.calificacionFinal || null
+                                        CalificacionEmpleado: califEmpleado,
+                                        CalificacionFinal: califFinal                                        
                                       };
                                       
                                       this.nivelesCompetencias.push(combinado);
@@ -691,15 +704,46 @@ obtenerFaseActual(): void {
   ];
 
   guardarDatosEvaluacion(): void {
-    let fase = this.faseEvaluacion!; // Cambiar según la fase actual
+    let fase = this.faseEvaluacion!;
     console.log('fase de guardado', fase);
+
+    // CASO ESPECIAL: FASE 6 - Solo actualizar evaluación
+    if (fase === 6) {
+      console.log('⏭️ Fase 6 detectada - Solo actualizando evaluación a fase 2');
+      
+      const anio = 2025;
+      
+      this.gthEvaluacionServcie
+        .MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual!, anio)
+        .subscribe({
+          next: (response: any) => {
+            let evaluacionesData = response?.$values || response;
+            
+            if (evaluacionesData && evaluacionesData.length > 0) {
+              const idEvaluacion = evaluacionesData[0].idEvaluacion;
+              console.log('ID Evaluación:', idEvaluacion);
+              
+              // Ir directo a actualizar evaluación
+              this.actualizarEvaluacionFinal(fase, idEvaluacion, anio);
+            } else {
+              alerts.error('No se encontró la evaluación.');
+            }
+          },
+          error: (error) => {
+            console.error('❌ Error al obtener evaluación:', error);
+            alerts.error('Error al obtener la evaluación.');
+          }
+        });
+      
+      return; // Salir aquí, ya se actualizó la evaluación
+    }
 
     // VALIDACIÓN 1: Objetivos completos (según la fase)
     let objetivosVacios;
     
     if (fase === 0) {
       objetivosVacios = this.objetivosIndividuales.filter(obj => 
-        !obj.titulo?.trim() || obj.valoracionEmpleado == null || !obj.fechaLimite
+        !obj.titulo?.trim()
       );
     } else if (fase === 1) {
       objetivosVacios = this.objetivosIndividuales.filter(obj => 
@@ -724,11 +768,7 @@ obtenerFaseActual(): void {
     // VALIDACIÓN 2: Competencias completas (según la fase)
     let competenciasIncompletas;
     
-    if (fase === 0) {
-      competenciasIncompletas = this.nivelesCompetencias.filter(comp => 
-        comp.ValoracionEmpleado == null || !comp.FechaLimite
-      );
-    } else if (fase === 1) {
+    if (fase === 1) {
       competenciasIncompletas = this.nivelesCompetencias.filter(comp => 
         comp.ValoracionEmpleado == null || !comp.FechaLimite
       );
@@ -768,47 +808,33 @@ obtenerFaseActual(): void {
           const idEvaluacion = evaluacionesData[0].idEvaluacion;
           console.log('ID Evaluación:', idEvaluacion);
           
-          // PASO 1: Guardar objetivos
+          // ✅ SI ES FASE 6, SALTAR GUARDADO DE OBJETIVOS
+          if (fase === 6) {
+            console.log('⏭️ Fase 6 detectada - Saltando guardado de objetivos');
+            // Aquí puedes continuar con el guardado de la evaluación directamente
+            // O simplemente retornar si no hay nada más que hacer
+            return; // O continuar al siguiente paso
+          }
+          
+          // PASO 1: Guardar objetivos (solo si NO es fase 6)
           const promesasObjetivos = this.objetivosIndividuales.map((objetivo, index) => {
             const tipoOperacion = objetivo.idObjetivo ? 2 : 1;
             let objetivoData: IgthObjetivo | null = null;
             
-            switch (fase) {
-              case 0:
-                if (!objetivo.titulo?.trim() || objetivo.valoracionEmpleado == null) {
-                  console.warn('⚠️ Objetivo incompleto en fase 0:', objetivo);
-                  return null;
-                }
+            const tipoObjetivo = index === 0 ? 'AREA' : 'INDIVIDUAL';
+
+            switch (fase) {              
+              case 0:                    
                 objetivoData = {
                   tipo: tipoOperacion,
                   idObjetivo: objetivo.idObjetivo,
                   idEvaluacion: idEvaluacion,
-                  titulo: objetivo.titulo.trim(),
-                  descripcion: objetivo.descripcion?.trim() || objetivo.titulo.trim(),
-                  tipoObjetivo: 'INDIVIDUAL',
-                  estado: 'ACTIVO',
-                  valoracionEmpleado: objetivo.valoracionEmpleado,
-                  // valoracionJefe: null,
-                  // calificacionEmpleado: null,
-                  // calificacionFinal: null,
-                  fechaLimite: objetivo.fechaLimite || undefined
+                  titulo: objetivo.titulo!.trim(),
+                  tipoObjetivo: tipoObjetivo,
+                  estado: 'ACTIVO'
                 };
                 break;
               
-              case 1: // Valoración del jefe
-                if (!objetivo.idObjetivo || objetivo.valoracionJefe == null) {
-                  console.warn('⚠️ Objetivo sin ID o sin valoración del jefe:', objetivo);
-                  return null;
-                }
-                objetivoData = {
-                  tipo: 2, // Siempre actualización
-                  idObjetivo: objetivo.idObjetivo,
-                  valoracionEmpleado: objetivo.valoracionEmpleado,
-                  valoracionJefe: objetivo.valoracionJefe,
-                  fechaLimite: objetivo.fechaLimite || undefined
-                };
-                break;
-                
               case 2: // Calificación empleado
                 if (!objetivo.idObjetivo || objetivo.calificacionEmpleado == null) {
                   console.warn('⚠️ Objetivo sin ID o sin calificación empleado:', objetivo);
@@ -817,37 +843,28 @@ obtenerFaseActual(): void {
                 objetivoData = {
                   tipo: 2,
                   idObjetivo: objetivo.idObjetivo,
-                  calificacionEmpleado: objetivo.calificacionEmpleado
+                  calificacionEmpleado: objetivo.calificacionEmpleado,
+                  tipoObjetivo: tipoObjetivo,
+                  peso: index === 0 ? 22 : 12   
                 };
                 break;
-                
-              // case 4: // Calificación final (fase 4 según tu mapeo)
-              //   if (!objetivo.idObjetivo || objetivo.calificacionFinal == null) {
-              //     console.warn('⚠️ Objetivo sin ID o sin calificación final:', objetivo);
-              //     return null;
-              //   }
-              //   objetivoData = {
-              //     tipo: 2,
-              //     idObjetivo: objetivo.idObjetivo,
-              //     calificacionFinal: objetivo.calificacionFinal
-              //   };
-              //   break;
                 
               default:
                 console.error('❌ Fase no reconocida:', fase);
                 return null;
-              }
-              
-              if (!objetivoData) return null;
-              
-              console.log(`${tipoOperacion === 1 ? 'Creando' : 'Actualizando'} objetivo ${index + 1}:`, objetivoData);
-              return this.gthObjetivoService.gestionarObjetivo(objetivoData).toPromise();
-            }).filter(promesa => promesa !== null);
-            
-            if (promesasObjetivos.length === 0) {
-              alert('No hay objetivos válidos para guardar.');
-              return;
             }
+            
+            if (!objetivoData) return null;
+            
+            console.log(`${tipoOperacion === 1 ? 'Creando' : 'Actualizando'} objetivo ${index + 1}:`, objetivoData);
+            return this.gthObjetivoService.gestionarObjetivo(objetivoData).toPromise();
+          }).filter(promesa => promesa !== null);
+          
+          if (promesasObjetivos.length === 0) {
+            alert('No hay objetivos válidos para guardar.');
+            return;
+          }       
+        
           
           // EJECUTAR: Objetivos → Competencias → Evaluación
           Promise.all(promesasObjetivos)
@@ -861,12 +878,8 @@ obtenerFaseActual(): void {
               
               if (hayErroresObjetivos) {
                 alert('Error al guardar objetivos. Revise la consola.');
-                return;
-              }
+                return;              }
               
-              // PASO 2: Guardar competencias
-              // console.log('=== INICIANDO GUARDADO DE COMPETENCIAS ===');
-              // console.log('Competencias en memoria:', this.nivelesCompetencias);
 
               const promesasCompetencias = this.nivelesCompetencias.map((competencia, index) => {
                 console.log(`\n--- Procesando competencia ${index + 1} ---`);
@@ -875,45 +888,10 @@ obtenerFaseActual(): void {
                 let competenciaData: IGTHAsignacionCompetenciaViewModel | null = null;
                 
                 switch (fase) {
-                  case 0: // Captura inicial
-                    if (competencia.ValoracionEmpleado == null || !competencia.FechaLimite) {
-                      console.warn(`⚠️ Competencia ${index + 1} incompleta en fase 0:`, {
-                        ValoracionEmpleado: competencia.ValoracionEmpleado,
-                        fecha: competencia.FechaLimite
-                      });
-                      return null;
-                    }
-                    
-                    let fechaFormateada0: Date | undefined;
-                    if (competencia.FechaLimite) {
-                      fechaFormateada0 = new Date(competencia.FechaLimite);
-                    }
-                    
+                  case 0: // Captura inicial                    
                     competenciaData = {
                       Tipo: 2,
-                      IdAsignacion: competencia.idAsignacionCompetencia,
-                      ValoracionEmpleado: competencia.ValoracionEmpleado,
-                      FechaLimite: fechaFormateada0
-                    };
-                    break;
-                  
-                  case 1: // Valoración del jefe
-                    if (!competencia.idAsignacionCompetencia || competencia.ValoracionJefe == null) {
-                      console.warn('⚠️ Competencia sin ID o sin valoración del jefe:', competencia);
-                      return null;
-                    }
-                    
-                    let fechaFormateada1: Date | undefined;
-                    if (competencia.FechaLimite) {
-                      fechaFormateada1 = new Date(competencia.FechaLimite);
-                    }
-                    
-                    competenciaData = {
-                      Tipo: 2,
-                      IdAsignacion: competencia.idAsignacionCompetencia,
-                      ValoracionEmpleado: competencia.ValoracionEmpleado,
-                      ValoracionJefe: competencia.ValoracionJefe,
-                      FechaLimite: fechaFormateada1
+                      IdAsignacion: competencia.idAsignacionCompetencia                      
                     };
                     break;
                   
@@ -1023,16 +1001,28 @@ obtenerFaseActual(): void {
         idEvaluacion: idEvaluacion,
         anio: anio,
         estado: 'EN PROCESO',
-        fase: 1
+        fase: 1,
+        fechaRegObj: this.fechaRegObj, // ← Agregar la fecha actual
+        fechaInicio: this.fechaRegObj // ← Agregar la fecha actual
+      };
+    } else if (fase === 6) {
+      evaluacionActualizada = {
+        tipo: 2,
+        idEmpleado: this.idEmpleadoActual!,
+        idEvaluacion: idEvaluacion,
+        estado: 'EN PROCESO',
+        fase: 2
       };
     } else if (fase === 2) {
       evaluacionActualizada = {
         tipo: 2,
         idEmpleado: this.idEmpleadoActual!,
         idEvaluacion: idEvaluacion,
-        anio: anio,
-        fase: 3
+        estado: 'EN PROCESO',
+        fase: 3,
+        fechaAutoevaluacion: this.obtenerFechaActual()        
       };
+      console.log('❌ EffeeechAA:', this.obtenerFechaActual());
     }
     
     if (evaluacionActualizada) {
@@ -1051,6 +1041,20 @@ obtenerFaseActual(): void {
     }
   }
 
+  getNombreCalificacion(valor: number | null | undefined): string {
+    if (!valor) return 'Sin calificar';
+    
+    switch (valor) {
+      case 1: return '⭐';
+      case 2: return '⭐⭐';
+      case 3: return '⭐⭐⭐';
+      case 4: return '⭐⭐⭐⭐';
+      default: return 'N/A';
+    }
+  }
+
+
+
 /**
  * Carga objetivos existentes según la fase
  */
@@ -1062,19 +1066,17 @@ cargarObjetivosPorFase(fase: number, idEvaluacion: number): void {
     next: (objetivosResponse: any) => {
       const objetivosExistentes = objetivosResponse?.$values || objetivosResponse || [];
       
-      const objetivosIndividuales = Array.isArray(objetivosExistentes) 
-          ? objetivosExistentes.filter((obj: any) => 
-              (obj.tipoObjetivo || obj.tipo_objetivo) === 'INDIVIDUAL'
-            )
+      // QUITAR EL FILTRO - Traer todos los objetivos (AREA e INDIVIDUAL)
+      const todosLosObjetivos = Array.isArray(objetivosExistentes) 
+          ? objetivosExistentes 
           : [];
       
-      console.log('Objetivos INDIVIDUALES encontrados:', objetivosIndividuales);
+      console.log('Todos los objetivos encontrados:', todosLosObjetivos);
       
-      if (objetivosIndividuales.length > 0) {
-        this.mapearObjetivosSegunFase(objetivosIndividuales, fase);
+      if (todosLosObjetivos.length > 0) {
+        this.mapearObjetivosSegunFase(todosLosObjetivos, fase);
       } else {
         console.log('No hay objetivos existentes');
-        // Inicializar vacíos si no hay objetivos
         this.inicializarObjetivosVacios();
       }
     },
@@ -1083,7 +1085,6 @@ cargarObjetivosPorFase(fase: number, idEvaluacion: number): void {
       this.inicializarObjetivosVacios();
     }
   });
-  
 }
 
 /**
@@ -1091,10 +1092,36 @@ cargarObjetivosPorFase(fase: number, idEvaluacion: number): void {
  */
 mapearObjetivosSegunFase(objetivos: any[], fase: number): void {
   console.log('Mapeando objetivos para fase:', fase);
+  console.log('Objetivos recibidos de BD:', objetivos);
+  
+  // Separar objetivos por tipo
+  const objetivoArea = objetivos.find(obj => {
+    const tipo = (obj.tipoObjetivo || obj.tipo_objetivo || '').toUpperCase();
+    return tipo === 'AREA';
+  });
+  
+  const objetivosIndividuales = objetivos
+    .filter(obj => {
+      const tipo = (obj.tipoObjetivo || obj.tipo_objetivo || '').toUpperCase();
+      return tipo === 'INDIVIDUAL';
+    })
+    .sort((a, b) => {
+      // Ordenar por ID ascendente
+      const idA = a.idObjetivo || a.id_objetivo || 0;
+      const idB = b.idObjetivo || b.id_objetivo || 0;
+      return idA - idB;
+    });
+  
+  // Combinar: primero AREA, luego INDIVIDUAL
+  const objetivosOrdenados = objetivoArea 
+    ? [objetivoArea, ...objetivosIndividuales]
+    : objetivosIndividuales;
+  
+  console.log('Objetivos ORDENADOS:', objetivosOrdenados);
   
   for (let i = 0; i < 5; i++) {
-    if (i < objetivos.length) {
-      const obj = objetivos[i];
+    if (i < objetivosOrdenados.length) {
+      const obj = objetivosOrdenados[i];
       
       // Formatear fecha
       let fechaFormateada = '';
@@ -1103,23 +1130,26 @@ mapearObjetivosSegunFase(objetivos: any[], fase: number): void {
         fechaFormateada = fecha.toISOString().split('T')[0];
       }
       
+      // Obtener tipo
+      const tipoObjetivo = (obj.tipoObjetivo || obj.tipo_objetivo || 'INDIVIDUAL').toUpperCase();
+      
+      console.log(`Mapeando posición ${i}: ID=${obj.idObjetivo}, Tipo=${tipoObjetivo}, Título=${obj.titulo}`);
+      
       // Mapear según fase
       if (fase === 0) {
-        // Fase 0: titulo, valoracionEmpleado, fechaLimite
         this.objetivosIndividuales[i] = {
           idObjetivo: obj.idObjetivo || obj.id_objetivo,
           titulo: obj.titulo,
-          valoracionEmpleado: obj.valoracionEmpleado || obj.valoracion_empleado || null,
-          fechaLimite: fechaFormateada
+          tipoObjetivo: tipoObjetivo
         };
-      } else if (fase === 1) {
+      }    else if (fase === 6) {
         // Fase 1: titulo, valoracionEmpleado, valoracionJefe, fechaLimite
         this.objetivosIndividuales[i] = {
           idObjetivo: obj.idObjetivo || obj.id_objetivo,
           titulo: obj.titulo,
-          valoracionEmpleado: obj.valoracionEmpleado || obj.valoracion_empleado || null,
+          // valoracionEmpleado: obj.valoracionEmpleado || obj.valoracion_empleado || null,
           valoracionJefe: obj.valoracionJefe || obj.valoracion_jefe || null,
-          fechaLimite: fechaFormateada
+          // fechaLimite: fechaFormateada
         };
       } else if (fase === 2) {
         // Fase 2: titulo, fechaLimite (para luego agregar calificacionEmpleado)
@@ -1130,6 +1160,15 @@ mapearObjetivosSegunFase(objetivos: any[], fase: number): void {
           calificacionEmpleado: null
         };
       } else if (fase === 4) {
+        // Fase 3: titulo, fechaLimite, calificacionEmpleado, calificacionFinal
+        this.objetivosIndividuales[i] = {
+          idObjetivo: obj.idObjetivo || obj.id_objetivo,
+          titulo: obj.titulo,
+          fechaLimite: fechaFormateada,
+          calificacionEmpleado: obj.calificacionEmpleado || obj.calificacion_empleado || null,
+          calificacionFinal: obj.calificacionFinal || obj.calificacion_final || null
+        };
+      } else if (fase === 5) {
         // Fase 3: titulo, fechaLimite, calificacionEmpleado, calificacionFinal
         this.objetivosIndividuales[i] = {
           idObjetivo: obj.idObjetivo || obj.id_objetivo,
@@ -1161,7 +1200,12 @@ inicializarObjetivosVacios(): void {
   ];
 }
 
+  avanzarCierreEvaluacion(){
+    console.log('⚠️ FASE 4 EN PROCESO, SOLO LECTURA');
+  }
 
+
+  
   /**
    * Actualiza el texto de un objetivo específico
    * @param index - Índice del objetivo (0-4)
@@ -1351,7 +1395,7 @@ inicializarObjetivosVacios(): void {
   //       console.log(`🔄 Reconsiderar objetivo ${index + 1}:`, valor, this.objetivos[index]);
   //     }
   //   }
-  // }
+  // }   
 
 
   // showSection(targetId: string): void {

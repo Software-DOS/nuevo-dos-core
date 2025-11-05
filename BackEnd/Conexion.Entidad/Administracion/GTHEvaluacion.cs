@@ -21,6 +21,10 @@ namespace Conexion.Entidad.Administracion
         public decimal? CalificacionFinal { get; set; }
         public string Retroalimentacion { get; set; }
         public string PlanAccion { get; set; }
+        public DateTime? FechaRegObj { get; set; }
+        public DateTime? FechaRegJefe { get; set; }
+        public DateTime? FechaAutoevaluacion { get; set; }
+        public DateTime? FechaEvaluacionJefe { get; set; }
         public string Observaciones { get; set; }
         public string UsuarioCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }

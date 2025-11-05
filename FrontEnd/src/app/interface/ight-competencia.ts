@@ -42,9 +42,11 @@ export interface IGTHAsignacionCompetenciaViewModel{
   FechaLimite?: Date;
   ComentariosEmpleado?: string;
   ComentariosJefe?: string;
-  FechaAutoevaluacion?: Date;
-  FechaEvaluacionJefe?: Date;
   Estado?: string;
   FechaCreacion?: Date;
+  fechaRegObj?: string;
+  fechaRegJefe?: string;
+  fechaAutoevaluacion?: string;
+  fechaEvaluacionJefe?: string;  
 }
 

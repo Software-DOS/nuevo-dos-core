@@ -9,7 +9,7 @@
           Ingresar
         </h4>
 
-        <form autocomplete="off" [formGroup]="f" (ngSubmit)="login()">
+        <form autocomplete="off" [formGroup]="f" (ngSubmit)="loginAD()">
           <section class="content" [hidden]="!verLogin">
             <h3>
               <div
@@ -22,11 +22,10 @@
             </h3>
             <div class="input-group mb-3">
               <input
-                type="email"
+                type="text"
                 class="form-control"
-                placeholder="Email"
-                formControlName="email"
-                [ngClass]="{ 'is-invalid': invalidField('email') }"
+                placeholder="Usuario"
+                formControlName="user"
               />
               <div class="input-group-append">
                 <div class="input-group-text">
@@ -43,7 +42,6 @@
                 class="form-control"
                 placeholder="Password"
                 formControlName="password"
-                [ngClass]="{ 'is-invalid': invalidField('password') }"
               />
               <div class="input-group-append">
                 <div class="input-group-text">

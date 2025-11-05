@@ -371,8 +371,6 @@ export class EmpleadoCvComponent implements OnInit {
     });
   }
 
-
-
   /**
    * Mapea los datos del empleado a las variables de visualización
    */

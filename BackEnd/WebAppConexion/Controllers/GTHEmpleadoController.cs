@@ -103,7 +103,6 @@ namespace WebAppConexion.Controllers
         [HttpPost("[action]")]
         public async Task<IEnumerable<Generica>> Gestionar([FromBody] GTHEmpleadoViewModel model)
         {
-            // Mapear ViewModel a la entidad GTHEmpleado
             var db = new GTHEmpleado
             {
                 Tipo = model.Tipo,
@@ -116,8 +115,8 @@ namespace WebAppConexion.Controllers
                 FechaNacimiento = model.FechaNacimiento,
                 Direccion = model.Direccion,
                 Telefono = model.Telefono,
-                Correo = model.Correo.ToLower(),
-                CorreoCorporativo = model.CorreoCorporativo?.ToLower(),
+                Correo = model.Correo?.ToLower(),                    // ✅ Agregar ?
+                CorreoCorporativo = model.CorreoCorporativo?.ToLower(), // ✅ Ya lo tenías
                 FechaContratacion = model.FechaContratacion,
                 EstadoCivil = model.EstadoCivil,
                 Sexo = model.Sexo,
@@ -125,7 +124,6 @@ namespace WebAppConexion.Controllers
                 EstadoEmpleado = model.EstadoEmpleado,
                 EmpTipo = model.EmpTipo,
                 Sueldo = model.Sueldo,
-
                 TipoSangre = model.TipoSangre,
                 Etnia = model.Etnia,
                 PaisNacimiento = model.PaisNacimiento,
@@ -152,7 +150,6 @@ namespace WebAppConexion.Controllers
 
             var responseResul = await _repository.Gestionar(db.Tipo, db);
 
-            // Devolver la respuesta mapeada a Generica
             return responseResul.Select(s => new Generica
             {
                 valor1 = s.valor1,
@@ -394,36 +391,37 @@ namespace WebAppConexion.Controllers
         /// </summary>
         /// <param name="idEmpleado">ID del empleado</param>
         /// <returns>URL de la foto de perfil o imagen por defecto</returns>
-        [HttpGet("obtener-foto-perfil/{idEmpleado}")]
+        [HttpGet("foto-perfil/{idEmpleado}")]
         public async Task<IActionResult> ObtenerFotoPerfil(long idEmpleado)
         {
             try
             {
-                // Buscar el empleado
                 var empleados = await _repository.Mostrar(1, (int)idEmpleado, null, null, null);
                 var empleado = empleados.FirstOrDefault();
 
                 if (empleado == null)
-                {
                     return NotFound(new { mensaje = "No se encontró el empleado especificado" });
-                }
 
-                // Verificar si tiene foto de perfil
-                var fotoUrl = !string.IsNullOrEmpty(empleado.FotoPerfilUrl) 
-                    ? empleado.FotoPerfilUrl 
-                    : "/img/usuarios/default-avatar.png";
+                // Ruta relativa o default
+                var fotoUrlRelativa = !string.IsNullOrEmpty(empleado.FotoPerfilUrl)
+                    ? empleado.FotoPerfilUrl
+                    : "img/usuarios/default-avatar.png";
 
-                // Verificar si el archivo existe físicamente
-                var nombreArchivo = fotoUrl.Replace("/img/usuarios/", "");
-                var rutaCompleta = Path.Combine(_webHostEnvironment.WebRootPath, "img", "usuarios", nombreArchivo);
-                
+                // Ruta física en el servidor
+                var rutaCompleta = Path.Combine(_webHostEnvironment.WebRootPath, fotoUrlRelativa.Replace("/", Path.DirectorySeparatorChar.ToString()));
                 if (!System.IO.File.Exists(rutaCompleta))
                 {
-                    fotoUrl = "/img/usuarios/default-avatar.png";
+                    fotoUrlRelativa = "img/usuarios/default-avatar.png";
                 }
 
-                return Ok(new { 
-                    fotoPerfilUrl = fotoUrl,
+                // Construir URL pública (baseUrl + ruta relativa)
+                var request = HttpContext.Request;
+                var baseUrl = $"{request.Scheme}://{request.Host}";
+                var fotoUrlPublica = $"{baseUrl}/{fotoUrlRelativa.Replace("\\", "/")}";
+
+                return Ok(new
+                {
+                    fotoPerfilUrl = fotoUrlPublica,
                     idEmpleado = empleado.IdEmpleado,
                     nombre = empleado.Nombre,
                     apellido = empleado.Apellido
@@ -434,6 +432,7 @@ namespace WebAppConexion.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
             }
         }
+
 
         /// <summary>
         /// Elimina la foto de perfil de un empleado y restaura la imagen por defecto

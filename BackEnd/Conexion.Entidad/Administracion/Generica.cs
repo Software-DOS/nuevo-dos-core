@@ -10,5 +10,6 @@ namespace Conexion.Entidad.Administracion
     {
         public int valor1 { get; set; }
         public string valor2 { get; set; }
+        public int valor3 { get; set; } = 0; 
     }
 }

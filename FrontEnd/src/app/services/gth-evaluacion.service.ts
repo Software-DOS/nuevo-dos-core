@@ -119,9 +119,13 @@ export class GthEvaluacionService {
       calificacionFinal: evaluacion.calificacionFinal || null,
       observaciones: evaluacion.observaciones || null,
       usuarioCreacion: evaluacion.usuarioCreacion || 'SISTEMA',
-      fase: evaluacion.fase !== undefined ? evaluacion.fase : 0,
+      fase: evaluacion.fase ?? null,
       retroalimentacion: evaluacion.retroalimentacion || null,
-      planAccion: evaluacion.planAccion || null
+      planAccion: evaluacion.planAccion || null,
+      fechaRegObj: evaluacion.fechaRegObj || null,
+      fechaRegJefe: evaluacion.fechaRegJefe || null,
+      fechaAutoevaluacion: evaluacion.fechaAutoevaluacion,
+      fechaEvaluacionJefe: evaluacion.fechaEvaluacionJefe
     };
 
     console.log('Datos enviados para gestionar evaluación:', requestData);

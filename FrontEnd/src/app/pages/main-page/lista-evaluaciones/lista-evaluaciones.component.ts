@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
 import { GthEvaluacionService } from '../../../services/gth-evaluacion.service';
 import { GthCompetenciaService } from 'src/app/services/gth-competencia.service';
+import { GthAreaService } from 'src/app/services/gth-area.service';
 
 import { iGTHEmpleado } from '../../../interface/igth-empleado';
 import { IgthObjetivo } from '../../../interface/igth-objetivo';
@@ -12,6 +15,7 @@ import { Ievaluacion } from '../../../interface/ievaluacion';
 import { IGTHNivelCompetenciaViewModel, 
   IGTHAsignacionCompetenciaViewModel } 
   from '../../../interface/ight-competencia';
+import { IgthArea, } from '../../../interface/igth-area';
 
 import { alerts } from '../../../helpers/alerts';
 
@@ -36,7 +40,7 @@ interface Filtros {
 
 // Interface utilizada para almacenar todos los datos necesarios
 interface NivelConCompetencia {
-  idAsignacionCompetencia: number; // ✅ AGREGAR ESTO
+  idAsignacionCompetencia: number; 
   idCompetencia: number;
   nivel: number;
   descripcion: string;
@@ -171,7 +175,8 @@ export class ListaEvaluacionesComponent implements OnInit {
     private router: Router, 
     private gthEmpleadoService: GthEmpleadoService, 
     private gthCompetenciaService: GthCompetenciaService, 
-    private gthEvaluacionServcie: GthEvaluacionService) {      
+    private gthEvaluacionServcie: GthEvaluacionService,
+    private gthAreaService: GthAreaService) {      
   }
     
   
@@ -180,6 +185,11 @@ export class ListaEvaluacionesComponent implements OnInit {
     this.cargarEvaluaciones(); //Cargar empleados con evaluaciones
     this.cargarEmpleadosParaEvaluacion(); // Carga todos los empleados
     this.cargarCompetencias();
+
+    this.obtenerCelulas(); // Carga todas las celulas para seleccionar AREA-cambiar
+  
+    // Cargar todos los empleados al iniciar
+    this.cargarEmpleadosParaJefeEvaluador();
   }
 
 
@@ -409,27 +419,27 @@ buscarEvaluacionesPorEmpleado(idEmpleado: number, anio?: number): void {
 /**
  * Obtener resumen de evaluaciones por estado
  */
-obtenerResumenEvaluaciones(): void {
-  this.gthEvaluacionServcie.MostrarEvaluaciones().subscribe({
-    next: (response: any) => {
-      let evaluaciones = response;
-      if (response && response.$values) {
-        evaluaciones = response.$values;
-      }
+// obtenerResumenEvaluaciones(): void {
+//   this.gthEvaluacionServcie.MostrarEvaluaciones().subscribe({
+//     next: (response: any) => {
+//       let evaluaciones = response;
+//       if (response && response.$values) {
+//         evaluaciones = response.$values;
+//       }
       
-      // Agrupar por estado
-      const resumen = evaluaciones.reduce((acc: any, evaluacion: Ievaluacion) => {
-        acc[evaluacion.estado || ''] = (acc[evaluacion.estado || ''] || 0) + 1;
-        return acc;
-      }, {});
+//       // Agrupar por estado
+//       const resumen = evaluaciones.reduce((acc: any, evaluacion: Ievaluacion) => {
+//         acc[evaluacion.estado || ''] = (acc[evaluacion.estado || ''] || 0) + 1;
+//         return acc;
+//       }, {});
       
-      console.log("📊 Resumen de evaluaciones por estado:", resumen);
-    },
-    error: (error) => {
-      console.error("❌ Error al obtener resumen:", error);
-    }
-  });
-}
+//       console.log("📊 Resumen de evaluaciones por estado:", resumen);
+//     },
+//     error: (error) => {
+//       console.error("❌ Error al obtener resumen:", error);
+//     }
+//   });
+// }
 
 
 /**
@@ -453,46 +463,6 @@ private formatearFecha(fechaISO: string): string {
     return 'N/A';
   }
 }
-
-
-
-// /**
-//  * Construir la URL completa de la foto de perfil
-//  */
-//   private construirUrlFoto(fotoPerfilUrl: string, sexo: string): string {
-//     // Normalizar sexo (maneja nulos, undefined y mayúsculas)
-//     const sexoNormalizado = (sexo || '').toString().trim().toLowerCase();
-
-//     // Si no hay URL de foto, usar imagen por defecto según sexo
-//     if (!fotoPerfilUrl) {
-//       if (sexoNormalizado === 'femenino' || sexoNormalizado === 'f') {
-//         // return 'https://cdn-icons-png.flaticon.com/512/2922/2922561.png'; // niña
-//         return 'assets/img/iconos/iconos mycollection/png/001-buena-retroalimentacion.png'; // niña 
-//       } else if (sexoNormalizado === 'masculino' || sexoNormalizado === 'm') {
-//         // return 'https://cdn-icons-png.flaticon.com/512/2922/2922510.png'; // niño 
-//         return 'assets/img/iconos/iconos mycollection/png/008-subiendo-escaleras.png'; // niño
-//       } else {
-//         // Imagen genérica si no se reconoce el valor
-//         return 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-//       }
-//     }
-
-//     // Si ya es una URL completa (http/https), devolverla tal como está
-//     if (fotoPerfilUrl.startsWith('http://') || fotoPerfilUrl.startsWith('https://')) {
-//       return fotoPerfilUrl;
-//     }
-
-//     // Si es una ruta relativa, construir URL completa con el backend
-//     const baseUrl = environment.urlbackend.endsWith('/') 
-//       ? environment.urlbackend.slice(0, -1) 
-//       : environment.urlbackend;
-
-//     if (fotoPerfilUrl.startsWith('/')) {
-//       return `${baseUrl}${fotoPerfilUrl}`;
-//     }
-
-//     return `${baseUrl}/${fotoPerfilUrl}`;
-//   }
 
 construirUrlFoto(fotoPerfilUrl: string, sexo: string): string {
   // Normalizar sexo
@@ -567,11 +537,6 @@ onImageError(event: Event, sexo: string) {
     });
   }
 
-  // navigateToEvaluacion(empleadoId: number): void {
-  //   // Navigate to evaluation page
-  //   // Adjust the route path according to your routing configuration
-  //   this.router.navigate(['/evaluacion', empleadoId]);
-  // }
   navigateToEvaluacion(empleadoId: number): void {
     console.log('➡️ Entró en navigateToEvaluacion con empleadoId:', empleadoId);
     this.selectedEmpleadoId = empleadoId;
@@ -582,7 +547,6 @@ onImageError(event: Event, sexo: string) {
   cerrarModal(): void {
     this.showModal = false;
   }
-
 
 
   //Mostrar el contenido de las pestañas
@@ -613,12 +577,357 @@ onImageError(event: Event, sexo: string) {
   }
 
 
+//--------------------      ---------------------------------       ------------------------
+
+
+/*===================================================================
+            FUNCIONES PARA LA SECCION DE GESTION DE AREA
+ ====================================================================*/
+
+ // Variables del Paso 1
+  nombreArea: string = '';
+  nombreCelula: string = '';
+  jefeSeleccionado: any = null; // Cambiar a null
+
+  // Control del Paso 2
+  paso2Habilitado: boolean = false;
+
+  // Validar Paso 1
+  validarPaso1(): void {
+    this.paso2Habilitado = 
+      // this.nombreArea?.trim().length > 0 && 
+      this.nombreCelula?.trim().length > 0 && 
+      this.jefeSeleccionado != null; // Usa != para capturar null y undefined
+      
+    console.log('Validación Paso 1:', {
+      // nombreArea: this.nombreArea,
+      nombreCelula: this.nombreCelula,
+      jefeSeleccionado: this.jefeSeleccionado,
+      paso2Habilitado: this.paso2Habilitado
+    });
+  }
+
+  // Llamar en cada cambio
+  onInputChange(): void {
+    this.validarPaso1();
+  }
+
+  // Lista de empleados asignados
+  empleadosAsignados: any[] = [];
+  empleadoSeleccionado: any = null;
+  mensajeEmpleado: string = '';
+  tipoMensaje: 'error' | 'success' | '' = '';
+
+
+  // Variables para células AREA-cambiar
+  celulas: IgthArea[] = [];
+  celulasFiltradas: IgthArea[] = [];
+  mostrarSugerencias: boolean = false;
+
+
+  // Validar formulario completo
+formularioValido(): boolean {
+  return this.nombreCelula.trim() !== '' && 
+         this.jefeSeleccionado !== null &&
+         this.empleadosAsignados.length > 0;
+}
+
+  /**
+   * Obtener todas las células existentes
+   */
+  obtenerCelulas(): void {
+  this.gthAreaService.MostrarCelulas().subscribe({
+    next: (response: any) => {
+      console.log('✅ Respuesta completa del backend ->', response);
+      
+      if (response?.$values) {
+        this.celulas = response.$values;
+      } else if (Array.isArray(response)) {
+        this.celulas = response;
+      }
+      
+      console.log('✅ Total células:', this.celulas.length);
+      
+      // 👇 VER ESTRUCTURA COMPLETA DE LA PRIMERA CÉLULA
+      if (this.celulas.length > 0) {
+        console.log('📋 Primera célula completa:', this.celulas[0]);
+        console.log('📋 Propiedades:', Object.keys(this.celulas[0]));
+      }
+    },
+    error: (error) => {
+      console.error('❌ Error:', error);
+    }
+  });
+}
+
+  /**
+   * Filtrar células mientras se escribe
+   */
+  // Variable para saber si es célula nueva
+esCelulaNueva: boolean = false;
+
+onCelulaInput(): void {
+  this.onInputChange(); // Validar paso 1
+  
+  const busqueda = this.nombreCelula?.trim().toLowerCase() || '';
+  
+  if (busqueda.length >= 3) {
+    this.celulasFiltradas = this.celulas.filter(celula => {
+      const nombre = celula.nombre?.toLowerCase() || '';
+      return nombre.includes(busqueda);
+    });
+    
+    this.mostrarSugerencias = this.celulasFiltradas.length > 0;
+    
+    // 👇 VERIFICAR SI ES NUEVA
+    const coincideExacta = this.celulas.some(celula => 
+      celula.nombre?.toLowerCase() === busqueda
+    );
+    this.esCelulaNueva = !coincideExacta;
+  } else {
+    this.celulasFiltradas = [];
+    this.mostrarSugerencias = false;
+    this.esCelulaNueva = false;
+  }
+}
+
+seleccionarCelula(celula: IgthArea): void {
+  this.nombreCelula = celula.nombre;
+  this.mostrarSugerencias = false;
+  this.celulasFiltradas = [];
+  this.esCelulaNueva = false; // 👈 No es nueva si la seleccionó
+  this.onInputChange();
+}
+
+  /**
+   * Cerrar sugerencias al hacer click fuera
+   */
+  cerrarSugerencias(): void {
+    setTimeout(() => {
+      this.mostrarSugerencias = false;
+    }, 200);
+  }
+
+
+  // Guardar área completa
+guardarArea(): void {
+  if (!this.formularioValido()) {
+    alert('Por favor complete todos los campos y asigne al menos un empleado');
+    return;
+  }
+
+  // Paso 1: Crear o buscar célula
+  this.crearOBuscarCelula().subscribe({
+    next: (idCelula: number) => {
+      console.log('✅ ID Célula obtenida:', idCelula);
+      
+      // Paso 2: Actualizar empleados con el idCelula
+      this.actualizarEmpleadosConCelula(idCelula);
+    },
+    error: (error) => {
+      console.error('❌ Error al crear/buscar célula:', error);
+      alert('Error al guardar el área');
+    }
+  });
+}
+
+// Crear o buscar célula existente
+crearOBuscarCelula(): Observable<number> {
+  return new Observable<number>(observer => {
+    // Si es célula existente
+    if (!this.esCelulaNueva) {
+      const celulaExistente = this.celulas.find(c => 
+        c.nombre?.toLowerCase() === this.nombreCelula.toLowerCase()
+      );
+      
+      if (celulaExistente?.idCelula) {
+        // ✅ ACTUALIZAR el encargado de la célula existente
+        const celulaActualizada: IgthArea = {
+          tipo: 1, // 1 = Actualizar
+          idCelula: celulaExistente.idCelula,
+          nombre: celulaExistente.nombre,
+          encargado: this.jefeSeleccionado?.nombre || '',
+          descripcion: celulaExistente.descripcion,
+          objetivo: celulaExistente.objetivo
+        };
+        
+        this.gthAreaService.gestionarCelula(1, celulaActualizada).subscribe({
+          next: (response: any) => {
+            console.log('✅ Célula actualizada con nuevo encargado:', response);
+            observer.next(celulaExistente.idCelula!);
+            observer.complete();
+          },
+          error: (err: any) => {
+            observer.error(err);
+          }
+        });
+        return;
+      }
+    }
+    
+    // Si es nueva, crearla
+    const nuevaCelula: IgthArea = {
+      tipo: 0,
+      nombre: this.nombreCelula,
+      descripcion: `Célula ${this.nombreCelula}`,
+      encargado: this.jefeSeleccionado?.nombre || '',
+      objetivo: ''
+    };
+    
+    this.gthAreaService.gestionarCelula(0, nuevaCelula).subscribe({
+      next: (response: any) => {
+        console.log('✅ Célula creada:', response);
+        
+        // Buscar el ID recién creado
+        this.gthAreaService.MostrarCelulas().subscribe({
+          next: (celulasResponse: any) => {
+            const celulas = celulasResponse?.$values || celulasResponse || [];
+            
+            const celulaCreada = celulas.find((c: any) => 
+              c.nombre?.toLowerCase() === this.nombreCelula.toLowerCase()
+            );
+            
+            if (celulaCreada?.idCelula) {
+              console.log('🆔 ID encontrado:', celulaCreada.idCelula);
+              observer.next(celulaCreada.idCelula);
+              observer.complete();
+            } else {
+              observer.error('No se pudo encontrar la célula creada');
+            }
+          },
+          error: (err: any) => {
+            observer.error(err);
+          }
+        });
+      },
+      error: (err: any) => {
+        observer.error(err);
+      }
+    });
+  });
+}
+
+// Actualizar empleados con el idCelula
+actualizarEmpleadosConCelula(idCelula: number): void {
+  const empleadosTotal = [...this.empleadosAsignados];
+  
+  const jefeYaIncluido = empleadosTotal.some(e => e.id === this.jefeSeleccionado.id);
+  if (!jefeYaIncluido) {
+    empleadosTotal.push(this.jefeSeleccionado);
+  }
+  
+  console.log(`📝 Actualizando ${empleadosTotal.length} empleados con idCelula: ${idCelula}`);
+  
+  let completados = 0;
+  let errores = 0;
+  
+  empleadosTotal.forEach((empleado) => {
+    // ✅ SOLO ENVIAR LOS CAMPOS NECESARIOS
+    const data = {
+      tipo: 1,
+      idEmpleado: empleado.id,
+      idCelula: idCelula
+    };
+    
+    console.log('📤 Payload simplificado:', data);
+    
+    this.gthEmpleadoService.gestionarEmpleado(data as any).subscribe({
+      next: (response: any) => {
+        completados++;
+        console.log(`✅ ${empleado.nombre} actualizado`);
+        
+        if (completados + errores === empleadosTotal.length) {
+          this.finalizarGuardado(completados, errores);
+        }
+      },
+      error: (err: any) => {
+        errores++;
+        console.error(`❌ Error al actualizar ${empleado.nombre}:`, err);
+        
+        if (completados + errores === empleadosTotal.length) {
+          this.finalizarGuardado(completados, errores);
+        }
+      }
+    });
+  });
+}
+
+// Finalizar guardado
+finalizarGuardado(completados: number, errores: number): void {
+  if (errores === 0) {
+    alert(`✅ Área creada exitosamente!\n${completados} empleados asignados.`);
+    this.limpiarFormulario();
+  } else {
+    alert(`⚠️ Área creada con advertencias:\n✅ ${completados} empleados asignados\n❌ ${errores} empleados con errores`);
+  }
+}
+
+// Limpiar formulario
+limpiarFormulario(): void {
+  this.nombreCelula = '';
+  this.jefeSeleccionado = null;
+  this.empleadoSeleccionado = null;
+  this.empleadosAsignados = [];
+  this.paso2Habilitado = false;
+  this.esCelulaNueva = false;
+}
+
+
+
+// Agregar empleado a la lista
+agregarEmpleado(): void {
+  if (this.empleadoSeleccionado) {
+    // Validar si es el jefe
+    if (this.jefeSeleccionado && this.empleadoSeleccionado.id === this.jefeSeleccionado.id) {
+      this.mensajeEmpleado = 'El jefe del área ya está asignado automáticamente';
+      this.tipoMensaje = 'error';
+      this.ocultarMensaje();
+      return;
+    }
+    
+    // Validar si ya está agregado
+    const yaExiste = this.empleadosAsignados.some(e => e.id === this.empleadoSeleccionado.id);
+    
+    if (yaExiste) {
+      this.mensajeEmpleado = 'Este empleado ya está en la lista';
+      this.tipoMensaje = 'error';
+      this.ocultarMensaje();
+      return;
+    }
+    
+    // Agregar empleado
+    this.empleadosAsignados.push(this.empleadoSeleccionado);
+    this.mensajeEmpleado = `${this.empleadoSeleccionado.nombre} agregado correctamente`;
+    this.tipoMensaje = 'success';
+    this.empleadoSeleccionado = null;
+    this.ocultarMensaje();
+  }
+}
+
+// Remover empleado de la lista
+removerEmpleado(empleado: any): void {
+  this.empleadosAsignados = this.empleadosAsignados.filter(e => e.id !== empleado.id);
+  this.mensajeEmpleado = `${empleado.nombre} removido de la lista`;
+  this.tipoMensaje = 'success';
+  this.ocultarMensaje();
+}
+
+// Ocultar mensaje después de 3 segundos
+ocultarMensaje(): void {
+  setTimeout(() => {
+    this.mensajeEmpleado = '';
+    this.tipoMensaje = '';
+  }, 3500);
+}
+
+
+
 
   //--------------------      ---------------------------------       ------------------------
   
-  // ===============================
-  // 📌 FUNCION PARA CREAR UNA NUEVA EVALUACION
-  // ===============================
+  // ===============================================
+  //     FUNCION PARA CREAR UNA NUEVA EVALUACION
+  // ===============================================
 
   empleadosTodos: any[] = [];
   empleadosFiltrados2: any[] = []; //filtro para buscar empleado por area y crear evaluacion
@@ -627,15 +936,15 @@ onImageError(event: Event, sexo: string) {
   // Filtros para buscar empleado y Crear evaluacion
   filtroAreaBuscarEmp: string = '';
 
-  // empleadoSeleccionado: any = null;
-
-  
+  // NUEVAS variables exclusivas para jefe evaluador
+  jefeSeleccionadoEvaluacion: any = null;
+  filtroJefeEvaluacion: string = '';
+  jefesFiltradosEvaluacion: any[] = [];
+  todosLosEmpleadosParaJefe: any[] = []; 
 
   evaluacionCreada: any = null; // Para almacenar la evaluación creada
   cargandoEvaluacion: boolean = false;
   cargandoEmpleados: boolean = false;
-
-
 
 
   // Control de visibilidad
@@ -645,7 +954,9 @@ onImageError(event: Event, sexo: string) {
   competenciasAgregadas: any[] = [];
 
   
-  /*=====================   Buscar empleado para crear su esapcio de competencias ======================*/
+
+
+  /*=====================   Buscar empleado para crear su espacio de competencias ======================*/
 
   /**
    * Cargar todos los empleados disponibles (sin evaluación)
@@ -710,17 +1021,117 @@ onImageError(event: Event, sexo: string) {
       }
     }
   }
+  
+  /**
+   * Cargar todos los empleados para selector de jefe evaluador
+   * (Usando la misma lógica que cargarEmpleadosParaEvaluacion que ya funciona)
+   */
+  cargarEmpleadosParaJefeEvaluador(): void {
+    console.log('🔵 Cargando empleados para jefe evaluador...');
+    
+    this.gthEmpleadoService.Mostrar().subscribe({
+      next: (response: any) => {
+        console.log('✅ Respuesta recibida:', response);
+        
+        let empleadosBD = response;
+        if (response && response.$values) {
+          empleadosBD = response.$values;
+        }
+
+        if (empleadosBD && Array.isArray(empleadosBD)) {
+          // Mapear igual que en cargarEmpleadosParaEvaluacion
+          this.todosLosEmpleadosParaJefe = empleadosBD.map((emp: iGTHEmpleado) => ({
+            id: emp.idEmpleado,
+            nombre: `${emp.nombre || ''} ${emp.apellido || ''}`.trim() || `Empleado ${emp.idEmpleado}`,
+            area: emp.area || 'Sin área',
+            // estado: emp.estado || 'A' // Agregar estado si lo necesitas
+          }));
+
+          console.log('✅ Total empleados para jefe cargados:', this.todosLosEmpleadosParaJefe.length);
+          
+          if (this.todosLosEmpleadosParaJefe.length > 0) {
+            console.log('📋 Primeros 3 empleados:', this.todosLosEmpleadosParaJefe.slice(0, 3));
+          }
+        } else {
+          console.warn('⚠️ No se recibieron empleados');
+          this.todosLosEmpleadosParaJefe = [];
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar empleados para jefe:', error);
+        this.todosLosEmpleadosParaJefe = [];
+      }
+    });
+  }
+
+  /**
+   * Filtrar jefes evaluadores según el texto ingresado (mínimo 3 letras)
+   */
+  filtrarJefesEvaluacion(): void {
+    console.log('🔍 Filtrando jefes. Texto:', this.filtroJefeEvaluacion);
+    console.log('📦 Total empleados disponibles:', this.todosLosEmpleadosParaJefe.length);
+    
+    if (!this.filtroJefeEvaluacion || this.filtroJefeEvaluacion.trim().length < 3) {
+      console.log('⚠️ Filtro muy corto (menos de 3 letras)');
+      this.jefesFiltradosEvaluacion = [];
+      return;
+    }
+
+    const filtro = this.filtroJefeEvaluacion.toLowerCase().trim();
+    console.log('🔍 Buscando con filtro:', filtro);
+    
+    this.jefesFiltradosEvaluacion = this.todosLosEmpleadosParaJefe.filter(emp => {
+      // Usar 'nombre' y 'area' que son los campos mapeados
+      const nombre = (emp.nombre || '').toLowerCase();
+      const area = (emp.area || '').toLowerCase();
+      
+      const coincide = nombre.includes(filtro) || area.includes(filtro);
+      
+      if (coincide) {
+        console.log('✅ Coincidencia:', emp.nombre, '-', emp.area);
+      }
+      
+      return coincide;
+    });
+
+    console.log('✅ Total jefes filtrados:', this.jefesFiltradosEvaluacion.length);
+    console.log('📋 Jefes encontrados:', this.jefesFiltradosEvaluacion);
+  }
 
   // Método que se ejecuta cuando se selecciona un empleado
   onEmpleadoBuscadoSeleccionado(): void {
+    console.log('════════════════════════════════════════');
+    console.log('👤 EMPLEADO SELECCIONADO');
+    console.log('════════════════════════════════════════');
+    
+    // Limpiar selección de jefe evaluador
+    this.jefeSeleccionadoEvaluacion = null;
+    this.filtroJefeEvaluacion = '';
+    this.jefesFiltradosEvaluacion = [];
+
     if (this.empleadoBuscado?.id) {
-      console.log('Empleado buscado seleccionado:', this.empleadoBuscado);
-      this.evaluacionCreada = null; // Limpiar evaluación previa
+      console.log('✅ Empleado válido:', this.empleadoBuscado);
+      console.log('📋 ID Empleado:', this.empleadoBuscado.id);
+      console.log('📋 Nombre:', this.empleadoBuscado.nombre);
+      this.evaluacionCreada = null;
+      
+      console.log('🔍 Verificando empleados para jefe...');
+      console.log('📦 Empleados actuales en memoria:', this.todosLosEmpleadosParaJefe.length);
+      
+      // Cargar empleados si no están cargados
+      if (this.todosLosEmpleadosParaJefe.length === 0) {
+        console.log('🔵 NO HAY EMPLEADOS - Iniciando carga...');
+        this.cargarEmpleadosParaJefeEvaluador();
+      } else {
+        console.log('✅ Empleados ya cargados:', this.todosLosEmpleadosParaJefe.length);
+      }
     } else {
+      console.warn('⚠️ Empleado no válido o deseleccionado');
       this.empleadoBuscado = null;
       this.evaluacionCreada = null;
     }
   }
+
   // Método auxiliar para el trackBy (mejora el rendimiento)
   trackByEmpleadoId(index: number, empleado: any): any {
     return empleado.id;
@@ -831,7 +1242,6 @@ onImageError(event: Event, sexo: string) {
     this.nivelSeleccionado = null;
     console.log('Niveles limpiados por cambio de tipo');
   }
-
   
   // Método para mostrar la sección de competencias  
   async mostrarSeccionCompetencias(): Promise<void> {
@@ -840,68 +1250,71 @@ onImageError(event: Event, sexo: string) {
       return;
     }
 
+    // Validar que se haya seleccionado un jefe evaluador
+    if (!this.jefeSeleccionadoEvaluacion?.id) {
+      alert('Debe seleccionar un jefe evaluador');
+      return;
+    }
+
     this.cargandoEvaluacion = true;
 
     try {
-      // Crear evaluación primero
+      // Crear evaluación con el ID del jefe evaluador seleccionado
       const nuevaEvaluacion: Ievaluacion = {
         idEmpleado: this.empleadoBuscado.id,
-        idJefe: this.empleadoBuscado.idJefe || null,
+        idJefe: this.jefeSeleccionadoEvaluacion.id, // ← ID del jefe evaluador
         anio: new Date().getFullYear(),
         estado: 'PENDIENTE',
         usuarioCreacion: 'SISTEMA',
         fase: 0
       };
 
+      console.log('Datos de evaluación a crear:', nuevaEvaluacion);
+      console.log('Jefe evaluador asignado:', this.jefeSeleccionadoEvaluacion.nombre);
+
       const response = await this.gthEvaluacionServcie
         .crearGthEvaluacion(nuevaEvaluacion)
         .toPromise();
 
-      // Si todo sale bien (nuevo o existente), mostrar la sección
       if (response?.codigo > 0) {
-        // Evaluación creada
         this.evaluacionCreada = {
           idEvaluacion: response.idEvaluacion || response.codigo,
           idEmpleado: this.empleadoBuscado.id,
+          idJefe: this.jefeSeleccionadoEvaluacion.id,
           estado: 'PENDIENTE',
           fase: 0,
           anio: new Date().getFullYear()
         };
-        console.log('✅ Nueva evaluación creada:', this.evaluacionCreada);
-        //alerts.exito('Nueva evaluación creada:');
+        console.log('✅ Nueva evaluación creada con jefe evaluador:', this.evaluacionCreada);
         this.mostrarCompetencias = true;
 
       } else if (response?.codigo === -3) {
-        // Evaluación existente
         this.evaluacionCreada = {
-          idEvaluacion: 999, // ⚠️ Valor fijo (placeholder)
+          idEvaluacion: 999,
           idEmpleado: this.empleadoBuscado.id,
+          idJefe: this.jefeSeleccionadoEvaluacion.id,
           estado: 'EN_PROCESO',
           fase: 1,
           anio: new Date().getFullYear()
         };
-        alerts.info('Este colaborador ya cuenta con una evaluacion para este año');        
-
+        alerts.info('Este colaborador ya cuenta con una evaluación para este año');        
       } else {
         alert(`Error: ${response?.mensaje || 'Error desconocido'}`);
-        console.error('❌ Error en respuesta de crearGthEvaluacion:', response);
+        console.error('❌ Error en respuesta:', response);
         return;
       }
 
-      // Usar tu lógica original      
       this.evaluacionGuardada = false;
-
-      // Limpiar formulario de competencias
       this.limpiarFormularioCompetencia();
       this.competenciasAgregadas = [];
 
     } catch (error) {
       alerts.error('Error al comunicarse con el servidor');
+      console.error('Error:', error);
     } finally {
       this.cargandoEvaluacion = false;
     }
   }
-
 
   // Método para agregar competencia
   agregarCompetencia(): void {
@@ -952,64 +1365,63 @@ onImageError(event: Event, sexo: string) {
 
 
   /**
- * Intenta extraer un idNum (number) del valor del nivel.
- * Acepta:
- *  - número (return number)
- *  - objeto con idNivelCompetencia (return number)
- *  - string como "Nivel 1 - Descripción - 42" -> devuelve 42
- *  - string como "Nivel 1 - Descripción (42)" -> devuelve 42
- *  - si no puede extraer, devuelve null
- */
-private parseIdFromNivelValue(nivelVal: any): number | null {
-  if (nivelVal === null || nivelVal === undefined) return null;
+   * Intenta extraer un idNum (number) del valor del nivel.
+   * Acepta:
+   *  - número (return number)
+   *  - objeto con idNivelCompetencia (return number)
+   *  - string como "Nivel 1 - Descripción - 42" -> devuelve 42
+   *  - string como "Nivel 1 - Descripción (42)" -> devuelve 42
+   *  - si no puede extraer, devuelve null
+   */
+  private parseIdFromNivelValue(nivelVal: any): number | null {
+    if (nivelVal === null || nivelVal === undefined) return null;
 
-  // Si ya es número válido
-  if (typeof nivelVal === 'number' && !isNaN(nivelVal)) {
-    return nivelVal;
-  }
-
-  // Si es objeto y tiene la propiedad idNivelCompetencia (o IdNivelCompetencia)
-  if (typeof nivelVal === 'object') {
-    const maybeId = nivelVal.idNivelCompetencia ?? nivelVal.IdNivelCompetencia ?? nivelVal.id ?? nivelVal.Id;
-    if (maybeId !== undefined && maybeId !== null) {
-      const n = Number(maybeId);
-      return !isNaN(n) ? n : null;
+    // Si ya es número válido
+    if (typeof nivelVal === 'number' && !isNaN(nivelVal)) {
+      return nivelVal;
     }
-  }
 
-  // Convertir a string y limpiar
-  const s = String(nivelVal).trim();
-  if (!s) return null;
+    // Si es objeto y tiene la propiedad idNivelCompetencia (o IdNivelCompetencia)
+    if (typeof nivelVal === 'object') {
+      const maybeId = nivelVal.idNivelCompetencia ?? nivelVal.IdNivelCompetencia ?? nivelVal.id ?? nivelVal.Id;
+      if (maybeId !== undefined && maybeId !== null) {
+        const n = Number(maybeId);
+        return !isNaN(n) ? n : null;
+      }
+    }
 
-  // 1) Preferir captura de dígitos al final del string (ej: "... - 42" o "... (42)")
-  let m = s.match(/(\d+)\s*$/);
-  if (m && m[1]) {
-    const num = Number(m[1]);
-    if (!isNaN(num)) return num;
-  }
+    // Convertir a string y limpiar
+    const s = String(nivelVal).trim();
+    if (!s) return null;
 
-  // 2) Si no, intentar tomar la última parte separada por '-' y extraer dígitos
-  const parts = s.split('-').map(p => p.trim()).filter(Boolean);
-  if (parts.length) {
-    const last = parts[parts.length - 1];
-    const mm = last.match(/(\d+)/);
-    if (mm && mm[1]) {
-      const num = Number(mm[1]);
+    // 1) Preferir captura de dígitos al final del string (ej: "... - 42" o "... (42)")
+    let m = s.match(/(\d+)\s*$/);
+    if (m && m[1]) {
+      const num = Number(m[1]);
       if (!isNaN(num)) return num;
     }
+
+    // 2) Si no, intentar tomar la última parte separada por '-' y extraer dígitos
+    const parts = s.split('-').map(p => p.trim()).filter(Boolean);
+    if (parts.length) {
+      const last = parts[parts.length - 1];
+      const mm = last.match(/(\d+)/);
+      if (mm && mm[1]) {
+        const num = Number(mm[1]);
+        if (!isNaN(num)) return num;
+      }
+    }
+
+    // 3) fallback: buscar cualquier número en el string (first occurrence)
+    m = s.match(/(\d+)/);
+    if (m && m[1]) {
+      const num = Number(m[1]);
+      if (!isNaN(num)) return num;
+    }
+
+    // No se pudo extraer
+    return null;
   }
-
-  // 3) fallback: buscar cualquier número en el string (first occurrence)
-  m = s.match(/(\d+)/);
-  if (m && m[1]) {
-    const num = Number(m[1]);
-    if (!isNaN(num)) return num;
-  }
-
-  // No se pudo extraer
-  return null;
-}
-
   async terminarEvaluacion(): Promise<void> {
     if (this.competenciasAgregadas.length === 4 && this.empleadoBuscado && this.evaluacionCreada) {
       try {        

@@ -43,6 +43,12 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@CALIFICACION_FINAL", (object)evaluacion.CalificacionFinal ?? DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@RETROALIMENTACION", evaluacion.Retroalimentacion ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@PLAN_ACCION", evaluacion.PlanAccion ?? (object)DBNull.Value));
+
+            cmd.Parameters.Add(new SqlParameter("@FECHA_REGISTRO_OBJ", (object)evaluacion.FechaRegObj ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@FECHA_REGISTRO_JEFE", (object)evaluacion.FechaRegJefe ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@FECHA_AUTOEVALUACION", (object)evaluacion.FechaAutoevaluacion ?? DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@FECHA_EVALUACION_JEFE", (object)evaluacion.FechaEvaluacionJefe ?? DBNull.Value));
+
             cmd.Parameters.Add(new SqlParameter("@OBSERVACIONES", evaluacion.Observaciones ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@USUARIO_CREACION", "SISTEMA"));
             cmd.Parameters.Add(new SqlParameter("@FASE", evaluacion.Fase ?? 0));
@@ -138,6 +144,20 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                                           : (decimal?)null,
                     Retroalimentacion = reader["RETROALIMENTACION"]?.ToString(),
                     PlanAccion = reader["PLAN_ACCION"]?.ToString(),
+
+                    FechaRegObj = reader["FECHA_REGISTRO_OBJ"] != DBNull.Value
+                                          ? Convert.ToDateTime(reader["FECHA_REGISTRO_OBJ"])
+                                          : (DateTime?)null,
+                    FechaRegJefe = reader["FECHA_REGISTRO_JEFE"] != DBNull.Value
+                                          ? Convert.ToDateTime(reader["FECHA_REGISTRO_JEFE"])
+                                          : (DateTime?)null,
+                    FechaAutoevaluacion = reader["FECHA_AUTOEVALUACION"] != DBNull.Value
+                                          ? Convert.ToDateTime(reader["FECHA_AUTOEVALUACION"])
+                                          : (DateTime?)null,
+                    FechaEvaluacionJefe = reader["FECHA_EVALUACION_JEFE"] != DBNull.Value
+                                          ? Convert.ToDateTime(reader["FECHA_EVALUACION_JEFE"])
+                                          : (DateTime?)null,
+
                     Observaciones = reader["OBSERVACIONES"]?.ToString(),
                     FechaCreacion = reader["FECHA_CREACION"] != DBNull.Value
                                           ? Convert.ToDateTime(reader["FECHA_CREACION"])

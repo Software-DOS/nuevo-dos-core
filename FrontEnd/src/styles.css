@@ -15,3 +15,53 @@ mat-dialog-content::-webkit-scrollbar-thumb{
 .cdk-overlay-container{
     z-index: 2000 !important;
 }
+
+
+/* ============================================
+   IMPORTAR FUENTES LOCALES
+   ============================================ */
+
+/* Uni Sans - Thin */
+@font-face {
+  font-family: 'Uni Sans';
+  src: url('/assets/fonts/UniSansThin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Uni Sans';
+  src: url('/assets/fonts/UniSansThinItalic.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+}
+
+/* Uni Sans - Heavy */
+@font-face {
+  font-family: 'Uni Sans';
+  src: url('/assets/fonts/UniSansHeavy.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Uni Sans';
+  src: url('/assets/fonts/UniSansHeavyItalic.otf') format('opentype');
+  font-weight: 800;
+  font-style: italic;
+}
+
+/* Plus Jakarta Sans */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/assets/fonts/PlusJakartaSans/PlusJakartaSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/assets/fonts/PlusJakartaSans/PlusJakartaSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}

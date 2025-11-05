@@ -25,9 +25,10 @@ export class MainPageComponent implements OnInit {
     if (typeof valor === 'string') {
       var IdEmpleado =JSON.parse(atob(valor.split('.')[1]));
       this.usuario = IdEmpleado['NombresApellidos'];
-      this.Imagen = "assets/img/" + IdEmpleado['Imagen'];
-      console.log("this.Imagen:",this.Imagen);
-      this.menuService.cargarMenu(IdEmpleado['IdEmpleado']).subscribe(
+      // this.Imagen = "assets/img/" + IdEmpleado['Imagen'];
+      // console.log("this.Imagen:",this.Imagen);
+      // this.menuService.cargarMenu(IdEmpleado['IdEmpleado']).subscribe(
+      this.menuService.cargarMenu('1').subscribe(
         (resp:any)=>{
             this.menu=resp['$values'];
             console.log("this.menu",this.menu);
