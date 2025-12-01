@@ -176,14 +176,14 @@ export class LoginComponent implements OnInit {
     
     this.loginService.loginAD(data).subscribe({
       next: (resp: any) => {
-        console.log("✅ [DEBUG] Component AD Login successful, response:", resp);
+        // console.log("✅ [DEBUG] Component AD Login successful, response:", resp);
         
         const valor = sessionStorage.getItem('token');
         
         if (typeof valor === 'string' && valor.trim() !== '') {
           try {
             var tokenData = JSON.parse(atob(valor.split('.')[1]));
-            console.log("👤 [DEBUG] Component login token:", tokenData);
+            // console.log("👤 [DEBUG] Component login token:", tokenData);
             
             const email = tokenData['email'] || 
                          tokenData['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ||
@@ -195,7 +195,7 @@ export class LoginComponent implements OnInit {
               return;
             }
             
-            const displayName = tokenData['Usuario'] || 
+            const displayName = tokenData['Name'] || 
                               tokenData['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ||
                               email;
             

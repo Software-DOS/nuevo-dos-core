@@ -96,8 +96,8 @@ export class GthEvaluacionService {
   * Guardar o actualizar evaluacion GTH  la FASE Debe ser 1 o mayor a 0
   */
   GuardarGthEvaluacion(data:Ievaluacion){
-        return this.http.post(environment.urlbackend +"api/GTHEvaluacion/Gestionar",data);
-    }
+    return this.http.post(environment.urlbackend +"api/GTHEvaluacion/Gestionar",data);
+  }
 
   
   /**

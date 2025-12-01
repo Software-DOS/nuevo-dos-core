@@ -27,8 +27,9 @@ export class MainPageComponent implements OnInit {
       this.usuario = IdEmpleado['NombresApellidos'];
       // this.Imagen = "assets/img/" + IdEmpleado['Imagen'];
       // console.log("this.Imagen:",this.Imagen);
-      // this.menuService.cargarMenu(IdEmpleado['IdEmpleado']).subscribe(
-      this.menuService.cargarMenu('1').subscribe(
+      console.log("Para saber el id del empleado a buscar en la base de datos: ",IdEmpleado['IdEmpleado']);
+      this.menuService.cargarMenu(IdEmpleado['IdEmpleado']).subscribe(
+      // this.menuService.cargarMenu('1').subscribe(
         (resp:any)=>{
             this.menu=resp['$values'];
             console.log("this.menu",this.menu);

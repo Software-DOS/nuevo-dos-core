@@ -10,9 +10,8 @@
         Lista de Evaluaciones
       </div>
 
-      <div class="subcategory-link" 
-          [class.active]="activeSubcategory === 'gestAreas'" 
-          (click)="showSubcategoryEval('gestAreas')">
+      <div class="subcategory-link" [class.active]="activeSubcategory === 'gestAreas'"
+        (click)="showSubcategoryEval('gestAreas')">
         Gestionar Áreas
       </div>
 
@@ -94,115 +93,118 @@
 
         <!-- NUEVO: Selector de Jefe -->
         <div
-  style="position: relative; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; background: #fff;">
-  <!-- Línea decorativa superior -->
-  <div class="linea-decorativa-sup"></div>
+          style="position: relative; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; background: #fff;">
+          <!-- Línea decorativa superior -->
+          <div class="linea-decorativa-sup"></div>
 
-  <h5 style="color: #2c3e50; margin-bottom: 1rem; font-size: 1.1rem;">
-    <i class="fas fa-search" style="margin-right: 0.5rem; color: #3498db;"></i>
-    Paso 1: Seleccionar Empleado
-  </h5>
+          <h5 style="color: #2c3e50; margin-bottom: 1rem; font-size: 1.1rem;">
+            <i class="fas fa-search" style="margin-right: 0.5rem; color: #3498db;"></i>
+            Paso 1: Seleccionar Empleado
+          </h5>
 
-  <!-- Búsqueda de Empleado -->
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-    <div class="form-group">
-      <label class="form-label">Área:</label>
-      <input type="text" [(ngModel)]="filtroArea" placeholder="Buscar área..." class="form-input"
-        (input)="filtrarEmpleadosParaEvaluacion()" autocomplete="off">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Empleado:</label>
-      <select [(ngModel)]="empleadoBuscado" (ngModelChange)="onEmpleadoBuscadoSeleccionado()" class="form-input"
-        [compareWith]="compareEmpleados" [disabled]="empleadosFiltrados2.length === 0">
-        <option [ngValue]="null">
-          {{ empleadosFiltrados2.length === 0 ? '- No hay empleados disponibles -' : '- Seleccionar empleado -' }}
-        </option>
-        <option *ngFor="let empleado of empleadosFiltrados2; trackBy: trackByEmpleadoId" [ngValue]="empleado">
-          {{empleado.nombre}} - {{empleado.area}}
-        </option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Información del empleado seleccionado -->
-  <div *ngIf="empleadoBuscado"
-    style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px; margin-bottom: 1rem; border-left: 4px solid #28a745;">
-    <h6 style="color: #28a745; margin: 0 0 1rem 0; font-size: 1rem;">
-      <i class="fas fa-user-check" style="margin-right: 0.5rem;"></i>
-      Empleado Seleccionado
-    </h6>
-
-    <!-- Información detallada en grid -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-      <div>
-        <label
-          style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">NOMBRE
-          COMPLETO:</label>
-        <span style="color: #2c3e50; font-weight: 500;">{{empleadoBuscado.nombre}}</span>
-      </div>
-      <div>
-        <label
-          style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">ÁREA:</label>
-        <span style="color: #2c3e50; font-weight: 500;">{{empleadoBuscado.area}}</span>
-      </div>
-    </div>
-
-    <!-- SELECTOR DE JEFE (DENTRO DEL MISMO DIV) -->
-    <div style="background: #e8f4f8; padding: 1.5rem; border-radius: 6px; margin-top: 1rem; border-left: 4px solid #3498db;">
-      <h6 style="color: #3498db; margin: 0 0 1rem 0; font-size: 1rem;">
-        <i class="fas fa-user-tie" style="margin-right: 0.5rem;"></i>
-        Seleccionar Jefe Evaluador
-      </h6>
-
-      <div class="form-group">
-        <label class="form-label">Buscar Jefe (mínimo 3 letras):</label>
-        <input 
-          type="text" 
-          [(ngModel)]="filtroJefeEvaluacion" 
-          placeholder="Ingrese al menos 3 letras para buscar..." 
-          class="form-input"
-          (input)="filtrarJefesEvaluacion()" 
-          autocomplete="off">
-      </div>
-
-      <div class="form-group" *ngIf="filtroJefeEvaluacion && filtroJefeEvaluacion.length >= 3">
-        <label class="form-label">Jefe:</label>
-        <select [(ngModel)]="jefeSeleccionadoEvaluacion" class="form-input"
-          [compareWith]="compareEmpleados" [disabled]="jefesFiltradosEvaluacion.length === 0">
-          <option [ngValue]="null">
-            {{ jefesFiltradosEvaluacion.length === 0 ? '- No se encontraron resultados -' : '- Seleccionar jefe -' }}
-          </option>
-          <option *ngFor="let jefe of jefesFiltradosEvaluacion; trackBy: trackByEmpleadoId" [ngValue]="jefe">
-            {{jefe.nombre}} - {{jefe.area}}
-          </option>
-        </select>
-      </div>
-
-      <!-- Mostrar jefe seleccionado -->
-      <div *ngIf="jefeSeleccionadoEvaluacion"
-        style="background: #fff; padding: 1rem; border-radius: 6px; margin-top: 1rem; border: 1px solid #3498db;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-          <div>
-            <label style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">
-              JEFE ASIGNADO:
-            </label>
-            <span style="color: #2c3e50; font-weight: 500;">{{jefeSeleccionadoEvaluacion.nombre}}</span>
+          <!-- Búsqueda de Empleado -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Área:</label>
+              <input type="text" [(ngModel)]="filtroArea" placeholder="Buscar área..." class="form-input"
+                (input)="filtrarEmpleadosParaEvaluacion()" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Empleado:</label>
+              <select [(ngModel)]="empleadoBuscado" (ngModelChange)="onEmpleadoBuscadoSeleccionado()" class="form-input"
+                [compareWith]="compareEmpleados" [disabled]="empleadosFiltrados2.length === 0">
+                <option [ngValue]="null">
+                  {{ empleadosFiltrados2.length === 0 ? '- No hay empleados disponibles -' : '- Seleccionar empleado -'
+                  }}
+                </option>
+                <option *ngFor="let empleado of empleadosFiltrados2; trackBy: trackByEmpleadoId" [ngValue]="empleado">
+                  {{empleado.nombre}} - {{empleado.area}}
+                </option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">
-              ÁREA:
-            </label>
-            <span style="color: #2c3e50; font-weight: 500;">{{jefeSeleccionadoEvaluacion.area}}</span>
+
+          <!-- Información del empleado seleccionado -->
+          <div *ngIf="empleadoBuscado"
+            style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+            <h6 style="color: #28a745; margin: 0 0 1rem 0; font-size: 1rem;">
+              <i class="fas fa-user-check" style="margin-right: 0.5rem;"></i>
+              Empleado Seleccionado
+            </h6>
+
+            <!-- Información detallada en grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <label
+                  style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">NOMBRE
+                  COMPLETO:</label>
+                <span style="color: #2c3e50; font-weight: 500;">{{empleadoBuscado.nombre}}</span>
+              </div>
+              <div>
+                <label
+                  style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">ÁREA:</label>
+                <span style="color: #2c3e50; font-weight: 500;">{{empleadoBuscado.area}}</span>
+              </div>
+            </div>
+
+            <!-- SELECTOR DE JEFE (DENTRO DEL MISMO DIV) -->
+            <div
+              style="background: #e8f4f8; padding: 1.5rem; border-radius: 6px; margin-top: 1rem; border-left: 4px solid #3498db;">
+              <h6 style="color: #3498db; margin: 0 0 1rem 0; font-size: 1rem;">
+                <i class="fas fa-user-tie" style="margin-right: 0.5rem;"></i>
+                Seleccionar Jefe Evaluador
+              </h6>
+
+              <div class="form-group">
+                <label class="form-label">Buscar Jefe (mínimo 3 letras):</label>
+                <input type="text" [(ngModel)]="filtroJefeEvaluacion"
+                  placeholder="Ingrese al menos 3 letras para buscar..." class="form-input"
+                  (input)="filtrarJefesEvaluacion()" autocomplete="off">
+              </div>
+
+              <div class="form-group" *ngIf="filtroJefeEvaluacion && filtroJefeEvaluacion.length >= 3 && jefesFiltradosEvaluacion">
+                <label class="form-label">Jefe:</label>
+                <select [(ngModel)]="jefeSeleccionadoEvaluacion" 
+                        class="form-input" 
+                        [compareWith]="compareEmpleados"
+                        [disabled]="jefesFiltradosEvaluacion.length === 0">
+                  <option [ngValue]="null">
+                    {{ jefesFiltradosEvaluacion.length === 0 ? '- No se encontraron resultados -' : '- Seleccionar jefe -' }}
+                  </option>
+                  <option *ngFor="let jefe of jefesFiltradosEvaluacion; trackBy: trackByEmpleadoId" 
+                          [ngValue]="jefe">
+                    {{jefe.nombre}} - {{jefe.area}}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Mostrar jefe seleccionado -->
+              <div *ngIf="jefeSeleccionadoEvaluacion"
+                style="background: #fff; padding: 1rem; border-radius: 6px; margin-top: 1rem; border: 1px solid #3498db;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div>
+                    <label
+                      style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">
+                      JEFE ASIGNADO:
+                    </label>
+                    <span style="color: #2c3e50; font-weight: 500;">{{jefeSeleccionadoEvaluacion.nombre}}</span>
+                  </div>
+                  <div>
+                    <label
+                      style="font-weight: 600; color: #495057; font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">
+                      ÁREA:
+                    </label>
+                    <span style="color: #2c3e50; font-weight: 500;">{{jefeSeleccionadoEvaluacion.area}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- FIN SELECTOR DE JEFE -->
+
           </div>
+          <!-- FIN empleadoBuscado -->
+
         </div>
-      </div>
-    </div>
-    <!-- FIN SELECTOR DE JEFE -->
-
-  </div>
-  <!-- FIN empleadoBuscado -->
-
-</div>
 
         <!-- Botón Crear Evaluación -->
         <div style="text-align: center; margin-top: 1.5rem;">
@@ -369,360 +371,500 @@
 
     <!-- GESTIONAR EL PERSONAL DEL AREA -->
     <div id="gestAreas" class="subcategory-section" [class.active]="activeSubcategory === 'gestAreas'">
-      <div class="container"> 
-      <div style="margin-bottom: 2rem;">
+      <div class="container">
+        <div style="margin-bottom: 2rem;">
 
-        <!-- PASO 1: BUSCAR Y SELECCIONAR EMPLEADO -->
-        <!-- <h4 class="form-section-subtitle">Gestión de Áreas</h4>         -->
+          <!-- PASO 1: BUSCAR Y SELECCIONAR EMPLEADO -->
+          <!-- <h4 class="form-section-subtitle">Gestión de Áreas</h4>         -->
 
-                 
+
 
           <div class="page-header">
-              <h2 class="page-title">Gestionar Área</h2>
-              <p class="page-subtitle">Configure la información del área y asigne empleados</p>
+            <h2 class="page-title">Gestionar Área</h2>
+            <p class="page-subtitle">Configure la información del área y asigne empleados</p>
           </div>
 
           <!-- ESTADO 1: PASO 2 BLOQUEADO -->
           <div class="demo-state-1">
-              <div class="form-card">
-                  <!-- Progress Steps -->
-                  <!-- <div class="wizard-progress">
-                      <div class="progress-step active">
-                          <div class="step-circle">1</div>
-                          <div class="step-label">Información del Área</div>
+            <div class="form-card">
+              
+              <form>
+                <!-- PASO 1: Información del Área -->
+                <div class="form-section">
+                  <!-- Línea decorativa superior -->
+                  <div class="linea-decorativa-sup"></div>
+                  <div class="section-header">
+                    <div class="section-number" style="margin-top: 3rem;">1</div>
+                    <div class="section-title" style="margin-top: 3rem;">Información del Área</div>
+                  </div>
+
+                  <div class="form-group" style="position: relative;">
+                    <label class="form-label">Nombre de la Célula *</label>
+                    <input type="text" class="form-input" name="nombreCelula" [(ngModel)]="nombreCelula"
+                      (input)="onCelulaInput()" (blur)="cerrarSugerencias()" placeholder="Escribe al menos 3 letras..."
+                      autocomplete="off">
+
+                    <!-- Dropdown de sugerencias -->
+                    <div *ngIf="mostrarSugerencias" class="celulas-dropdown">
+                      <div *ngFor="let celula of celulasFiltradas" class="celula-item"
+                        (mousedown)="seleccionarCelula(celula)">
+                        <div class="celula-nombre">{{celula.nombre}}</div>
+                        <div class="celula-desc" *ngIf="celula.descripcion">
+                          {{celula.descripcion}}
+                        </div>
                       </div>
-                      <div class="progress-step">
-                          <div class="step-circle">2</div>
-                          <div class="step-label">Asignar Empleados</div>
-                      </div>
-                  </div> -->
+                    </div>
 
-                  <form>
-                      <!-- PASO 1: Información del Área -->
-                      <div class="form-section">
-                        <!-- Línea decorativa superior -->
-                        <div class="linea-decorativa-sup"></div>
-                          <div class="section-header">
-                              <div class="section-number" style="margin-top: 3rem;">1</div>
-                              <div class="section-title" style="margin-top: 3rem;">Información del Área</div>
-                          </div>
-
-                          <!-- <div class="form-group">
-                              <label class="form-label">Nombre del Área *</label>
-                              <input type="text" class="form-input" 
-                              name="nombreArea"
-                              [(ngModel)]="nombreArea" (ngModelChange)="onInputChange()"                              
-                              placeholder="Ej: Tecnología, Marketing, Recursos Humanos...">
-                          </div> -->
-
-                          <!-- (input)="filtrarEmpleadosParaEvaluacion()" autocomplete="off"  -->
-
-                          <div class="form-group" style="position: relative;">
-                            <label class="form-label">Nombre de la Célula *</label>
-                            <input type="text" 
-                                  class="form-input" 
-                                  name="nombreCelula"
-                                  [(ngModel)]="nombreCelula" 
-                                  (input)="onCelulaInput()"
-                                  (blur)="cerrarSugerencias()"
-                                  placeholder="Escribe al menos 3 letras..."
-                                  autocomplete="off">
-                            
-                            <!-- Dropdown de sugerencias -->
-                            <div *ngIf="mostrarSugerencias" class="celulas-dropdown">
-                                <div *ngFor="let celula of celulasFiltradas" 
-                                    class="celula-item"
-                                    (mousedown)="seleccionarCelula(celula)">
-                                    <div class="celula-nombre">{{celula.nombre}}</div>
-                                    <div class="celula-desc" *ngIf="celula.descripcion">
-                                        {{celula.descripcion}}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Mensaje si no hay coincidencias -->
-                            <!-- <div *ngIf="nombreCelula.length >= 3 && celulasFiltradas.length === 0 && !mostrarSugerencias" 
+                    <!-- Mensaje si no hay coincidencias -->
+                    <!-- <div *ngIf="nombreCelula.length >= 3 && celulasFiltradas.length === 0 && !mostrarSugerencias" 
                                 class="nueva-celula-msg">
                                 ✨ Se creará una nueva célula: <strong>{{nombreCelula}}</strong>
                             </div> -->
-                            <div *ngIf="esCelulaNueva && nombreCelula.length >= 3" class="nueva-celula-msg">
-                                ✨ Se creará una nueva célula: <strong>{{nombreCelula}}</strong>
-                            </div>
-                        </div>
+                    <div *ngIf="esCelulaNueva && nombreCelula.length >= 3" class="nueva-celula-msg">
+                      ✨ Se creará una nueva célula: <strong>{{nombreCelula}}</strong>
+                    </div>
+                  </div>
 
-                          <div class="form-group">
-                              <label class="form-label">Jefe del Área *</label>
-                              <select [(ngModel)]="jefeSeleccionado" (ngModelChange)="onInputChange()" class="form-input" name="jefeSeleccionado"
-                                [compareWith]="compareEmpleados" [disabled]="empleadosFiltrados2.length === 0">
-                                <option [ngValue]="null">
-                                  {{ empleadosFiltrados2.length === 0 ? '- No hay empleados disponibles -' : '- Seleccionar empleado -'
-                                  }}
-                                </option>
-                                <option *ngFor="let empleado of empleadosFiltrados2; trackBy: trackByEmpleadoId" [ngValue]="empleado">
-                                  {{empleado.nombre}} - {{empleado.area}}
-                                </option>
-                              </select>
-                          </div>
+                  <div class="form-group">
+                    <label class="form-label">Jefe del Área *</label>
+                    <select [(ngModel)]="jefeSeleccionado" (ngModelChange)="onInputChange()" class="form-input"
+                      name="jefeSeleccionado" [compareWith]="compareEmpleados"
+                      [disabled]="empleadosFiltrados2.length === 0">
+                      <option [ngValue]="null">
+                        {{ empleadosFiltrados2.length === 0 ? '- No hay empleados disponibles -' : '- Seleccionar empleado -'
+                        }}
+                      </option>
+                      <option *ngFor="let empleado of empleadosFiltrados2; trackBy: trackByEmpleadoId"
+                        [ngValue]="empleado">
+                        {{empleado.nombre}} - {{empleado.area}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- PASO 2: Empleados -->
+                <div class="form-section" [class.locked]="!paso2Habilitado">
+                  <div class="section-header">
+                    <div class="section-number">2</div>
+                    <div class="section-title">Asignar Empleados</div>
+                  </div>
+
+                  <div class="empleados-container">
+                    <div class="empleados-selector">
+                      <div class="selector-title">
+                        <span>➕</span>
+                        Agregar Empleado
                       </div>
+                      <select name="empleadoSeleccionado" [(ngModel)]="empleadoSeleccionado" class="form-select">
+                        <option [ngValue]="null">Seleccione un empleado...</option>
+                        <option *ngFor="let emp of empleadosFiltrados2" [ngValue]="emp">
+                          {{emp.nombre}} - {{emp.area}}
+                        </option>
+                      </select>
+                      <button type="button" class="btn-agregar" (click)="agregarEmpleado()"
+                        [disabled]="!empleadoSeleccionado">
+                        Agregar →
+                      </button>
 
-                      <!-- PASO 2: Empleados -->
-                      <div class="form-section" [class.locked]="!paso2Habilitado">
-                          <div class="section-header">
-                              <div class="section-number">2</div>
-                              <div class="section-title">Asignar Empleados</div>
-                          </div>
-
-                          <div class="empleados-container">
-                            <div class="empleados-selector">
-                              <div class="selector-title">
-                                  <span>➕</span>
-                                  Agregar Empleado
-                              </div>
-                              <select name="empleadoSeleccionado" 
-                                      [(ngModel)]="empleadoSeleccionado" 
-                                      class="form-select">
-                                  <option [ngValue]="null">Seleccione un empleado...</option>
-                                  <option *ngFor="let emp of empleadosFiltrados2" [ngValue]="emp">
-                                      {{emp.nombre}} - {{emp.area}}
-                                  </option>
-                              </select>
-                              <button type="button" 
-                                      class="btn-agregar" 
-                                      (click)="agregarEmpleado()"
-                                      [disabled]="!empleadoSeleccionado">
-                                  Agregar →
-                              </button>
-                              
-                              <!-- 👇 MENSAJE DE FEEDBACK -->
-                              <div *ngIf="mensajeEmpleado" 
-                                  [class]="'mensaje-feedback mensaje-' + tipoMensaje">
-                                  <span *ngIf="tipoMensaje === 'error'">⚠️</span>
-                                  <span *ngIf="tipoMensaje === 'success'">✓</span>
-                                  {{mensajeEmpleado}}
-                              </div>
-                          </div>
-
-                          <div class="empleados-list">
-                              <div class="list-header">
-                                  <div class="list-title">Empleados Asignados</div>
-                                  <div class="list-counter">{{empleadosAsignados.length}}</div>
-                              </div>
-                              
-                              <div *ngIf="empleadosAsignados.length === 0" class="empty-state">
-                                  <div class="empty-state-icon">👥</div>
-                                  <div class="empty-state-text">No hay empleados asignados aún</div>
-                              </div>
-
-                              <div *ngFor="let empleado of empleadosAsignados" class="empleado-item">
-                                  <div class="empleado-info">
-                                      <div class="empleado-name">{{empleado.nombre}}</div>
-                                      <span *ngIf="empleado.id === jefeSeleccionado?.id" class="empleado-badge">Jefe</span>
-                                  </div>
-                                  <button type="button" class="empleado-remove" (click)="removerEmpleado(empleado)">✕</button>
-                              </div>
-                          </div>
-                          </div>
+                      <!-- 👇 MENSAJE DE FEEDBACK -->
+                      <div *ngIf="mensajeEmpleado" [class]="'mensaje-feedback mensaje-' + tipoMensaje">
+                        <span *ngIf="tipoMensaje === 'error'">⚠️</span>
+                        <span *ngIf="tipoMensaje === 'success'">✓</span>
+                        {{mensajeEmpleado}}
                       </div>
-
-                      <div class="form-actions">
-                        <button type="button" class="btn btn-cancel" (click)="limpiarFormulario()">
-                            Cancelar
-                        </button>
-                        <button type="button" 
-                                class="btn btn-submit" 
-                                [disabled]="!formularioValido()"
-                                (click)="guardarArea()">
-                            Crear Área
-                        </button>
                     </div>
 
-                  </form>
-              </div>
+                    <div class="empleados-list">
+                      <div class="list-header">
+                        <div class="list-title">Empleados Asignados</div>
+                        <div class="list-counter">{{empleadosAsignados.length}}</div>
+                      </div>
+
+                      <div *ngIf="empleadosAsignados.length === 0" class="empty-state">
+                        <div class="empty-state-icon">👥</div>
+                        <div class="empty-state-text">No hay empleados asignados aún</div>
+                      </div>
+
+                      <div *ngFor="let empleado of empleadosAsignados" class="empleado-item">
+                        <div class="empleado-info">
+                          <div class="empleado-name">{{empleado.nombre}}</div>
+                          <span *ngIf="empleado.id === jefeSeleccionado?.id" class="empleado-badge">Jefe</span>
+                        </div>
+                        <button type="button" class="empleado-remove" (click)="removerEmpleado(empleado)">✕</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-cancel" (click)="limpiarFormulario()">
+                    Cancelar
+                  </button>
+                  <button type="button" class="btn btn-submit" [disabled]="!formularioValido()" (click)="guardarArea()">
+                    Crear Área
+                  </button>
+                </div>
+
+              </form>
+            </div>
           </div>
 
-          
-      </div>
+
+        </div>
 
       </div>
     </div>
 
 
     <!-- Modal Evaluación de Empleado -->
-<div
-  class="modal fade"
-  tabindex="-1"
-  [ngClass]="{ show: showModal }"
-  [ngStyle]="{ display: showModal ? 'block' : 'none' }"
-  aria-modal="true"
-  role="dialog"
->
-  <div class="modal-dialog modal-resizable" role="document">
-    <div class="modal-content modal-evaluacion">
-      <div class="modal-header">
-        <!-- Tarjeta del Empleado -->
-        <div class="employe-card">
-          <h2 style="color: lightslategray;">Evaluación de Desempeño 2025</h2>
-          <div class="employee-card3">
-            <!-- <img [src]="employee.avatar" alt="Foto del Empleado" class="employee-image"> -->
-            <div class="employee-image-container">
-              <img [src]="construirUrlFoto(this.empleadoModal?.fotoPerfilUrl || '', this.empleadoModal?.sexo || '')" class="employee-image-Modal" id="employee-image-Modal"
-              [alt]="this.empleadoModal?.nombre" (error)="onImageError($event, this.empleadoModal?.sexo || 'M')">
+    <div class="modal fade" style="background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.7),    /* Más oscuro arriba */
+    rgba(0, 0, 0, 0.4)     /* Más claro abajo */
+  );" tabindex="-1" [ngClass]="{ show: showModal }" [ngStyle]="{ display: showModal ? 'block' : 'none' }"
+      aria-modal="true" role="dialog">
+      <div class="modal-dialog modal-resizable" role="document">
+        <div class="modal-content modal-evaluacion">
+          <div class="modal-header">
 
-            </div> 
-            <div class="employee-personal-info">
+            <!-- Tarjeta del Empleado -->
+            <div class="employe-card">
+              <h2 style="color: lightslategray;">Evaluación de Desempeño 2025</h2>
+              <div class="employee-card3">
+                <!-- <img [src]="employee.avatar" alt="Foto del Empleado" class="employee-image"> -->
+                <div class="employee-image-container">
+                  <img [src]="construirUrlFoto(this.empleadoModal?.fotoPerfilUrl || '', this.empleadoModal?.sexo || '')"
+                    class="employee-image-Modal" id="employee-image-Modal" [alt]="this.empleadoModal?.nombre"
+                    (error)="onImageError($event, this.empleadoModal?.sexo || '')">
+
+                </div>
+                <div class="employee-personal-info">
                   <div class="info-field">
                     <i class="info-icon-titulo fas fa-user"></i>
                     <h4 class="info-label">{{nombreCompletoDisplayModal || 'Nombre Completo'}}</h4>
                   </div>
-                  
+
                   <div class="info-field">
                     <i class="info-icon far fa-envelope"></i>
                     <p class="info-value">{{correoElectronicoDisplayModal || 'Correo Electrónico'}}</p>
                   </div>
-                  
+
                   <div class="info-field">
                     <i class="info-icon far fa-gem"></i>
-                    <p class="info-value">{{posicionDisplayModal || 'Posición'}}</p> 
+                    <p class="info-value">{{posicionDisplayModal || 'Posición'}}</p>
                   </div>
-                            
+
                 </div>
-                
-          </div>
-          
-        </div>
-      </div>
 
-      <div class="modal-body">
-        <!-- === CONTENIDO ORIGINAL FASE 1 === -->
-        <div class="evaluation-form" >
-          <h4 class="titulos-pequeños">Revisión Inicial</h4>
+              </div>
 
-          <!-- Objetivo Área -->
-          <div class="form-section">          
-            <div class="section-title" style="display: flex; gap: 1rem">
-              <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena" class="icono-normal">
-              Objetivo Área
             </div>
-            <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
-              <span>{{ objetivoAreaDisplay || "Objetivo de Área" }}</span>          
-            </div>
+            
           </div>
 
-          <!-- Objetivos -->
-          <div class="form-section" style="margin-right: 0;">
-            <div style="display:flex; justify-content: space-between; margin-left: 1rem;" >
-              <div class="section-title" style="color:#064eb4">
-                <div style="display:flex; gap:0.2rem;">
-                  <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor">
-                  Objetivos:
-                </div>                
-              </div>
-              <div style="align-content: center;">
-                <span class="titulos-pequeños-columna" style="margin-right: 3.2rem;">Valor</span>
-                <span class="titulos-pequeños-columna" style="margin-right: 3.3rem;">Revisado</span>
-                <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha estimada</span>
-              </div>              
-            </div>
-      
-            <div *ngFor="let objetivo of objetivosIndividuales; let i = index" class="form-row">
-              <span class="item-number">{{ i + 1 }}.</span>
-              <div class="objetivo-container">
-                <div class="input-wrapper-mobile">
-                  <label class="label-mobile">Objetivo</label>
-                  <input type="text" class="text-input text-input-objetivo" 
-                        placeholder="Objetivo"
-                        [(ngModel)]="objetivo.titulo">
-                </div>
-                
-                <div class="input-wrapper-mobile">
-                  <label class="label-mobile">Valor</label>
-                  <input type="number" class="number-input number-input-objetivo" 
-                        min="0" max="100"
-                        [(ngModel)]="objetivo.valoracionEmpleado">
-                </div>
-                
-                <div class="input-wrapper-mobile">
-                  <label class="label-mobile">Revisado</label>
-                  <input type="number" class="number-input number-input-rev" 
-                        min="0" max="100"
-                        [(ngModel)]="objetivo.valoracionJefe"
-                        placeholder="-"
-                        [disabled]="true">
-                </div>
-                
-                <div class="input-wrapper-mobile">
-                  <label class="label-mobile">Fecha estimada</label>
-                  <input type="date" class="date-input date-input-objetivo"
-                        [(ngModel)]="objetivo.fechaLimite">
-                </div>
-              </div>
-            </div>
-          </div>
+          <div class="modal-body">           
 
-          <!-- Competencias -->
-          <div class="form-section" style="margin-top: 3rem; margin-left: 2rem">
-            <div class="section-title purple">
-              <div style="display:flex; gap:0.2rem;">
-                <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj" class="icono-menor">
-                Competencias:
-              </div>
-            </div>
-
-            <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row" style="display: flex; gap: 10px;">  
-              <span class="item-number" style="flex-shrink: 0;">{{ i + 1 }}.</span>
+            <!-- Retroalimentación Admin MODAL -->
+            <div class="evaluation-form" *ngIf="faseEvaluacionModal === 4">
+              <h4 class="titulos-pequeños">Evaluación Intermedia</h4>
               
-              <div class="competencia-container">
-                <div style="flex: 1; min-width: 0;">
-                  <div class="competencia-header">
-                    <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
-                    <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
+              <!-- Objetivo Área -->
+              <div class="form-section">
+                <div class="section-title" style="display:flex; gap:1rem;">
+                  <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" 
+                      alt="reloj de arena" class="icono-normal">
+                  Objetivo Área
+                </div>
+                <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
+                  <span class="">{{ objetivoAreaDisplayModal || "Objetivo de Área" }}</span>
+                </div>
+              </div>
+
+              <!-- Objetivos -->
+              <div class="form-section" style="margin-right: 0;" *ngIf="faseEvaluacionModal === 4">
+                <div style="display:flex; justify-content: space-between; margin-left: 1rem;">
+                  <div class="section-title" style="color:#064eb4">
+                    <div class="" style="display:flex; gap:0.2rem;">
+                      <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" 
+                          alt="icono obj" class="icono-menor">
+                      Objetivos:
+                    </div>
                   </div>
-                  <div class="competencia-body">
-                    <p style="margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;">
-                      <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
-                    </p>
+                  <div style="align-content: center;">
+                    <span class="titulos-pequeños-columna" style="margin-right: 1rem;">Calificación Colaborador</span>
+                    <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Calificación Jefe</span>
+                    <!-- <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha estimada</span> -->
                   </div>
                 </div>
-                
-                <div style="display: flex;">
-                  <div style="text-align: center;">
-                    <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Valor</label>
-                    <input type="number" class="number-input number-input-competencia" 
-                      min="0" max="100"
-                      [(ngModel)]="competencia.valor"
-                      placeholder="/100"
-                    />
-                  </div>
 
-                  <div style="text-align: center; margin-right: 0; margin-left: 10px;">
-                    <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Revisado</label>
-                    <input type="number" class="number-input number-input-rev" min="0" max="100" 
-                        [(ngModel)]="competencia.valor"
-                        [disabled]="true">
-                  </div>              
-                  
-                  <div style="margin-right: 0; margin-left: 10px; text-align: center;">
-                    <label style="display: block; font-size: 12px; color:  #707070; margin-bottom: 4px;">Fecha</label>
-                    <input
-                      type="date"
-                      class="date-input date-input-competencia"
-                      [(ngModel)]="competencia.fecha"
-                    />
+                <!-- FASE 4: Calificación del Jefe -->
+                <div class="form-section">
+                  <div *ngFor="let objetivoModal of objetivosIndividualesModal; let i = index" class="form-row">
+                    <span class="item-number">{{ i + 1 }}.</span>
+
+                    <!-- ✅ Clase diferente para el primer objetivo (área) -->
+                    <div [class]="i === 0 ? 'objetivo-container-area' : 'objetivo-container'">
+
+                      <div class="input-wrapper-mobile">
+                        <label class="label-mobile">Objetivo</label>
+                        <input type="text" class="text-input text-input-rev"
+                              [placeholder]="i === 0 ? 'Objetivo del Área' : 'Objetivo Individual'"
+                              [(ngModel)]="objetivoModal.titulo" [disabled]="true">
+                      </div>
+
+                      <!-- ✅ Calificación Colaborador (solo lectura) -->
+                      <div class="input-wrapper-mobile">
+                        <label class="label-mobile">Calificación Colaborador</label>
+                        <select class="number-input number-input-rev" 
+                                [(ngModel)]="objetivoModal.calificacionEmpleado" [disabled]="true">
+                          <option [value]="objetivoModal.calificacionEmpleado">
+                            {{ objetivoModal.calificacionEmpleado }} - {{
+                            getNombreCalificacion(objetivoModal.calificacionEmpleado) }}
+                          </option>
+                        </select>
+                      </div>
+
+                      <!-- ✅ Calificación Jefe (editable con select 1-4) -->
+                      <div class="input-wrapper-mobile">
+                        <label class="label-mobile">Calificación Jefe</label>
+                        <select class="number-input number-input-objetivo"
+                                [(ngModel)]="objetivoModal.calificacionFinal">
+                          <option value="" disabled selected>Seleccione</option>
+                          <option [value]="1">1 - Insatisfactorio</option>
+                          <option [value]="2">2 - Necesita Mejorar</option>
+                          <option [value]="3">3 - Satisfactorio</option>
+                          <option [value]="4">4 - Sobresaliente</option>
+                        </select>
+                      </div>
+
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <!-- Competencias -->
+              <div class="form-section" style="margin-top: 3rem; margin-left: 2rem" *ngIf="faseEvaluacionModal === 4">
+                
+                <div class="section-title purple">
+                  <div class="" style="display: flex; gap: 0.2rem">
+                    <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" 
+                        alt="icono obj" class="icono-menor" />
+                    Competencias:
+                  </div>
+                </div>
+
+                <!-- Mostrar competencias cargadas desde el backend -->
+                <div *ngFor="let competenciaModal of nivelesCompetenciasModal; let i = index" 
+                    class="form-row" style="display: flex; gap: 10px;">
+                  <span class="item-number" style="flex-shrink: 0;">{{ i + 1 }}.</span>
+
+                  <div class="competencia-container">
+                    <div style="flex: 1; min-width: 0;">
+                      <div class="competencia-header">
+                        <span class="tipo-competencia">{{ competenciaModal.tipoCompetencia }}</span>
+                        <span class="nombre-competencia">{{ competenciaModal.nombreCompetencia }}</span>
+                      </div>
+                      <div class="competencia-body">
+                        <p style="margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;">
+                          <strong>Nivel {{ competenciaModal.nivel }}</strong> - {{ competenciaModal.descripcion }}
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Parte derecha: Inputs -->
+                    <div style="display: flex;">
+
+                      <!-- ✅ Calificación Colaborador (solo lectura) -->
+                      <div style="text-align: center;">
+                        <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">
+                          Calificación Colaborador
+                        </label>
+                        <select class="number-input number-input-rev"
+                                [(ngModel)]="competenciaModal.calificacion" [disabled]="true">
+                          <option *ngIf="!competenciaModal.calificacion" value="">Sin calificar</option>
+                          <option *ngIf="competenciaModal.calificacion"
+                                  [value]="competenciaModal.calificacion">
+                            {{ competenciaModal.calificacion }} - {{
+                            getNombreCalificacion(competenciaModal.calificacion) }}
+                          </option>
+                        </select>
+                      </div>
+
+                      <!-- ✅ Calificación Jefe (editable con select 1-4) -->
+                      <div style="text-align: center; margin-right: 0; margin-left: 10px;">
+                        <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">
+                          Calificación Jefe
+                        </label>
+                        <select class="number-input number-input-competencia"
+                                [(ngModel)]="competenciaModal.calificacionFinal">
+                          <option value="" disabled selected>Seleccione</option>
+                          <option [value]="1">1 - Insatisfactorio</option>
+                          <option [value]="2">2 - Necesita Mejorar</option>
+                          <option [value]="3">3 - Satisfactorio</option>
+                          <option [value]="4">4 - Sobresaliente</option>
+                        </select>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Retroalimentación y Plan de acción -->
+              <div class="form-section" *ngIf="faseEvaluacionModal === 4">
+
+                <div class="section-title">
+                  <div class="" style="display: flex; gap: 0.4rem">
+                    <img src="assets/img/iconos/iconos mycollection/png/042-portapapeles.png" 
+                        alt="icono obj" class="icono-menor" />
+                    Retroalimentación:
+                  </div>
+                </div>
+                <div class="form-row" style="margin-left: 2rem;">
+                  <textarea class="text-input" rows="4"
+                            placeholder="Retroalimentación del supervisor sobre el desempeño..."
+                            [(ngModel)]="retroalimentacionModal">
+                  </textarea>
+                </div>
+
+                <div class="section-title " style="margin-top: 2rem;">
+                  <div class="" style="display: flex; gap: 0.4rem">
+                    <img src="assets/img/iconos/iconos mycollection/png/024-objetivo.png" 
+                        alt="icono obj" class="icono-menor" />
+                    Plan de Acción:
+                  </div>
+                </div>
+                <div class="form-row" style="margin-left: 2rem;">
+                  <textarea class="text-input" rows="4" 
+                            placeholder="Plan de acción a llevar a cabo..."
+                            [(ngModel)]="planAccionModal">
+                  </textarea>
+                </div>
+
+              </div>
+
+              <!-- Botones -->
+              <div class="buttons-container" style="text-align: center; margin-top: 2rem;" *ngIf="faseEvaluacionModal === 4">
+                <button class="finalizar-btn" (click)="enviarRetroalimentacionModal()">
+                  Finalizar
+                </button>
+              </div>
+
             </div>
+            <!-- fin Retroalimentación Admin MODAL -->
+
+
+            <!-- Formulario: Cierre FASE 5 MODAL -->
+            <div class="evaluation-form-cierre" *ngIf="faseEvaluacionModal === 5">
+              
+              <div class="header">
+                <h2>Resultado de Evaluación de Desempeño</h2>
+                <div class="subtitle">Reporte Semestral 2025 • {{ empleadoModal?.area || 'Departamento' }}</div>
+              </div>
+              <div class="content"></div>
+              
+              
+              <!-- INICIO DEL CÓDIGO DE CIERRE -->
+              <div class="cierre"> 
+
+                <div class="grid">
+                  <!-- Tarjeta Objetivos -->
+                  <div class="card card-objetivos">
+                      <div class="card-title">Objetivos</div>
+                      <div class="circular-progress">
+                          <svg width="140" height="140">
+                              <circle class="bg-circle" cx="70" cy="70" r="50"></circle>
+                              <circle class="progress-circle" cx="70" cy="70" r="50" 
+                                      stroke="#3b82f6"
+                                      [attr.stroke-dasharray]="314.16" 
+                                      [attr.stroke-dashoffset]="calcularDashOffset(promedioObjetivosModal, 4)"></circle>
+                          </svg>
+                          <div class="circle-text">{{ promedioObjetivosModal | number:'1.1-1' }}</div>
+                          <div class="circle-subtext">de 4.0</div>
+                      </div>
+                      <span class="card-badge" [ngClass]="obtenerClaseBadge(promedioObjetivosModal)">
+                        {{ obtenerNivelDesempeno(promedioObjetivosModal) }}
+                      </span>
+                  </div>
+                  
+                  <!-- Tarjeta Competencias -->
+                  <div class="card card-competencias">
+                      <div class="card-title">Competencias</div>
+                      <div class="circular-progress">
+                          <svg width="140" height="140">
+                              <circle class="bg-circle" cx="70" cy="70" r="50"></circle>
+                              <circle class="progress-circle" cx="70" cy="70" r="50" 
+                                      stroke="#8b5cf6"
+                                      [attr.stroke-dasharray]="314.16" 
+                                      [attr.stroke-dashoffset]="calcularDashOffset(promedioCompetenciasModal, 4)"></circle>
+                          </svg>
+                          <div class="circle-text">{{ promedioCompetenciasModal | number:'1.1-1' }}</div>
+                          <div class="circle-subtext">de 4.0</div>
+                      </div>
+                      <span class="card-badge" [ngClass]="obtenerClaseBadge(promedioCompetenciasModal)">
+                        {{ obtenerNivelDesempeno(promedioCompetenciasModal) }}
+                      </span>
+                  </div>
+                  
+                  <!-- Tarjeta Calificación Final -->
+                  <div class="card final-card">
+                      <div class="final-header">
+                          <span class="final-title">Calificación Final</span>
+                          <span class="final-badge">{{ obtenerNivelDesempeno(calificacionFinalModal) }}</span>
+                      </div>
+                      <div class="final-content">
+                          <div class="final-score">
+                              {{ calificacionFinalModal | number:'1.2-2' }} <span class="final-max">/ 4.0</span>
+                          </div>
+                          <div class="final-bar-container">
+                              <div class="bar-wrapper">
+                                  <div class="bar-container">
+                                      <div class="bar-fill" 
+                                          [style.width.%]="(calificacionFinalModal / 4) * 100"></div>
+                                  </div>
+                              </div>
+                              <div class="bar-label">{{ obtenerDescripcionDesempeno(calificacionFinalModal) }}</div>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+
+                <div class="content"></div>
+
+                <!-- Retroalimentación -->
+                <div class="cierre-seccion">
+                  <div class="cierre-header" style="display: flex; gap: 0.4rem">
+                    <img src="assets/img/iconos/iconos mycollection/png/042-portapapeles.png"
+                        alt="icono obj" class="icono-menor" />
+                    <h3>Retroalimentación:</h3>
+                  </div>
+                  <div class="cierre-texto" [innerHTML]="retroalimentacionModal || 'Sin retroalimentación'"></div>
+                </div>
+
+                <!-- Plan de Acción -->
+                <div class="cierre-seccion">
+                  <div class="cierre-header" style="display: flex; gap: 0.4rem">
+                    <img src="assets/img/iconos/iconos mycollection/png/024-objetivo.png"
+                        alt="icono obj" class="icono-menor" />
+                    <h3>Plan de Acción:</h3>
+                  </div>
+                  <div class="cierre-texto" [innerHTML]="planAccionModal || 'Sin plan de acción'"></div>
+                </div>
+              </div>
+
+            </div>
+            <!-- fin Formulario: Cierre FASE 5 MODAL -->
+
 
           </div>
-        </div>
-      </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
 
 

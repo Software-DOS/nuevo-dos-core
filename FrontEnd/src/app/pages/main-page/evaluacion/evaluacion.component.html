@@ -525,7 +525,7 @@
 
 
     <!-- Formulario: Retroalimentación  4 -->
-    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 4">
+    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 5">
       <h4 class="titulos-pequeños">Retroalimentación</h4>
         <!-- Objetivo Área -->
         <div class="form-section">          
@@ -708,11 +708,26 @@
           </div>
 
         </div>
+
+        <!-- Botón Enviar -->
+      <div>
+        <button class="submit-btn" style="margin-right: 1rem" (click)="avanzarCierreEvaluacion()">
+          Continuar
+        </button>
+      </div>
+      <div style="clear: both;"></div>
+
+      <!-- <div>
+        <button class="submit-btn" style="margin-right: 1rem" (click)="avanzarCierreEvaluacion()">
+          Continuar
+        </button>
+      </div> -->
+
     </div>
 
     
     <!-- Formulario: Cierre  5 -->
-    <div class="evaluation-form-cierre" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 5">
+    <div class="evaluation-form-cierre" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 7">
       
       <div class="header">
         <h2>Resultado de Evaluación de Desempeño</h2>
@@ -813,30 +828,9 @@
       </div>
       
 
-</div>
+    </div>
 
       
-
-
-    <!-- Botón Enviar -->
-      <div *ngIf="faseEvaluacion != 4">
-        <button class="submit-btn" style="margin-right: 1rem" (click)="guardarDatosEvaluacion()">
-          Enviar
-        </button>
-      </div>
-      <div style="clear: both;"></div>
-
-      <div *ngIf="faseEvaluacion === 4">
-        <button class="submit-btn" style="margin-right: 1rem" (click)="avanzarCierreEvaluacion()">
-          Continuar
-        </button>
-      </div>
-      
-
-
-
-
-
 
 
     <!-- -----------      --------------          -------------             ------------ -->

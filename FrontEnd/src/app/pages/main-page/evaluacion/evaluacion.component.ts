@@ -212,7 +212,7 @@ timelineSteps = [
     pngIcon: 'assets/img/iconos/iconos mycollection/png/028-grafico.png',
     sectionId: 'Retroalimentacion',
     isActive: false,
-    phase: 4  
+    phase: 5  
   },
   { 
     number: 5, 
@@ -222,7 +222,7 @@ timelineSteps = [
     pngIcon: 'assets/img/iconos/iconos mycollection/png/056-alcanzando-objetivos.png',
     sectionId: 'Cierre',
     isActive: false,
-    phase: 5  
+    phase: 7
   }
 ];
 
@@ -386,10 +386,10 @@ actualizarTimelinePorFase(fase: number): void {
     case 2:
       maxPaso = 3; // hasta Evaluación Intermedia
       break;
-    case 4:
+    case 5:
       maxPaso = 4; // hasta Retroalimentación
       break;
-    case 5:
+    case 7:
       maxPaso = 5; // todos
       break;
     default:
@@ -629,8 +629,6 @@ obtenerFaseActual(): void {
         }
       });
   }
-
-
 
 
   // Objectives (KPIs)
@@ -1202,6 +1200,9 @@ inicializarObjetivosVacios(): void {
 
   avanzarCierreEvaluacion(){
     console.log('⚠️ FASE 4 EN PROCESO, SOLO LECTURA');
+    this.actualizarTimelinePorFase(7);
+    this.faseEvaluacion = 7;
+    this. cargarEvaluaciones();
   }
 
 
@@ -1211,69 +1212,69 @@ inicializarObjetivosVacios(): void {
    * @param index - Índice del objetivo (0-4)
    * @param valor - Nuevo texto del objetivo (puede ser Event o string)
    */
-  actualizarTextoObjetivo(index: number, valor: any): void {
-    let nuevoTexto: string;
+  // actualizarTextoObjetivo(index: number, valor: any): void {
+  //   let nuevoTexto: string;
     
-    if (valor && typeof valor === 'object' && valor.target) {
-      // Es un evento
-      nuevoTexto = (valor.target as HTMLInputElement).value;
-    } else {
-      // Es un valor directo (ngModelChange)
-      nuevoTexto = valor;
-    }
+  //   if (valor && typeof valor === 'object' && valor.target) {
+  //     // Es un evento
+  //     nuevoTexto = (valor.target as HTMLInputElement).value;
+  //   } else {
+  //     // Es un valor directo (ngModelChange)
+  //     nuevoTexto = valor;
+  //   }
     
-    if (index >= 0 && index < this.objetivos.length) {
-      this.objetivos[index].texto = nuevoTexto;
-      console.log(`📝 Objetivo ${index + 1} actualizado:`, this.objetivos[index]);
-    }
-  }
+  //   if (index >= 0 && index < this.objetivos.length) {
+  //     this.objetivos[index].texto = nuevoTexto;
+  //     console.log(`📝 Objetivo ${index + 1} actualizado:`, this.objetivos[index]);
+  //   }
+  // }
 
   /**
    * Actualiza el valor numérico de un objetivo específico
    * @param index - Índice del objetivo (0-4)
    * @param valor - Nuevo valor numérico (puede ser Event o number)
    */
-  actualizarValorObjetivo(index: number, valor: any): void {
-    let nuevoValor: number;
+  // actualizarValorObjetivo(index: number, valor: any): void {
+  //   let nuevoValor: number;
     
-    if (valor && typeof valor === 'object' && valor.target) {
-      // Es un evento
-      nuevoValor = parseInt((valor.target as HTMLInputElement).value, 10);
-    } else {
-      // Es un valor directo (ngModelChange)
-      nuevoValor = parseInt(valor, 10);
-    }
+  //   if (valor && typeof valor === 'object' && valor.target) {
+  //     // Es un evento
+  //     nuevoValor = parseInt((valor.target as HTMLInputElement).value, 10);
+  //   } else {
+  //     // Es un valor directo (ngModelChange)
+  //     nuevoValor = parseInt(valor, 10);
+  //   }
     
-    if (index >= 0 && index < this.objetivos.length) {
-      // Validar que el valor esté entre 0 y 100
-      if (!isNaN(nuevoValor) && nuevoValor >= 0 && nuevoValor <= 100) {
-        this.objetivos[index].valor = nuevoValor;
-        console.log(`📊 Valor del objetivo ${index + 1} actualizado:`, this.objetivos[index]);
-      }
-    }
-  }
+  //   if (index >= 0 && index < this.objetivos.length) {
+  //     // Validar que el valor esté entre 0 y 100
+  //     if (!isNaN(nuevoValor) && nuevoValor >= 0 && nuevoValor <= 100) {
+  //       this.objetivos[index].valor = nuevoValor;
+  //       console.log(`📊 Valor del objetivo ${index + 1} actualizado:`, this.objetivos[index]);
+  //     }
+  //   }
+  // }
 
   /**
    * Actualiza la fecha de un objetivo específico
    * @param index - Índice del objetivo (0-4)
    * @param valor - Nueva fecha (puede ser Event o string)
    */
-  actualizarFechaObjetivo(index: number, valor: any): void {
-    let nuevaFecha: string;
+  // actualizarFechaObjetivo(index: number, valor: any): void {
+  //   let nuevaFecha: string;
     
-    if (valor && typeof valor === 'object' && valor.target) {
-      // Es un evento
-      nuevaFecha = (valor.target as HTMLInputElement).value;
-    } else {
-      // Es un valor directo (ngModelChange)
-      nuevaFecha = valor;
-    }
+  //   if (valor && typeof valor === 'object' && valor.target) {
+  //     // Es un evento
+  //     nuevaFecha = (valor.target as HTMLInputElement).value;
+  //   } else {
+  //     // Es un valor directo (ngModelChange)
+  //     nuevaFecha = valor;
+  //   }
     
-    if (index >= 0 && index < this.objetivos.length) {
-      this.objetivos[index].fecha = nuevaFecha;
-      console.log(`📅 Fecha del objetivo ${index + 1} actualizada:`, this.objetivos[index]);
-    }
-  }
+  //   if (index >= 0 && index < this.objetivos.length) {
+  //     this.objetivos[index].fecha = nuevaFecha;
+  //     console.log(`📅 Fecha del objetivo ${index + 1} actualizada:`, this.objetivos[index]);
+  //   }
+  // }
 
   /**
    * Actualiza el nombre de una competencia específica (array fijo)
@@ -1302,47 +1303,47 @@ inicializarObjetivosVacios(): void {
    * @param index - Índice de la competencia (0-4)
    * @param valor - Valor numérico (puede ser Event o number)
    */
-  actualizarValorCompetenciaFija(index: number, valor: any): void {
-    let nuevoValor: number;
+  // actualizarValorCompetenciaFija(index: number, valor: any): void {
+  //   let nuevoValor: number;
     
-    if (valor && typeof valor === 'object' && valor.target) {
-      // Es un evento
-      nuevoValor = Number((valor.target as HTMLInputElement).value);
-    } else {
-      // Es un número directo
-      nuevoValor = Number(valor);
-    }
+  //   if (valor && typeof valor === 'object' && valor.target) {
+  //     // Es un evento
+  //     nuevoValor = Number((valor.target as HTMLInputElement).value);
+  //   } else {
+  //     // Es un número directo
+  //     nuevoValor = Number(valor);
+  //   }
 
-    // if (index >= 0 && index < this.competencias.length) {
-    //   // Validar que el valor esté entre 0 y 100
-    //   if (!isNaN(nuevoValor) && nuevoValor >= 0 && nuevoValor <= 100) {
-    //     this.competencias[index].valor = nuevoValor;
-    //     console.log(`📊 Valor competencia ${index + 1}:`, nuevoValor, this.competencias[index]);
-    //   }
-    // }
-  }
+  //   // if (index >= 0 && index < this.competencias.length) {
+  //   //   // Validar que el valor esté entre 0 y 100
+  //   //   if (!isNaN(nuevoValor) && nuevoValor >= 0 && nuevoValor <= 100) {
+  //   //     this.competencias[index].valor = nuevoValor;
+  //   //     console.log(`📊 Valor competencia ${index + 1}:`, nuevoValor, this.competencias[index]);
+  //   //   }
+  //   // }
+  // }
 
   /**
    * Actualiza la fecha de una competencia específica (array fijo)
    * @param index - Índice de la competencia (0-4)
    * @param fecha - Nueva fecha (puede ser Event o string)
    */
-  actualizarFechaCompetenciaFija(index: number, fecha: any): void {
-    let nuevaFecha: string;
+  // actualizarFechaCompetenciaFija(index: number, fecha: any): void {
+  //   let nuevaFecha: string;
     
-    if (fecha && typeof fecha === 'object' && fecha.target) {
-      // Es un evento
-      nuevaFecha = (fecha.target as HTMLInputElement).value;
-    } else {
-      // Es una fecha directa
-      nuevaFecha = String(fecha);
-    }
+  //   if (fecha && typeof fecha === 'object' && fecha.target) {
+  //     // Es un evento
+  //     nuevaFecha = (fecha.target as HTMLInputElement).value;
+  //   } else {
+  //     // Es una fecha directa
+  //     nuevaFecha = String(fecha);
+  //   }
 
-    // if (index >= 0 && index < this.competencias.length) {
-    //   this.competencias[index].fecha = nuevaFecha;
-    //   console.log(`📅 Fecha competencia ${index + 1}:`, nuevaFecha, this.competencias[index]);
-    // }
-  }
+  //   // if (index >= 0 && index < this.competencias.length) {
+  //   //   this.competencias[index].fecha = nuevaFecha;
+  //   //   console.log(`📅 Fecha competencia ${index + 1}:`, nuevaFecha, this.competencias[index]);
+  //   // }
+  // }
 
   /**
    * Calcula el porcentaje total basado en los valores de los objetivos
@@ -1358,72 +1359,25 @@ inicializarObjetivosVacios(): void {
     return Math.round(promedio);
   }
 
-  /**
-   * Obtiene todos los objetivos como un objeto para debugging
-   * @returns Array con todos los objetivos actuales
-   */
-  // obtenerEstadoObjetivos(): any[] {
-  //   return this.objetivos.map(obj => ({
-  //     id: obj.id,
-  //     texto: obj.texto,
-  //     valor: obj.valor,
-  //     fecha: obj.fecha,
-  //     reconsiderar: obj.reconsiderar,
-  //     completado: obj.texto && obj.valor && obj.fecha
-  //   }));
-  // }
 
-  /**
-   * Determina si los campos de objetivos deben estar deshabilitados
-   * Solo son editables en la etapa "Captura-Resultados"
-   * @returns true si los campos deben estar deshabilitados
-   */
-  // sonCamposObjetivosDeshabilitados(): boolean {
-  //   return this.activeTimelineStep !== 'Captura-Resultados';
-  // }
-
-  /**
-   * Actualiza el estado de "reconsiderar" para un objetivo específico
-   * @param index - Índice del objetivo (0-4)
-   * @param valor - Valor numérico para reconsiderar
-   */
-  // actualizarReconsiderarObjetivo(index: number, valor: number): void {
-  //   if (index >= 0 && index < this.objetivos.length) {
-  //     // Validar que el valor esté entre 0 y 100
-  //     if (!isNaN(valor) && valor >= 0 && valor <= 100) {
-  //       this.objetivos[index].reconsiderar = valor;
-  //       console.log(`🔄 Reconsiderar objetivo ${index + 1}:`, valor, this.objetivos[index]);
-  //     }
-  //   }
-  // }   
-
-
-  // showSection(targetId: string): void {
-  //   this.activeSection = targetId;
-  // }
   // Método para el menú principal
   showSection(targetId: string): void {
     this.activeSection = targetId;
-    
-    // Si selecciona "hoja-ruta", resetea al primer paso del timeline
-    // if (targetId === 'hoja-ruta') {
-    //   this.activeTimelineStep = 'Captura-Resultados';
-    // }
     
     console.log('Sección principal activa:', this.activeSection);
     // console.log('Step del timeline activo:', this.activeTimelineStep);
   }
 
-  toggleDropdown(): void {
-    const dropdown = document.getElementById('profileMenu');
-    if (dropdown) {
-      dropdown.classList.toggle('show');
-    }
-  }
+  // toggleDropdown(): void {
+  //   const dropdown = document.getElementById('profileMenu');
+  //   if (dropdown) {
+  //     dropdown.classList.toggle('show');
+  //   }
+  // }
 
-  logout(): void {
-    // Logout logic will be implemented later
-    console.log('Logout clicked');
-  }
+  // logout(): void {
+  //   // Logout logic will be implemented later
+  //   console.log('Logout clicked');
+  // }
 
 }

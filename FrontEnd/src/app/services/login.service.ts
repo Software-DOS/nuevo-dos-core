@@ -245,7 +245,7 @@ getCurrentUser(): any {
     // BORRAR - PRODUCCIÓN: console.log("👤 [DEBUG] Current user from token:", decoded);
     return decoded;
   } catch (error) {
-    console.error("❌ [DEBUG] Error getting current user:", error);
+    // console.error("❌ [DEBUG] Error getting current user:", error);
     return null;
   }
 }

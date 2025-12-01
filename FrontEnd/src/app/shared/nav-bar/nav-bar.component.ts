@@ -178,34 +178,61 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
    * Carga la foto de perfil del empleado desde el backend
    * @param idEmpleado - ID del empleado logueado
    */
-  cargarFotoPerfilEmpleado(idEmpleado: number): void {
-    console.log('NavBar: Intentando cargar foto para empleado ID:', idEmpleado);
+  // cargarFotoPerfilEmpleado(idEmpleado: number): void {
+  //   console.log('NavBar: Intentando cargar foto para empleado ID:', idEmpleado);
     
-    if (idEmpleado) {
-      this.gthEmpleadoService.obtenerFotoPerfil(idEmpleado).subscribe({
-        next: (response: any) => {
-          console.log('NavBar: Respuesta del backend para foto:', response);
+  //   if (idEmpleado) {
+  //     this.gthEmpleadoService.obtenerFotoPerfil(idEmpleado).subscribe({
+  //       next: (response: any) => {
+  //         console.log('NavBar: Respuesta del backend para foto:', response);
           
-          if (response && response.fotoPerfilUrl) {
-            const urlCompleta = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
-            console.log('NavBar: URL construida para imagen:', urlCompleta);
-            this.Imagen = urlCompleta;
-          } else {
-            console.log('NavBar: No hay foto de perfil, usando imagen por defecto');
-            // Mantener imagen por defecto si no tiene foto
-            this.Imagen = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-          }
-        },
-        error: (error) => {
-          console.error('NavBar: Error al cargar foto de perfil:', error);
-          // Mantener imagen por defecto en caso de error
+  //         if (response && response.fotoPerfilUrl) {
+  //           const urlCompleta = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
+  //           console.log('NavBar: URL construida para imagen:', urlCompleta);
+  //           this.Imagen = urlCompleta;
+  //         } else {
+  //           console.log('NavBar: No hay foto de perfil, usando imagen por defecto');
+  //           // Mantener imagen por defecto si no tiene foto
+  //           this.Imagen = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  //         }
+  //       },
+  //       error: (error) => {
+  //         console.error('NavBar: Error al cargar foto de perfil:', error);
+  //         // Mantener imagen por defecto en caso de error
+  //         this.Imagen = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  //       }
+  //     });
+  //   } else {
+  //     console.warn('NavBar: No se proporcionó ID de empleado válido');
+  //     this.Imagen = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  //   }
+  // }
+  cargarFotoPerfilEmpleado(idEmpleado: number): void {
+    // console.log('NavBar: Intentando cargar foto para empleado ID:', idEmpleado);
+
+    if (!idEmpleado) {
+      // console.warn('NavBar: No se proporcionó ID de empleado válido');
+      this.Imagen = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+      return;
+    }
+
+    this.gthEmpleadoService.obtenerFotoPerfil(idEmpleado).subscribe({
+      next: (response: any) => {
+        // console.log('NavBar: Respuesta del backend para foto:', response);
+
+        if (response && response.fotoPerfilUrl) {
+          // si el backend ya devuelve la URL completa, usarla directamente
+          this.Imagen = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
+        } else {
+          console.log('NavBar: No hay foto de perfil, usando imagen por defecto');
           this.Imagen = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
         }
-      });
-    } else {
-      console.warn('NavBar: No se proporcionó ID de empleado válido');
-      this.Imagen = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-    }
+      },
+      error: (error) => {
+        console.error('NavBar: Error al cargar foto de perfil:', error);
+        this.Imagen = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+      }
+    });
   }
 
   dropdownAbierto = false;

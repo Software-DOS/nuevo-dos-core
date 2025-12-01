@@ -115,10 +115,53 @@ export class GthEmpleadoService {
    * Obtiene el ID del empleado GTH desde sessionStorage
    * @returns ID del empleado GTH o null si no existe
    */
+  // obtenerIdGthEmpleadoDesdeSession(): number | null {
+  //   const id = sessionStorage.getItem('idGthEmpleado');
+  //   console.log('[GthEmpleadoService] Obteniendo ID:', id);
+  //   return id ? parseInt(id, 10) : null;
+  // }
+
   obtenerIdGthEmpleadoDesdeSession(): number | null {
-    const id = sessionStorage.getItem('idGthEmpleado');
-    console.log('[GthEmpleadoService] Obteniendo ID:', id);
-    return id ? parseInt(id, 10) : null;
+    // Intentar obtener directamente de sessionStorage
+    const idDirecto = sessionStorage.getItem('idGthEmpleado');
+    if (idDirecto) {
+      return parseInt(idDirecto, 10);
+    }
+
+    // Si no existe, obtener del token JWT
+    const token = sessionStorage.getItem('token');
+    
+    if (!token || typeof token !== 'string' || token.trim() === '') {
+      return null;
+    }
+
+    try {
+      // Decodificar el payload del token JWT
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      
+      // Buscar el IdEmpleado en el token
+      const idEmpleado = tokenPayload['IdEmpleado'] || 
+                        tokenPayload['idEmpleado'] || 
+                        tokenPayload['Id'] ||
+                        null;
+      
+      if (idEmpleado) {
+        const idNumerico = typeof idEmpleado === 'number' ? 
+                          idEmpleado : 
+                          parseInt(idEmpleado, 10);
+        
+        // Guardar en sessionStorage para futuras consultas
+        sessionStorage.setItem('idGthEmpleado', idNumerico.toString());
+        
+        return idNumerico;
+      }
+      
+      return null;
+      
+    } catch (error) {
+      console.error('Error al decodificar el token:', error);
+      return null;
+    }
   }
 
 
@@ -196,15 +239,30 @@ export class GthEmpleadoService {
   }
 
   /**
-   * Obtiene la foto de perfil de un empleado
-   * @param idEmpleado - ID del empleado
-   * @returns Observable con la URL de la foto de perfil
-   */
-  obtenerFotoPerfil(idEmpleado: number) {
-    return this.http.get(
-      environment.urlbackend + `api/GTHEmpleado/obtener-foto-perfil/${idEmpleado}`
-    );
+ * Obtiene la foto de perfil de un empleado
+ */
+obtenerFotoPerfil(idEmpleado: number) {
+  return this.http.get(`${environment.urlbackend}api/GTHEmpleado/foto-perfil/${idEmpleado}`);
+}
+
+/**
+ * Construye la URL completa para mostrar una imagen
+ */
+construirUrlImagen(fotoPerfilUrl: string): string {
+  if (!fotoPerfilUrl) {
+    return environment.urlbackend + 'img/usuarios/default-avatar.png';
   }
+
+  // Si ya es una URL absoluta
+  if (fotoPerfilUrl.startsWith('http')) {
+    return fotoPerfilUrl;
+  }
+
+  // Si es relativa
+  const urlLimpia = fotoPerfilUrl.startsWith('/') ? fotoPerfilUrl.substring(1) : fotoPerfilUrl;
+  return environment.urlbackend + urlLimpia;
+}
+
 
   /**
    * Elimina la foto de perfil de un empleado
@@ -222,20 +280,20 @@ export class GthEmpleadoService {
    * @param fotoPerfilUrl - URL relativa de la foto
    * @returns URL completa para mostrar la imagen
    */
-  construirUrlImagen(fotoPerfilUrl: string): string {
-    if (!fotoPerfilUrl) {
-      return environment.urlbackend + 'img/usuarios/default-avatar.png';
-    }
+  // construirUrlImagen(fotoPerfilUrl: string): string {
+  //   if (!fotoPerfilUrl) {
+  //     return environment.urlbackend + 'img/usuarios/default-avatar.png';
+  //   }
     
-    // Si ya tiene el dominio, devolverla tal como está
-    if (fotoPerfilUrl.startsWith('http')) {
-      return fotoPerfilUrl;
-    }
+  //   // Si ya tiene el dominio, devolverla tal como está
+  //   if (fotoPerfilUrl.startsWith('http')) {
+  //     return fotoPerfilUrl;
+  //   }
     
-    // Si es una URL relativa, agregar el dominio del backend
-    const urlLimpia = fotoPerfilUrl.startsWith('/') ? fotoPerfilUrl.substring(1) : fotoPerfilUrl;
-    return environment.urlbackend + urlLimpia;
-  }
+  //   // Si es una URL relativa, agregar el dominio del backend
+  //   const urlLimpia = fotoPerfilUrl.startsWith('/') ? fotoPerfilUrl.substring(1) : fotoPerfilUrl;
+  //   return environment.urlbackend + urlLimpia;
+  // }
 
   /**
    * Obtiene la foto de perfil del empleado logueado desde sessionStorage

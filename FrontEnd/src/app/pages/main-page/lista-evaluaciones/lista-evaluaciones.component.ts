@@ -8,6 +8,7 @@ import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
 import { GthEvaluacionService } from '../../../services/gth-evaluacion.service';
 import { GthCompetenciaService } from 'src/app/services/gth-competencia.service';
 import { GthAreaService } from 'src/app/services/gth-area.service';
+import { GthObjetivoService } from '../../../services/gth-objetivo.service';
 
 import { iGTHEmpleado } from '../../../interface/igth-empleado';
 import { IgthObjetivo } from '../../../interface/igth-objetivo';
@@ -67,13 +68,10 @@ export class ListaEvaluacionesComponent implements OnInit {
   // 📌 Datos para filtros
   // =====================
   filtroEmpleado: string = '';
-
   
-  empleados: any[] = [
-  ];
+  empleados: any[] = [];
 
-  niveles: string[] = [
-  ];
+  niveles: string[] = [];
 
 
   // Variables usadas para el Modal    ----------------------------------------
@@ -90,6 +88,8 @@ export class ListaEvaluacionesComponent implements OnInit {
 
   showModal: boolean = false;
   selectedEmpleadoId: number | null = null;
+
+  faseColabNuevo:number = 2;
 
   objetivoAreaDisplay: string = 'El objetivo de un área de TI es gestionar la infraestructura tecnológica, mantener las operaciones de la empresa y, al mismo tiempo, apoyar los objetivos comerciales del negocio, ya sea mediante la mejora de la eficiencia, la innovación y la protección de los datos, adaptándose a las necesidades y nueva estrategia';
 
@@ -108,19 +108,9 @@ export class ListaEvaluacionesComponent implements OnInit {
 
   // EJEMPLO DESPUES TOCA BORRAR  
   objetivosIndividuales = [
-    { titulo: 'Reducir tiempos de entrega', descripcion: 'Optimizar el flujo de trabajo', peso: 20, valoracionEmpleado: 90, valoracionJefe: 4, calificacionFinal: 88, fechaLimite: '2025-12-15' },
-    { titulo: 'Aumentar satisfacción del cliente', descripcion: 'Mejorar atención postventa', peso: 25, valoracionEmpleado: 95, valoracionJefe: 5, calificacionFinal: 92, fechaLimite: '2025-11-20' },
-    { titulo: 'Capacitar al personal', descripcion: 'Implementar programa trimestral', peso: 15, valoracionEmpleado: 80, valoracionJefe: 3, calificacionFinal: 75, fechaLimite: '2025-10-30' },
-    { titulo: 'Reducir costos operativos', descripcion: 'Control de inventarios', peso: 25, valoracionEmpleado: 85, valoracionJefe: 4, calificacionFinal: 82, fechaLimite: '2025-12-01' },
-    { titulo: 'Implementar mejoras tecnológicas', descripcion: 'Adoptar herramientas digitales', peso: 15, valoracionEmpleado: 90, valoracionJefe: 5, calificacionFinal: 89, fechaLimite: '2025-11-10' },
   ];
 
   nivelesCompetencias = [
-    { tipoCompetencia: 'Organizacional', nombreCompetencia: 'Comprensión Interpersonal', nivel: 2, descripcion: 'Conoce y maneja sus emociones.', valor: 85, fecha: '2025-11-15' },
-    { tipoCompetencia: 'Comportamental', nombreCompetencia: 'Comunicación Asertiva', nivel: 3, descripcion: 'Escucha e implementa canales de comunicación efectiva.', valor: 90, fecha: '2025-12-10' },
-    { tipoCompetencia: 'Técnica', nombreCompetencia: 'Gestión de Proyectos', nivel: 3, descripcion: 'Administra recursos y tareas efectivamente.', valor: 88, fecha: '2025-11-25' },
-    { tipoCompetencia: 'Liderazgo', nombreCompetencia: 'Trabajo en Equipo', nivel: 2, descripcion: 'Colabora y motiva a su equipo.', valor: 92, fecha: '2025-12-20' },
-    { tipoCompetencia: 'Innovación', nombreCompetencia: 'Pensamiento Creativo', nivel: 3, descripcion: 'Propone ideas y mejoras continuas.', valor: 87, fecha: '2025-10-30' },
   ];
 
   retroalimentacion = 'El desempeño del empleado fue sobresaliente en la mayoría de los objetivos.';
@@ -176,20 +166,19 @@ export class ListaEvaluacionesComponent implements OnInit {
     private gthEmpleadoService: GthEmpleadoService, 
     private gthCompetenciaService: GthCompetenciaService, 
     private gthEvaluacionServcie: GthEvaluacionService,
+    private gthObjetivoService: GthObjetivoService,
     private gthAreaService: GthAreaService) {      
   }
     
   
 
   ngOnInit(): void {
-    this.cargarEvaluaciones(); //Cargar empleados con evaluaciones
-    this.cargarEmpleadosParaEvaluacion(); // Carga todos los empleados
-    this.cargarCompetencias();
+    this.cargarEvaluaciones(); //Cargar empleados con evaluaciones  
 
-    this.obtenerCelulas(); // Carga todas las celulas para seleccionar AREA-cambiar
+    // this.obtenerCelulas(); // Carga todas las celulas para seleccionar AREA-cambiar
   
     // Cargar todos los empleados al iniciar
-    this.cargarEmpleadosParaJefeEvaluador();
+    // this.cargarEmpleadosParaJefeEvaluador();
   }
 
 
@@ -208,11 +197,11 @@ cargarEvaluaciones(): void {
       if (evaluacionesData && Array.isArray(evaluacionesData)) {
         this.procesarEvaluaciones(evaluacionesData);
       } else {
-        this.cargarEmpleadosConParametros();
+        // this.cargarEmpleadosConParametros();
       }
     },
     error: (error) => {
-      this.cargarEmpleadosConParametros();
+      // this.cargarEmpleadosConParametros();
     }
   });
 }
@@ -220,71 +209,57 @@ cargarEvaluaciones(): void {
 /**
  * Procesar evaluaciones y obtener datos mínimos de empleados
  */
+/**
+ * Procesar evaluaciones obteniendo empleados en UNA sola petición
+ */
 private procesarEvaluaciones(evaluaciones: Ievaluacion[]): void {
+  console.log('🔄 Procesando evaluaciones...');
+  console.log('📊 Total evaluaciones:', evaluaciones.length);
   
   // Extraer IDs únicos de empleados
   const idsEmpleados = [...new Set(evaluaciones.map(evaluacion => evaluacion.idEmpleado))];
+  console.log('👥 Empleados únicos necesarios:', idsEmpleados.length);
 
   if (idsEmpleados.length === 0) {
-    this.cargarEmpleadosConParametros();
+    console.warn('⚠️ No hay empleados para procesar');
+    this.empleados = [];
+    this.empleadosFiltrados = [];
     return;
   }
 
-  // Almacenar empleados obtenidos
-  const empleadosObtenidos: { [key: number]: iGTHEmpleado } = {};
-  let empleadosProcessed = 0;
-
-  // Obtener datos mínimos de cada empleado
-  idsEmpleados.forEach(idEmpleado => {
-    // Usar tipo=1 para buscar por ID específico
-    this.gthEmpleadoService.MostrarConParametros(1, idEmpleado).subscribe({
-      next: (response: any) => {
-        
-        let empleadoData = null;
-        
-        // Manejar diferentes estructuras de respuesta
-        if (response && response.$values && Array.isArray(response.$values)) {
-          // Buscar el empleado específico en el array $values
-          empleadoData = response.$values.find((emp: any) => emp.idEmpleado === idEmpleado);
-          
-          // Si no se encuentra, tomar el primer elemento si solo hay uno
-          if (!empleadoData && response.$values.length === 1) {
-            empleadoData = response.$values[0];
-          }
-        } else if (Array.isArray(response)) {
-          empleadoData = response.find((emp: any) => emp.idEmpleado === idEmpleado);
-          
-          // Si no se encuentra, tomar el primer elemento si solo hay uno
-          if (!empleadoData && response.length === 1) {
-            empleadoData = response[0];
-          }
-        } else if (response && response.idEmpleado) {
-          empleadoData = response;
-        }
-        
-        if (empleadoData) {
-          empleadosObtenidos[idEmpleado] = empleadoData;
-        } else {
-          console.warn(`⚠️ No se encontraron datos para empleado ${idEmpleado}. Respuesta completa:`, response);
-        }
-
-        empleadosProcessed++;
-        
-        // Mapear cuando todos estén procesados
-        if (empleadosProcessed === idsEmpleados.length) {
-          this.mapearEvaluacionesConEmpleados(evaluaciones, empleadosObtenidos);
-        }
-      },
-      error: (error) => {
-        console.error(`❌ Error al obtener empleado ${idEmpleado}:`, error);
-        empleadosProcessed++;
-        
-        // Continuar aunque falle uno
-        if (empleadosProcessed === idsEmpleados.length) {
-          this.mapearEvaluacionesConEmpleados(evaluaciones, empleadosObtenidos);
-        }
+  // ✅ OPTIMIZACIÓN: Obtener TODOS los empleados en UNA sola petición
+  this.gthEmpleadoService.MostrarConParametros(0).subscribe({
+    next: (response: any) => {
+      let empleadosData = response;
+      if (response && response.$values) {
+        empleadosData = response.$values;
       }
-    });
+
+      if (!empleadosData || !Array.isArray(empleadosData)) {
+        console.error('❌ Respuesta de empleados inválida');
+        this.empleados = [];
+        this.empleadosFiltrados = [];
+        return;
+      }
+
+      console.log('✅ Empleados obtenidos del backend:', empleadosData.length);
+
+      // Crear diccionario para búsqueda rápida
+      const empleadosMap: { [key: number]: iGTHEmpleado } = {};
+      empleadosData.forEach((emp: iGTHEmpleado) => {
+        empleadosMap[emp.idEmpleado] = emp;
+      });
+
+      console.log('📚 Diccionario de empleados creado:', Object.keys(empleadosMap).length);
+
+      // Mapear evaluaciones con empleados
+      this.mapearEvaluacionesConEmpleados(evaluaciones, empleadosMap);
+    },
+    error: (error) => {
+      console.error('❌ Error al obtener empleados:', error);
+      this.empleados = [];
+      this.empleadosFiltrados = [];
+    }
   });
 }
 
@@ -292,10 +267,18 @@ private procesarEvaluaciones(evaluaciones: Ievaluacion[]): void {
  * Mapear evaluaciones con datos mínimos de empleados
  */
 private mapearEvaluacionesConEmpleados(evaluaciones: Ievaluacion[], empleadosData: { [key: number]: iGTHEmpleado }): void {
+  // console.log('🔄 Mapeando evaluaciones con empleados...');
+  // console.log('📊 Total evaluaciones:', evaluaciones.length);
+  // console.log('👥 Empleados disponibles:', Object.keys(empleadosData).length);
+  
   const empleadosMapeados: Empleado[] = evaluaciones.map(evaluacion => {
     const empleado = empleadosData[evaluacion.idEmpleado];
     
+    // Si no se encuentra el empleado en el diccionario
     if (!empleado) {
+      // console.warn(`⚠️ Empleado ${evaluacion.idEmpleado} no encontrado en datos`);
+      
+      // Intentar obtener nombre de la evaluación misma (si el backend lo incluye)
       const nombreFallback = (evaluacion as any).nombreCompleto || 
                            `${(evaluacion as any).nombreEmpleado || ''} ${(evaluacion as any).apellidoEmpleado || ''}`.trim() ||
                            `Empleado ${evaluacion.idEmpleado}`;
@@ -303,15 +286,17 @@ private mapearEvaluacionesConEmpleados(evaluaciones: Ievaluacion[], empleadosDat
       return {
         id: evaluacion.idEmpleado,
         nombre: nombreFallback,
-        sexo: 'N/A',
-        area: 'N/A',
+        sexo: (evaluacion as any).sexo || 'N/A',
+        area: (evaluacion as any).area || (evaluacion as any).nombreArea || 'N/A',
         fechaInicio: this.formatearFecha(evaluacion.fechaCreacion || ''),
-        calificado: 'Pendiente',
-        photo: this.construirUrlFoto('', ''),
+        calificado: evaluacion.calificacionFinal ? 
+          `${evaluacion.calificacionFinal.toFixed(2)}/4.0` : '- / 4.0',
+        photo: this.construirUrlFoto('', (evaluacion as any).sexo || ''),
         estado: evaluacion.estado || 'PENDIENTE'
       };
     }
 
+    // Si SÍ se encuentra el empleado
     const nombreCompleto = `${empleado.nombre || ''} ${empleado.apellido || ''}`.trim();
     
     return {
@@ -321,7 +306,7 @@ private mapearEvaluacionesConEmpleados(evaluaciones: Ievaluacion[], empleadosDat
       area: empleado.area || 'Sin área',
       fechaInicio: this.formatearFecha(evaluacion.fechaCreacion || ''),
       calificado: evaluacion.calificacionFinal ? 
-        `${evaluacion.calificacionFinal}/100` : 'Pendiente',
+        `${evaluacion.calificacionFinal.toFixed(2)}/4.0` : '- / 4.0',
       photo: this.construirUrlFoto(empleado.fotoPerfilUrl || '', empleado.sexo || ''),
       estado: evaluacion.estado || 'PENDIENTE'
     };
@@ -330,63 +315,63 @@ private mapearEvaluacionesConEmpleados(evaluaciones: Ievaluacion[], empleadosDat
   if (empleadosMapeados.length > 0) {
     this.empleados = empleadosMapeados;
     this.empleadosFiltrados = [...this.empleados];
-    // <!-- Console log BORRAR -->
-    console.log(`${this.empleados.length} evaluaciones cargadas correctamente`);
+    // console.log(`✅ ${this.empleados.length} evaluaciones cargadas correctamente`);
   } else {
-    console.error('No se pudieron mapear las evaluaciones');
-    this.cargarDatosPorDefecto();
+    // console.error('❌ No se pudieron mapear las evaluaciones');
+    this.empleados = [];
+    this.empleadosFiltrados = [];
   }
 }
 
 /**
  * Método alternativo simplificado
  */
-private cargarEmpleadosConParametros(): void {
+// private cargarEmpleadosConParametros(): void {
 
-  this.gthEmpleadoService.MostrarConParametros(0).subscribe({
-    next: (response: any) => {
-      let empleadosData = response;
-      if (response && response.$values) {
-        empleadosData = response.$values;
-      }
+//   this.gthEmpleadoService.MostrarConParametros(0).subscribe({
+//     next: (response: any) => {
+//       let empleadosData = response;
+//       if (response && response.$values) {
+//         empleadosData = response.$values;
+//       }
       
-      if (empleadosData && Array.isArray(empleadosData)) {
-        // Mapear empleados sin evaluación
-        this.empleados = empleadosData.map((emp: iGTHEmpleado) => ({
-          id: emp.idEmpleado,
-          nombre: `${emp.nombre || ''} ${emp.apellido || ''}`.trim(),
-          sexo: emp.sexo || 'N/A',
-          photo: this.construirUrlFoto(emp.fotoPerfilUrl || '', emp.sexo || ''),
+//       if (empleadosData && Array.isArray(empleadosData)) {
+//         // Mapear empleados sin evaluación
+//         this.empleados = empleadosData.map((emp: iGTHEmpleado) => ({
+//           id: emp.idEmpleado,
+//           nombre: `${emp.nombre || ''} ${emp.apellido || ''}`.trim(),
+//           sexo: emp.sexo || 'N/A',
+//           photo: this.construirUrlFoto(emp.fotoPerfilUrl || '', emp.sexo || ''),
           
-          // Propiedades que espera el template
-          area: emp.area || 'Sin área', // Cambiado de departamento a area
-          fechaIncorporacion: emp.fechaContratacion || 'N/A',
-          calificado: 'Sin evaluación',
-          estado: 'Sin asignar',
+//           // Propiedades que espera el template
+//           area: emp.area || 'Sin área', // Cambiado de departamento a area
+//           fechaIncorporacion: emp.fechaContratacion || 'N/A',
+//           calificado: 'Sin evaluación',
+//           estado: 'Sin asignar',
           
-          // Datos de evaluación por defecto
-          idEvaluacion: 0,
-          anioEvaluacion: new Date().getFullYear(),
-          estadoEvaluacion: 'Sin asignar',
-          fechaCreacion: 'N/A',
-          fechaLimite: 'N/A',
-          fechaFinalizacion: undefined,
-          calificacionFinal: undefined,
-          observaciones: 'Sin evaluación asignada'
-        }));
+//           // Datos de evaluación por defecto
+//           idEvaluacion: 0,
+//           anioEvaluacion: new Date().getFullYear(),
+//           estadoEvaluacion: 'Sin asignar',
+//           fechaCreacion: 'N/A',
+//           fechaLimite: 'N/A',
+//           fechaFinalizacion: undefined,
+//           calificacionFinal: undefined,
+//           observaciones: 'Sin evaluación asignada'
+//         }));
         
-        this.empleadosFiltrados = [...this.empleados];
-        console.log("✅ Empleados sin evaluación cargados:", this.empleados.length);
-      } else {
-        this.cargarDatosPorDefecto();
-      }
-    },
-    error: (error) => {
-      console.error('❌ Error en método alternativo:', error);
-      this.cargarDatosPorDefecto();
-    }
-  });
-}
+//         this.empleadosFiltrados = [...this.empleados];
+//         console.log("✅ Empleados sin evaluación cargados:", this.empleados.length);
+//       } else {
+//         this.cargarDatosPorDefecto();
+//       }
+//     },
+//     error: (error) => {
+//       console.error('❌ Error en método alternativo:', error);
+//       this.cargarDatosPorDefecto();
+//     }
+//   });
+// }
 
 /**
  * Buscar evaluaciones específicas de un empleado
@@ -465,29 +450,26 @@ private formatearFecha(fechaISO: string): string {
 }
 
 construirUrlFoto(fotoPerfilUrl: string, sexo: string): string {
-  // Normalizar sexo
+  // console.log("datos de las imagenes de la lista: ", fotoPerfilUrl);
+  
   const sexoNormalizado = (sexo || '').toString().trim().toLowerCase();
 
   const defaultFemenino = 'assets/img/iconos/iconos mycollection/png/010-mujer-2.png';
   const defaultMasculino = 'assets/img/iconos/iconos mycollection/png/028-hombre-2.png';
   const defaultGenerico = 'assets/img/iconos/iconos mycollection/png/026-hombre-de-traje-y-corbata.png';
 
-  // Determinar fallback según sexo
   const fallback = sexoNormalizado === 'femenino' || sexoNormalizado === 'f'
     ? defaultFemenino
     : sexoNormalizado === 'masculino' || sexoNormalizado === 'm'
       ? defaultMasculino
       : defaultGenerico;
 
-  // Si no hay URL, usar fallback directamente
   if (!fotoPerfilUrl) return fallback;
 
-  // Si es una URL completa (http/https), devolverla tal cual
   if (fotoPerfilUrl.startsWith('http://') || fotoPerfilUrl.startsWith('https://')) {
     return fotoPerfilUrl;
   }
 
-  // Si es una ruta relativa, construir con el backend
   const baseUrl = environment.urlbackend.endsWith('/')
     ? environment.urlbackend.slice(0, -1)
     : environment.urlbackend;
@@ -502,6 +484,7 @@ construirUrlFoto(fotoPerfilUrl: string, sexo: string): string {
 
 onImageError(event: Event, sexo: string) {
   const img = event.target as HTMLImageElement;
+  console.log("Error al cargar la imagen");
   img.src = this.construirUrlFoto('', sexo); // 👉 fuerza a usar fallback según sexo
 }
 
@@ -537,22 +520,809 @@ onImageError(event: Event, sexo: string) {
     });
   }
 
-  navigateToEvaluacion(empleadoId: number): void {
-    console.log('➡️ Entró en navigateToEvaluacion con empleadoId:', empleadoId);
-    this.selectedEmpleadoId = empleadoId;
-    this.fase = 2; // o 4, según la que quieras mostrar
-    this.showModal = true;
+//=======================    Funciones para ver y cargar la lista de evaluaciones   ============================
+
+// ========================================
+// VARIABLES PARA EL MODAL DEL COLABORADOR
+// ========================================
+faseEvaluacionModal: number = 0;
+retroalimentacionModal: string = '';
+planAccionModal: string = '';
+objetivosIndividualesModal: any[] = [];
+nivelesCompetenciasModal: NivelConCompetencia[] = [];
+objetivoAreaDisplayModal: string = '';
+idEvaluacionModal: number = 0;
+
+// Variables para promedios en fase 5
+promedioObjetivosModal: number = 0;
+promedioCompetenciasModal: number = 0;
+calificacionFinalModal: number = 0;
+
+// ========================================
+// NAVEGACIÓN A EVALUACIÓN DEL EMPLEADO
+// ========================================
+navigateToEvaluacion(empleadoId: number): void {
+  this.selectedEmpleadoId = empleadoId;
+  
+  // Buscar el empleado en el array filtrado
+  const empleadoSeleccionado = this.empleadosFiltrados.find(emp => emp.id === empleadoId);
+  
+  if (empleadoSeleccionado) {
+    // Cargar datos completos del empleado desde el servicio
+    this.cargarDatosEmpleadoModal(empleadoId);
+    
+    // ✅ Cargar las evaluaciones del empleado
+    this.cargarEvaluacionesModal(empleadoId);
+  } else {
+    console.warn('No se encontró el empleado seleccionado');
+  }
+  
+  this.faseColabNuevo = 2;
+  this.showModal = true;
+}
+
+// ========================================
+// CARGAR DATOS PERSONALES DEL EMPLEADO EN EL MODAL
+// ========================================
+private cargarDatosEmpleadoModal(empleadoId: number): void {
+  this.gthEmpleadoService.MostrarConParametros(1, empleadoId).subscribe({
+    next: (response: any) => {
+      let empleadoData = null;
+      
+      // Manejar diferentes estructuras de respuesta
+      if (response && response.$values && Array.isArray(response.$values)) {
+        empleadoData = response.$values.find((emp: any) => emp.idEmpleado === empleadoId);
+        if (!empleadoData && response.$values.length === 1) {
+          empleadoData = response.$values[0];
+        }
+      } else if (Array.isArray(response)) {
+        empleadoData = response.find((emp: any) => emp.idEmpleado === empleadoId);
+        if (!empleadoData && response.length === 1) {
+          empleadoData = response[0];
+        }
+      } else if (response && response.idEmpleado) {
+        empleadoData = response;
+      }
+      
+      if (empleadoData) {
+        // Asignar datos al modal
+        this.empleadoModal = empleadoData;
+        this.nombreCompletoDisplayModal = `${empleadoData.nombre || ''} ${empleadoData.apellido || ''}`.trim();
+        this.correoElectronicoDisplayModal = empleadoData.correoCorporativo || 
+                                             empleadoData.correo || 
+                                             'No disponible';
+        this.posicionDisplayModal = empleadoData.area || 
+                                    empleadoData.cargo || 
+                                    'No disponible';
+        
+        console.log('✅ Datos del empleado cargados para modal:', this.empleadoModal);
+      } else {
+        console.warn('No se encontraron datos para el empleado:', empleadoId);
+        this.setDatosModalPorDefecto();
+      }
+    },
+    error: (error) => {
+      console.error('Error al cargar datos del empleado para modal:', error);
+      this.setDatosModalPorDefecto();
+    }
+  });
+}
+
+// ========================================
+// DATOS POR DEFECTO DEL MODAL
+// ========================================
+private setDatosModalPorDefecto(): void {
+  this.empleadoModal = null;
+  this.nombreCompletoDisplayModal = 'Nombre no disponible';
+  this.correoElectronicoDisplayModal = 'Correo no disponible';
+  this.posicionDisplayModal = 'Posición no disponible';
+}
+
+// ========================================
+// CARGAR EVALUACIONES DEL COLABORADOR SELECCIONADO
+// ========================================
+cargarEvaluacionesModal(empleadoId: number): void {
+  console.log('🔍 Cargando evaluaciones para empleado ID:', empleadoId);
+  
+  const anio = 2025;
+
+  // Obtener evaluaciones del empleado seleccionado
+  this.gthEvaluacionServcie
+    .MostrarEvaluacionesPorEmpleadoyAnio(empleadoId, anio)
+    .subscribe({
+      next: (response: any) => {
+        let evaluacionesData = response;
+        if (response && response.$values) {
+          evaluacionesData = response.$values;
+        }
+
+        if (evaluacionesData && evaluacionesData.length > 0) {
+          const evaluacion = evaluacionesData[0];
+          const idEvaluacion = evaluacion.idEvaluacion;
+          
+          // ✅ Asignar datos a variables del modal
+          this.idEvaluacionModal = idEvaluacion;
+          this.retroalimentacionModal = evaluacion.retroalimentacion || '';
+          this.planAccionModal = evaluacion.planAccion || '';
+          this.faseEvaluacionModal = evaluacion.fase || 0;
+          
+          console.log('📊 Fase de evaluación del colaborador:', this.faseEvaluacionModal);
+          console.log('📋 ID Evaluación:', idEvaluacion);
+
+          // ✅ Cargar objetivos del colaborador
+          this.cargarObjetivosPorFaseModal(this.faseEvaluacionModal, idEvaluacion);
+
+          // ✅ Cargar objetivo de área si existe célula
+          if (evaluacion.idCelula) {
+            this.cargarObjetivoAreaModal(evaluacion.idCelula);
+          }
+
+          // ✅ Inicializar array de competencias del colaborador
+          this.nivelesCompetenciasModal = [];
+
+          // ✅ Cargar competencias asignadas a esta evaluación
+          this.cargarCompetenciasModal(idEvaluacion);
+
+        } else {
+          console.warn('⚠️ No se encontró evaluación para el empleado ID:', empleadoId);
+          this.inicializarDatosModalVacios();
+        }
+      },
+      error: (error) => {
+        console.error('Error al consultar evaluaciones del colaborador:', error);
+        this.inicializarDatosModalVacios();
+      }
+    });
+}
+
+// ========================================
+// CARGAR COMPETENCIAS DEL MODAL
+// ========================================
+cargarCompetenciasModal(idEvaluacion: number): void {
+  this.gthCompetenciaService
+    .obtenerAsignacionCompetenciaPorIdEvaluacion(idEvaluacion)
+    .subscribe({
+      next: (respAsigCompetencias: any) => {
+        console.log('📦 Competencias asignadas recibidas:', respAsigCompetencias);
+        
+        let asignacionesCompetenciasData = respAsigCompetencias;
+        if (respAsigCompetencias && respAsigCompetencias.$values) {
+          asignacionesCompetenciasData = respAsigCompetencias.$values;
+        }
+
+        // Usar Promise.all para esperar a que todas las competencias se carguen
+        const promesasCompetencias = asignacionesCompetenciasData.map((competencia: any) => {
+          return this.procesarCompetenciaModal(competencia);
+        });
+
+        Promise.all(promesasCompetencias).then(() => {
+          console.log('✅ Todas las competencias del modal cargadas');
+          
+          // Si estamos en fase 5, calcular promedios
+          if (this.faseEvaluacionModal === 5) {
+            this.calcularPromediosModal();
+          }
+        });
+      },
+      error: (error) => console.error('Error al consultar competencias asignadas:', error)
+    });
+}
+
+// ========================================
+// PROCESAR UNA COMPETENCIA DEL MODAL
+// ========================================
+procesarCompetenciaModal(competencia: any): Promise<void> {
+  return new Promise((resolve) => {
+    const idAsignacionCompetencia = competencia.idAsignacion;
+    const idNivelCompetencia = competencia.idNivelCompetencia;
+    const valoracionJefe = competencia.valoracionJefe || null;
+    const califEmpleado = competencia.calificacionEmpleado || null;
+    const califFinal = competencia.calificacionFinal || null;
+    
+    // ✅ CORRECCIÓN 1: Convertir a Date para FechaLimite y a string para fecha
+    const fechaDate = competencia.fechaLimite 
+      ? new Date(competencia.fechaLimite)
+      : new Date();
+    
+    const fechaString = competencia.fechaLimite 
+      ? new Date(competencia.fechaLimite).toISOString().split('T')[0]
+      : '';
+
+    // ✅ Obtener detalles del nivel de competencia
+    this.gthCompetenciaService
+      .mostrarNivelCompetencias(1, idNivelCompetencia)
+      .subscribe({
+        next: (respNivelCompetencias: any) => {
+          let nivelesCompetenciasData = respNivelCompetencias;
+          if (respNivelCompetencias && respNivelCompetencias.$values) {
+            nivelesCompetenciasData = respNivelCompetencias.$values;
+          }
+
+          if (nivelesCompetenciasData && nivelesCompetenciasData.length > 0) {
+            const nivel = nivelesCompetenciasData[0];
+            
+            // ✅ Obtener detalles de la competencia
+            this.gthCompetenciaService
+              .mostrarCompetencias(1, nivel.idCompetencia)
+              .subscribe({
+                next: (respCompetencia: any) => {
+                  let competenciaData = respCompetencia;
+                  if (respCompetencia && respCompetencia.$values) {
+                    competenciaData = respCompetencia.$values;
+                  }
+
+                  if (competenciaData.length > 0) {
+                    const comp = competenciaData[0];
+
+                    // ✅ Usar los tipos correctos según la interfaz
+                    const combinado: NivelConCompetencia = {
+                      idAsignacionCompetencia: idAsignacionCompetencia,
+                      idCompetencia: nivel.idCompetencia,
+                      nivel: nivel.nivel,
+                      descripcion: nivel.descripcion,
+                      nombreCompetencia: comp.nombreCompetencia,
+                      tipoCompetencia: comp.tipoCompetencia,
+                      FechaLimite: fechaDate, // Date
+                      valor: valoracionJefe,
+                      fecha: fechaString, // string (formato YYYY-MM-DD)
+                      reconsiderar: valoracionJefe,
+                      calificacion: califEmpleado,
+                      calificacionFinal: califFinal
+                    };
+
+                    this.nivelesCompetenciasModal.push(combinado);
+                    console.log('✅ Competencia del modal agregada:', combinado);
+                    resolve();
+                  } else {
+                    resolve();
+                  }
+                },
+                error: (error) => {
+                  console.error('Error al cargar competencia:', error);
+                  resolve();
+                }
+              });
+          } else {
+            resolve();
+          }
+        },
+        error: (error) => {
+          console.error('Error al cargar nivel de competencias:', error);
+          resolve();
+        }
+      });
+  });
+}
+
+
+
+// ========================================
+// CARGAR OBJETIVO DE ÁREA PARA EL MODAL
+// ========================================
+cargarObjetivoAreaModal(idCelula: number): void {
+  if (!idCelula) return;
+
+  this.gthObjetivoService.obtenerObjetivosPorIdCelula(1, idCelula)
+    .subscribe({
+      next: (response: any) => {
+        const datos = response?.$values?.[0] || response?.[0] || response;
+        
+        if (datos) {
+          const objetivo = datos.celObjetivo || 
+                          datos.cel_objetivo || 
+                          datos.objetivo ||
+                          datos.CEL_OBJETIVO || '';
+
+          this.objetivoAreaDisplayModal = objetivo;
+          console.log('✅ Objetivo de área del modal cargado:', objetivo);
+        } else {
+          this.objetivoAreaDisplayModal = '';
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar objetivo de área del modal:', error);
+        this.objetivoAreaDisplayModal = '';
+      }
+    });
+}
+
+// ========================================
+// CARGAR OBJETIVOS POR FASE DEL MODAL
+// ========================================
+cargarObjetivosPorFaseModal(fase: number, idEvaluacion: number): void {
+  console.log('=== CARGANDO OBJETIVOS DEL MODAL - FASE:', fase, '===');
+  
+  this.gthObjetivoService.obtenerObjetivosPorIdEvaluacion(idEvaluacion)
+    .subscribe({
+      next: (objetivosResponse: any) => {
+        const objetivosExistentes = objetivosResponse?.$values || objetivosResponse || [];
+        
+        const todosLosObjetivos = Array.isArray(objetivosExistentes) 
+          ? objetivosExistentes 
+          : [];
+        
+        console.log('Todos los objetivos del modal encontrados:', todosLosObjetivos);
+        
+        if (todosLosObjetivos.length > 0) {
+          this.mapearObjetivosSegunFaseModal(todosLosObjetivos, fase);
+        } else {
+          console.log('No hay objetivos existentes para el modal');
+          this.objetivosIndividualesModal = [];
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar objetivos del modal:', error);
+        this.objetivosIndividualesModal = [];
+      }
+    });
+}
+
+// ========================================
+// MAPEAR OBJETIVOS SEGÚN LA FASE DEL MODAL
+// ========================================
+mapearObjetivosSegunFaseModal(objetivos: any[], fase: number): void {
+  console.log('📝 Mapeando objetivos del modal para fase:', fase);
+  console.log('Objetivos recibidos:', objetivos);
+  
+  // Separar objetivos por tipo
+  const objetivoArea = objetivos.find(obj => {
+    const tipo = (obj.tipoObjetivo || obj.tipo_objetivo || '').toUpperCase();
+    return tipo === 'AREA';
+  });
+  
+  const objetivosIndividuales = objetivos
+    .filter(obj => {
+      const tipo = (obj.tipoObjetivo || obj.tipo_objetivo || '').toUpperCase();
+      return tipo === 'INDIVIDUAL';
+    })
+    .sort((a, b) => {
+      const idA = a.idObjetivo || a.id_objetivo || 0;
+      const idB = b.idObjetivo || b.id_objetivo || 0;
+      return idA - idB;
+    });
+  
+  // Combinar: primero AREA, luego INDIVIDUAL
+  const objetivosOrdenados = objetivoArea 
+    ? [objetivoArea, ...objetivosIndividuales]
+    : objetivosIndividuales;
+  
+  console.log('Objetivos ordenados del modal:', objetivosOrdenados);
+  
+  // ✅ Mapear a objetivosIndividualesModal
+  this.objetivosIndividualesModal = [];
+  
+  for (let i = 0; i < 5; i++) {
+    if (i < objetivosOrdenados.length) {
+      const obj = objetivosOrdenados[i];
+      
+      // Formatear fecha
+      let fechaFormateada = '';
+      if (obj.fechaLimite || obj.fecha_limite) {
+        const fecha = new Date(obj.fechaLimite || obj.fecha_limite);
+        fechaFormateada = fecha.toISOString().split('T')[0];
+      }
+      
+      const tipoObjetivo = (obj.tipoObjetivo || obj.tipo_objetivo || 'INDIVIDUAL').toUpperCase();
+      
+      // Mapear según fase 4 o 5
+      if (fase === 4 || fase === 5) {
+        this.objetivosIndividualesModal[i] = {
+          idObjetivo: obj.idObjetivo || obj.id_objetivo,
+          titulo: obj.titulo || '',
+          fechaLimite: fechaFormateada,
+          calificacionEmpleado: obj.calificacionEmpleado || obj.calificacion_empleado || null,
+          calificacionFinal: obj.calificacionFinal || obj.calificacion_final || null
+        };
+      }
+      
+      console.log(`Objetivo ${i + 1} del modal mapeado:`, this.objetivosIndividualesModal[i]);
+    } else {
+      this.objetivosIndividualesModal[i] = { 
+        titulo: '', 
+        fechaLimite: '',
+        calificacionEmpleado: null,
+        calificacionFinal: null
+      };
+    }
+  }
+  
+  // Si estamos en fase 5, calcular promedios después de mapear objetivos
+  if (fase === 5) {
+    this.calcularPromediosModal();
+  }
+}
+
+
+// ========================================
+// CALCULAR PROMEDIOS PARA FASE 5
+// ========================================
+calcularPromediosModal(): void {
+  console.log('🔍 Iniciando cálculo de promedios...');
+  console.log('📋 Objetivos disponibles:', this.objetivosIndividualesModal);
+  console.log('📋 Competencias disponibles:', this.nivelesCompetenciasModal);
+
+  // ========================================
+  // CÁLCULO DE OBJETIVOS (70% del total)
+  // ========================================
+  const objetivosConCalificacion = this.objetivosIndividualesModal.filter(
+    obj => obj.calificacionFinal && obj.calificacionFinal > 0
+  );
+  
+  console.log('✅ Objetivos con calificación:', objetivosConCalificacion);
+  
+  if (objetivosConCalificacion.length > 0) {
+    let sumaObjetivosPonderada = 0;
+    
+    objetivosConCalificacion.forEach((obj, index) => {
+      // El primer objetivo (relacionado al área) tiene peso del 22%
+      // Los otros 4 objetivos tienen peso del 12% cada uno
+      const peso = index === 0 ? 0.22 : 0.12;
+      const valorPonderado = obj.calificacionFinal * peso;
+      
+      console.log(`  📌 Objetivo ${index + 1}:`);
+      console.log(`     - Calificación: ${obj.calificacionFinal}`);
+      console.log(`     - Peso: ${peso * 100}%`);
+      console.log(`     - Valor ponderado: ${valorPonderado.toFixed(4)}`);
+      
+      sumaObjetivosPonderada += valorPonderado;
+    });
+    
+    // Normalizar a escala de 4.0 dividiendo entre 0.70
+    this.promedioObjetivosModal = sumaObjetivosPonderada / 0.70;
+    console.log(`  ✅ Suma ponderada: ${sumaObjetivosPonderada.toFixed(4)}`);
+    console.log(`  ✅ Promedio Objetivos (normalizado): ${this.promedioObjetivosModal.toFixed(2)}`);
+  } else {
+    this.promedioObjetivosModal = 0;
+    console.log('  ⚠️ No hay objetivos con calificación');
   }
 
-  cerrarModal(): void {
-    this.showModal = false;
+  // ========================================
+  // CÁLCULO DE COMPETENCIAS (30% del total)
+  // ========================================
+  const competenciasConCalificacion = this.nivelesCompetenciasModal.filter(
+    comp => comp.calificacionFinal && comp.calificacionFinal > 0
+  );
+  
+  console.log('✅ Competencias con calificación:', competenciasConCalificacion);
+  
+  if (competenciasConCalificacion.length > 0) {
+    let sumaCompetenciasPonderada = 0;
+    
+    competenciasConCalificacion.forEach((comp, index) => {
+      // Cada competencia tiene un peso del 7.5%
+      const peso = 0.075;
+      const valorPonderado = comp.calificacionFinal! * peso;
+      
+      console.log(`  📌 Competencia ${index + 1}:`);
+      console.log(`     - Calificación: ${comp.calificacionFinal}`);
+      console.log(`     - Peso: ${peso * 100}%`);
+      console.log(`     - Valor ponderado: ${valorPonderado.toFixed(4)}`);
+      
+      sumaCompetenciasPonderada += valorPonderado;
+    });
+    
+    // Normalizar a escala de 4.0 dividiendo entre 0.30
+    this.promedioCompetenciasModal = sumaCompetenciasPonderada / 0.30;
+    console.log(`  ✅ Suma ponderada: ${sumaCompetenciasPonderada.toFixed(4)}`);
+    console.log(`  ✅ Promedio Competencias (normalizado): ${this.promedioCompetenciasModal.toFixed(2)}`);
+  } else {
+    this.promedioCompetenciasModal = 0;
+    console.log('  ⚠️ No hay competencias con calificación');
   }
 
+  // ========================================
+  // CALIFICACIÓN FINAL
+  // ========================================
+  // Ahora aplicamos los pesos a los promedios normalizados
+  this.calificacionFinalModal = (this.promedioObjetivosModal * 0.70) + (this.promedioCompetenciasModal * 0.30);
+
+  console.log('📊 ============ RESUMEN FINAL ============');
+  console.log(`  - Promedio Objetivos: ${this.promedioObjetivosModal.toFixed(2)} / 4.0`);
+  console.log(`  - Promedio Competencias: ${this.promedioCompetenciasModal.toFixed(2)} / 4.0`);
+  console.log(`  - Contribución Objetivos (70%): ${(this.promedioObjetivosModal * 0.70).toFixed(2)}`);
+  console.log(`  - Contribución Competencias (30%): ${(this.promedioCompetenciasModal * 0.30).toFixed(2)}`);
+  console.log(`  - Calificación Final: ${this.calificacionFinalModal.toFixed(2)} / 4.0`);
+  console.log('=========================================');
+}
+
+// ========================================
+// FUNCIONES HELPER PARA EL HTML DE FASE 5
+// ========================================
+// calcularDashOffset(promedio: number, maximo: number): number {
+//   const circunferencia = 2 * Math.PI * 60; // 376.99
+//   const porcentaje = (promedio / maximo) * 100;
+//   return circunferencia - (circunferencia * porcentaje) / 100;
+// }
+calcularDashOffset(promedio: number, maximo: number): number {
+  const radio = 50; // ✅ Debe coincidir con r="50" en el HTML
+  const circunferencia = 2 * Math.PI * radio; // 314.16
+  const porcentaje = (promedio / maximo) * 100;
+  const offset = circunferencia - (circunferencia * porcentaje) / 100;
+  
+  return offset;
+}
+
+obtenerClaseBadge(calificacion: number): string {
+  if (calificacion >= 3.5) return 'badge-excepcional';
+  if (calificacion >= 3.0) return 'badge-sobresaliente';
+  if (calificacion >= 2.0) return 'badge-necesita-mejorar';
+  return 'badge-insatisfactorio';
+}
+
+obtenerNivelDesempeno(calificacion: number): string {
+  if (calificacion >= 3.5) return 'Excepcional';
+  if (calificacion >= 3.0) return 'Sobresaliente';
+  if (calificacion >= 2.0) return 'Necesita Mejorar';
+  return 'Insatisfactorio';
+}
+
+obtenerDescripcionDesempeno(calificacion: number): string {
+  if (calificacion >= 3.5) return 'Supera ampliamente las expectativas';
+  if (calificacion >= 3.0) return 'Cumple con las expectativas';
+  if (calificacion >= 2.0) return 'Requiere mejora en algunas áreas';
+  return 'No cumple con las expectativas';
+}
+
+// ========================================
+// INICIALIZAR DATOS VACÍOS DEL MODAL
+// ========================================
+inicializarDatosModalVacios(): void {
+  this.retroalimentacionModal = '';
+  this.planAccionModal = '';
+  this.faseEvaluacionModal = 0;
+  this.objetivosIndividualesModal = [];
+  this.nivelesCompetenciasModal = [];
+  this.objetivoAreaDisplayModal = '';
+  this.idEvaluacionModal = 0;
+  this.promedioObjetivosModal = 0;
+  this.promedioCompetenciasModal = 0;
+  this.calificacionFinalModal = 0;
+  
+  console.log('⚠️ Datos del modal inicializados vacíos');
+}
+
+// ========================================
+// CERRAR MODAL
+// ========================================
+cerrarModal(): void {
+  this.showModal = false;
+  this.empleadoModal = null;
+  this.selectedEmpleadoId = 0;
+  this.inicializarDatosModalVacios();
+}
+
+// ========================================
+// FUNCIÓN PARA OBTENER NOMBRE DE CALIFICACIÓN
+// ========================================
+getNombreCalificacion(valor: number | null | undefined): string {
+  if (!valor) return 'Sin calificar';
+  
+  switch (valor) {
+    case 1: return '⭐';
+    case 2: return '⭐⭐';
+    case 3: return '⭐⭐⭐';
+    case 4: return '⭐⭐⭐⭐';
+    default: return 'N/A';
+  }
+}
+
+// ========================================
+// ENVIAR RETROALIMENTACIÓN DEL MODAL (FASE 4)
+// ========================================
+enviarRetroalimentacionModal(): void {
+  console.log('📤 Enviando retroalimentación del modal...');
+  
+  // Validar que todos los objetivos tengan calificación final
+  const objetivosSinCalificar = this.objetivosIndividualesModal.filter(
+    obj => obj.titulo && obj.titulo.trim() !== '' && (!obj.calificacionFinal || obj.calificacionFinal === 0)
+  );
+  
+  if (objetivosSinCalificar.length > 0) {
+    alert('Por favor, califica todos los objetivos antes de finalizar.');
+    return;
+  }
+  
+  // Validar que todas las competencias tengan calificación final
+  const competenciasSinCalificar = this.nivelesCompetenciasModal.filter(
+    comp => !comp.calificacionFinal || comp.calificacionFinal === 0
+  );
+  
+  if (competenciasSinCalificar.length > 0) {
+    alert('Por favor, califica todas las competencias antes de finalizar.');
+    return;
+  }
+  
+  // Validar retroalimentación y plan de acción
+  if (!this.retroalimentacionModal || this.retroalimentacionModal.trim() === '') {
+    alert('Por favor, ingresa una retroalimentación antes de finalizar.');
+    return;
+  }
+  
+  if (!this.planAccionModal || this.planAccionModal.trim() === '') {
+    alert('Por favor, ingresa un plan de acción antes de finalizar.');
+    return;
+  }
+  
+  // Llamar a la función de guardado
+  this.guardarDatosEvaluacionModal();
+}
+
+// ========================================
+// GUARDAR DATOS DE EVALUACIÓN DEL MODAL
+// ========================================
+guardarDatosEvaluacionModal(): void {
+  console.log('=== GUARDANDO DATOS DEL MODAL - Fase 4 → Fase 5 ===');
+  
+  const anio = 2025;
+  
+  // Obtener la evaluación actual
+  this.gthEvaluacionServcie
+    .MostrarEvaluacionesPorEmpleadoyAnio(this.selectedEmpleadoId!, anio)
+    .subscribe({
+      next: (response: any) => {
+        let evaluacionesData = response?.$values || response;
+        
+        if (evaluacionesData && evaluacionesData.length > 0) {
+          const idEvaluacion = evaluacionesData[0].idEvaluacion;
+          console.log('ID Evaluación:', idEvaluacion);
+          
+          // PASO 1: Guardar objetivos
+          const promesasObjetivos = this.objetivosIndividualesModal
+            .filter(obj => obj.idObjetivo && obj.titulo && obj.titulo.trim() !== '')
+            .map((objetivo, index) => {
+              const objetivoData: IgthObjetivo = {
+                tipo: 2,
+                idObjetivo: objetivo.idObjetivo,
+                calificacionFinal: objetivo.calificacionFinal
+              };
+              
+              console.log(`Actualizando objetivo ${index + 1}:`, objetivoData);
+              return this.gthObjetivoService.gestionarObjetivo(objetivoData).toPromise();
+            });
+          
+          if (promesasObjetivos.length === 0) {
+            alert('No hay objetivos válidos para guardar.');
+            return;
+          }
+        
+          // EJECUTAR: Objetivos → Competencias → Evaluación
+          Promise.all(promesasObjetivos)
+            .then((responsesObjetivos) => {
+              console.log('✅ Objetivos guardados');
+              
+              const hayErroresObjetivos = responsesObjetivos.some((resp: any) => {
+                const resultado = resp?.$values?.[0] || resp?.[0] || resp;
+                return resultado?.valor1 < 0;
+              });
+              
+              if (hayErroresObjetivos) {
+                alert('Error al guardar objetivos. Revise la consola.');
+                return;
+              }
+              
+              // PASO 2: Guardar competencias
+              const promesasCompetencias = this.nivelesCompetenciasModal
+                .filter(comp => comp.idAsignacionCompetencia)
+                .map((competencia, index) => {
+                  const competenciaData: IGTHAsignacionCompetenciaViewModel = {
+                    Tipo: 2,
+                    IdAsignacion: competencia.idAsignacionCompetencia,
+                    CalificacionFinal: competencia.calificacionFinal
+                  };
+                  
+                  console.log(`Actualizando competencia ${index + 1}:`, competenciaData);
+                  return this.gthCompetenciaService.gestionarAsignacionCompetencia(competenciaData).toPromise();
+                });
+
+              if (promesasCompetencias.length === 0) {
+                console.warn('⚠️ No hay competencias para actualizar');
+                this.actualizarEvaluacionFinalModal(idEvaluacion);
+                return;
+              }
+
+              Promise.all(promesasCompetencias)
+                .then((responsesCompetencias) => {
+                  console.log('✅ Competencias guardadas');
+                  
+                  const hayErroresCompetencias = responsesCompetencias.some((resp: any) => {
+                    const resultado = resp?.$values?.[0] || resp?.[0] || resp;
+                    return resultado?.valor1 < 0;
+                  });
+                  
+                  if (hayErroresCompetencias) {
+                    alert('Error al guardar competencias. Revise la consola.');
+                    return;
+                  }
+                  
+                  // PASO 3: Actualizar evaluación con retroalimentación
+                  this.actualizarEvaluacionFinalModal(idEvaluacion);
+                })
+                .catch((error) => {
+                  console.error('❌ Error al guardar competencias:', error);
+                  alert('Objetivos guardados, pero error al guardar competencias.');
+                });
+            })
+            .catch((error) => {
+              console.error('❌ Error al guardar objetivos:', error);
+              alert('Error al guardar objetivos.');
+            });
+        } else {
+          alert('No se encontró la evaluación.');
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error al obtener evaluación:', error);
+        alert('Error al obtener la evaluación.');
+      }
+    });
+}
+
+// ========================================
+// ACTUALIZAR EVALUACIÓN FINAL DEL MODAL
+// ========================================
+private actualizarEvaluacionFinalModal(idEvaluacion: number): void {
+  // console.log('✅ Actualizando evaluación a Fase 5');
+  // console.log('📝 Retroalimentación:', this.retroalimentacionModal);
+  // console.log('📋 Plan de Acción:', this.planAccionModal);
+  
+  const evaluacionActualizada: Ievaluacion = {
+    tipo: 2,
+    idEmpleado: this.selectedEmpleadoId!,
+    idEvaluacion: idEvaluacion,
+    estado: 'COMPLETADA',
+    retroalimentacion: this.retroalimentacionModal, 
+    planAccion: this.planAccionModal,
+    fechaEvaluacionJefe: this.obtenerFechaActual(),
+    fase: 5  // ✅ Cambiar a fase 5
+  };
+  
+  this.gthEvaluacionServcie.actualizarGthEvaluacion(evaluacionActualizada).subscribe({
+    next: (resp) => {
+      console.log('✅ Evaluación actualizada:', evaluacionActualizada);
+      alert('✅ Evaluación finalizada y guardada correctamente.');
+      
+      // ✅ Cerrar el modal
+      // this.cerrarModal();
+      
+      // ✅ Recargar la lista de evaluaciones
+      // this.cargarEvaluaciones();
+      
+      // ✅ Opcional: Reabrir el modal con la nueva fase
+      setTimeout(() => {
+        if (this.selectedEmpleadoId) {
+          this.navigateToEvaluacion(this.selectedEmpleadoId);
+        }
+      }, 300);
+    },
+    error: (error) => {
+      console.error('❌ Error al actualizar evaluación:', error);
+      alert('Objetivos y competencias guardados, pero error al actualizar evaluación.');
+    }
+  });
+}
+
+// ========================================
+// FUNCIÓN HELPER PARA OBTENER FECHA ACTUAL
+// ========================================
+private obtenerFechaActual(): string {
+  const fecha = new Date();
+  return fecha.toISOString().split('T')[0]; // Formato: YYYY-MM-DD
+}
 
   //Mostrar el contenido de las pestañas
   showSubcategoryEval(tab: string): void {
     this.activeSubcategory = tab;
     console.log('Pestaña activa:', this.activeSubcategory);
+    
+    // ✅ Ejecutar función solo cuando se selecciona 'gestAreas'
+    if (tab === 'gestAreas') {
+      this.obtenerCelulas();
+    }
+    
+    if (tab === 'crearEvaluacion') {
+      this.cargarEmpleadosParaEvaluacion(); // Carga todos los empleados
+      this.cargarCompetencias();
+    }
   }
 
   // Damos color a la etiqueta de AREA
@@ -575,6 +1345,8 @@ onImageError(event: Event, sexo: string) {
         return 'area-badge';
     }
   }
+  
+
 
 
 //--------------------      ---------------------------------       ------------------------
@@ -638,7 +1410,7 @@ formularioValido(): boolean {
   obtenerCelulas(): void {
   this.gthAreaService.MostrarCelulas().subscribe({
     next: (response: any) => {
-      console.log('✅ Respuesta completa del backend ->', response);
+      // console.log('✅ Respuesta completa del backend ->', response);
       
       if (response?.$values) {
         this.celulas = response.$values;
@@ -646,13 +1418,13 @@ formularioValido(): boolean {
         this.celulas = response;
       }
       
-      console.log('✅ Total células:', this.celulas.length);
+      // console.log('✅ Total células:', this.celulas.length);
       
       // 👇 VER ESTRUCTURA COMPLETA DE LA PRIMERA CÉLULA
-      if (this.celulas.length > 0) {
-        console.log('📋 Primera célula completa:', this.celulas[0]);
-        console.log('📋 Propiedades:', Object.keys(this.celulas[0]));
-      }
+      // if (this.celulas.length > 0) {
+      //   console.log('📋 Primera célula completa:', this.celulas[0]);
+      //   console.log('📋 Propiedades:', Object.keys(this.celulas[0]));
+      // }
     },
     error: (error) => {
       console.error('❌ Error:', error);
@@ -1068,17 +1840,17 @@ ocultarMensaje(): void {
    * Filtrar jefes evaluadores según el texto ingresado (mínimo 3 letras)
    */
   filtrarJefesEvaluacion(): void {
-    console.log('🔍 Filtrando jefes. Texto:', this.filtroJefeEvaluacion);
-    console.log('📦 Total empleados disponibles:', this.todosLosEmpleadosParaJefe.length);
+    // console.log('🔍 Filtrando jefes. Texto:', this.filtroJefeEvaluacion);
+    // console.log('📦 Total empleados disponibles:', this.todosLosEmpleadosParaJefe.length);
     
     if (!this.filtroJefeEvaluacion || this.filtroJefeEvaluacion.trim().length < 3) {
-      console.log('⚠️ Filtro muy corto (menos de 3 letras)');
+      // console.log('⚠️ Filtro muy corto (menos de 3 letras)');
       this.jefesFiltradosEvaluacion = [];
       return;
     }
 
     const filtro = this.filtroJefeEvaluacion.toLowerCase().trim();
-    console.log('🔍 Buscando con filtro:', filtro);
+    // console.log('🔍 Buscando con filtro:', filtro);
     
     this.jefesFiltradosEvaluacion = this.todosLosEmpleadosParaJefe.filter(emp => {
       // Usar 'nombre' y 'area' que son los campos mapeados
@@ -1088,21 +1860,21 @@ ocultarMensaje(): void {
       const coincide = nombre.includes(filtro) || area.includes(filtro);
       
       if (coincide) {
-        console.log('✅ Coincidencia:', emp.nombre, '-', emp.area);
+        // console.log('✅ Coincidencia:', emp.nombre, '-', emp.area);
       }
       
       return coincide;
     });
 
-    console.log('✅ Total jefes filtrados:', this.jefesFiltradosEvaluacion.length);
-    console.log('📋 Jefes encontrados:', this.jefesFiltradosEvaluacion);
+    // console.log('✅ Total jefes filtrados:', this.jefesFiltradosEvaluacion.length);
+    // console.log('📋 Jefes encontrados:', this.jefesFiltradosEvaluacion);
   }
 
   // Método que se ejecuta cuando se selecciona un empleado
   onEmpleadoBuscadoSeleccionado(): void {
-    console.log('════════════════════════════════════════');
-    console.log('👤 EMPLEADO SELECCIONADO');
-    console.log('════════════════════════════════════════');
+    // console.log('════════════════════════════════════════');
+    // console.log('👤 EMPLEADO SELECCIONADO');
+    // console.log('════════════════════════════════════════');
     
     // Limpiar selección de jefe evaluador
     this.jefeSeleccionadoEvaluacion = null;
@@ -1110,23 +1882,23 @@ ocultarMensaje(): void {
     this.jefesFiltradosEvaluacion = [];
 
     if (this.empleadoBuscado?.id) {
-      console.log('✅ Empleado válido:', this.empleadoBuscado);
-      console.log('📋 ID Empleado:', this.empleadoBuscado.id);
-      console.log('📋 Nombre:', this.empleadoBuscado.nombre);
+      // console.log('✅ Empleado válido:', this.empleadoBuscado);
+      // console.log('📋 ID Empleado:', this.empleadoBuscado.id);
+      // console.log('📋 Nombre:', this.empleadoBuscado.nombre);
       this.evaluacionCreada = null;
       
-      console.log('🔍 Verificando empleados para jefe...');
-      console.log('📦 Empleados actuales en memoria:', this.todosLosEmpleadosParaJefe.length);
+      // console.log('🔍 Verificando empleados para jefe...');
+      // console.log('📦 Empleados actuales en memoria:', this.todosLosEmpleadosParaJefe.length);
       
       // Cargar empleados si no están cargados
       if (this.todosLosEmpleadosParaJefe.length === 0) {
-        console.log('🔵 NO HAY EMPLEADOS - Iniciando carga...');
+        // console.log('🔵 NO HAY EMPLEADOS - Iniciando carga...');
         this.cargarEmpleadosParaJefeEvaluador();
       } else {
-        console.log('✅ Empleados ya cargados:', this.todosLosEmpleadosParaJefe.length);
+        // console.log('✅ Empleados ya cargados:', this.todosLosEmpleadosParaJefe.length);
       }
     } else {
-      console.warn('⚠️ Empleado no válido o deseleccionado');
+      console.warn('⚠️ Colaborador no válido o deseleccionado');
       this.empleadoBuscado = null;
       this.evaluacionCreada = null;
     }

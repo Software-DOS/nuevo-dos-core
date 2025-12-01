@@ -43,8 +43,6 @@
   gap: 1rem;
 }
 
-
-
 /* Estilos para la tabla de empleados */
 .cap-table {
   width: 100%;
@@ -240,8 +238,6 @@
 }
 
 
-
-
 /* Centrar contenido de las otras columnas */
 .cap-row > div:not(.empleado-info-column) {
   text-align: center;
@@ -369,11 +365,11 @@
                 Estilos para el Modal de la Evaluación                        
 ===============================================================*/
 
-.modal-dialog.modal-resizable {
+.modal-resizable {
   width: 80vw;
-  max-width: 90vw;
-  min-width: 500px;
-  resize: both; /* 👈 permite redimensionar */
+  max-width: 90%;
+  /* min-width: 500px; */
+  resize: both; /* permite redimensionar */
   overflow: auto;
   height: -webkit-fill-available;
   min-height: 500px;
@@ -391,6 +387,74 @@
 }
 
 /*      ========    ÁREA DE CONTENIDO    =============      */
+/* Contenedores de objetivos */
+  .objetivo-container {
+  background: #e7eff7;
+  border: 2px solid #002d7f80;
+  border-radius: 10px;
+  padding: 0.5rem;
+  flex: 1;
+  display: flex; 
+  gap: 10px;
+  /* align-items: flex-start; */
+  margin-bottom: 0.1rem;
+}
+
+.objetivo-container-area {
+  background: #f0e7f7;
+  border: 2px solid #0e007f80;
+  border-radius: 10px;
+  padding: 0.5rem;
+  flex: 1;
+  display: flex; 
+  gap: 10px;
+  /* align-items: flex-start; */
+  margin-bottom: 0.1rem;
+}
+
+/* Contenedor para las competencias */
+.competencia-container {
+  background: #faf5ff;
+  border: 2px solid #c084fc;
+  border-radius: 10px;
+  padding: 0.6rem;
+  flex: 1;
+  display: flex; 
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 0.1rem;
+}
+
+.objetivo-solo-texto {
+  margin: 0;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #1e293b;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  background: #f8f9fab5; /* Fondo claro */
+  border-radius: 6px; /* Bordes redondeados */
+  border: 1px solid #e9ecef; /* Borde sutil */
+}
+
+.finalizar-btn {
+  background: linear-gradient(16deg, #007cc8 0%, #00cb9d 80%);
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  width: 12rem;
+}
+.finalizar-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 88, 52, 0.4);
+}
 
 .employee-card3 { 
     display: flex;
@@ -447,10 +511,10 @@
 .evaluation-form {
    background: linear-gradient(135deg, #f8fafb 0%, #f1f5f9 100%);
    border-radius: 16px;
-   padding: 30px;
+   padding: 1rem 30px;
    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
    border: 1px solid #e2e8f0;
-   margin: 20px 0.5rem;
+   margin: 1rem 0.5rem;
 }
 
 .form-section {
@@ -1216,6 +1280,312 @@ input:disabled {
 
 
 
+/*----------------------  Estilos para la fase de Cierre  ------------------------ */
+
+/* ESTILOS PARA SECCIÓN DE CIERRE - ESTILO 1 MINIMALISTA */
+
+.evaluation-form-cierre {
+  background: linear-gradient(135deg, #f8fafb 0%, #f1f5f9 100%);  
+  border-radius: 16px;
+  padding: 0 0 0.5rem 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  margin: 1rem 0.5rem;
+}
+
+
+ /* Todos los estilos encapsulados en la clase .cierre */
+.cierre {
+    /* font-family: 'Segoe UI', system-ui, sans-serif; */
+    /* max-width: 1100px; */
+    padding: 0 30px;
+    margin: 0 auto;
+}
+
+.cierre .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+    gap: 25px;
+}
+
+.cierre .card {
+    background: white;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.cierre .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+
+.cierre .card-objetivos::before { 
+    background: #3b82f6; 
+}
+
+.cierre .card-competencias::before { 
+    background: #8b5cf6; 
+}
+
+
+
+.evaluation-form-cierre .header {
+  /* background: linear-gradient(135deg, #1e293b 0%, #334155 100%); */
+  /* background: linear-gradient(135deg, #0c2937 0%, #0f4560 100%);  */
+  background: linear-gradient(135deg, #9fbec42e 0%, #82889924 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 16px 16px 0 0; /* Superior izquierda, superior derecha, inferior derecha, inferior izquierda */
+  border-bottom: 4px solid #0ea5e9;
+}
+
+.evaluation-form-cierre .header h2 {
+  font-size: 30px;
+  font-weight: 600;
+  color: rgb(88 88 88);
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.evaluation-form-cierre .header .subtitle {
+  font-size: 16px;
+  opacity: 0.8;
+  /* font-family: var(--font-heading), sans-serif; */
+  color: rgb(32, 32, 31);
+}
+
+.evaluation-form-cierre .content { 
+  padding: 1rem 0;
+}
+
+/* Círculos de progreso */
+.cierre .circular-progress {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 0;
+    position: relative;
+}
+
+.cierre .circular-progress svg {
+    transform: rotate(-90deg);
+}
+
+.cierre .circular-progress circle {
+    fill: none;
+    stroke-width: 8;
+}
+
+.cierre .bg-circle { 
+    stroke: #f0f0f0; 
+}
+
+.cierre .progress-circle { 
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease;
+}
+
+.cierre .circle-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.cierre .circle-subtext {
+    position: absolute;
+    top: 58%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-size: 14px;
+    color: #8492a5;
+}
+
+.cierre .card-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4b5e7a;
+    font-weight: 600;
+    /* margin-bottom: 8px; */
+    text-align: center;
+}
+
+.cierre .card-badge {
+    display: block;
+    text-align: center;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    /* margin-top: 15px; */
+}
+
+.cierre .badge-excepcional {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.cierre .badge-sobresaliente {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* Tarjeta final con barra */
+.cierre .final-card {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #13223a 0%, #013737 100%);
+    color: white;
+    padding: 1.5rem 3rem;
+}
+
+.cierre .final-card::before { 
+    display: none; 
+}
+
+.cierre .final-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.cierre .final-title {
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cierre .final-badge {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #10b981;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cierre .final-content {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.cierre .final-score {
+    font-size: 65px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.cierre .final-max {
+    font-size: 28px;
+    opacity: 0.7;
+}
+
+.cierre .final-bar-container {
+    flex: 1;
+}
+
+.cierre .bar-wrapper {
+    margin-bottom: 12px;
+}
+
+.cierre .bar-container {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.cierre .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 6px;
+    width: 88%;
+    transition: width 1.5s ease;
+}
+
+.cierre .bar-label {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-top: 8px;
+} 
+
+
+/*    ESTILOS PARA LA SECCION DE RETROALIMENTEACION Y PLAN DE ACCION  del  CIERE */
+.cierre-seccion {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.cierre-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.cierre-icono {
+  font-size: 24px;
+}
+
+.cierre-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.cierre-competencia-contenido-titulo {
+  display: block;  
+  width: fit-content; 
+}
+
+.cierre-competencia-titulo {
+  margin: 0 0 0 0;
+  padding: 5px 1rem;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #f3f3f3;
+  font-weight: 700;
+  background: linear-gradient(135deg, #8156f1 0%, #3f1ac0 100%);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+}
+
+
+
+
+
+
+
+
+
 /* === MEDIA QUERIES === */
 
 /* Tablets y dispositivos medianos (máximo 992px) */
@@ -1329,6 +1699,7 @@ input:disabled {
     font-size: 12px;
     padding: 10px 20px;
   }
+  
 }
 
 /* Móviles (máximo 576px) */
@@ -1412,8 +1783,21 @@ input:disabled {
     width: 100%;
     float: none;
   }
+
+  /*    Modal   */
+  .modal-resizable {
+      position: relative;
+      max-width: 100%;
+      margin: 0;
+      pointer-events: none;
+  }
+
 }
 
+.modal-header {
+  display: block;
+  padding: 1.5rem 2rem 1rem 2rem;
+}
 
 /* Estado Activo */
   .demo-state-2 {

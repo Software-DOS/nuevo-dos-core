@@ -1,3 +1,9 @@
+.main-flex-evaluacion{
+  display: block;
+  max-width: none;
+}
+
+
 .employe-card {
     background-color: white;
     border: 1px solid #989898; 
@@ -12,6 +18,7 @@
     position: relative;
     overflow: hidden;
     transition: var(--transition-slow);
+    max-width: none;
 }
 
 .employee-card2 { 
@@ -258,10 +265,10 @@
 .category-link2:not(.selected):hover {
   background: linear-gradient(135deg, #c9ebf357 0%, #e0ebf7 100%);
 }
-
-.category-link2.selected {
+ 
+/* .category-link2.selected {
   background: linear-gradient(135deg, #c9ebf357 0%, #e0ebf7 100%);
-}
+} */
 
 @keyframes fadeInDown {
   from {
@@ -545,10 +552,10 @@
 .evaluation-form {
    background: linear-gradient(135deg, #f8fafb 0%, #f1f5f9 100%);
    border-radius: 16px;
-   padding: 30px;
+   padding: 0 30px;
    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
    border: 1px solid #e2e8f0;
-   margin: 20px 0.5rem;
+   margin: 1rem 0.5rem;
 }
 
 .form-section {
@@ -863,6 +870,276 @@ input:disabled {
 .input-wrapper-mobile {
   display: contents; /* No afecta el layout en desktop */
 }
+
+
+
+
+
+
+
+
+
+
+/* ===========================================================================
+                Estilos para la Seccion de la lista de evaluaciones
+=============================================================================*/
+
+/* Estilos para la tabla de empleados */
+.cap-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cap-header {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+  gap: 20px;
+  padding: 16px 25px;
+  background-color: linear-gradient(135deg, #e91e63 0%, #af0b42 100%);
+  color: white;
+  font-weight: 500;
+  font-size: 13px;
+  text-transform: uppercase;
+  min-height: auto;
+  text-align: center;
+}
+
+.cap-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+  gap: 20px;
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  align-items: center;
+  transition: all 0.2s ease;
+  /* min-height: 70px; */
+  cursor: pointer;
+  text-align: center;
+}
+
+.cap-row:nth-child(even) {
+  /* background-color: var(--color-very-light-gray);  */
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.cap-row:hover {
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+  border-color: #06b6d4;
+}
+
+.cap-row:nth-child(even):hover {
+  background-color: #f0f2f5;
+}
+
+.cap-row:last-child {
+  border-bottom: none;
+}
+
+/* Columna de empleado con foto y nombre */
+.empleado-info-column {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: #333;
+}
+
+.employee-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 15%;
+  object-fit: cover;
+  border: 3px solid #f0f0f0;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.cap-row:hover .employee-photo {
+  transform: scale(1.05);
+  border-color: #e91e63;
+}
+
+.empleado-info-column span {
+  font-weight: 600;
+  color: #272727;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+
+/* .filter-sidebar {
+  width: 15rem;
+  padding: 1rem;
+  height: -moz-fit-content;
+  height: fit-content;
+  max-height: calc(100vh - 120px);
+} */
+
+
+/*  *******    Estilos para los ESTADOS   *******  */
+.estado-badge {
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.estado-badge.pendiente {
+  background: linear-gradient(135deg, #c0009c 0%, #f78d00 100%);
+  box-shadow: 0 2px 4px rgba(222, 74, 151, 0.3);
+}
+
+.estado-badge.completada {
+  /* background: linear-gradient(135deg, #03d34f 0%, #00b3de 100%); */
+  box-shadow: 0 2px 4px rgb(4 90 200 / 29%);
+  color: black;
+}
+
+.estado-badge.en-proceso {
+  background: linear-gradient(135deg, #03d34f 0%, #00b3de 100%);
+  /* background: linear-gradient(135deg, #00bcf5 0%, #3550f5 100%); */
+  box-shadow: 0 2px 4px rgba(74, 155, 222, 0.3);
+}
+
+.certifications-count {
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #4ade80 0%, #06b6d4 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 4px rgba(74, 222, 128, 0.3);
+}
+
+/*  *****      Estilos para dar color a las etiquetas de AREA     *******+   */
+.area-badge {
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-align: center;
+  /* max-width: fit-content; */
+}
+
+.area-tecnologia {
+  background-color: #d6e4ff;
+  color: #1a237e;
+}
+
+.area-talento {
+  background-color: #fce4ec;
+  color: #880e4f;
+}
+
+.area-marketing {
+  background-color: #fff3cd;
+  color: #b37400;
+}
+
+.area-finanzas {
+  background-color: #d0f0d0;
+  color: #2e7d32;
+}
+
+.area-legal {
+  background-color: #ede7f6;
+  color: #512da8;
+}
+
+.area-calidad {
+  background-color: #e0f7fa;
+  color: #006064;
+}
+
+/* =======================*/
+
+
+
+
+/* ============================================================
+                Estilos para el Modal de la Evaluación                        
+===============================================================*/
+/* ========================================
+   BACKDROP DEL MODAL
+   ======================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Negro con 50% opacidad */
+  z-index: 999; /* Debe estar detrás del modal */
+  backdrop-filter: blur(3px); /* Opcional: efecto blur al fondo */
+
+  /* animation: fadeIn 0.3s ease-in-out; */
+}
+.modal-resizable {
+  width: 80vw;
+  max-width: 90%;
+  min-width: 500px;
+  resize: both; /* 👈 permite redimensionar */
+  overflow: auto;
+  height: -webkit-fill-available;
+  min-height: 500px;
+}
+
+.modal-header {
+  display: block;
+  padding: 1.5rem 2rem 0 2rem;
+}
+
+@media (max-width: 576px) {
+  /*    Modal   */
+  .modal-resizable {
+      position: relative;
+      max-width: 100%;
+      margin: 0;
+      pointer-events: none;
+  }
+}
+
+.modal-evaluacion {
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.employee-card3 { 
+    display: flex;
+    align-items: center;  
+    gap:2rem;
+}
+
+.employee-image-Modal {
+    width: 100px;
+    height: 100px;
+    border-radius: var(--radius-full);
+    margin-left: 2rem;
+}
+
+
+
+
+
+
+
+
 
 /* === MEDIA QUERIES === */
 

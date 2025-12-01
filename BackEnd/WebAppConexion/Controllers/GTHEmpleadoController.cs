@@ -396,6 +396,7 @@ namespace WebAppConexion.Controllers
         {
             try
             {
+                // Buscar el empleado
                 var empleados = await _repository.Mostrar(1, (int)idEmpleado, null, null, null);
                 var empleado = empleados.FirstOrDefault();
 

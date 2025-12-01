@@ -35,6 +35,19 @@ interface NivelConCompetencia {
   fechaEvaluacionJefe?: string;    
 }
 
+//Interfaz usada por el frontend para mapear los campos necesarios y mostrar
+interface Empleado {
+  id: number;
+  nombre: string;
+  sexo: string; 
+  area: string;
+  fechaInicio: string;
+  calificado: string;
+  photo: string;
+  ubicacion?: string;
+  idioma?: string;
+  estado: string | undefined;
+}
 
 @Component({
   selector: 'app-jefe-evaluacion',
@@ -63,9 +76,14 @@ export class JefeEvaluacionComponent implements OnInit {
       { titulo: '', valoracionEmpleado: null, fechaLimite: '' }
     ];    
 
-    this.cargarEvaluaciones();
+    // Obtener fase actual de la evaluación
+    this.obtenerFaseActual();
 
-    // this.cargarCompetenciasAdmin();
+    // this.cargarEvaluaciones();
+
+    // this.cargarListaEvaluaciones(idEmpleado);
+    this.cargarListaEvaluaciones(3); //probando
+
 
     // Inicializar los 5 objetivos Colaboradores
     this.objetivosIndividualesColab = [
@@ -75,9 +93,6 @@ export class JefeEvaluacionComponent implements OnInit {
       { titulo: '', valoracionJefe: 10, fechaLimite: '' },
       { titulo: '', valoracionJefe: 10, fechaLimite: '' }
     ];
-
-
-    this.cargarEvaluacionesColab(); //Borrar, esta parte debe usarse cuando se de click a un empleado de la lista enviando su id
 
   }
 
@@ -103,7 +118,70 @@ export class JefeEvaluacionComponent implements OnInit {
     idCelulaActual: number | null = null;   
 
 
+
+
+    // Fase actual de evaluacion
+    faseEvaluacion: number | null = null; 
+    fechaRegObj: string = '';
+    retroalimentacion: string = '';
+    planAccion: string = '';  
+
+    timelineSteps = [
+  { 
+    number: 1, 
+    label: 'Captura de Resultados', 
+    completed: false, 
+    icon: 'fas fa-check',
+    pngIcon: 'assets/img/iconos/iconos mycollection/png/062-reloj-de-arena.png',
+    sectionId: 'Captura-Resultados',
+    isActive: false,
+    phase: 0  
+  },
+  { 
+    number: 2, 
+    label: 'Revisión Inicial', 
+    completed: false,
+    icon: 'fas fa-check', 
+    pngIcon: 'assets/img/iconos/iconos mycollection/png/035-retroalimentacion-7.png',
+    sectionId: 'Revision-Inicial',
+    isActive: false,
+    phase: 6 
+  },
+  { 
+    number: 3, 
+    label: 'Evaluación Intermedia', 
+    completed: false,
+    icon: 'fas fa-check', 
+    pngIcon: 'assets/img/iconos/iconos mycollection/png/051-lista-de-verificacion.png',
+    sectionId: 'Evaluacion-Intermedia',
+    isActive: false,
+    phase: 2  
+  },
+  { 
+    number: 4, 
+    label: 'Retroalimentación', 
+    completed: false,
+    icon: 'fas fa-check', 
+    pngIcon: 'assets/img/iconos/iconos mycollection/png/028-grafico.png',
+    sectionId: 'Retroalimentacion',
+    isActive: false,
+    phase: 5  
+  },
+  { 
+    number: 5, 
+    label: 'Cierre', 
+    completed: false,
+    icon: 'fas fa-check', 
+    pngIcon: 'assets/img/iconos/iconos mycollection/png/056-alcanzando-objetivos.png',
+    sectionId: 'Cierre',
+    isActive: false,
+    phase: 7
+  }
+];
   
+
+
+
     /* -------------  Campos para mostrar en el HTML  ----------  */
   
     fotoPerfilUrl: string = 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Imagen por defecto
@@ -133,12 +211,47 @@ export class JefeEvaluacionComponent implements OnInit {
     nivelesCompetencias: NivelConCompetencia[] = [];
 
 
+    /**
+     * Formatear fecha de ISO string a dd/mm/yyyy
+     */
+    private formatearFecha(fechaISO: string): string {
+      if (!fechaISO) return 'N/A';
+      
+      try {
+        const fecha = new Date(fechaISO);
+        if (isNaN(fecha.getTime())) return 'N/A';
+        
+        const dia = fecha.getDate().toString().padStart(2, '0');
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+        const anio = fecha.getFullYear();
+        
+        return `${dia}/${mes}/${anio}`;
+      } catch (error) {
+        
+        console.warn('Error al formatear fecha:', fechaISO, error); //<!-- Console log BORRAR -->
+        return 'N/A';
+      }
+    }
 
     /* -------------------------------------------------------------
           Variables para la seccion de evaluacion de colboradores
     ----------------------------------------------------------------*/
     // Fase actual (esto vendrá del backend)
     // currentPhaseColab: number = 3; 
+
+    empleadosFiltrados: Empleado[] = [];
+    empleadoModal: iGTHEmpleado | null = null;
+    // idJefeActual: number | null = null;
+    selectedEmpleadoId: number | null = null;
+    empleados: any[] = [];
+    showModal: boolean = false;
+
+    nombreCompletoDisplayModal: string = ''; 
+    correoElectronicoDisplayModal: string = ''; 
+    posicionDisplayModal: string = ''; 
+    // faseColabNuevo:number = 2;
+
+    faseColabNuevo:number | null = null;
 
     // Objetivos individuales
     objetivosIndividualesColab: IgthObjetivo[] = [];
@@ -150,14 +263,243 @@ export class JefeEvaluacionComponent implements OnInit {
     faseEvaluacionColab: number | null = null;     
 
     // Sub-secciones para "Evaluación de Colaboradores"
-    activeTimelineStepColab: string = 'Revision-Inicial-colab';
+    activeTimelineStepColab: string = '';
 
     // En la clase del componente, agrega estas propiedades
     retroalimentacionColab: string = '';
     planAccionColab: string = '';
     fechaRegJefeColab: string = '';
   
-//=======================    Pasos para cambiar entre Secciones de la Evaluacion de Colaborador   ============================
+  
+//------------------------------    --------------------------------    ---------------------------   ----------------------------
+
+
+  // 2. Método principal optimizado
+  cargarListaEvaluaciones(idJefe: number): void {
+    if (!idJefe || idJefe === 0) {
+      this.cargarDatosPorDefecto();
+      return;
+    }
+
+    this.gthEvaluacionServcie.MostrarEvaluaciones().subscribe({
+      next: (response: any) => {
+        let evaluacionesData = response;
+        if (response && response.$values) {
+          evaluacionesData = response.$values;
+        }
+
+        if (evaluacionesData && Array.isArray(evaluacionesData)) {
+          // Filtrar evaluaciones por jefe asignado
+          const evaluacionesFiltradas = evaluacionesData.filter(
+            (evaluacion: Ievaluacion) => 
+              evaluacion.idJefe !== null && 
+              evaluacion.idJefe !== undefined && 
+              evaluacion.idJefe === idJefe
+          );
+
+          if (evaluacionesFiltradas.length > 0) {
+            this.procesarEvaluaciones(evaluacionesFiltradas);
+          } else {
+            this.cargarDatosPorDefecto();
+          }
+        } else {
+          this.cargarEmpleadosConParametros();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar evaluaciones:', error);
+        this.cargarEmpleadosConParametros();
+      }
+    });
+  }
+  
+  /**
+   * Procesar evaluaciones y obtener datos mínimos de empleados
+   */
+  private procesarEvaluaciones(evaluaciones: Ievaluacion[]): void {
+    
+    // Extraer IDs únicos de empleados
+    const idsEmpleados = [...new Set(evaluaciones.map(evaluacion => evaluacion.idEmpleado))];
+  
+    if (idsEmpleados.length === 0) {
+      this.cargarEmpleadosConParametros();
+      return;
+    }
+  
+    // Almacenar empleados obtenidos
+    const empleadosObtenidos: { [key: number]: iGTHEmpleado } = {};
+    let empleadosProcessed = 0;
+  
+    // Obtener datos mínimos de cada empleado
+    idsEmpleados.forEach(idEmpleado => {
+      // Usar tipo=1 para buscar por ID específico
+      this.gthEmpleadoService.MostrarConParametros(1, idEmpleado).subscribe({
+        next: (response: any) => {
+          
+          let empleadoData = null;
+          
+          // Manejar diferentes estructuras de respuesta
+          if (response && response.$values && Array.isArray(response.$values)) {
+            // Buscar el empleado específico en el array $values
+            empleadoData = response.$values.find((emp: any) => emp.idEmpleado === idEmpleado);
+            
+            // Si no se encuentra, tomar el primer elemento si solo hay uno
+            if (!empleadoData && response.$values.length === 1) {
+              empleadoData = response.$values[0];
+            }
+          } else if (Array.isArray(response)) {
+            empleadoData = response.find((emp: any) => emp.idEmpleado === idEmpleado);
+            
+            // Si no se encuentra, tomar el primer elemento si solo hay uno
+            if (!empleadoData && response.length === 1) {
+              empleadoData = response[0];
+            }
+          } else if (response && response.idEmpleado) {
+            empleadoData = response;
+          }
+          
+          if (empleadoData) {
+            empleadosObtenidos[idEmpleado] = empleadoData;
+          } else {
+            console.warn(`⚠️ No se encontraron datos para empleado ${idEmpleado}. Respuesta completa:`, response);
+          }
+  
+          empleadosProcessed++;
+          
+          // Mapear cuando todos estén procesados
+          if (empleadosProcessed === idsEmpleados.length) {
+            this.mapearEvaluacionesConEmpleados(evaluaciones, empleadosObtenidos);
+          }
+        },
+        error: (error) => {
+          console.error(`❌ Error al obtener empleado ${idEmpleado}:`, error);
+          empleadosProcessed++;
+          
+          // Continuar aunque falle uno
+          if (empleadosProcessed === idsEmpleados.length) {
+            this.mapearEvaluacionesConEmpleados(evaluaciones, empleadosObtenidos);
+          }
+        }
+      });
+    });
+  }
+  
+  /**
+   * Mapear evaluaciones con datos mínimos de empleados
+   */
+  private mapearEvaluacionesConEmpleados(evaluaciones: Ievaluacion[], empleadosData: { [key: number]: iGTHEmpleado }): void {
+    const empleadosMapeados: Empleado[] = evaluaciones.map(evaluacion => {
+      const empleado = empleadosData[evaluacion.idEmpleado];
+      
+      if (!empleado) {
+        const nombreFallback = (evaluacion as any).nombreCompleto || 
+                             `${(evaluacion as any).nombreEmpleado || ''} ${(evaluacion as any).apellidoEmpleado || ''}`.trim() ||
+                             `Empleado ${evaluacion.idEmpleado}`;
+        
+        return {
+          id: evaluacion.idEmpleado,
+          nombre: nombreFallback,
+          sexo: 'N/A',
+          area: 'N/A',
+          fechaInicio: this.formatearFecha(evaluacion.fechaCreacion || ''),
+          calificado: 'Pendiente',
+          photo: this.construirUrlFoto('', ''),
+          estado: evaluacion.estado || 'PENDIENTE'
+        };
+      }
+  
+      const nombreCompleto = `${empleado.nombre || ''} ${empleado.apellido || ''}`.trim();
+      
+      return {
+        id: evaluacion.idEmpleado,
+        nombre: nombreCompleto || `Empleado ${evaluacion.idEmpleado}`,
+        sexo: empleado.sexo || 'N/A',
+        area: empleado.area || 'Sin área',
+        fechaInicio: this.formatearFecha(evaluacion.fechaCreacion || ''),
+        calificado: evaluacion.calificacionFinal ? 
+          `${evaluacion.calificacionFinal}/100` : 'Pendiente',
+        photo: this.construirUrlFoto(empleado.fotoPerfilUrl || '', empleado.sexo || ''),
+        estado: evaluacion.estado || 'PENDIENTE'
+      };
+    });
+  
+    if (empleadosMapeados.length > 0) {
+      this.empleados = empleadosMapeados;
+      this.empleadosFiltrados = [...this.empleados];
+      // <!-- Console log BORRAR -->
+      console.log(`${this.empleados.length} evaluaciones cargadas correctamente`);
+    } else {
+      console.error('No se pudieron mapear las evaluaciones');
+      this.cargarDatosPorDefecto();
+    }
+  }
+
+  /**
+ * Método alternativo simplificado
+ */
+private cargarEmpleadosConParametros(): void {
+
+  this.gthEmpleadoService.MostrarConParametros(0).subscribe({
+    next: (response: any) => {
+      let empleadosData = response;
+      if (response && response.$values) {
+        empleadosData = response.$values;
+      }
+      
+      if (empleadosData && Array.isArray(empleadosData)) {
+        // Mapear empleados sin evaluación
+        this.empleados = empleadosData.map((emp: iGTHEmpleado) => ({
+          id: emp.idEmpleado,
+          nombre: `${emp.nombre || ''} ${emp.apellido || ''}`.trim(),
+          sexo: emp.sexo || 'N/A',
+          photo: this.construirUrlFoto(emp.fotoPerfilUrl || '', emp.sexo || ''),
+          
+          // Propiedades que espera el template
+          area: emp.area || 'Sin área', // Cambiado de departamento a area
+          fechaIncorporacion: emp.fechaContratacion || 'N/A',
+          calificado: 'Sin evaluación',
+          estado: 'Sin asignar',
+          
+          // Datos de evaluación por defecto
+          idEvaluacion: 0,
+          anioEvaluacion: new Date().getFullYear(),
+          estadoEvaluacion: 'Sin asignar',
+          fechaCreacion: 'N/A',
+          fechaLimite: 'N/A',
+          fechaFinalizacion: undefined,
+          calificacionFinal: undefined,
+          observaciones: 'Sin evaluación asignada'
+        }));
+        
+        this.empleadosFiltrados = [...this.empleados];
+        console.log("✅ Empleados sin evaluación cargados:", this.empleados.length);
+      } else {
+        this.cargarDatosPorDefecto();
+      }
+    },
+    error: (error) => {
+      console.error('❌ Error en método alternativo:', error);
+      this.cargarDatosPorDefecto();
+    }
+  });
+}
+
+
+  /**
+   * Cargar datos por defecto en caso de error
+   */
+  private cargarDatosPorDefecto(): void {
+    this.empleados = [
+      {
+      }
+    ];
+    this.empleadosFiltrados = [...this.empleados];
+  }
+
+
+
+
+  //=======================    Pasos para cambiar entre Secciones de la Evaluacion de Colaborador   ============================
 
   // Timeline Steps - Solo para jefe
   // Inicializar con active: false
@@ -190,16 +532,14 @@ export class JefeEvaluacionComponent implements OnInit {
       fase: 5  // ← AGREGAR la fase correspondiente
     }
   ];
-
-  // ✅ Nueva función para Evaluación Colaboradores
+  
+  // ================ MÉTODO PARA CAMBIAR SUB-SECCIÓN EN EVALUACIÓN COLABORADORES ================
   onStepKeyDownColab(event: KeyboardEvent, step: any): void {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       this.onStepClickColab(step);
     }
   }
-
-  // ================ MÉTODO PARA CAMBIAR SUB-SECCIÓN EN EVALUACIÓN COLABORADORES ================
   onStepClickColab(step: any): void {
     if (this.activeSection === 'EvaluacionColab') {
       this.activeTimelineStepColab = step.sectionId;
@@ -212,67 +552,94 @@ export class JefeEvaluacionComponent implements OnInit {
   }
   
   establecerSubseccionColabSegunFase(): void {
-    if (!this.faseEvaluacionColab) return;
+    console.log('🔍 Estableciendo subsección según fase...');
+    console.log('📊 Fase actual:', this.faseEvaluacionColab);
+    
+    if (!this.faseEvaluacionColab) {
+      console.warn('⚠️ No hay fase definida');
+      return;
+    }
     
     const fase = this.faseEvaluacionColab;
     
     // Mapear fase a step
     let stepActual;
-    if (fase > 0 && fase <= 2) stepActual = this.timelineStepsColab[0];      // Step 1
-    else if (fase <= 4) stepActual = this.timelineStepsColab[1]; // Step 2
-    else stepActual = this.timelineStepsColab[2];                // Step 3
+    
+    if (fase === 1 || fase === 2) {
+      // Fase 1-2 → Revisión Inicial
+      stepActual = this.timelineStepsColab[0];
+      console.log('✅ Mostrando: Revisión Inicial (Fase 1-2)');
+    } else if (fase === 3 || fase === 4) {
+      // Fase 3-4 → Retroalimentación
+      stepActual = this.timelineStepsColab[1];
+      console.log('✅ Mostrando: Retroalimentación (Fase 3-4)');
+    } else if (fase === 5) {
+      // Fase 5 → Cierre
+      stepActual = this.timelineStepsColab[2];
+      console.log('✅ Mostrando: Cierre (Fase 5)');
+    } else {
+      // Fallback: Revisión Inicial
+      stepActual = this.timelineStepsColab[0];
+      console.warn('⚠️ Fase no reconocida, mostrando Revisión Inicial');
+    }
     
     this.activeTimelineStepColab = stepActual.sectionId;
+    console.log('📍 Timeline step activo:', this.activeTimelineStepColab);
     
     // Actualizar estados completados
-    this.timelineStepsColab[0].completed = fase > 1;  // Step 1
-    this.timelineStepsColab[1].completed = fase > 3;  // Step 2
-    this.timelineStepsColab[2].completed = fase == 5;  // Step 3 (nunca completado)
+    this.timelineStepsColab[0].completed = fase > 2;   // Step 1 completado si fase > 2
+    this.timelineStepsColab[1].completed = fase > 4;   // Step 2 completado si fase > 4
+    this.timelineStepsColab[2].completed = fase === 5; // Step 3 completado si fase === 5
     
+    console.log('✅ Estados actualizados:', {
+      step1: this.timelineStepsColab[0].completed,
+      step2: this.timelineStepsColab[1].completed,
+      step3: this.timelineStepsColab[2].completed
+    });
   }
 //---------------------------------------------------------------------------------------------------------------------
 
 //=======================    Pasos para cambiar entre Secciones de la Evaluacion   ============================
 
   // Timeline Steps
-  timelineSteps = [
-    { 
-      number: 1, 
-      label: 'Captura de Resultados', 
-      completed: true, 
-      icon: 'fas fa-check',
-      pngIcon: 'assets/img/iconos/iconos mycollection/png/062-reloj-de-arena.png',
-      sectionId: 'Captura-Resultados'
-    },
-    { 
-      number: 2, 
-      label: 'Revisión Inicial', 
-      completed: false,
-      pngIcon: 'assets/img/iconos/iconos mycollection/png/035-retroalimentacion-7.png',
-      sectionId: 'Revision-Inicial'
-    },
-    { 
-      number: 3, 
-      label: 'Evaluación Intermedia', 
-      completed: false,
-      pngIcon: 'assets/img/iconos/iconos mycollection/png/051-lista-de-verificacion.png',
-      sectionId: 'Evaluacion-Intermedia'
-    },
-    { 
-      number: 4, 
-      label: 'Retroalimentación', 
-      completed: false,
-      pngIcon: 'assets/img/iconos/iconos mycollection/png/028-grafico.png',
-      sectionId: 'Retroalimentacion'
-    },
-    { 
-      number: 5, 
-      label: 'Cierre', 
-      completed: false,
-      pngIcon: 'assets/img/iconos/iconos mycollection/png/056-alcanzando-objetivos.png',
-      sectionId: 'Cierre'
-    }
-  ];
+  // timelineSteps = [
+  //   { 
+  //     number: 1, 
+  //     label: 'Captura de Resultados', 
+  //     completed: true, 
+  //     icon: 'fas fa-check',
+  //     pngIcon: 'assets/img/iconos/iconos mycollection/png/062-reloj-de-arena.png',
+  //     sectionId: 'Captura-Resultados'
+  //   },
+  //   { 
+  //     number: 2, 
+  //     label: 'Revisión Inicial', 
+  //     completed: false,
+  //     pngIcon: 'assets/img/iconos/iconos mycollection/png/035-retroalimentacion-7.png',
+  //     sectionId: 'Revision-Inicial'
+  //   },
+  //   { 
+  //     number: 3, 
+  //     label: 'Evaluación Intermedia', 
+  //     completed: false,
+  //     pngIcon: 'assets/img/iconos/iconos mycollection/png/051-lista-de-verificacion.png',
+  //     sectionId: 'Evaluacion-Intermedia'
+  //   },
+  //   { 
+  //     number: 4, 
+  //     label: 'Retroalimentación', 
+  //     completed: false,
+  //     pngIcon: 'assets/img/iconos/iconos mycollection/png/028-grafico.png',
+  //     sectionId: 'Retroalimentacion'
+  //   },
+  //   { 
+  //     number: 5, 
+  //     label: 'Cierre', 
+  //     completed: false,
+  //     pngIcon: 'assets/img/iconos/iconos mycollection/png/056-alcanzando-objetivos.png',
+  //     sectionId: 'Cierre'
+  //   }
+  // ];
 
   // Método para cambiar la sección activa
   onStepKeyDown(event: KeyboardEvent, step: any): void {
@@ -308,22 +675,22 @@ export class JefeEvaluacionComponent implements OnInit {
 
 
   // Objectives (KPIs) - Objetivos precargados del empleado
-  objectives = [
-    {
-      name: 'Entrega de Proyectos',
-      weight: '40%',
-      startDate: '01/01/2025',
-      endDate: '30/06/2025',
-      description: 'Completar entregables en tiempo y forma.',
-    },
-    {
-      name: 'Reducción de Errores',
-      weight: '30%',
-      startDate: '01/01/2025',
-      endDate: '30/06/2025',
-      description: 'Reducir errores de software en un 20%.',
-    },
-  ];
+  // objectives = [
+  //   {
+  //     name: 'Entrega de Proyectos',
+  //     weight: '40%',
+  //     startDate: '01/01/2025',
+  //     endDate: '30/06/2025',
+  //     description: 'Completar entregables en tiempo y forma.',
+  //   },
+  //   {
+  //     name: 'Reducción de Errores',
+  //     weight: '30%',
+  //     startDate: '01/01/2025',
+  //     endDate: '30/06/2025',
+  //     description: 'Reducir errores de software en un 20%.',
+  //   },
+  // ];
 
   // Competencias dinámicas - Se cargarán desde el backend
   competencies: IGTHCompetenciaViewModel[] = [];
@@ -384,26 +751,24 @@ export class JefeEvaluacionComponent implements OnInit {
 
 
   /*=======================================================================================
-                            fUNCIONES PARA CARGAR INFO DE COLABORADOR
+                            fUNCIONES PARA CARGAR INFO DE JEFE
 =========================================================================================*/
 
   cargarDatosEmpleado(): void {
-    // console.log('Iniciando proceso de carga de informacion');
-    // Obtener ID del empleado del sessionStorage
-    const idEmpleado =
-      this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
 
+  // console.log('Iniciando proceso de carga de informacion');
+    // Obtener ID del empleado del sessionStorage
+    const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+    
     if (idEmpleado) {
       this.idEmpleadoActual = idEmpleado;
-      this.buscarEmpleadoPorId(2); //Probando
+      this.buscarEmpleadoPorId(3); //Probando
     } else {
-      console.warn(
-        'No se encontró ID de empleado en sessionStorage, usando cédula de prueba'
-      );
+      console.warn('No se encontró ID de empleado en sessionStorage, usando cédula de prueba');      
     }
   }
 
-  /**
+/**
    * Busca un empleado específico por ID
    * @param idEmpleado - ID del empleado a buscar
    */
@@ -411,7 +776,7 @@ export class JefeEvaluacionComponent implements OnInit {
 
     this.gthEmpleadoService.MostrarConParametros(1, idEmpleado).subscribe({
       next: (empleado: any) => {
-        // console.log('Respuesta del backend ->', empleado); //importante
+        // console.log('Respuesta del backend ->', empleado);
 
         const datosEmpleado = empleado?.$values?.[0];
 
@@ -419,79 +784,95 @@ export class JefeEvaluacionComponent implements OnInit {
           this.empleado = datosEmpleado;
           this.mapearDatosParaMostrar();
         } else {
-          console.warn('No se encontró empleado con el ID:');
+          console.warn('No se encontró empleado con el ID:', idEmpleado);
         }
       },
       error: (error) => {
         console.error('Error al buscar empleado por ID:', error);
-      },
+      }
     });
   }
- 
-  private async mapearDatosParaMostrar(): Promise<void> {
+
+/**
+   * Busca un empleado específico por cédula
+   * @param cedula - Cédula del empleado a buscar
+   */
+  buscarEmpleadoPorCedula(cedula: string): void {
+    this.gthEmpleadoService.BuscarPorCedula(cedula).subscribe({
+      next: (empleado: any) => {
+        // console.log('Respuesta del backend ->', empleado);
+
+        const datosEmpleado = empleado?.$values?.[0];
+
+        if (datosEmpleado) {
+          this.empleado = datosEmpleado;
+          this.mapearDatosParaMostrar();
+        } else {
+          console.warn('No se encontró empleado con la cédula:', cedula);
+        }
+      },
+      error: (error) => {
+        console.error('Error al buscar empleado por cédula:', error);
+      }
+    });
+  }
+
+  private async mapearDatosParaMostrar(): Promise<void>  {
     if (this.empleado) {
       // Guardar ID del empleado para usar en subida de fotos
       this.idEmpleadoActual = this.empleado.idEmpleado;
 
-      // ⭐ NUEVA LÍNEA: Guardar el ID de la célula
+      // Guardar el ID de la célula para buscar el objetivo de Area
       this.idCelulaActual = this.empleado.idCelula || null;
 
-      if (this.idCelulaActual) this.cargarObjetivoExistente(); //Hay que cambiar el lugar
-
       this.nombreCompletoDisplay = `${this.empleado.nombre} ${this.empleado.apellido}`;
-      this.correoElectronicoDisplay =
-        this.empleado.correo || this.empleado.correoCorporativo;
+      this.correoElectronicoDisplay = this.empleado.correo || this.empleado.correoCorporativo;
       this.posicionDisplay = this.empleado.cargoActual;
       // this.areaDisplay = this.empleado.area;
+
     }
-  }
+  }    
 
   construirUrlFoto(fotoPerfilUrl: string, sexo: string): string {
     // Normalizar sexo
     const sexoNormalizado = (sexo || '').toString().trim().toLowerCase();
-
-    const defaultFemenino =
-      'assets/img/iconos/iconos mycollection/png/010-mujer-2.png';
-    const defaultMasculino =
-      'assets/img/iconos/iconos mycollection/png/028-hombre-2.png';
-    const defaultGenerico =
-      'assets/img/iconos/iconos mycollection/png/026-hombre-de-traje-y-corbata.png';
-
+  
+    const defaultFemenino = 'assets/img/iconos/iconos mycollection/png/010-mujer-2.png';
+    const defaultMasculino = 'assets/img/iconos/iconos mycollection/png/028-hombre-2.png';
+    const defaultGenerico = 'assets/img/iconos/iconos mycollection/png/026-hombre-de-traje-y-corbata.png';
+  
     // Determinar fallback según sexo
-    const fallback =
-      sexoNormalizado === 'femenino' || sexoNormalizado === 'f'
-        ? defaultFemenino
-        : sexoNormalizado === 'masculino' || sexoNormalizado === 'm'
+    const fallback = sexoNormalizado === 'femenino' || sexoNormalizado === 'f'
+      ? defaultFemenino
+      : sexoNormalizado === 'masculino' || sexoNormalizado === 'm'
         ? defaultMasculino
         : defaultGenerico;
-
+  
     // Si no hay URL, usar fallback directamente
     if (!fotoPerfilUrl) return fallback;
-
+  
     // Si es una URL completa (http/https), devolverla tal cual
-    if (
-      fotoPerfilUrl.startsWith('http://') ||
-      fotoPerfilUrl.startsWith('https://')
-    ) {
+    if (fotoPerfilUrl.startsWith('http://') || fotoPerfilUrl.startsWith('https://')) {
       return fotoPerfilUrl;
     }
-
+  
     // Si es una ruta relativa, construir con el backend
     const baseUrl = environment.urlbackend.endsWith('/')
       ? environment.urlbackend.slice(0, -1)
       : environment.urlbackend;
-
+  
     if (fotoPerfilUrl.startsWith('/')) {
       return `${baseUrl}${fotoPerfilUrl}`;
     }
-
+  
     return `${baseUrl}/${fotoPerfilUrl}`;
-  }
-
+  }  
+  
   onImageError(event: Event, sexo: string) {
     const img = event.target as HTMLImageElement;
     img.src = this.construirUrlFoto('', sexo); // 👉 fuerza a usar fallback según sexo
   }
+  
 
 
 /*-------------  Buscamos si tenemos un Objetivo de Area  ----------------------------*/
@@ -535,6 +916,110 @@ cargarObjetivoExistente(): void {
 /*=======================================================================================
                   fUNCIONES PARA CARGAR INFO DE EVALUACION PERSONAL
 =========================================================================================*/
+
+/**
+ * Inicializa objetivos vacíos
+ */
+inicializarObjetivosVacios(): void {
+  this.objetivosIndividuales = [
+    { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
+    { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
+    { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
+    { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
+    { titulo: '', valoracionEmpleado: null, fechaLimite: '' }
+  ];
+}
+
+avanzarCierreEvaluacion(){
+    // console.log('⚠️ FASE 4 EN PROCESO, SOLO LECTURA');
+  this.actualizarTimelinePorFase(7);
+  this.faseEvaluacion = 7;
+  this. cargarEvaluaciones();
+}
+
+/*============================================================
+  Funcion para actualizar el timeline segun la fase
+=============================================================*/
+actualizarTimelinePorFase(fase: number): void {
+  // Reiniciar todos los pasos
+  this.timelineSteps.forEach(step => {
+    step.completed = false;
+    step.isActive = false;
+  });
+  
+  // Mapeo de fases a qué pasos deben estar completados
+  let maxPaso = 0;
+  switch (fase) {
+    case 0:
+      maxPaso = 1; // solo Captura de Resultados
+      break;
+    case 6:
+      maxPaso = 2; // Captura + Revisión Inicial
+      break;
+    case 2:
+      maxPaso = 3; // hasta Evaluación Intermedia
+      break;
+    case 5:
+      maxPaso = 4; // hasta Retroalimentación
+      break;
+    case 7:
+      maxPaso = 5; // todos
+      break;
+    default:
+      maxPaso = 0;
+      break;
+  }
+  
+  // ✅ CORRECCIÓN: Marca todos incluyendo el activo como completados
+  this.timelineSteps.forEach(step => {
+    // Completados: todos hasta el paso activo (inclusive)
+    if (step.number <= maxPaso) {
+      step.completed = true;
+    }
+    // Activo: solo el paso actual
+    if (step.number === maxPaso) {
+      step.isActive = true;
+    }
+  });
+}
+
+obtenerFaseActual(): void {
+  // console.log('=== OBTENIENDO FASE ACTUAL ===');
+  const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+  
+  if (!idEmpleado) {
+    console.error('No se pudo obtener ID del empleado');
+    // this.currentPhase = 1;
+    return;
+  }
+
+  this.idEmpleadoActual = 2; // pruebas
+  const anio = 2025;
+
+  this.gthEvaluacionServcie
+    .MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual, anio)
+    .subscribe({
+      next: (response: any) => {
+        const evaluacionesData = response?.$values || response;
+        
+        if (evaluacionesData && evaluacionesData.length > 0) {
+          const evaluacion = evaluacionesData[0];
+          this.faseEvaluacion = evaluacion.fase || 0;
+          
+          // Actualizar el timeline con la fase real
+          this.actualizarTimelinePorFase(this.faseEvaluacion!);
+          // console.log('fase de evaluación: ', this.faseEvaluacion!);
+        } else {
+          this.faseEvaluacion = 7;
+        }
+      },
+      error: (error) => {
+        // console.error('❌ Error al obtener fase de evaluación:');
+        this.faseEvaluacion = 0;
+      }
+    });
+}
+
 
   /**
    * Actualiza el texto de un objetivo específico
@@ -617,8 +1102,7 @@ cargarObjetivoExistente(): void {
   =========================================================================================*/
 
     cargarEvaluaciones(): void {
-      const idEmpleado =
-        this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+      const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
 
       if (idEmpleado) {
         this.idEmpleadoActual = 2; // pruebas
@@ -774,140 +1258,230 @@ cargarObjetivoExistente(): void {
     return `${year}-${month}-${day}`;
   }
 
+
+
+  
   /*=======================================================================================
-                    fUNCIONES PARA CARGAR INFO DE EVALUACION COLABORADOR
+                    fUNCIONES PARA CARGAR INFO DE EVALUACION SUB-EMPLEADO
   =========================================================================================*/
 
-  cargarEvaluacionesColab(): void {
-    const idEmpleado = 2; //Ingresamos el id del empleado desde la lista de Colaboradores
+  //=======================    Funciones para ver la lista de evaluaciones   ============================
 
-    if (idEmpleado) {
-      this.idEmpleadoActual = 2; // pruebas
-      const anio = 2025;
-
-      // Obtenermos el id de la evaluacion
-      this.gthEvaluacionServcie
-        .MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual, anio)
-        .subscribe({
-          next: (response: any) => {
-            let evaluacionesData = response;
-            if (response && response.$values)
-              evaluacionesData = response.$values;
-
-            if (evaluacionesData && evaluacionesData.length > 0) {
-              const idEvaluacionColab = evaluacionesData[0].idEvaluacion;
-              const retroalimentacionColab = evaluacionesData[0].retroalimentacion;
-              const planAccionColab = evaluacionesData[0].planAccion || null;
-              const fechaRegObjetivosJefe = evaluacionesData[0].fechaRegJefe || null;
-
-              this.retroalimentacionColab = retroalimentacionColab;
-              this.planAccionColab = planAccionColab;
-
-              this.faseEvaluacionColab = evaluacionesData[0].fase;
-              console.log('fase que llega de la evaluacion colab', this.faseEvaluacionColab);
-
-              // Usamos el id de la evaluacion para saber que objetivos tiene
-              this.cargarObjetivosPorFaseColab(this.faseEvaluacionColab!, idEvaluacionColab);
-
-              if (this.idCelulaActual){
-                this.cargarObjetivoExistente();  //Traemos el Objetivo de AREA
-              }
-
-              // inicializamos la colección
-              this.nivelesCompetenciasColab = [];
-
-               if(this.faseEvaluacionColab == 1){
-                this.fechaRegJefeColab = this.obtenerFechaActual();
-              } else {
-                this.fechaRegJefeColab = fechaRegObjetivosJefe;
-              }
-
-              // Obtenemos las competencias Asiganadas a esa evaluacion
-              this.gthCompetenciaService
-                .obtenerAsignacionCompetenciaPorIdEvaluacion(idEvaluacionColab)
-                .subscribe({
-                  next: (respAsigCompetencias: any) => {
-                    // console.log('\n📦 COMPONENTE - Respuesta recibida:', respAsigCompetencias);
-                    // console.log('📦 COMPONENTE - Tiene $values?:', !!respAsigCompetencias?.$values);
-
-                    let asignacionesCompetenciasDataColab = respAsigCompetencias;
-                    if (respAsigCompetencias && respAsigCompetencias.$values) {
-                      asignacionesCompetenciasDataColab = respAsigCompetencias.$values;
-                    }                    
-
-                    asignacionesCompetenciasDataColab.forEach((competencia: any) => {
-                      const idAsignacionCompetenciaColab = competencia.idAsignacion;
-                      const idNivelCompetenciaColab = competencia.idNivelCompetencia;          
-                      const fechaExistenteColab = competencia.fechaLimite ? new Date(competencia.fechaLimite).toISOString().split('T')[0]: '';
-                      const calificacionEmpleado = competencia.calificacionEmpleado || null;
-                      const calificacionFinal = competencia.calificacionFinal || null;
-
-                      // Buscamos los datos de esa competencia Asignada ya que solo sabemos el id 
-                      this.gthCompetenciaService
-                        .mostrarNivelCompetencias(1, idNivelCompetenciaColab)
-                        .subscribe({
-                          next: (respNivelCompetencias: any) => {
-                            let nivelesCompetenciasData = respNivelCompetencias;
-                            if (respNivelCompetencias && respNivelCompetencias.$values) {
-                              nivelesCompetenciasData = respNivelCompetencias.$values;
-                            }
-                            
-                            nivelesCompetenciasData.forEach((nivel: any) => {
-                              this.gthCompetenciaService
-                                .mostrarCompetencias(1, nivel.idCompetencia)
-                                .subscribe({
-                                  next: (respCompetencia: any) => {
-                                    let competenciaData = respCompetencia;
-                                    if (respCompetencia && respCompetencia.$values) {
-                                      competenciaData = respCompetencia.$values;
-                                    }
-                                    
-                                    if (competenciaData.length > 0) {
-                                      const competenciaColab = competenciaData[0];
-                                      
-                                      const combinadoColab: NivelConCompetencia = {
-                                        idAsignacionCompetencia: idAsignacionCompetenciaColab,
-                                        idCompetencia: nivel.idCompetencia,
-                                        nivel: nivel.nivel,
-                                        descripcion: nivel.descripcion,
-                                        nombreCompetencia: competenciaColab.nombreCompetencia,
-                                        tipoCompetencia: competenciaColab.tipoCompetencia,
-                                        fechaRegJefe: this.obtenerFechaActual(), // String en formato YYYY-MM-DD
-                                        CalificacionEmpleado: calificacionEmpleado,
-                                        CalificacionFinal: calificacionFinal
-                                      };
-                                      
-                                      this.nivelesCompetenciasColab.push(combinadoColab);
-                                      // console.log('✅ Competencia de colaborador agregada:', combinadoColab);
-                                    }
-                                  }
-                                });
-                            });
-                          }
-                        });
-                    });
-                  },
-                  error: (error) =>
-                    console.error('Error al consultar competencias asignadas:', error),
-                });
-            } else {
-              console.warn('⚠️ No se encontró ninguna evaluación para este empleado y año.');
-            }
-          },
-          error: (error) =>
-            console.error('Error al consultar evaluaciones:', error),
-        });
+  navigateToEvaluacion(empleadoId: number): void {
+    console.log('🔍 Abriendo evaluación para empleado:', empleadoId);
+    
+    this.selectedEmpleadoId = empleadoId;
+    
+    // Buscar el empleado en el array filtrado
+    const empleadoSeleccionado = this.empleadosFiltrados.find(emp => emp.id === empleadoId);
+    
+    if (empleadoSeleccionado) {
+      // Cargar datos completos del empleado desde el servicio
+      this.cargarDatosEmpleadoModal(empleadoId);
+      
+      // ✅ Cargar las evaluaciones del empleado
+      this.cargarEvaluacionesColab(empleadoId);
     } else {
-      console.warn('No se encontró ID de empleado en sessionStorage');
+      console.warn('No se encontró el empleado seleccionado');
     }
+    
+    // Mostrar el modal
+    this.showModal = true;
+    
+    // ✅ IMPORTANTE: Establecer la sección activa
+    this.activeSection = 'EvaluacionColab';
   }
+
+  // ======================================================================================
+  // Nueva función para cargar datos del sub empleado en el modal (datos personales)
+  // ======================================================================================
+  private cargarDatosEmpleadoModal(empleadoId: number): void {
+    // Usar tipo=1 para buscar por ID específico
+    this.gthEmpleadoService.MostrarConParametros(1, empleadoId).subscribe({
+      next: (response: any) => {
+        let empleadoData = null;
+        
+        // Manejar diferentes estructuras de respuesta
+        if (response && response.$values && Array.isArray(response.$values)) {
+          empleadoData = response.$values.find((emp: any) => emp.idEmpleado === empleadoId);
+          if (!empleadoData && response.$values.length === 1) {
+            empleadoData = response.$values[0];
+          }
+        } else if (Array.isArray(response)) {
+          empleadoData = response.find((emp: any) => emp.idEmpleado === empleadoId);
+          if (!empleadoData && response.length === 1) {
+            empleadoData = response[0];
+          }
+        } else if (response && response.idEmpleado) {
+          empleadoData = response;
+        }
+        
+        if (empleadoData) {
+          // Asignar datos al modal
+          this.empleadoModal = empleadoData;
+          this.nombreCompletoDisplayModal = `${empleadoData.nombre || ''} ${empleadoData.apellido || ''}`.trim();
+          this.correoElectronicoDisplayModal = empleadoData.correoElectronico || empleadoData.email || 'No disponible';
+          this.posicionDisplayModal = empleadoData.posicion || empleadoData.cargo || empleadoData.area || 'No disponible';
+        } else {
+          console.warn('No se encontraron datos para el empleado:', empleadoId);
+          this.setDatosModalPorDefecto();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar datos del empleado para modal:', error);
+        this.setDatosModalPorDefecto();
+      }
+    });
+  }
+  // ========================================
+  // 4. Función auxiliar para datos por defecto del modal
+  // ========================================
+  private setDatosModalPorDefecto(): void {
+    this.empleadoModal = null;
+    this.nombreCompletoDisplayModal = 'Nombre no disponible';
+    this.correoElectronicoDisplayModal = 'Correo no disponible';
+    this.posicionDisplayModal = 'Posición no disponible';
+  }
+
+
+  cerrarModal(): void {
+    this.showModal = false;
+    this.empleadoModal = null;
+    this.selectedEmpleadoId = 0;
+  }
+
+
+  cargarEvaluacionesColab(idEmpleado: number): void {
+  if (idEmpleado) {
+    this.idEmpleadoActual = idEmpleado;
+    const anio = 2025;
+
+    // Obtener el id de la evaluacion
+    this.gthEvaluacionServcie
+      .MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual, anio)
+      .subscribe({
+        next: (response: any) => {
+          let evaluacionesData = response;
+          if (response && response.$values)
+            evaluacionesData = response.$values;
+
+          if (evaluacionesData && evaluacionesData.length > 0) {
+            const idEvaluacionColab = evaluacionesData[0].idEvaluacion;
+            const retroalimentacionColab = evaluacionesData[0].retroalimentacion;
+            const planAccionColab = evaluacionesData[0].planAccion || null;
+            const fechaRegObjetivosJefe = evaluacionesData[0].fechaRegJefe || null;
+
+            this.retroalimentacionColab = retroalimentacionColab;
+            this.planAccionColab = planAccionColab;
+
+            // ✅ CRÍTICO: Guardar la fase
+            this.faseEvaluacionColab = evaluacionesData[0].fase;
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('📊 Fase cargada:', this.faseEvaluacionColab);
+            console.log('📋 ID Evaluación:', idEvaluacionColab);
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+            // ✅ NUEVO: Establecer subsección según fase
+            this.establecerSubseccionColabSegunFase();
+
+            // Usamos el id de la evaluacion para saber que objetivos tiene
+            this.cargarObjetivosPorFaseColab(this.faseEvaluacionColab!, idEvaluacionColab);
+
+            if (this.idCelulaActual){
+              this.cargarObjetivoExistente();
+            }
+
+            // inicializamos la colección
+            this.nivelesCompetenciasColab = [];
+
+            if(this.faseEvaluacionColab == 1){
+              this.fechaRegJefeColab = this.obtenerFechaActual();
+            } else {
+              this.fechaRegJefeColab = fechaRegObjetivosJefe;
+            }
+
+            // Obtenemos las competencias Asignadas a esa evaluacion
+            this.gthCompetenciaService
+              .obtenerAsignacionCompetenciaPorIdEvaluacion(idEvaluacionColab)
+              .subscribe({
+                next: (respAsigCompetencias: any) => {
+                  let asignacionesCompetenciasDataColab = respAsigCompetencias;
+                  if (respAsigCompetencias && respAsigCompetencias.$values) {
+                    asignacionesCompetenciasDataColab = respAsigCompetencias.$values;
+                  }                    
+
+                  asignacionesCompetenciasDataColab.forEach((competencia: any) => {
+                    const idAsignacionCompetenciaColab = competencia.idAsignacion;
+                    const idNivelCompetenciaColab = competencia.idNivelCompetencia;          
+                    const fechaExistenteColab = competencia.fechaLimite ? new Date(competencia.fechaLimite).toISOString().split('T')[0]: '';
+                    const calificacionEmpleado = competencia.calificacionEmpleado || null;
+                    const calificacionFinal = competencia.calificacionFinal || null;
+
+                    this.gthCompetenciaService
+                      .mostrarNivelCompetencias(1, idNivelCompetenciaColab)
+                      .subscribe({
+                        next: (respNivelCompetencias: any) => {
+                          let nivelesCompetenciasData = respNivelCompetencias;
+                          if (respNivelCompetencias && respNivelCompetencias.$values) {
+                            nivelesCompetenciasData = respNivelCompetencias.$values;
+                          }
+                          
+                          nivelesCompetenciasData.forEach((nivel: any) => {
+                            this.gthCompetenciaService
+                              .mostrarCompetencias(1, nivel.idCompetencia)
+                              .subscribe({
+                                next: (respCompetencia: any) => {
+                                  let competenciaData = respCompetencia;
+                                  if (respCompetencia && respCompetencia.$values) {
+                                    competenciaData = respCompetencia.$values;
+                                  }
+                                  
+                                  if (competenciaData.length > 0) {
+                                    const competenciaColab = competenciaData[0];
+                                    
+                                    const combinadoColab: NivelConCompetencia = {
+                                      idAsignacionCompetencia: idAsignacionCompetenciaColab,
+                                      idCompetencia: nivel.idCompetencia,
+                                      nivel: nivel.nivel,
+                                      descripcion: nivel.descripcion,
+                                      nombreCompetencia: competenciaColab.nombreCompetencia,
+                                      tipoCompetencia: competenciaColab.tipoCompetencia,
+                                      fechaRegJefe: this.obtenerFechaActual(),
+                                      CalificacionEmpleado: calificacionEmpleado,
+                                      CalificacionFinal: calificacionFinal
+                                    };
+                                    
+                                    this.nivelesCompetenciasColab.push(combinadoColab);
+                                  }
+                                }
+                              });
+                          });
+                        }
+                      });
+                  });
+                },
+                error: (error) =>
+                  console.error('Error al consultar competencias asignadas:', error),
+              });
+          } else {
+            console.warn('⚠️ No se encontró ninguna evaluación para este empleado y año.');
+          }
+        },
+        error: (error) =>
+          console.error('Error al consultar evaluaciones:', error),
+      });
+  } else {
+    console.warn('No se proporcionó ID de empleado');
+  }
+}  
    
 
   /**
    * Carga objetivos existentes según la fase
    */
   cargarObjetivosPorFaseColab(faseColab: number, idEvaluacionColab: number): void {
-  console.log('=== CARGANDO OBJETIVOS - FASE:', faseColab, '===');
+  console.log('=== CARGA de OBJETIVOS de sub empleado - FASE:', faseColab, '===');
+  console.log('=== CARGA de IdEvaluacion de sub empleado - FASE:', idEvaluacionColab, '===');
   
   this.gthObjetivoService.obtenerObjetivosPorIdEvaluacion(idEvaluacionColab)
   .subscribe({
@@ -1005,7 +1579,6 @@ cargarObjetivoExistente(): void {
       }
     }
   }
-
   
 
   /**
@@ -1026,17 +1599,33 @@ cargarObjetivoExistente(): void {
   // Variable para almacenar la fase actual del colaborador
   // faseEvaluacionColab: number = 1; // Se carga desde el backend
 
-  // Botón REVISAR - Guarda en fase 1 sin avanzar
-  // guardarRevision(): void {
-  //   this.guardarDatosEvaluacionColab(1, false);
-  // }
-  // Botón ENVIAR - Guarda y avanza a fase 2
+  
+  // Botón ENVIAR AVANCE - Guarda y avanza a fase 2
   enviarAvance(): void {
     this.guardarDatosEvaluacionColab(2, true);
+    
+    // ✅ Recargar evaluaciones después de guardar
+    setTimeout(() => {
+      if (this.selectedEmpleadoId) {
+        // this.cargarEvaluaciones(); // Recarga la lista principal
+        this.cargarEvaluacionesColab(this.selectedEmpleadoId); // Recarga datos del modal
+      }
+    }, 500);
+    this.cerrarModal();
   }
+
   // Botón ENVIAR RETROALIMENTACIÓN - Guarda y avanza a fase 4
   enviarRetroalimentacion(): void {
     this.guardarDatosEvaluacionColab(4, true);
+    
+    // ✅ Recargar evaluaciones después de guardar
+    setTimeout(() => {
+      if (this.selectedEmpleadoId) {
+        // this.cargarEvaluaciones(); // Recarga la lista principal
+        this.cargarEvaluacionesColab(this.selectedEmpleadoId); // Recarga datos del modal
+      }
+    }, 500);
+    this.cerrarModal();
   }
 
   guardarDatosEvaluacionColab(faseAGuardar: number, esAvance: boolean): void {
@@ -1301,25 +1890,25 @@ cargarObjetivoExistente(): void {
    * @param index - Índice de la competencia (0-4)
    * @param valor - Valor numérico (puede ser Event o number)
    */
-  actualizarValorCompetenciaFija(index: number, valor: any): void {
-    let nuevoValor: number;
+  // actualizarValorCompetenciaFija(index: number, valor: any): void {
+  //   let nuevoValor: number;
     
-    if (valor && typeof valor === 'object' && valor.target) {
-      // Es un evento
-      nuevoValor = Number((valor.target as HTMLInputElement).value);
-    } else {
-      // Es un número directo
-      nuevoValor = Number(valor);
-    }
+  //   if (valor && typeof valor === 'object' && valor.target) {
+  //     // Es un evento
+  //     nuevoValor = Number((valor.target as HTMLInputElement).value);
+  //   } else {
+  //     // Es un número directo
+  //     nuevoValor = Number(valor);
+  //   }
 
-    // if (index >= 0 && index < this.competencias.length) {
-    //   // Validar que el valor esté entre 0 y 100
-    //   if (!isNaN(nuevoValor) && nuevoValor >= 0 && nuevoValor <= 100) {
-    //     this.competencias[index].valor = nuevoValor;
-    //     console.log(`📊 Valor competencia ${index + 1}:`, nuevoValor, this.competencias[index]);
-    //   }
-    // }
-  }
+  //   // if (index >= 0 && index < this.competencias.length) {
+  //   //   // Validar que el valor esté entre 0 y 100
+  //   //   if (!isNaN(nuevoValor) && nuevoValor >= 0 && nuevoValor <= 100) {
+  //   //     this.competencias[index].valor = nuevoValor;
+  //   //     console.log(`📊 Valor competencia ${index + 1}:`, nuevoValor, this.competencias[index]);
+  //   //   }
+  //   // }
+  // }
 
 
 
@@ -1328,22 +1917,22 @@ cargarObjetivoExistente(): void {
    * @param index - Índice de la competencia (0-4)
    * @param fecha - Nueva fecha (puede ser Event o string)
    */
-  actualizarFechaCompetenciaFija(index: number, fecha: any): void {
-    let nuevaFecha: string;
+  // actualizarFechaCompetenciaFija(index: number, fecha: any): void {
+  //   let nuevaFecha: string;
     
-    if (fecha && typeof fecha === 'object' && fecha.target) {
-      // Es un evento
-      nuevaFecha = (fecha.target as HTMLInputElement).value;
-    } else {
-      // Es una fecha directa
-      nuevaFecha = String(fecha);
-    }
+  //   if (fecha && typeof fecha === 'object' && fecha.target) {
+  //     // Es un evento
+  //     nuevaFecha = (fecha.target as HTMLInputElement).value;
+  //   } else {
+  //     // Es una fecha directa
+  //     nuevaFecha = String(fecha);
+  //   }
 
-    // if (index >= 0 && index < this.competencias.length) {
-    //   this.competencias[index].fecha = nuevaFecha;
-    //   console.log(`📅 Fecha competencia ${index + 1}:`, nuevaFecha, this.competencias[index]);
-    // }
-  }
+  //   // if (index >= 0 && index < this.competencias.length) {
+  //   //   this.competencias[index].fecha = nuevaFecha;
+  //   //   console.log(`📅 Fecha competencia ${index + 1}:`, nuevaFecha, this.competencias[index]);
+  //   // }
+  // }
 
 
 
@@ -1416,24 +2005,26 @@ cargarObjetivoExistente(): void {
   /**
    * Aprueba la evaluación del empleado
    */
-  aprobarEvaluacion(): void {
-    console.log('✅ Evaluación aprobada por el administrador');
-    // Aquí se implementará la lógica para aprobar la evaluación
-    // Por ejemplo, cambiar el estado de la evaluación, enviar notificaciones, etc.
-    alert('Evaluación aprobada exitosamente');
-  }
+  // aprobarEvaluacion(): void {
+  //   console.log('✅ Evaluación aprobada por el administrador');
+  //   // Aquí se implementará la lógica para aprobar la evaluación
+  //   // Por ejemplo, cambiar el estado de la evaluación, enviar notificaciones, etc.
+  //   alert('Evaluación aprobada exitosamente');
+  // }
 
   /**
    * Rechaza la evaluación del empleado
    */
-  rechazarEvaluacion(): void {
-    console.log('❌ Evaluación rechazada por el administrador');
-    // Aquí se implementará la lógica para rechazar la evaluación
-    // Por ejemplo, solicitar comentarios del rechazo, cambiar estado, etc.
-    const motivo = prompt('Ingrese el motivo del rechazo:');
-    if (motivo) {
-      console.log('Motivo del rechazo:', motivo);
-      alert('Evaluación rechazada. Motivo: ' + motivo);
-    }
-  }
+  // rechazarEvaluacion(): void {
+  //   console.log('❌ Evaluación rechazada por el administrador');
+  //   // Aquí se implementará la lógica para rechazar la evaluación
+  //   // Por ejemplo, solicitar comentarios del rechazo, cambiar estado, etc.
+  //   const motivo = prompt('Ingrese el motivo del rechazo:');
+  //   if (motivo) {
+  //     console.log('Motivo del rechazo:', motivo);
+  //     alert('Evaluación rechazada. Motivo: ' + motivo);
+  //   }
+  // }
+
+  
 }
