@@ -74,16 +74,16 @@ export class LoginComponent implements OnInit {
       // ⭐ Llamada al servicio de login
       this.loginService.login(data).subscribe({
           next: (resp:any) => {
-             console.log("✅ [DEBUG] Login successful, response:", resp);
+            //  console.log("✅ [DEBUG] Login successful, response:", resp);
              
               // ⭐ Verificación doble del token guardado
               const valor = sessionStorage.getItem('token');
-              console.log("🔍 [DEBUG] Token from sessionStorage after login:", valor);
+              // console.log("🔍 [DEBUG] Token from sessionStorage after login:", valor);
               
               if (typeof valor === 'string' && valor.trim() !== '') {
                 try {
                   var IdEmpleado = JSON.parse(atob(valor.split('.')[1]));
-                  console.log("👤 [DEBUG] Decoded employee data:", IdEmpleado);
+                  // console.log("👤 [DEBUG] Decoded employee data:", IdEmpleado);
                   
                   // ⭐ Verificar claims de email en diferentes formatos
                   const email = IdEmpleado['email'] || 
@@ -97,23 +97,23 @@ export class LoginComponent implements OnInit {
                     return;
                   }
                   
-                  console.log("✅ [DEBUG] Email found in token:", email);
+                  // console.log("✅ [DEBUG] Email found in token:", email);
                   
                   // ⭐ Usar NgZone para asegurar que la navegación funcione correctamente
                   this.ngZone.run(() => {
-                    console.log("🔄 [DEBUG] Running navigation inside NgZone");
+                    // console.log("🔄 [DEBUG] Running navigation inside NgZone");
                     this.loading = false;
                     
-                    console.log("🚀 [DEBUG] Attempting navigation to home");
+                    // console.log("🚀 [DEBUG] Attempting navigation to home");
                     
                     // ⭐ Navegación con fallback en caso de fallo
                     this.router.navigate(['/']).then((success) => {
-                      console.log("✅ [DEBUG] Navigation success:", success);
+                      // console.log("✅ [DEBUG] Navigation success:", success);
                       if (success) {
                         // ⭐ Mostrar mensaje de éxito después de navegación exitosa
                         alerts.basicAlert("Éxito", "Login exitoso", "success");
                       } else {
-                        console.log("⚠️ [DEBUG] Navigation failed, trying alternative method");
+                        // console.log("⚠️ [DEBUG] Navigation failed, trying alternative method");
                         // ⭐ Fallback: recarga forzada de página
                         window.location.href = '/';
                       }
@@ -190,7 +190,7 @@ export class LoginComponent implements OnInit {
                          tokenData['Email'];
             
             if (!email) {
-              alerts.basicAlert("Error", "Token inválido", "error");
+              alerts.error("Error al ingresar, comuniquese con el Administrador.");
               this.loading = false;
               return;
             }
@@ -206,6 +206,7 @@ export class LoginComponent implements OnInit {
                 if (success) {
                   alerts.basicAlert("Éxito", `Bienvenido ${displayName}`, "success");
                 } else {
+                  alerts.error("Error al ingresar, comuniquese con el Administrador.");
                   window.location.href = '/';
                 }
               }).catch(() => {
@@ -215,7 +216,7 @@ export class LoginComponent implements OnInit {
             
           } catch (tokenError) {
             console.error("❌ Error:", tokenError);
-            alerts.basicAlert("Error", "Error al procesar token", "error");
+            alerts.error("Error al ingresar, comuniquese con el Administrador.");
             this.loading = false;
           }
         } else {
@@ -224,14 +225,14 @@ export class LoginComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error("❌ [DEBUG] AD Login failed:", err);
+        // console.error("❌ [DEBUG] AD Login failed:", err);
         
         if (err.status === 401) {
           alerts.basicAlert("Error", "Usuario o contraseña incorrectos", "error");
         } else if (err.status === 0) {
           alerts.basicAlert("Error", "Error de conexión", "error");
         } else {
-          alerts.basicAlert("Error", "Error al iniciar sesión", "error");
+          alerts.info("Acceso denegado: el correo electrónico ingresado no está registrado en el Active Directory (AD). Contacta al administrador para más información.");
         }
         
         this.loading = false;

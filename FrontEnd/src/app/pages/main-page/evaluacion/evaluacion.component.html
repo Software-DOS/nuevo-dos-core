@@ -38,7 +38,7 @@
           Hoja de Ruta
         </div>
       </li>
-      <li>
+      <!-- <li>
         <div class="category-link2" [class.selected]="activeSection === 'info-colaborador'" (click)="showSection('info-colaborador')">
           Información del Colaborador
         </div>
@@ -47,7 +47,7 @@
         <div class="category-link2" [class.selected]="activeSection === 'fechas-revision'" (click)="showSection('fechas-revision')">
           Fechas de Revisión
         </div>
-      </li>
+      </li> -->
       <!-- <li>
         <div class="category-link2" [class.selected]="activeSection === 'objetivos'" (click)="showSection('objetivos')">
           Objetivos
@@ -70,7 +70,7 @@
         <div *ngFor="let step of timelineSteps" 
           class="timeline-step"
           [class.completed]="step.completed"
-          [class.active]="step.isActive"          
+          [class.active]="step.isActive"   
           tabindex="0"> 
           <!-- (click)="onStepClick(step)" -->
 
@@ -99,6 +99,7 @@
 
     <!-- Formulario Captura de Resultados  1 -->
     <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 0">
+      <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 0"></div>
       <h4 class="titulos-pequeños">Captura de Resultados</h4>
 
       <!-- Objetivo Área -->
@@ -216,6 +217,13 @@
         <!-- <div class="percentage-display">40%</div> -->
       </div>
       <!-- Total -->      
+
+      <div style="text-align: center;">
+        <button class="submit-btn" style="margin: 1rem auto 2rem auto" (click)="enviarAvance()">
+          Enviar
+        </button>
+      </div>
+      <div style="clear: both;"></div>
       
     </div>
     <!-- fin Captura de Resultados -->
@@ -362,17 +370,12 @@
             <!-- <div class="percentage-display">40%</div> -->
         </div>
 
-        <!-- Total -->
-        <!-- <div class="total-percentage">100%</div> -->
-          
-        <!-- Botón Enviar -->
-        <!-- <div>
-          <button class="submit-btn" style="margin-left: 2rem;">Enviar</button>
-          <button class="revision-btn">Revisar</button> -->
-        <!-- </div> -->
-        
-        
-        <!-- <div style="clear: both;"></div> -->
+        <div style="text-align: center;">
+          <button class="submit-btn" style="margin: 1rem auto 2rem auto" (click)="enviarAvance()">
+            Continuar
+          </button>
+        </div>
+        <div style="clear: both;"></div>
 
     </div><!-- fin Captura de datos -->
 
@@ -402,7 +405,7 @@
             </div>
             <div style="align-content: center;">
               <span class="titulos-pequeños-columna" style="margin-right: 1rem;">Calificación</span>
-              <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha registro</span>
+              <!-- <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha registro</span> -->
             </div>
           </div>
 
@@ -513,14 +516,13 @@
 
         </div>
 
-        <!-- Total -->
-        <!-- <div class="total-percentage">100%</div> -->
-          
-        <!-- Botón Enviar -->
-        <!-- <div>
-          <button class="submit-btn" style="margin-left: 2rem;">Enviar</button>
+        <div style="text-align: center;">
+          <button class="submit-btn" style="margin: 1rem auto 2rem auto" (click)="enviarAvance()">
+            Enviar
+          </button>
         </div>
-        <div style="clear: both;"></div> -->
+        <div style="clear: both;"></div>
+
     </div>
 
 
@@ -726,109 +728,110 @@
     </div>
 
     
-    <!-- Formulario: Cierre  5 -->
-    <div class="evaluation-form-cierre" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 7">
-      
-      <div class="header">
-        <h2>Resultado de Evaluación de Desempeño</h2>
-        <div class="subtitle">Reporte Semestral 2025 • Departamento de Tecnología</div>
-      </div>
-      <div class="content"></div>
-      
-      
-      <!-- INICIO DEL CÓDIGO QUE NECESITAS -->
-      <div class="cierre"> 
-
-        <div class="grid">
-            <!-- Tarjeta Objetivos -->
-            <div class="card card-objetivos">
-                <div class="card-title">Objetivos</div>
-                <div class="circular-progress">
-                    <svg width="140" height="140">
-                        <circle class="bg-circle" cx="70" cy="70" r="60"></circle>
-                        <circle class="progress-circle" cx="70" cy="70" r="60" 
-                                stroke="#3b82f6"
-                                stroke-dasharray="376.99" 
-                                stroke-dashoffset="94.25"></circle>
-                    </svg>
-                    <div class="circle-text">3.6</div>
-                    <div class="circle-subtext">de 4.0</div>
-                </div>
-                <span class="card-badge badge-excepcional">Excepcional</span>
-            </div>
-            
-            <!-- Tarjeta Competencias -->
-            <div class="card card-competencias">
-                <div class="card-title">Competencias</div>
-                <div class="circular-progress">
-                    <svg width="140" height="140">
-                        <circle class="bg-circle" cx="70" cy="70" r="60"></circle>
-                        <circle class="progress-circle" cx="70" cy="70" r="60" 
-                                stroke="#8b5cf6"
-                                stroke-dasharray="376.99" 
-                                stroke-dashoffset="113.1"></circle>
-                    </svg>
-                    <div class="circle-text">3.4</div>
-                    <div class="circle-subtext">de 4.0</div>
-                </div>
-                <span class="card-badge badge-sobresaliente">Sobresaliente</span>
-            </div>
-            
-            <!-- Tarjeta Calificación Final -->
-            <div class="card final-card">
-                <div class="final-header">
-                    <span class="final-title">Calificación Final</span>
-                    <span class="final-badge">Excepcional</span>
-                </div>
-                <div class="final-content">
-                    <div class="final-score">
-                        3.52 <span class="final-max">/ 4.0</span>
-                    </div>
-                    <div class="final-bar-container">
-                        <div class="bar-wrapper">
-                            <div class="bar-container">
-                                <div class="bar-fill"></div>
-                            </div>
-                        </div>
-                        <div class="bar-label">Supera ampliamente las expectativas</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="content"></div>
-
-        <!-- Retroalimentación -->
-        <div class="cierre-seccion">
-          <div class="cierre-header" style="display: flex; gap: 0.4rem">
-                <img
-                  src="assets/img/iconos/iconos mycollection/png/042-portapapeles.png"
-                  alt="icono obj"
-                  class="icono-menor"
-                />
-                <h3>Retroalimentación:</h3>
-              </div>
-          <div class="cierre-texto" [innerHTML]="retroalimentacion || 'Sin retroalimentación'"></div>
-        </div>
-
-        
-
-        <!-- Plan de Acción -->
-        <div class="cierre-seccion">
-          <div class="cierre-header" style="display: flex; gap: 0.4rem">
-              <img
-                src="assets/img/iconos/iconos mycollection/png/024-objetivo.png"
-                alt="icono obj"
-                class="icono-menor"
-              />
-              <h3>Plan de Acción:</h3>
-          </div>
-          <div class="cierre-texto" [innerHTML]="planAccion || 'Sin plan de acción'"></div>
-        </div>
-      </div>
-      
-
+    <!-- Formulario: Cierre 7 -->
+  <div class="evaluation-form-cierre" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 7">
+    
+    <div class="header">
+      <h2>Resultado de Evaluación de Desempeño</h2>
+      <div class="subtitle">Reporte Semestral 2025 • Departamento de Tecnología</div>
     </div>
+    <div class="content"></div>
+    
+    <div class="cierre"> 
+      <div class="grid">
+        <!-- Tarjeta Objetivos -->
+        <div class="card card-objetivos">
+          <div class="card-title">Objetivos</div>
+          <div class="circular-progress">
+            <svg width="140" height="140">
+              <circle class="bg-circle" cx="70" cy="70" r="60"></circle>
+              <circle class="progress-circle" cx="70" cy="70" r="60" 
+                      stroke="#3b82f6"
+                      stroke-dasharray="376.99" 
+                      [attr.stroke-dashoffset]="calcularDashOffset(promedioObjetivos, 4.0)"></circle>
+            </svg>
+            <div class="circle-text">{{ promedioObjetivos | number:'1.2-2' }}</div>
+            <div class="circle-subtext">de 4.0</div>
+          </div>
+          <span class="card-badge" [ngClass]="obtenerClaseBadge(promedioObjetivos)">
+            {{ obtenerNivelDesempeno(promedioObjetivos) }}
+          </span>
+        </div>
+        
+        <!-- Tarjeta Competencias -->
+        <div class="card card-competencias">
+          <div class="card-title">Competencias</div>
+          <div class="circular-progress">
+            <svg width="140" height="140">
+              <circle class="bg-circle" cx="70" cy="70" r="60"></circle>
+              <circle class="progress-circle" cx="70" cy="70" r="60" 
+                      stroke="#8b5cf6"
+                      stroke-dasharray="376.99" 
+                      [attr.stroke-dashoffset]="calcularDashOffset(promedioCompetencias, 4.0)"></circle>
+            </svg>
+            <div class="circle-text">{{ promedioCompetencias | number:'1.2-2' }}</div>
+            <div class="circle-subtext">de 4.0</div>
+          </div>
+          <span class="card-badge" [ngClass]="obtenerClaseBadge(promedioCompetencias)">
+            {{ obtenerNivelDesempeno(promedioCompetencias) }}
+          </span>
+        </div>
+        
+        <!-- Tarjeta Calificación Final -->
+        <div class="card final-card">
+          <div class="final-header">
+            <span class="final-title">Calificación Final</span>
+            <span class="final-badge" [ngClass]="obtenerClaseBadge(calificacionFinal)">
+              {{ obtenerNivelDesempeno(calificacionFinal) }}
+            </span>
+          </div>
+          <div class="final-content">
+            <div class="final-score">
+              {{ calificacionFinal | number:'1.2-2' }}
+              <span class="final-max">/ 4.0</span>
+            </div>
+            <div class="final-bar-container">
+              <div class="bar-wrapper">
+                <div class="bar-container">
+                  <div class="bar-fill" 
+                      [style.width.%]="calcularPorcentajeBarra(calificacionFinal, 4.0)"></div>
+                </div>
+              </div>
+              <div class="bar-label">{{ obtenerDescripcionDesempeno(calificacionFinal) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content"></div>
+
+      <!-- Retroalimentación -->
+      <div class="cierre-seccion">
+        <div class="cierre-header" style="display: flex; gap: 0.4rem">
+          <img
+            src="assets/img/iconos/iconos mycollection/png/042-portapapeles.png"
+            alt="icono obj"
+            class="icono-menor"
+          />
+          <h3>Retroalimentación:</h3>
+        </div>
+        <div class="cierre-texto" [innerHTML]="retroalimentacion || 'Sin retroalimentación'"></div>
+      </div>        
+
+      <!-- Plan de Acción -->
+      <div class="cierre-seccion">
+        <div class="cierre-header" style="display: flex; gap: 0.4rem">
+          <img
+            src="assets/img/iconos/iconos mycollection/png/024-objetivo.png"
+            alt="icono obj"
+            class="icono-menor"
+          />
+          <h3>Plan de Acción:</h3>
+        </div>
+        <div class="cierre-texto" [innerHTML]="planAccion || 'Sin plan de acción'"></div>
+      </div>
+    </div>
+  </div>
 
       
 

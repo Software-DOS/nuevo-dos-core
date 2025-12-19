@@ -663,6 +663,7 @@
    border: 2px solid #6a8bbc;   
    color: #0b1e3d;
    background: white;   
+   text-align: center;
 }
 .date-input-objetivo {
   border: 2px solid #8baad7;
@@ -674,6 +675,7 @@
    border: 2px solid #ae96d7;   
    color: #39147a;
    background: white;   
+   text-align: center;
 }
 .date-input-competencia {
   border: 2px solid #ae96d7;

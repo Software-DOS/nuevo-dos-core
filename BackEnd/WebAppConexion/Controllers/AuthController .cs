@@ -1,4 +1,5 @@
 ﻿using Conexion.AccesoDatos.Repository.Usuario;
+using Conexion.Entidad.Administracion;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -78,37 +79,94 @@ namespace WebAppConexion.Controllers
                 Console.WriteLine($"Buscando empleado en BD local: {emailParaBuscar}");
                 var response = await _repository.GetByMostrarLogin(emailParaBuscar);
 
-                if (response == null)
+                if (response.password_hash != null)
                 {
                     Console.WriteLine("❌ BD Local: Empleado no encontrado");
-                    return NotFound(new { message = "Usuario autenticado en AD pero no existe en la base de datos local. Contacte al administrador." });
+                    //return NotFound(new { message = "Usuario autenticado en AD pero no existe en la base de datos local. Contacte al administrador." });
+
+                    Console.WriteLine($"✅ BD Local: Empleado encontrado - ID: {response.IdEmpleado}");
+                    Console.WriteLine($"Nombre: {response.NombresApellidos}");
+                    Console.WriteLine($"IdEmpresa: {response.IdEmpresa}");
+
+                    // ✅ PASO 4: Generar token
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, response.IdEmpleado.ToString()),
+                        new Claim(ClaimTypes.Email, emailParaBuscar),
+                        new Claim("IdEmpresa", response.IdEmpresa.ToString()),
+                        new Claim("IdEmpleado", response.IdEmpleado.ToString()),
+                        new Claim("email", emailParaBuscar),
+                        new Claim("NombresApellidos", response.NombresApellidos ?? ""),
+                        new Claim("Perfil", response.Rucedula ?? ""),
+                        new Claim("Imagen", response.RutaImagen ?? ""),
+                        new Claim("ClaveTemporal", response.ClaveTemporal ?? "")
+                    };
+
+                    var token = GenerarToken(claims);
+
+                    Console.WriteLine("✅ Token generado exitosamente");
+                    Console.WriteLine($"Token preview: {token.Substring(0, Math.Min(50, token.Length))}...");
+
+                    // ✅ PASO 5: Retornar token
+                    return Ok(new { token = token });
+
                 }
-
-                Console.WriteLine($"✅ BD Local: Empleado encontrado - ID: {response.IdEmpleado}");
-                Console.WriteLine($"Nombre: {response.NombresApellidos}");
-                Console.WriteLine($"IdEmpresa: {response.IdEmpresa}");
-
-                // ✅ PASO 4: Generar token
-                var claims = new List<Claim>
+                else
                 {
-                    new Claim(ClaimTypes.NameIdentifier, response.IdEmpleado.ToString()),
-                    new Claim(ClaimTypes.Email, emailParaBuscar),
-                    new Claim("IdEmpresa", response.IdEmpresa.ToString()),
-                    new Claim("IdEmpleado", response.IdEmpleado.ToString()),
-                    new Claim("email", emailParaBuscar),
-                    new Claim("NombresApellidos", response.NombresApellidos ?? ""),
-                    new Claim("Perfil", response.Rucedula ?? ""),
-                    new Claim("Imagen", response.RutaImagen ?? ""),
-                    new Claim("ClaveTemporal", response.ClaveTemporal ?? "")
-                };
+                    if(response.password_hash == null)
+                    {
+                        Empleado db = new Empleado();
+                        db.IdEmpleado = 0;
+                        db.IdEmpresa = 1;
+                        db.IdPerfil = 7;
+                        db.NombresApellidos = userInfoAD.Name;
+                        db.Rucedula = "";
+                        db.Sueldo = 0;
+                        db.Ingreso = DateTime.Now;
+                        db.Clase = "";
+                        db.Direccion = "";
+                        db.Telefono = "";
+                        db.Regimen = "";
+                        db.Correo = userInfoAD.Email;
+                        db.Rol = "";
+                        db.FondoReserva = "";
+                        db.Estado = 1;
+                        db.Tipo = 1;
+                        CrearPasswordHash(request.Clave, out byte[] passwordHash, out byte[] passwordSalt);
+                        db.password_hash = passwordHash;
+                        db.password_salt = passwordSalt;
+                        var responseResul = await _repository.Insert(db);
+                    }
 
-                var token = GenerarToken(claims);
+                    var responseNuevo = await _repository.GetByMostrarLogin(emailParaBuscar);
 
-                Console.WriteLine("✅ Token generado exitosamente");
-                Console.WriteLine($"Token preview: {token.Substring(0, Math.Min(50, token.Length))}...");
+                    Console.WriteLine($"✅ BD Local: Empleado encontrado - ID: {responseNuevo.IdEmpleado}");
+                    Console.WriteLine($"Nombre: {responseNuevo.NombresApellidos}");
+                    Console.WriteLine($"IdEmpresa: {responseNuevo.IdEmpresa}");
 
-                // ✅ PASO 5: Retornar token
-                return Ok(new { token = token });
+                    // ✅ PASO 4: Generar token
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, responseNuevo.IdEmpleado.ToString()),
+                        new Claim(ClaimTypes.Email, emailParaBuscar),
+                        new Claim("IdEmpresa", responseNuevo.IdEmpresa.ToString()),
+                        new Claim("IdEmpleado", responseNuevo.IdEmpleado.ToString()),
+                        new Claim("email", emailParaBuscar),
+                        new Claim("NombresApellidos", responseNuevo.NombresApellidos ?? ""),
+                        new Claim("Perfil", responseNuevo.Rucedula ?? ""),
+                        new Claim("Imagen", responseNuevo.RutaImagen ?? ""),
+                        new Claim("ClaveTemporal", responseNuevo.ClaveTemporal ?? "")
+                    };
+
+                    var token = GenerarToken(claims);
+
+                    Console.WriteLine("✅ Token generado exitosamente");
+                    Console.WriteLine($"Token preview: {token.Substring(0, Math.Min(50, token.Length))}...");
+
+                    // ✅ PASO 5: Retornar token
+                    return Ok(new { token = token });
+
+                }
             }
             catch (Exception ex)
             {
@@ -175,7 +233,21 @@ namespace WebAppConexion.Controllers
                 return StatusCode(500, new { mensaje = $"Error: {ex.Message}" });
             }
         }
+
+        #region CrearPasswordHash
+        private void CrearPasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+
+        }
+        #endregion
     }
+
+
 
     public class LoginRequest
     {

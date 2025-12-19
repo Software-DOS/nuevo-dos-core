@@ -80,7 +80,7 @@ body[data-page="cv"] .navbar {
   position: relative;
   color: var(--color-text-secondary);
   font-weight: var(--font-weight-medium);
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-lg);
   transition: var(--transition-normal);

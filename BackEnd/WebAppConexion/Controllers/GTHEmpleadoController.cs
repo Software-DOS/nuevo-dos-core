@@ -36,21 +36,22 @@ namespace WebAppConexion.Controllers
         /// </summary>
         [HttpGet("[action]")]
         public async Task<IEnumerable<GTHEmpleadoViewModel>> Mostrar(
-            [FromQuery] int tipo,
-            [FromQuery] int? idEmpleado = null,
-            [FromQuery] int? idCelula = null,
-            [FromQuery] string estadoEmpleado = null,
-            [FromQuery] string cedulaEmpleado = null) // <-- Agregado
+        [FromQuery] int tipo,
+        [FromQuery] int? idEmpleado = null,
+        [FromQuery] int? idCelula = null,
+        [FromQuery] string estadoEmpleado = null,
+        [FromQuery] string cedulaEmpleado = null)
         {
-            // Llamamos al repositorio con los filtros
             var entidades = await _repository.Mostrar(tipo, idEmpleado, idCelula, estadoEmpleado, cedulaEmpleado);
 
-            // Mapear cada GTHEmpleado a tu ViewModel
             return entidades.Select(e => new GTHEmpleadoViewModel
             {
-                //GthViewModel = GTH_Empleado
                 Tipo = e.Tipo,
-                IdEmpleado = e.IdEmpleado,
+                //IdEmpleado = e.IdEmpleado,
+                IdEmpleado = e.IdEmpleadoAD,
+                // ← AGREGAR ESTA LÍNEA
+                IdEmpleadoAD = e.IdEmpleadoAD,
+
                 IdPerfil = e.IdPerfil,
                 IdCelula = e.IdCelula,
                 Cedula = e.Cedula,

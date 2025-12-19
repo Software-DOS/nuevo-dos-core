@@ -116,7 +116,7 @@ export class GthEvaluacionService {
       fechaInicio: evaluacion.fechaInicio || null,
       fechaLimite: evaluacion.fechaLimite || null,
       fechaFinalizacion: evaluacion.fechaFinalizacion || null,
-      calificacionFinal: evaluacion.calificacionFinal || null,
+      calificacionFinal: evaluacion.calificacionFinal ?? null,
       observaciones: evaluacion.observaciones || null,
       usuarioCreacion: evaluacion.usuarioCreacion || 'SISTEMA',
       fase: evaluacion.fase ?? null,
@@ -128,12 +128,12 @@ export class GthEvaluacionService {
       fechaEvaluacionJefe: evaluacion.fechaEvaluacionJefe
     };
 
-    console.log('Datos enviados para gestionar evaluación:', requestData);
+    // console.log('Datos enviados para gestionar evaluación:', requestData);
     
     return this.http.post(`${environment.urlbackend}api/GTHEvaluacion/Gestionar`, requestData)
       .pipe(
         tap((response: any) => {
-          console.log('Respuesta gestión evaluación:', response);
+          // console.log('Respuesta gestión evaluación:', response);
         }),
         catchError((error) => {
           console.error('Error al gestionar evaluación:', error);

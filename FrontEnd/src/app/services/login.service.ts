@@ -207,11 +207,11 @@ isLoggedIn(): boolean {
       
       // Si tiene al menos uno de estos datos, el token es válido
       if (email || id || login || userName) {
-        // BORRAR - PRODUCCIÓN: console.log("✅ [DEBUG] Valid user data found in token");
-        // BORRAR - PRODUCCIÓN: console.log("  - Email:", email || 'N/A');
-        // BORRAR - PRODUCCIÓN: console.log("  - ID:", id || 'N/A');
-        // BORRAR - PRODUCCIÓN: console.log("  - Login:", login || 'N/A');
-        // BORRAR - PRODUCCIÓN: console.log("  - Name:", userName || 'N/A');
+        console.log("✅ [DEBUG] Valid user data found in token");
+        console.log("  - Email:", email || 'N/A');
+        console.log("  - ID:", id || 'N/A');
+        console.log("  - Login:", login || 'N/A');
+        console.log("  - Name:", userName || 'N/A');
         return true;
       } else {
         console.log("❌ [DEBUG] No user data found in token");

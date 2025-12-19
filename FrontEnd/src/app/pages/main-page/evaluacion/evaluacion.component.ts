@@ -48,6 +48,17 @@ export class EvaluacionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Iniciamos obteniendo el ID del empleado
+    const valor = sessionStorage.getItem('token');
+
+    if (typeof valor === 'string') {
+      var session =JSON.parse(atob(valor.split('.')[1]));
+      this.IdEmpleadoActalSession = session['IdEmpleado'];
+
+      // this.IdEmpleadoActalSession = 6;
+      //console.log("Id de session de empleado actual: ",session['IdEmpleado']);
+
+    }
 
     this.cargarDatosEmpleado();
 
@@ -67,7 +78,7 @@ export class EvaluacionComponent implements OnInit {
 
   }
 
-  
+  IdEmpleadoActalSession: number | null = null;
 
   // Variable para almacenar la información del empleado
   empleado: iGTHEmpleado | null = null;
@@ -115,21 +126,26 @@ export class EvaluacionComponent implements OnInit {
 // ];
 
 //   // Solo para desarrollo (simular cambio de step)
-//   onStepClick(step: any): void {
-//     if (this.activeSection === 'hoja-ruta') {
-//       // this.currentPhase = step.phase;  // ✅ Usa step.phase
-//       // this.faseEvaluacion = step.phase; 
+  // onStepClick(step: any): void {
+  //   if (this.activeSection === 'hoja-ruta') {
+  //     // this.currentPhase = step.phase;  // ✅ Usa step.phase
+  //     // this.faseEvaluacion = step.phase; 
 
-//       // Actualizar visualmente el timeline
-//       // this.actualizarTimelinePorFase(this.currentPhase);
-//       this.actualizarTimelinePorFase(this.faseEvaluacion!);
+  //     // Actualizar visualmente el timeline
+  //     // this.actualizarTimelinePorFase(this.currentPhase);
+  //     this.actualizarTimelinePorFase(this.faseEvaluacion!);
       
-//       console.log('✅ Navegando a fase:', step.phase, '-', step.sectionId);
-//     }
-//   }  
+  //     //console.log('✅ Navegando a fase:', step.phase, '-', step.sectionId);
+  //   }
+  // }  
 
   //------------------------------------------------------------------------------------------------------
+  //-------------------Variables para mostrar el cierre los promedios y calificaciones   ----------------- 
+  promedioObjetivos: number = 0;
+  promedioCompetencias: number = 0;
+  calificacionFinal: number = 0;
 
+  //------------------------------------------------------------------------------------------------------
 
 
   // Objetivo de area para todos los formularios de Empleado
@@ -229,12 +245,12 @@ timelineSteps = [
 
   // Método para cambiar la sección activa
   onStepKeyDown(event: KeyboardEvent, step: any): void {
-  // Activar con Enter o Espacio
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault(); // Prevenir scroll con espacio
-    // this.onStepClick(step);
+    // Activar con Enter o Espacio
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault(); // Prevenir scroll con espacio
+      // this.onStepClick(step);
+    }
   }
-}
 
 
 
@@ -245,13 +261,17 @@ timelineSteps = [
 
 cargarDatosEmpleado(): void {
 
-  // console.log('Iniciando proceso de carga de informacion');
+  // //console.log('Iniciando proceso de carga de informacion');
     // Obtener ID del empleado del sessionStorage
-    const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
-    
+    // const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession(); //cambios finales
+   
+    const idEmpleado = this.IdEmpleadoActalSession;
+
     if (idEmpleado) {
-      this.idEmpleadoActual = idEmpleado;
-      this.buscarEmpleadoPorId(2); //Probando
+      // this.idEmpleadoActual = idEmpleado;
+
+      //console.log("id desde la base ad - ", idEmpleado);
+      this.buscarEmpleadoPorId(idEmpleado); //Probando
     } else {
       console.warn('No se encontró ID de empleado en sessionStorage, usando cédula de prueba');      
     }
@@ -263,9 +283,11 @@ cargarDatosEmpleado(): void {
    */
   buscarEmpleadoPorId(idEmpleado: number): void {
 
+    //console.log("PRUEBAS FINALES: buscar empleado por id - ", idEmpleado);
+
     this.gthEmpleadoService.MostrarConParametros(1, idEmpleado).subscribe({
       next: (empleado: any) => {
-        // console.log('Respuesta del backend ->', empleado);
+        // //console.log('Respuesta del backend ->', empleado);
 
         const datosEmpleado = empleado?.$values?.[0];
 
@@ -286,25 +308,25 @@ cargarDatosEmpleado(): void {
    * Busca un empleado específico por cédula
    * @param cedula - Cédula del empleado a buscar
    */
-  buscarEmpleadoPorCedula(cedula: string): void {
-    this.gthEmpleadoService.BuscarPorCedula(cedula).subscribe({
-      next: (empleado: any) => {
-        // console.log('Respuesta del backend ->', empleado);
+  // buscarEmpleadoPorCedula(cedula: string): void {
+  //   this.gthEmpleadoService.BuscarPorCedula(cedula).subscribe({
+  //     next: (empleado: any) => {
+  //       // //console.log('Respuesta del backend ->', empleado);
 
-        const datosEmpleado = empleado?.$values?.[0];
+  //       const datosEmpleado = empleado?.$values?.[0];
 
-        if (datosEmpleado) {
-          this.empleado = datosEmpleado;
-          this.mapearDatosParaMostrar();
-        } else {
-          console.warn('No se encontró empleado con la cédula:', cedula);
-        }
-      },
-      error: (error) => {
-        console.error('Error al buscar empleado por cédula:', error);
-      }
-    });
-  }
+  //       if (datosEmpleado) {
+  //         this.empleado = datosEmpleado;
+  //         this.mapearDatosParaMostrar();
+  //       } else {
+  //         console.warn('No se encontró empleado con la cédula:', cedula);
+  //       }
+  //     },
+  //     error: (error) => {
+  //       console.error('Error al buscar empleado por cédula:', error);
+  //     }
+  //   });
+  // }
 
   private async mapearDatosParaMostrar(): Promise<void>  {
     if (this.empleado) {
@@ -411,8 +433,10 @@ actualizarTimelinePorFase(fase: number): void {
 }
 
 obtenerFaseActual(): void {
-  // console.log('=== OBTENIENDO FASE ACTUAL ===');
-  const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+  // //console.log('=== OBTENIENDO FASE ACTUAL ===');
+  // const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession(); //cambios finales
+
+  const idEmpleado = this.IdEmpleadoActalSession;
   
   if (!idEmpleado) {
     console.error('No se pudo obtener ID del empleado');
@@ -420,7 +444,8 @@ obtenerFaseActual(): void {
     return;
   }
 
-  this.idEmpleadoActual = 2; // pruebas
+  // this.idEmpleadoActual = 2; // pruebas 
+  this.idEmpleadoActual = idEmpleado;
   const anio = 2025;
 
   this.gthEvaluacionServcie
@@ -435,7 +460,7 @@ obtenerFaseActual(): void {
           
           // Actualizar el timeline con la fase real
           this.actualizarTimelinePorFase(this.faseEvaluacion!);
-          // console.log('fase de evaluación: ', this.faseEvaluacion!);
+          // //console.log('fase de evaluación: ', this.faseEvaluacion!);
         } else {
           this.faseEvaluacion = 7;
         }
@@ -461,144 +486,236 @@ obtenerFaseActual(): void {
 =========================================================================================*/
 
   cargarEvaluaciones(): void {
-    const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+    //console.log('🎬 ========================================');
+    //console.log('🎬 INICIO cargarEvaluaciones');
+    //console.log('🎬 ========================================');
+
+    const idEmpleado = this.IdEmpleadoActalSession;
+    
+    //console.log('👤 ID Empleado de sesión:', idEmpleado);
+    //console.log('👤 Tipo:', typeof idEmpleado);
 
     if (idEmpleado) {
-      this.idEmpleadoActual = 2; // pruebas
+      this.idEmpleadoActual = idEmpleado;
       const anio = 2025;
+      
+      //console.log('📅 Año a buscar:', anio);
+      //console.log('🔍 Llamando a MostrarEvaluacionesPorEmpleadoyAnio...');
 
-      // Obtenermos el id de la evaluacion
       this.gthEvaluacionServcie
-        .MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual, anio)
+        .MostrarEvaluacionesPorEmpleadoyAnio(idEmpleado, anio)
         .subscribe({
           next: (response: any) => {
+            //console.log('📦 Response completa:', response);
+
             let evaluacionesData = response;
-            if (response && response.$values)
+            if (response && response.$values) {
+              //console.log('✅ Extrayendo $values...');
               evaluacionesData = response.$values;
+            }
+
+            //console.log('📊 evaluacionesData:', evaluacionesData);
+            //console.log('📊 Longitud:', evaluacionesData?.length);
 
             if (evaluacionesData && evaluacionesData.length > 0) {
-              const idEvaluacion = evaluacionesData[0].idEvaluacion;
-              const retro = evaluacionesData[0].retroalimentacion || null;
-              const plan = evaluacionesData[0].planAccion || null;
-              const fechaRegObjetivos = evaluacionesData[0].fechaRegObj || null;
+              //console.log('✅ SE ENCONTRARON EVALUACIONES');
 
-              
+              const evaluacion = evaluacionesData[0];
+              const idEvaluacion = evaluacion.idEvaluacion;
+              const retro = evaluacion.retroalimentacion || null;
+              const plan = evaluacion.planAccion || null;
+              const fechaRegObjetivos = evaluacion.fechaRegObj || null;
+
+              //console.log('🆔 ID Evaluación:', idEvaluacion);
+
               this.retroalimentacion = retro;
               this.planAccion = plan;
 
               if(this.faseEvaluacion! == 0){
                 this.fechaRegObj = this.obtenerFechaActual();
+                alerts.info('Ingrese los objetivos relacionados a su Area');
               } else {
                 this.fechaRegObj = fechaRegObjetivos;
-              }
-              // this.faseEvaluacion = evaluacionesData[0].fase;
-              // console.log('fase que llega de la evaluacion', this.faseEvaluacion);
+              } 
 
-              // Usamos el id de la evaluacion para saber que objetivos tiene
+              if(this.faseEvaluacion! == 6){
+                this.fechaRegObj = this.obtenerFechaActual();
+                alerts.info('Revise los pesos de los objetivos y las competencias, y seleccione.');
+              } else if(this.faseEvaluacion! == 2){
+                this.fechaRegObj = this.obtenerFechaActual();
+                alerts.info('Ingrese sus calificaciones en cada uno de los objetivos y las competencias.');
+              }
+
+              // //console.log('🎯 Cargando objetivos para evaluación:', idEvaluacion);
               this.cargarObjetivosPorFase(this.faseEvaluacion!, idEvaluacion);
 
               if (this.idCelulaActual){
-                this.cargarObjetivoExistente();  //Traemos el Objetivo de AREA
+                // //console.log('🏢 Cargando objetivo de área (célula):', this.idCelulaActual);
+                this.cargarObjetivoExistente();
               }
 
-              // inicializamos la colección
+              // Inicializamos la colección
               this.nivelesCompetencias = [];
 
-              // Obtenemos las competencias Asiganadas a esa evaluacion
+              //console.log('🎓 CARGANDO COMPETENCIAS');
+
+              // Obtenemos las competencias Asignadas a esa evaluacion
               this.gthCompetenciaService
                 .obtenerAsignacionCompetenciaPorIdEvaluacion(idEvaluacion)
                 .subscribe({
                   next: (respAsigCompetencias: any) => {
-                    // console.log('\n📦 COMPONENTE - Respuesta recibida:', respAsigCompetencias);
-                    // console.log('📦 COMPONENTE - Tiene $values?:', !!respAsigCompetencias?.$values);
+                    //console.log('📦 COMPETENCIAS - Response:', respAsigCompetencias);
 
                     let asignacionesCompetenciasData = respAsigCompetencias;
                     if (respAsigCompetencias && respAsigCompetencias.$values) {
                       asignacionesCompetenciasData = respAsigCompetencias.$values;
-                      // console.log('✅ Usando $values');
-                    }                           
+                    }
 
-                    asignacionesCompetenciasData.forEach((competencia: any) => {
-                      const idAsignacionCompetencia = competencia.idAsignacion;
-                      const idNivelCompetencia = competencia.idNivelCompetencia;
+                    //console.log('📊 COMPETENCIAS - Total asignaciones:', asignacionesCompetenciasData?.length);
+
+                    if (asignacionesCompetenciasData && asignacionesCompetenciasData.length > 0) {
                       
-                      // ✅ Usar camelCase y manejar null
-                      // const valoracionExistente = competencia.valoracionEmpleado || null;                      
-                      const valoracionJefe = competencia.valoracionJefe || null;
-                      const califEmpleado = competencia.calificacionEmpleado || null;
-                      const califFinal = competencia.calificacionFinal || null;
-                      const fechaExistente = competencia.fechaLimite 
-                        ? new Date(competencia.fechaLimite).toISOString().split('T')[0] 
-                        : '';
+                      // ✅ PASO 1: AGREGAR CONTADOR AQUÍ (ANTES DEL FOREACH)
+                      let competenciasProcesadas = 0;
+                      const totalCompetencias = asignacionesCompetenciasData.length;
+                      //console.log('🎯 Total de competencias a procesar:', totalCompetencias);
 
-                      // Buscamos los datos de esa competencia Asignada ya que solo sabemos el id 
-                      this.gthCompetenciaService
-                        .mostrarNivelCompetencias(1, idNivelCompetencia)
-                        .subscribe({
-                          next: (respNivelCompetencias: any) => {
-                            let nivelesCompetenciasData = respNivelCompetencias;
-                            if (respNivelCompetencias && respNivelCompetencias.$values) {
-                              nivelesCompetenciasData = respNivelCompetencias.$values;
+                      asignacionesCompetenciasData.forEach((competencia: any, index: number) => {
+                        //console.log(`\n🎓 Procesando competencia ${index + 1}:`, competencia);
+                        
+                        const idAsignacionCompetencia = competencia.idAsignacion;
+                        const idNivelCompetencia = competencia.idNivelCompetencia;
+                        const valoracionJefe = competencia.valoracionJefe || null;
+                        const califEmpleado = competencia.calificacionEmpleado || null;
+                        const califFinal = competencia.calificacionFinal || null;
+                        const fechaExistente = competencia.fechaLimite 
+                          ? new Date(competencia.fechaLimite).toISOString().split('T')[0] 
+                          : '';
+
+                        // Buscamos los datos de esa competencia Asignada
+                        this.gthCompetenciaService
+                          .mostrarNivelCompetencias(1, idNivelCompetencia)
+                          .subscribe({
+                            next: (respNivelCompetencias: any) => {
+                              let nivelesCompetenciasData = respNivelCompetencias;
+                              if (respNivelCompetencias && respNivelCompetencias.$values) {
+                                nivelesCompetenciasData = respNivelCompetencias.$values;
+                              }
+                              
+                              nivelesCompetenciasData.forEach((nivel: any) => {
+                                this.gthCompetenciaService
+                                  .mostrarCompetencias(1, nivel.idCompetencia)
+                                  .subscribe({
+                                    next: (respCompetencia: any) => {
+                                      let competenciaData = respCompetencia;
+                                      if (respCompetencia && respCompetencia.$values) {
+                                        competenciaData = respCompetencia.$values;
+                                      }
+                                      
+                                      if (competenciaData.length > 0) {
+                                        const competencia = competenciaData[0];
+                                        
+                                        const combinado: NivelConCompetencia = {
+                                          idAsignacionCompetencia: idAsignacionCompetencia,
+                                          idCompetencia: nivel.idCompetencia,
+                                          nivel: nivel.nivel,
+                                          descripcion: nivel.descripcion,
+                                          nombreCompetencia: competencia.nombreCompetencia,
+                                          tipoCompetencia: competencia.tipoCompetencia,
+                                          FechaLimite: fechaExistente,
+                                          ValoracionJefe: valoracionJefe,
+                                          CalificacionEmpleado: califEmpleado,
+                                          CalificacionFinal: califFinal                                        
+                                        };
+                                        
+                                        this.nivelesCompetencias.push(combinado);
+                                        //console.log('✅ Competencia agregada:', combinado);
+
+                                        // ✅ PASO 2: AGREGAR VERIFICACIÓN AQUÍ (DESPUÉS DEL PUSH)
+                                        competenciasProcesadas++;
+                                        //console.log(`✅ Competencias procesadas: ${competenciasProcesadas}/${totalCompetencias}`);
+
+                                        // ✅ PASO 3: VERIFICAR SI YA TERMINAMOS Y CALCULAR
+                                        if (competenciasProcesadas === totalCompetencias) {
+                                          //console.log('🎯 ========================================');
+                                          //console.log('🎯 TODAS LAS COMPETENCIAS CARGADAS');
+                                          //console.log('🎯 ========================================');
+                                          
+                                          // Si estamos en fase 7, calcular calificaciones
+                                          if (this.faseEvaluacion === 7) {
+                                            //console.log('📊 FASE 7 DETECTADA - Calculando calificaciones');
+                                            
+                                            // Esperar un poco para asegurar que los objetivos también estén cargados
+                                            setTimeout(() => {
+                                              //console.log('📋 Objetivos cargados:', this.objetivos?.length || 0);
+                                              //console.log('🎓 Competencias cargadas:', this.nivelesCompetencias?.length || 0);
+                                              
+                                              // ← AQUÍ SE LLAMA A LA FUNCIÓN DE CÁLCULO
+                                              this.calcularPromedios();
+                                              
+                                              //console.log('✅ ========================================');
+                                              //console.log('✅ CÁLCULO COMPLETADO');
+                                              //console.log('✅ Promedio Objetivos:', this.promedioObjetivos?.toFixed(2));
+                                              //console.log('✅ Promedio Competencias:', this.promedioCompetencias?.toFixed(2));
+                                              //console.log('✅ Calificación Final:', this.calificacionFinal?.toFixed(2));
+                                              //console.log('✅ ========================================');
+                                            }, 500);
+                                          } else {
+                                            //console.log('ℹ️ Fase actual:', this.faseEvaluacion, '(no es fase 7)');
+                                          }
+                                        }
+
+                                      } else {
+                                        console.warn('⚠️ competenciaData vacío');
+                                      }
+                                    },
+                                    error: (error) => {
+                                      console.error('❌ Error al obtener competencia:', error);
+                                    }
+                                  });
+                              });
+                            },
+                            error: (error) => {
+                              console.error('❌ Error al obtener nivel competencias:', error);
                             }
-                            
-                            nivelesCompetenciasData.forEach((nivel: any) => {
-                              this.gthCompetenciaService
-                                .mostrarCompetencias(1, nivel.idCompetencia)
-                                .subscribe({
-                                  next: (respCompetencia: any) => {
-                                    let competenciaData = respCompetencia;
-                                    if (respCompetencia && respCompetencia.$values) {
-                                      competenciaData = respCompetencia.$values;
-                                    }
-                                    
-                                    if (competenciaData.length > 0) {
-                                      const competencia = competenciaData[0];
-                                      
-                                      const combinado: NivelConCompetencia = {
-                                        idAsignacionCompetencia: idAsignacionCompetencia,
-                                        idCompetencia: nivel.idCompetencia,
-                                        nivel: nivel.nivel,
-                                        descripcion: nivel.descripcion,
-                                        nombreCompetencia: competencia.nombreCompetencia,
-                                        tipoCompetencia: competencia.tipoCompetencia,
-                                        // ValoracionEmpleado: valoracionExistente,
-                                        FechaLimite: fechaExistente, // String en formato YYYY-MM-DD
-                                        ValoracionJefe: valoracionJefe,
-                                        CalificacionEmpleado: califEmpleado,
-                                        CalificacionFinal: califFinal                                        
-                                      };
-                                      
-                                      this.nivelesCompetencias.push(combinado);
-                                      console.log('✅ Competencia agregada:', combinado);
-                                    }
-                                  }
-                                });
-                            });
-                          }
-                        });
-                    });
+                          });
+                      });
+                    } else {
+                      console.warn('⚠️ No hay asignaciones de competencias');
+                      
+                      // ✅ PASO 4: TAMBIÉN CALCULAR SI NO HAY COMPETENCIAS PERO ES FASE 7
+                      if (this.faseEvaluacion === 7) {
+                        //console.log('📊 FASE 7 sin competencias - Calculando solo con objetivos');
+                        setTimeout(() => {
+                          this.calcularPromedios();
+                        }, 500);
+                      }
+                    }
                   },
-                  error: (error) =>
-                    console.error('Error al consultar competencias asignadas:', error),
+                  error: (error) => {
+                    console.error('❌ Error al consultar competencias asignadas:', error);
+                  }
                 });
+
             } else {
-              console.warn('⚠️ No se encontró ninguna evaluación para este empleado y año.');
+              console.warn('⚠️ NO SE ENCONTRARON EVALUACIONES');
             }
           },
-          error: (error) =>
-            console.error('Error al consultar evaluaciones:', error),
+          error: (error) => {
+            console.error('❌ ERROR AL CONSULTAR EVALUACIONES:', error);
+          }
         });
     } else {
-      console.warn('No se encontró ID de empleado en sessionStorage');
+      console.error('❌ NO HAY ID DE EMPLEADO');
     }
   }
 
-/*--Ojo-----Buscamos si tenemos un Objetivo de AREA  ----------------------------*/
+  /*--Ojo-----Buscamos si tenemos un Objetivo de AREA  ----------------------------*/
   cargarObjetivoExistente(): void {
     if (!this.idCelulaActual) return;
 
     // Si se elimina esta impresion no funciona el objetivo de area(REVISAR)
-    // console.log('Id de la celula:------->', this.idCelulaActual );
+    // //console.log('Id de la celula:------->', this.idCelulaActual );
 
 
     this.gthObjetivoService.obtenerObjetivosPorIdCelula(1, this.idCelulaActual)
@@ -629,6 +746,137 @@ obtenerFaseActual(): void {
         }
       });
   }
+
+
+  // ========================================
+  // CÁLCULO DE CALIFICACIONES FINALES
+  // ========================================
+  calcularPromedios(): void {
+    //console.log('🔍 Iniciando cálculo de promedios (Empleado)');
+    
+    // ✅ CAMBIO: usar objetivosIndividuales en lugar de objetivos
+    //console.log('📋 Objetivos disponibles:', this.objetivosIndividuales);
+    //console.log('📋 Competencias disponibles:', this.nivelesCompetencias);
+
+    // ========================================
+    // CÁLCULO DE OBJETIVOS (70% del total)
+    // ========================================
+    const objetivosConCalificacion = this.objetivosIndividuales.filter(
+      obj => obj.calificacionFinal && obj.calificacionFinal > 0
+    );
+    
+    //console.log('✅ Objetivos con calificación:', objetivosConCalificacion.length);
+    
+    if (objetivosConCalificacion.length > 0) {
+      let sumaObjetivosPonderada = 0;
+      
+      objetivosConCalificacion.forEach((obj, index) => {
+        // El primer objetivo (relacionado al área) tiene peso del 22%
+        // Los otros 4 objetivos tienen peso del 12% cada uno
+        const peso = index === 0 ? 0.22 : 0.12;
+        const valorPonderado = obj.calificacionFinal! * peso;
+        
+        //console.log(`  📌 Objetivo ${index + 1}:`);
+        //console.log(`     - Calificación: ${obj.calificacionFinal}`);
+        //console.log(`     - Peso: ${peso * 100}%`);
+        //console.log(`     - Valor ponderado: ${valorPonderado.toFixed(4)}`);
+        
+        sumaObjetivosPonderada += valorPonderado;
+      });
+      
+      // Normalizar a escala de 4.0 dividiendo entre 0.70
+      this.promedioObjetivos = sumaObjetivosPonderada / 0.70;
+      //console.log(`  ✅ Suma ponderada: ${sumaObjetivosPonderada.toFixed(4)}`);
+      //console.log(`  ✅ Promedio Objetivos (normalizado): ${this.promedioObjetivos.toFixed(2)}`);
+    } else {
+      this.promedioObjetivos = 0;
+      //console.log('  ⚠️ No hay objetivos con calificación');
+    }
+
+    // ========================================
+    // CÁLCULO DE COMPETENCIAS (30% del total)
+    // ========================================
+    const competenciasConCalificacion = this.nivelesCompetencias.filter(
+      comp => comp.CalificacionFinal && comp.CalificacionFinal > 0
+    );
+    
+    //console.log('✅ Competencias con calificación:', competenciasConCalificacion.length);
+    
+    if (competenciasConCalificacion.length > 0) {
+      let sumaCompetenciasPonderada = 0;
+      
+      competenciasConCalificacion.forEach((comp, index) => {
+        // Cada competencia tiene un peso del 7.5%
+        const peso = 0.075;
+        const valorPonderado = comp.CalificacionFinal! * peso;
+        
+        //console.log(`  📌 Competencia ${index + 1}:`);
+        //console.log(`     - Calificación: ${comp.CalificacionFinal}`);
+        //console.log(`     - Peso: ${peso * 100}%`);
+        //console.log(`     - Valor ponderado: ${valorPonderado.toFixed(4)}`);
+        
+        sumaCompetenciasPonderada += valorPonderado;
+      });
+      
+      // Normalizar a escala de 4.0 dividiendo entre 0.30
+      this.promedioCompetencias = sumaCompetenciasPonderada / 0.30;
+      //console.log(`  ✅ Suma ponderada: ${sumaCompetenciasPonderada.toFixed(4)}`);
+      //console.log(`  ✅ Promedio Competencias (normalizado): ${this.promedioCompetencias.toFixed(2)}`);
+    } else {
+      this.promedioCompetencias = 0;
+      //console.log('  ⚠️ No hay competencias con calificación');
+    }
+
+    // ========================================
+    // CALIFICACIÓN FINAL
+    // ========================================
+    this.calificacionFinal = (this.promedioObjetivos * 0.70) + (this.promedioCompetencias * 0.30);
+
+    //console.log('📊 ============ RESUMEN FINAL ============');
+    //console.log(`  - Promedio Objetivos: ${this.promedioObjetivos.toFixed(2)} / 4.0`);
+    //console.log(`  - Promedio Competencias: ${this.promedioCompetencias.toFixed(2)} / 4.0`);
+    //console.log(`  - Contribución Objetivos (70%): ${(this.promedioObjetivos * 0.70).toFixed(2)}`);
+    //console.log(`  - Contribución Competencias (30%): ${(this.promedioCompetencias * 0.30).toFixed(2)}`);
+    //console.log(`  - Calificación Final: ${this.calificacionFinal.toFixed(2)} / 4.0`);
+    //console.log('=========================================');
+  }
+
+  // ========================================
+  // FUNCIONES HELPER PARA EL HTML DE FASE 7
+  // ========================================
+  calcularDashOffset(promedio: number, maximo: number): number {
+    const radio = 60; // ✅ Coincide con r="60" en tu HTML
+    const circunferencia = 2 * Math.PI * radio; // 376.99
+    const porcentaje = (promedio / maximo) * 100;
+    const offset = circunferencia - (circunferencia * porcentaje) / 100;
+    return offset;
+  }
+
+  calcularPorcentajeBarra(promedio: number, maximo: number): number {
+    return (promedio / maximo) * 100;
+  }
+
+  obtenerClaseBadge(calificacion: number): string {
+    if (calificacion >= 3.5) return 'badge-excepcional';
+    if (calificacion >= 3.0) return 'badge-sobresaliente';
+    if (calificacion >= 2.0) return 'badge-necesita-mejorar';
+    return 'badge-insatisfactorio';
+  }
+
+  obtenerNivelDesempeno(calificacion: number): string {
+    if (calificacion >= 3.5) return 'Excepcional';
+    if (calificacion >= 3.0) return 'Sobresaliente';
+    if (calificacion >= 2.0) return 'Necesita Mejorar';
+    return 'Insatisfactorio';
+  }
+
+  obtenerDescripcionDesempeno(calificacion: number): string {
+    if (calificacion >= 3.5) return 'Supera ampliamente las expectativas';
+    if (calificacion >= 3.0) return 'Cumple con las expectativas';
+    if (calificacion >= 2.0) return 'Requiere mejora en algunas áreas';
+    return 'No cumple con las expectativas';
+  }
+
 
 
   // Objectives (KPIs)
@@ -701,13 +949,15 @@ obtenerFaseActual(): void {
     }
   ];
 
+  // --------------------------------------------GUARDAR EVALUACION ------------------------------------------ 
+
   guardarDatosEvaluacion(): void {
     let fase = this.faseEvaluacion!;
-    console.log('fase de guardado', fase);
+    //console.log('fase de guardado', fase);
 
     // CASO ESPECIAL: FASE 6 - Solo actualizar evaluación
     if (fase === 6) {
-      console.log('⏭️ Fase 6 detectada - Solo actualizando evaluación a fase 2');
+      //console.log('⏭️ Fase 6 detectada - Solo actualizando evaluación a fase 2');
       
       const anio = 2025;
       
@@ -719,7 +969,7 @@ obtenerFaseActual(): void {
             
             if (evaluacionesData && evaluacionesData.length > 0) {
               const idEvaluacion = evaluacionesData[0].idEvaluacion;
-              console.log('ID Evaluación:', idEvaluacion);
+              //console.log('ID Evaluación:', idEvaluacion);
               
               // Ir directo a actualizar evaluación
               this.actualizarEvaluacionFinal(fase, idEvaluacion, anio);
@@ -804,11 +1054,11 @@ obtenerFaseActual(): void {
         
         if (evaluacionesData && evaluacionesData.length > 0) {
           const idEvaluacion = evaluacionesData[0].idEvaluacion;
-          console.log('ID Evaluación:', idEvaluacion);
+          //console.log('ID Evaluación:', idEvaluacion);
           
           // ✅ SI ES FASE 6, SALTAR GUARDADO DE OBJETIVOS
           if (fase === 6) {
-            console.log('⏭️ Fase 6 detectada - Saltando guardado de objetivos');
+            //console.log('⏭️ Fase 6 detectada - Saltando guardado de objetivos');
             // Aquí puedes continuar con el guardado de la evaluación directamente
             // O simplemente retornar si no hay nada más que hacer
             return; // O continuar al siguiente paso
@@ -854,7 +1104,7 @@ obtenerFaseActual(): void {
             
             if (!objetivoData) return null;
             
-            console.log(`${tipoOperacion === 1 ? 'Creando' : 'Actualizando'} objetivo ${index + 1}:`, objetivoData);
+            //console.log(`${tipoOperacion === 1 ? 'Creando' : 'Actualizando'} objetivo ${index + 1}:`, objetivoData);
             return this.gthObjetivoService.gestionarObjetivo(objetivoData).toPromise();
           }).filter(promesa => promesa !== null);
           
@@ -867,7 +1117,7 @@ obtenerFaseActual(): void {
           // EJECUTAR: Objetivos → Competencias → Evaluación
           Promise.all(promesasObjetivos)
             .then((responsesObjetivos) => {
-              console.log('✅ Objetivos guardados:', responsesObjetivos);
+              //console.log('✅ Objetivos guardados:', responsesObjetivos);
               
               const hayErroresObjetivos = responsesObjetivos.some((resp: any) => {
                 const resultado = resp?.$values?.[0] || resp?.[0] || resp;
@@ -880,8 +1130,8 @@ obtenerFaseActual(): void {
               
 
               const promesasCompetencias = this.nivelesCompetencias.map((competencia, index) => {
-                console.log(`\n--- Procesando competencia ${index + 1} ---`);
-                console.log('Datos originales:', competencia);
+                // //console.log(`\n--- Procesando competencia ${index + 1} ---`);
+                // //console.log('Datos originales:', competencia);
                 
                 let competenciaData: IGTHAsignacionCompetenciaViewModel | null = null;
                 
@@ -932,7 +1182,7 @@ obtenerFaseActual(): void {
                 return this.gthCompetenciaService.gestionarAsignacionCompetencia(competenciaData).toPromise();
               }).filter(promesa => promesa !== null);
 
-              console.log('\n📊 Total de competencias a guardar:', promesasCompetencias.length);
+              //console.log('\n📊 Total de competencias a guardar:', promesasCompetencias.length);
 
               if (promesasCompetencias.length === 0) {
                 console.warn('⚠️ No hay competencias para actualizar, saltando a evaluación');
@@ -942,12 +1192,12 @@ obtenerFaseActual(): void {
 
               Promise.all(promesasCompetencias)
                 .then((responsesCompetencias) => {
-                  console.log('\n=== RESPUESTAS DE COMPETENCIAS ===');
-                  console.log('Todas las respuestas:', responsesCompetencias);
+                  //console.log('\n=== RESPUESTAS DE COMPETENCIAS ===');
+                  //console.log('Todas las respuestas:', responsesCompetencias);
                   
                   responsesCompetencias.forEach((resp, idx) => {
                     const resultado = resp?.$values?.[0] || resp?.[0] || resp;
-                    console.log(`Competencia ${idx + 1} - Código: ${resultado?.valor1}, Mensaje: ${resultado?.valor2}`);
+                    //console.log(`Competencia ${idx + 1} - Código: ${resultado?.valor1}, Mensaje: ${resultado?.valor2}`);
                     
                     if (resultado?.valor1 < 0) {
                       console.error(`❌ ERROR en competencia ${idx + 1}:`, resultado.valor2);
@@ -964,7 +1214,7 @@ obtenerFaseActual(): void {
                     return;
                   }
                   
-                  console.log('✅ Todas las competencias guardadas correctamente');
+                  //console.log('✅ Todas las competencias guardadas correctamente');
                   
                   // PASO 3: Actualizar evaluación
                   this.actualizarEvaluacionFinal(fase, idEvaluacion, anio);
@@ -1020,14 +1270,19 @@ obtenerFaseActual(): void {
         fase: 3,
         fechaAutoevaluacion: this.obtenerFechaActual()        
       };
-      console.log('❌ EffeeechAA:', this.obtenerFechaActual());
+      //console.log('❌ EffeeechAA:', this.obtenerFechaActual());
     }
     
     if (evaluacionActualizada) {
       this.gthEvaluacionServcie.actualizarGthEvaluacion(evaluacionActualizada).subscribe({
         next: (resp) => {
-          console.log('✅ Evaluación actualizada a fase:', evaluacionActualizada!.fase);
-          alert('✅ Datos guardados correctamente.');
+          //console.log('✅ Evaluación actualizada a fase:', evaluacionActualizada!.fase);
+          // alert('✅ Datos guardados correctamente.');
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+
         },
         error: (error) => {
           console.error('❌ Error al actualizar evaluación:', error);
@@ -1035,8 +1290,18 @@ obtenerFaseActual(): void {
         }
       });
     } else {
-      alert('✅ Datos guardados correctamente.');
+      alerts.exito('✅ Datos guardados correctamente.');
     }
+  }
+
+
+  enviarAvance(): void {
+    this.guardarDatosEvaluacion();
+    
+    // ✅ Esperar y recargar toda la página
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 500);
   }
 
   getNombreCalificacion(valor: number | null | undefined): string {
@@ -1053,155 +1318,165 @@ obtenerFaseActual(): void {
 
 
 
-/**
- * Carga objetivos existentes según la fase
- */
-cargarObjetivosPorFase(fase: number, idEvaluacion: number): void {
-  console.log('=== CARGANDO OBJETIVOS - FASE:', fase, '===');
-  
-  this.gthObjetivoService.obtenerObjetivosPorIdEvaluacion(idEvaluacion)
-  .subscribe({
-    next: (objetivosResponse: any) => {
-      const objetivosExistentes = objetivosResponse?.$values || objetivosResponse || [];
-      
-      // QUITAR EL FILTRO - Traer todos los objetivos (AREA e INDIVIDUAL)
-      const todosLosObjetivos = Array.isArray(objetivosExistentes) 
-          ? objetivosExistentes 
-          : [];
-      
-      console.log('Todos los objetivos encontrados:', todosLosObjetivos);
-      
-      if (todosLosObjetivos.length > 0) {
-        this.mapearObjetivosSegunFase(todosLosObjetivos, fase);
-      } else {
-        console.log('No hay objetivos existentes');
+  /**
+   * Carga objetivos existentes según la fase
+   */
+  cargarObjetivosPorFase(fase: number, idEvaluacion: number): void {
+    // //console.log('=== CARGANDO OBJETIVOS - FASE:', fase, '===');
+    
+    this.gthObjetivoService.obtenerObjetivosPorIdEvaluacion(idEvaluacion)
+    .subscribe({
+      next: (objetivosResponse: any) => {
+        const objetivosExistentes = objetivosResponse?.$values || objetivosResponse || [];
+        
+        // QUITAR EL FILTRO - Traer todos los objetivos (AREA e INDIVIDUAL)
+        const todosLosObjetivos = Array.isArray(objetivosExistentes) 
+            ? objetivosExistentes 
+            : [];
+        
+        //console.log('Todos los objetivos encontrados:', todosLosObjetivos);
+        
+        if (todosLosObjetivos.length > 0) {
+          this.mapearObjetivosSegunFase(todosLosObjetivos, fase);
+        } else {
+          //console.log('No hay objetivos existentes');
+          this.inicializarObjetivosVacios();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar objetivos:', error);
         this.inicializarObjetivosVacios();
       }
-    },
-    error: (error) => {
-      console.error('Error al cargar objetivos:', error);
-      this.inicializarObjetivosVacios();
-    }
-  });
-}
-
-/**
- * Mapea objetivos según la fase
- */
-mapearObjetivosSegunFase(objetivos: any[], fase: number): void {
-  console.log('Mapeando objetivos para fase:', fase);
-  console.log('Objetivos recibidos de BD:', objetivos);
-  
-  // Separar objetivos por tipo
-  const objetivoArea = objetivos.find(obj => {
-    const tipo = (obj.tipoObjetivo || obj.tipo_objetivo || '').toUpperCase();
-    return tipo === 'AREA';
-  });
-  
-  const objetivosIndividuales = objetivos
-    .filter(obj => {
-      const tipo = (obj.tipoObjetivo || obj.tipo_objetivo || '').toUpperCase();
-      return tipo === 'INDIVIDUAL';
-    })
-    .sort((a, b) => {
-      // Ordenar por ID ascendente
-      const idA = a.idObjetivo || a.id_objetivo || 0;
-      const idB = b.idObjetivo || b.id_objetivo || 0;
-      return idA - idB;
     });
-  
-  // Combinar: primero AREA, luego INDIVIDUAL
-  const objetivosOrdenados = objetivoArea 
-    ? [objetivoArea, ...objetivosIndividuales]
-    : objetivosIndividuales;
-  
-  console.log('Objetivos ORDENADOS:', objetivosOrdenados);
-  
-  for (let i = 0; i < 5; i++) {
-    if (i < objetivosOrdenados.length) {
-      const obj = objetivosOrdenados[i];
-      
-      // Formatear fecha
-      let fechaFormateada = '';
-      if (obj.fechaLimite || obj.fecha_limite) {
-        const fecha = new Date(obj.fechaLimite || obj.fecha_limite);
-        fechaFormateada = fecha.toISOString().split('T')[0];
+  }
+
+  /**
+   * Mapea objetivos según la fase
+   */
+  mapearObjetivosSegunFase(objetivos: any[], fase: number): void {
+    // //console.log('Mapeando objetivos para fase:', fase);
+    // //console.log('Objetivos recibidos de BD:', objetivos);
+    
+    // Separar objetivos por tipo
+    const objetivoArea = objetivos.find(obj => {
+      const tipo = (obj.tipoObjetivo || obj.tipo_objetivo || '').toUpperCase();
+      return tipo === 'AREA';
+    });
+    
+    const objetivosIndividuales = objetivos
+      .filter(obj => {
+        const tipo = (obj.tipoObjetivo || obj.tipo_objetivo || '').toUpperCase();
+        return tipo === 'INDIVIDUAL';
+      })
+      .sort((a, b) => {
+        // Ordenar por ID ascendente
+        const idA = a.idObjetivo || a.id_objetivo || 0;
+        const idB = b.idObjetivo || b.id_objetivo || 0;
+        return idA - idB;
+      });
+    
+    // Combinar: primero AREA, luego INDIVIDUAL
+    const objetivosOrdenados = objetivoArea 
+      ? [objetivoArea, ...objetivosIndividuales]
+      : objetivosIndividuales;
+    
+    // //console.log('Objetivos ORDENADOS:', objetivosOrdenados);
+    
+    for (let i = 0; i < 5; i++) {
+      if (i < objetivosOrdenados.length) {
+        const obj = objetivosOrdenados[i];
+        
+        // Formatear fecha
+        let fechaFormateada = '';
+        if (obj.fechaLimite || obj.fecha_limite) {
+          const fecha = new Date(obj.fechaLimite || obj.fecha_limite);
+          fechaFormateada = fecha.toISOString().split('T')[0];
+        }
+        
+        // Obtener tipo
+        const tipoObjetivo = (obj.tipoObjetivo || obj.tipo_objetivo || 'INDIVIDUAL').toUpperCase();
+        
+        // //console.log(`Mapeando posición ${i}: ID=${obj.idObjetivo}, Tipo=${tipoObjetivo}, Título=${obj.titulo}`);
+        
+        // Mapear según fase
+        if (fase === 0) {
+          this.objetivosIndividuales[i] = {
+            idObjetivo: obj.idObjetivo || obj.id_objetivo,
+            titulo: obj.titulo,
+            tipoObjetivo: tipoObjetivo
+          };
+        }    else if (fase === 6) {
+          // Fase 1: titulo, valoracionEmpleado, valoracionJefe, fechaLimite
+          this.objetivosIndividuales[i] = {
+            idObjetivo: obj.idObjetivo || obj.id_objetivo,
+            titulo: obj.titulo,
+            // valoracionEmpleado: obj.valoracionEmpleado || obj.valoracion_empleado || null,
+            valoracionJefe: obj.valoracionJefe || obj.valoracion_jefe || null,
+            // fechaLimite: fechaFormateada
+          };
+        } else if (fase === 2) {
+          // Fase 2: titulo, fechaLimite (para luego agregar calificacionEmpleado)
+          this.objetivosIndividuales[i] = {
+            idObjetivo: obj.idObjetivo || obj.id_objetivo,
+            titulo: obj.titulo,
+            fechaLimite: fechaFormateada,
+            calificacionEmpleado: null
+          };
+        } else if (fase === 4) {
+          // Fase 3: titulo, fechaLimite, calificacionEmpleado, calificacionFinal
+          this.objetivosIndividuales[i] = {
+            idObjetivo: obj.idObjetivo || obj.id_objetivo,
+            titulo: obj.titulo,
+            fechaLimite: fechaFormateada,
+            calificacionEmpleado: obj.calificacionEmpleado || obj.calificacion_empleado || null,
+            calificacionFinal: obj.calificacionFinal || obj.calificacion_final || null
+          };
+        } else if (fase === 5) {
+          // Fase 3: titulo, fechaLimite, calificacionEmpleado, calificacionFinal
+          this.objetivosIndividuales[i] = {
+            idObjetivo: obj.idObjetivo || obj.id_objetivo,
+            titulo: obj.titulo,
+            fechaLimite: fechaFormateada,
+            calificacionEmpleado: obj.calificacionEmpleado || obj.calificacion_empleado || null,
+            calificacionFinal: obj.calificacionFinal || obj.calificacion_final || null
+          };
+        } else if (fase === 7) {
+          // ✅ AGREGAR ESTE NUEVO CASO
+          // Fase 7 (Cierre): Igual que fase 5, solo lectura
+          this.objetivosIndividuales[i] = {
+            idObjetivo: obj.idObjetivo || obj.id_objetivo,
+            titulo: obj.titulo,
+            fechaLimite: fechaFormateada,
+            calificacionEmpleado: obj.calificacionEmpleado || obj.calificacion_empleado || null,
+            calificacionFinal: obj.calificacionFinal || obj.calificacion_final || null
+          };
+        }
+        
+        //console.log(`Objetivo ${i + 1} mapeado:`, this.objetivosIndividuales[i]);
+      } else {
+        this.objetivosIndividuales[i] = { titulo: '', fechaLimite: '' };
       }
-      
-      // Obtener tipo
-      const tipoObjetivo = (obj.tipoObjetivo || obj.tipo_objetivo || 'INDIVIDUAL').toUpperCase();
-      
-      console.log(`Mapeando posición ${i}: ID=${obj.idObjetivo}, Tipo=${tipoObjetivo}, Título=${obj.titulo}`);
-      
-      // Mapear según fase
-      if (fase === 0) {
-        this.objetivosIndividuales[i] = {
-          idObjetivo: obj.idObjetivo || obj.id_objetivo,
-          titulo: obj.titulo,
-          tipoObjetivo: tipoObjetivo
-        };
-      }    else if (fase === 6) {
-        // Fase 1: titulo, valoracionEmpleado, valoracionJefe, fechaLimite
-        this.objetivosIndividuales[i] = {
-          idObjetivo: obj.idObjetivo || obj.id_objetivo,
-          titulo: obj.titulo,
-          // valoracionEmpleado: obj.valoracionEmpleado || obj.valoracion_empleado || null,
-          valoracionJefe: obj.valoracionJefe || obj.valoracion_jefe || null,
-          // fechaLimite: fechaFormateada
-        };
-      } else if (fase === 2) {
-        // Fase 2: titulo, fechaLimite (para luego agregar calificacionEmpleado)
-        this.objetivosIndividuales[i] = {
-          idObjetivo: obj.idObjetivo || obj.id_objetivo,
-          titulo: obj.titulo,
-          fechaLimite: fechaFormateada,
-          calificacionEmpleado: null
-        };
-      } else if (fase === 4) {
-        // Fase 3: titulo, fechaLimite, calificacionEmpleado, calificacionFinal
-        this.objetivosIndividuales[i] = {
-          idObjetivo: obj.idObjetivo || obj.id_objetivo,
-          titulo: obj.titulo,
-          fechaLimite: fechaFormateada,
-          calificacionEmpleado: obj.calificacionEmpleado || obj.calificacion_empleado || null,
-          calificacionFinal: obj.calificacionFinal || obj.calificacion_final || null
-        };
-      } else if (fase === 5) {
-        // Fase 3: titulo, fechaLimite, calificacionEmpleado, calificacionFinal
-        this.objetivosIndividuales[i] = {
-          idObjetivo: obj.idObjetivo || obj.id_objetivo,
-          titulo: obj.titulo,
-          fechaLimite: fechaFormateada,
-          calificacionEmpleado: obj.calificacionEmpleado || obj.calificacion_empleado || null,
-          calificacionFinal: obj.calificacionFinal || obj.calificacion_final || null
-        };
-      }
-      
-      console.log(`Objetivo ${i + 1} mapeado:`, this.objetivosIndividuales[i]);
-    } else {
-      this.objetivosIndividuales[i] = { titulo: '', fechaLimite: '' };
     }
   }
-}
 
 
-/**
- * Inicializa objetivos vacíos
- */
-inicializarObjetivosVacios(): void {
-  this.objetivosIndividuales = [
-    { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
-    { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
-    { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
-    { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
-    { titulo: '', valoracionEmpleado: null, fechaLimite: '' }
-  ];
-}
+  /**
+   * Inicializa objetivos vacíos
+   */
+  inicializarObjetivosVacios(): void {
+    this.objetivosIndividuales = [
+      { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
+      { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
+      { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
+      { titulo: '', valoracionEmpleado: null, fechaLimite: '' },
+      { titulo: '', valoracionEmpleado: null, fechaLimite: '' }
+    ];
+  }
 
   avanzarCierreEvaluacion(){
-    console.log('⚠️ FASE 4 EN PROCESO, SOLO LECTURA');
+    // //console.log('⚠️ FASE 4 EN PROCESO, SOLO LECTURA');
     this.actualizarTimelinePorFase(7);
-    this.faseEvaluacion = 7;
+    this.faseEvaluacion = 7
     this. cargarEvaluaciones();
   }
 
@@ -1225,7 +1500,7 @@ inicializarObjetivosVacios(): void {
     
   //   if (index >= 0 && index < this.objetivos.length) {
   //     this.objetivos[index].texto = nuevoTexto;
-  //     console.log(`📝 Objetivo ${index + 1} actualizado:`, this.objetivos[index]);
+  //     //console.log(`📝 Objetivo ${index + 1} actualizado:`, this.objetivos[index]);
   //   }
   // }
 
@@ -1249,7 +1524,7 @@ inicializarObjetivosVacios(): void {
   //     // Validar que el valor esté entre 0 y 100
   //     if (!isNaN(nuevoValor) && nuevoValor >= 0 && nuevoValor <= 100) {
   //       this.objetivos[index].valor = nuevoValor;
-  //       console.log(`📊 Valor del objetivo ${index + 1} actualizado:`, this.objetivos[index]);
+  //       //console.log(`📊 Valor del objetivo ${index + 1} actualizado:`, this.objetivos[index]);
   //     }
   //   }
   // }
@@ -1272,7 +1547,7 @@ inicializarObjetivosVacios(): void {
     
   //   if (index >= 0 && index < this.objetivos.length) {
   //     this.objetivos[index].fecha = nuevaFecha;
-  //     console.log(`📅 Fecha del objetivo ${index + 1} actualizada:`, this.objetivos[index]);
+  //     //console.log(`📅 Fecha del objetivo ${index + 1} actualizada:`, this.objetivos[index]);
   //   }
   // }
 
@@ -1281,22 +1556,22 @@ inicializarObjetivosVacios(): void {
    * @param index - Índice de la competencia (0-4)
    * @param valor - Nuevo nombre (puede ser Event o string)
    */
-  actualizarNombreCompetenciaFija(index: number, valor: any): void {
-    let nuevoNombre: string;
+  // actualizarNombreCompetenciaFija(index: number, valor: any): void {
+  //   let nuevoNombre: string;
     
-    if (valor && typeof valor === 'object' && valor.target) {
-      // Es un evento
-      nuevoNombre = (valor.target as HTMLInputElement).value;
-    } else {
-      // Es un string directo
-      nuevoNombre = String(valor);
-    }
+  //   if (valor && typeof valor === 'object' && valor.target) {
+  //     // Es un evento
+  //     nuevoNombre = (valor.target as HTMLInputElement).value;
+  //   } else {
+  //     // Es un string directo
+  //     nuevoNombre = String(valor);
+  //   }
 
-    // if (index >= 0 && index < this.competencias.length) {
-    //   this.competencias[index].name = nuevoNombre;
-    //   console.log(`📝 Nombre competencia ${index + 1}:`, nuevoNombre, this.competencias[index]);
-    // }
-  }
+  //   // if (index >= 0 && index < this.competencias.length) {
+  //   //   this.competencias[index].name = nuevoNombre;
+  //   //   //console.log(`📝 Nombre competencia ${index + 1}:`, nuevoNombre, this.competencias[index]);
+  //   // }
+  // }
 
   /**
    * Actualiza el valor numérico de una competencia específica (array fijo)
@@ -1318,7 +1593,7 @@ inicializarObjetivosVacios(): void {
   //   //   // Validar que el valor esté entre 0 y 100
   //   //   if (!isNaN(nuevoValor) && nuevoValor >= 0 && nuevoValor <= 100) {
   //   //     this.competencias[index].valor = nuevoValor;
-  //   //     console.log(`📊 Valor competencia ${index + 1}:`, nuevoValor, this.competencias[index]);
+  //   //     //console.log(`📊 Valor competencia ${index + 1}:`, nuevoValor, this.competencias[index]);
   //   //   }
   //   // }
   // }
@@ -1341,7 +1616,7 @@ inicializarObjetivosVacios(): void {
 
   //   // if (index >= 0 && index < this.competencias.length) {
   //   //   this.competencias[index].fecha = nuevaFecha;
-  //   //   console.log(`📅 Fecha competencia ${index + 1}:`, nuevaFecha, this.competencias[index]);
+  //   //   //console.log(`📅 Fecha competencia ${index + 1}:`, nuevaFecha, this.competencias[index]);
   //   // }
   // }
 
@@ -1349,23 +1624,23 @@ inicializarObjetivosVacios(): void {
    * Calcula el porcentaje total basado en los valores de los objetivos
    * @returns Porcentaje total promedio
    */
-  calcularPorcentajeTotal(): number {
-    const objetivosConValor = this.objetivos.filter(obj => obj.valor !== null && obj.valor > 0);
-    if (objetivosConValor.length === 0) return 0;
+  // calcularPorcentajeTotal(): number {
+  //   const objetivosConValor = this.objetivos.filter(obj => obj.valor !== null && obj.valor > 0);
+  //   if (objetivosConValor.length === 0) return 0;
     
-    const suma = objetivosConValor.reduce((acc, obj) => acc + (obj.valor || 0), 0);
-    const promedio = suma / objetivosConValor.length;
+  //   const suma = objetivosConValor.reduce((acc, obj) => acc + (obj.valor || 0), 0);
+  //   const promedio = suma / objetivosConValor.length;
     
-    return Math.round(promedio);
-  }
+  //   return Math.round(promedio);
+  // }
 
 
   // Método para el menú principal
   showSection(targetId: string): void {
     this.activeSection = targetId;
     
-    console.log('Sección principal activa:', this.activeSection);
-    // console.log('Step del timeline activo:', this.activeTimelineStep);
+    //console.log('Sección principal activa:', this.activeSection);
+    // //console.log('Step del timeline activo:', this.activeTimelineStep);
   }
 
   // toggleDropdown(): void {
@@ -1377,7 +1652,7 @@ inicializarObjetivosVacios(): void {
 
   // logout(): void {
   //   // Logout logic will be implemented later
-  //   console.log('Logout clicked');
+  //   //console.log('Logout clicked');
   // }
 
 }

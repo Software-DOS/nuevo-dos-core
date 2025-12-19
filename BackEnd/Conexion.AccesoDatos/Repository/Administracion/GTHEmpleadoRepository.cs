@@ -92,11 +92,11 @@ namespace Conexion.AccesoDatos.Repository.Administracion
         /// Ejecuta SP para mostrar empleados según filtros.
         /// </summary>
         public async Task<IEnumerable<GTHEmpleado>> Mostrar(
-            int tipo,
-            int? idEmpleado = null,
-            int? idCelula = null,
-            string estadoEmpleado = null,
-            string cedulaEmpleado = null) // <-- Agregado
+        int tipo,
+        int? idEmpleado = null,
+        int? idCelula = null,
+        string estadoEmpleado = null,
+        string cedulaEmpleado = null)
         {
             using var sql = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("GTH_MostrarEmpleado", sql)
@@ -107,7 +107,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@ID_Empleado", idEmpleado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@ID_Celula", idCelula ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@Emp_EstadoEmpleado", estadoEmpleado ?? (object)DBNull.Value));
-            cmd.Parameters.Add(new SqlParameter("@CedulaEmpleado", cedulaEmpleado ?? (object)DBNull.Value)); // <-- Agregado
+            cmd.Parameters.Add(new SqlParameter("@CedulaEmpleado", cedulaEmpleado ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@Tipo", tipo));
 
             await sql.OpenAsync();
@@ -117,16 +117,20 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             {
                 list.Add(new GTHEmpleado
                 {
-                    // Convierte Int32 a Int64 de forma segura
-                    IdEmpleado = reader["ID_EMPLEADO"] != DBNull.Value
-                                          ? Convert.ToInt64(reader["ID_EMPLEADO"])
-                                          : 0L,
+                    IdEmpleado = reader["ID_EMPLEADO_AD"] != DBNull.Value
+                                      ? Convert.ToInt64(reader["ID_EMPLEADO_AD"])
+                                      : 0L,
+
+                    IdEmpleadoAD = reader["ID_EMPLEADO_AD"] != DBNull.Value
+                                      ? Convert.ToInt64(reader["ID_EMPLEADO_AD"])
+                                      : 0L,
+
                     IdPerfil = reader["ID_PERFIL"] != DBNull.Value
-                                          ? Convert.ToInt64(reader["ID_PERFIL"])
-                                          : (long?)null,
+                                      ? Convert.ToInt64(reader["ID_PERFIL"])
+                                      : (long?)null,
                     IdCelula = reader["ID_CELULA"] != DBNull.Value
-                                          ? Convert.ToInt64(reader["ID_CELULA"])
-                                          : (long?)null,
+                                      ? Convert.ToInt64(reader["ID_CELULA"])
+                                      : (long?)null,
                     Cedula = reader["EMP_CEDULA"]?.ToString(),
                     Nombre = reader["EMP_NOMBRE"]?.ToString(),
                     Apellido = reader["EMP_APELLIDO"]?.ToString(),
@@ -141,12 +145,11 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     FotoPerfilUrl = reader["EMP_FOTOPERFILURL"]?.ToString(),
                     EstadoEmpleado = reader["EMP_ESTADOEMPLEADO"]?.ToString(),
                     EmpTipo = reader["EMP_TIPO"] != DBNull.Value
-                                          ? Convert.ToInt32(reader["EMP_TIPO"])
-                                          : (int?)null,
+                                  ? Convert.ToInt32(reader["EMP_TIPO"])
+                                  : (int?)null,
                     ActPassword = reader["EMP_ACT_PASSWORD"] as bool?,
                     Password = reader["EMP_PASSWORD"]?.ToString(),
                     Sueldo = reader["EMP_SUELDO"] as decimal?,
-
                     TipoSangre = reader["EMP_TIPOSANGRE"]?.ToString(),
                     Etnia = reader["EMP_ETNIA"]?.ToString(),
                     PaisNacimiento = reader["EMP_PAISNACIMIENTO"]?.ToString(),
@@ -171,7 +174,6 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                     JefeDirecto = reader["EMP_JEFEDIRECTO"]?.ToString(),
                     TipoContrato = reader["EMP_TIPOCONTRATO"]?.ToString(),
                     Ubicacion = reader["EMP_UBICACION"]?.ToString()
-
                 });
             }
             return list;

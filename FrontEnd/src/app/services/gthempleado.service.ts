@@ -48,7 +48,7 @@ export class GthEmpleadoService {
    * @param cedula - Cédula del empleado a buscar
    */
   BuscarPorCedula(cedula: string) {
-    console.log('Llamando a BuscarPorCedula con cédula:', cedula); //Comentar
+    // console.log('Llamando a BuscarPorCedula con cédula:', cedula); //Comentar
     return this.MostrarConParametros(4, undefined, undefined, undefined, cedula);
   }
 
@@ -105,10 +105,10 @@ export class GthEmpleadoService {
    * @param idEmpleado - ID del empleado GTH a guardar
    */
   guardarIdGthEmpleadoEnSession(idEmpleado: number): void {
-    console.log('[GthEmpleadoService] Guardando ID:', idEmpleado);
+    // console.log('[GthEmpleadoService] Guardando ID:', idEmpleado);
     sessionStorage.setItem('idGthEmpleado', idEmpleado.toString());
     const verificacion = sessionStorage.getItem('idGthEmpleado');
-    console.log('[GthEmpleadoService] Verificación guardado:', verificacion);
+    // console.log('[GthEmpleadoService] Verificación guardado:', verificacion);
   }
 
   /**
@@ -122,14 +122,21 @@ export class GthEmpleadoService {
   // }
 
   obtenerIdGthEmpleadoDesdeSession(): number | null {
+
+    // console.log("PRUEBAS FINALES:");
     // Intentar obtener directamente de sessionStorage
     const idDirecto = sessionStorage.getItem('idGthEmpleado');
     if (idDirecto) {
       return parseInt(idDirecto, 10);
     }
 
+    // console.log("PRUEBAS FINALES: obtenerIdSession idDirecto - ", idDirecto);
+
     // Si no existe, obtener del token JWT
     const token = sessionStorage.getItem('token');
+
+    
+      // console.log("PRUEBAS FINALES: obtenerIdSession token - ", token);
     
     if (!token || typeof token !== 'string' || token.trim() === '') {
       return null;
@@ -144,11 +151,13 @@ export class GthEmpleadoService {
                         tokenPayload['idEmpleado'] || 
                         tokenPayload['Id'] ||
                         null;
+      // console.log("PRUEBAS FINALES: obtenerIdSession idEmp - ", idEmpleado);
       
       if (idEmpleado) {
         const idNumerico = typeof idEmpleado === 'number' ? 
                           idEmpleado : 
                           parseInt(idEmpleado, 10);
+        // console.log("PRUEBAS FINALES: obtenerIdSession - ", idNumerico);
         
         // Guardar en sessionStorage para futuras consultas
         sessionStorage.setItem('idGthEmpleado', idNumerico.toString());

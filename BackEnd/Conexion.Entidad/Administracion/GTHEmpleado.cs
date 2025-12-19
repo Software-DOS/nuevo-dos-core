@@ -10,6 +10,10 @@ namespace Conexion.Entidad.Administracion
     {
         public int Tipo { get; set; }
         public long IdEmpleado { get; set; }
+
+        // ← AGREGAR ESTA PROPIEDAD
+        public long IdEmpleadoAD { get; set; }
+
         public long? IdPerfil { get; set; }
         public long? IdCelula { get; set; }
         public string Cedula { get; set; }
@@ -29,7 +33,6 @@ namespace Conexion.Entidad.Administracion
         public bool? ActPassword { get; set; }
         public string Password { get; set; }
         public decimal? Sueldo { get; set; }
-
         public string TipoSangre { get; set; }
         public string Etnia { get; set; }
         public string PaisNacimiento { get; set; }
@@ -52,6 +55,5 @@ namespace Conexion.Entidad.Administracion
         public string JefeDirecto { get; set; }
         public string TipoContrato { get; set; }
         public string Ubicacion { get; set; }
-
     }
 }

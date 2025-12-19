@@ -10,6 +10,7 @@ namespace WebAppConexion.Models
     {
         public int Tipo { get; set; }
         public long IdEmpleado { get; set; }
+        public long IdEmpleadoAD { get; set; } //nuevo
         public long? IdPerfil { get; set; }
         public long? IdCelula { get; set; }
         public string Cedula { get; set; }

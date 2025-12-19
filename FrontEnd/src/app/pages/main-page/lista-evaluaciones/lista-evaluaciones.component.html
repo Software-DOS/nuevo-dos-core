@@ -16,7 +16,7 @@
       </div>
 
       <!-- Botón especial -->
-      <div class="subcategory-link crear-btn" [class.active]="activeSubcategory === 'crearEvaluacion'"
+      <div style="margin-bottom: 2rem;" class="subcategory-link crear-btn" [class.active]="activeSubcategory === 'crearEvaluacion'"
         (click)="showSubcategoryEval('crearEvaluacion')">
         + Crear Evaluación
       </div>
@@ -38,14 +38,14 @@
             <input type="text" id="filtroNombre" [(ngModel)]="filtroNombre" (input)="aplicarFiltros()"
               placeholder="Buscar empleado..." class="filter-input">
           </div>
-          <div class="filter-group">
+          <!-- <div class="filter-group">
             <label for="filtroCalificado">Calificado:</label>
             <select id="filtroCalificado" [(ngModel)]="filtroCalificado" (change)="aplicarFiltros()">
               <option value="">Todos</option>
               <option value="Si">Sí</option>
               <option value="No">No</option>
             </select>
-          </div>
+          </div> -->
         </aside>
 
         <!-- Tabla a la derecha --> <!-- Console log BORRAR -->
@@ -518,10 +518,10 @@
 
     <!-- Modal Evaluación de Empleado -->
     <div class="modal fade" style="background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.7),    /* Más oscuro arriba */
-    rgba(0, 0, 0, 0.4)     /* Más claro abajo */
-  );" tabindex="-1" [ngClass]="{ show: showModal }" [ngStyle]="{ display: showModal ? 'block' : 'none' }"
+      to bottom,
+      rgba(0, 0, 0, 0.7),    /* Más oscuro arriba */
+      rgba(0, 0, 0, 0.4)     /* Más claro abajo */
+    );" tabindex="-1" [ngClass]="{ show: showModal }" [ngStyle]="{ display: showModal ? 'block' : 'none' }"
       aria-modal="true" role="dialog">
       <div class="modal-dialog modal-resizable" role="document">
         <div class="modal-content modal-evaluacion">
@@ -558,8 +558,7 @@
 
               </div>
 
-            </div>
-            
+            </div>            
           </div>
 
           <div class="modal-body">           
@@ -609,7 +608,7 @@
                         <label class="label-mobile">Objetivo</label>
                         <input type="text" class="text-input text-input-rev"
                               [placeholder]="i === 0 ? 'Objetivo del Área' : 'Objetivo Individual'"
-                              [(ngModel)]="objetivoModal.titulo" [disabled]="true">
+                              [(ngModel)]="objetivoModal.titulo">
                       </div>
 
                       <!-- ✅ Calificación Colaborador (solo lectura) -->
@@ -629,7 +628,7 @@
                         <label class="label-mobile">Calificación Jefe</label>
                         <select class="number-input number-input-objetivo"
                                 [(ngModel)]="objetivoModal.calificacionFinal">
-                          <option value="" disabled selected>Seleccione</option>
+                          <option value="" selected>Seleccione</option>
                           <option [value]="1">1 - Insatisfactorio</option>
                           <option [value]="2">2 - Necesita Mejorar</option>
                           <option [value]="3">3 - Satisfactorio</option>
@@ -697,7 +696,7 @@
                         </label>
                         <select class="number-input number-input-competencia"
                                 [(ngModel)]="competenciaModal.calificacionFinal">
-                          <option value="" disabled selected>Seleccione</option>
+                          <option value="" selected>Seleccione</option>
                           <option [value]="1">1 - Insatisfactorio</option>
                           <option [value]="2">2 - Necesita Mejorar</option>
                           <option [value]="3">3 - Satisfactorio</option>
@@ -756,14 +755,13 @@
 
 
             <!-- Formulario: Cierre FASE 5 MODAL -->
-            <div class="evaluation-form-cierre" *ngIf="faseEvaluacionModal === 5">
+            <div class="evaluation-form-cierre" *ngIf="faseEvaluacionModal === 5 || faseEvaluacionModal === 7">
               
               <div class="header">
                 <h2>Resultado de Evaluación de Desempeño</h2>
                 <div class="subtitle">Reporte Semestral 2025 • {{ empleadoModal?.area || 'Departamento' }}</div>
               </div>
               <div class="content"></div>
-              
               
               <!-- INICIO DEL CÓDIGO DE CIERRE -->
               <div class="cierre"> 
@@ -780,7 +778,8 @@
                                       [attr.stroke-dasharray]="314.16" 
                                       [attr.stroke-dashoffset]="calcularDashOffset(promedioObjetivosModal, 4)"></circle>
                           </svg>
-                          <div class="circle-text">{{ promedioObjetivosModal | number:'1.1-1' }}</div>
+                          <!-- ✅ CAMBIO: 1.1-1 → 1.2-2 -->
+                          <div class="circle-text">{{ promedioObjetivosModal | number:'1.2-2' }}</div>
                           <div class="circle-subtext">de 4.0</div>
                       </div>
                       <span class="card-badge" [ngClass]="obtenerClaseBadge(promedioObjetivosModal)">
@@ -799,7 +798,8 @@
                                       [attr.stroke-dasharray]="314.16" 
                                       [attr.stroke-dashoffset]="calcularDashOffset(promedioCompetenciasModal, 4)"></circle>
                           </svg>
-                          <div class="circle-text">{{ promedioCompetenciasModal | number:'1.1-1' }}</div>
+                          <!-- ✅ CAMBIO: 1.1-1 → 1.2-2 -->
+                          <div class="circle-text">{{ promedioCompetenciasModal | number:'1.2-2' }}</div>
                           <div class="circle-subtext">de 4.0</div>
                       </div>
                       <span class="card-badge" [ngClass]="obtenerClaseBadge(promedioCompetenciasModal)">
