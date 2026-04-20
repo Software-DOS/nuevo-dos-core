@@ -45,14 +45,18 @@ export class LoginService {
   }
   
   login(data:Ilogin): Observable<any>{
-    // console.log("🚀 [DEBUG] Starting login with data:", JSON.stringify(data));
-    // console.log("🔗 [DEBUG] Backend URL:", environment.urlbackend);
+     console.log("🚀 [DEBUG] loginservice Starting login with data:", JSON.stringify(data));
+     console.log("🔗 [DEBUG] loginservice Backend URL:", environment.urlbackend);
     
     const loginUrl = environment.urlbackend + "api/Login/Login?email=" + data.email + "&password=" + data.password;
+
+    //const loginUrl = environment.urlbackend + "api/validar?usuario=" + data.email + "&clave=" + data.password;
+    
     // console.log("🔗 [DEBUG] Full login URL:", loginUrl);
     
     return this.http.get(loginUrl).pipe(
       tap((resp: any) => {
+        console.log("loginurl: ", loginUrl);
         console.log("✅ [DEBUG] Raw response from backend:", resp);
         console.log("🔍 [DEBUG] Token in response:", resp.token);
       }),
@@ -107,11 +111,14 @@ export class LoginService {
  * @returns Observable con la respuesta del backend (contiene token JWT)
  */
 loginAD(data: Ilogin): Observable<any> {
-  // BORRAR - PRODUCCIÓN: console.log("🚀 [DEBUG] Starting AD login with data:", JSON.stringify(data));
+  // BORRAR - PRODUCCIÓN: 
+  console.log("🚀 [DEBUG] Service Starting AD login with data:", JSON.stringify(data));
   
-  // Construir URL del endpoint de autenticación
-  const loginUrl = environment.urlbackend + "api/Auth/loginAD";
-  // BORRAR - PRODUCCIÓN: console.log("🔗 [DEBUG] AD Login URL:", loginUrl);
+  // Construir URL del endpoint de autenticación  
+  //const loginUrl = environment.urlApis + "api/Auth/loginAD";  // valida con el AD
+  const loginUrl = environment.urlbackend + "api/Auth/loginAD"; // desarrollo
+  // BORRAR - PRODUCCIÓN: 
+  //console.log("🔗 [DEBUG] Service AD Login URL:", loginUrl);
   
   // Preparar datos para enviar al backend
   const body = {
@@ -119,20 +126,24 @@ loginAD(data: Ilogin): Observable<any> {
     clave: data.password     // Contraseña del formulario
   };
   
-  // BORRAR - PRODUCCIÓN: console.log("📤 [DEBUG] Enviamos desde el servicio el POST body:", JSON.stringify(body));
+  // BORRAR - PRODUCCIÓN: 
+  console.log("📤 [DEBUG] Enviamos desde el servicio el POST body:", JSON.stringify(body));
   
   // Realizar petición HTTP POST al backend
   return this.http.post(loginUrl, body).pipe(
     
     // TAP: Interceptar respuesta para logs (no modifica la data)
     tap((resp: any) => {
-      // BORRAR - PRODUCCIÓN: console.log("✅ [DEBUG] Raw response from AD backend:", resp);
-      // BORRAR - PRODUCCIÓN: console.log("🔍 [DEBUG] Token in response:", resp.token);
+      // BORRAR - PRODUCCIÓN: 
+      console.log("✅ [DEBUG] Service Raw response from AD backend:", resp);
+      // BORRAR - PRODUCCIÓN: 
+      console.log("🔍 [DEBUG] Service Token in response:", resp.token);
     }),
     
     // MAP: Procesar respuesta y guardar token en sessionStorage
     map((resp: any) => {
-      // BORRAR - PRODUCCIÓN: console.log("🔄 [DEBUG] Processing AD response");
+      // BORRAR - PRODUCCIÓN: 
+      console.log("🔄 [DEBUG] Service Processing AD response");
       
       // Verificar que la respuesta contiene un token
       if (resp && resp.token) {
@@ -140,11 +151,13 @@ loginAD(data: Ilogin): Observable<any> {
         // Limpiar token anterior y guardar el nuevo
         sessionStorage.removeItem('token');
         sessionStorage.setItem('token', resp.token);
-        // BORRAR - PRODUCCIÓN: console.log("💾 [DEBUG] AD Token saved to sessionStorage");
+        // BORRAR - PRODUCCIÓN: 
+        console.log("💾 [DEBUG] Service AD Token saved to sessionStorage");
         
         // Verificar que el token se guardó correctamente
         const savedToken = sessionStorage.getItem('token');
-        // BORRAR - PRODUCCIÓN: console.log("✅ [DEBUG] Token retrieved:", savedToken ? 'EXISTS' : 'NULL');
+        // BORRAR - PRODUCCIÓN: 
+        console.log("✅ [DEBUG] Token retrieved:", savedToken ? 'EXISTS' : 'NULL');
         
         // Decodificar token para verificar su contenido (solo para debug)
         try {
@@ -346,4 +359,48 @@ procesarIdGthEmpleadoPostLogin(email?: string): void {
     return this.http.get(environment.urlbackend + "api/EnviarNotificacion/ActualizarClaveEmpleado?Correo=" + Correo + "&Titulo=" + Titulo +"&TipoDocumento=" + TipoDocumento +"&Clave=" + Clave +"&Tipo=" + Tipo +"");
   }
 
+
+
+
+
+  //Login para pruebas 
+  loginPruebas(data: Ilogin): Observable<any> {
+
+    const loginUrl =
+      environment.urlbackend +
+      `api/Auth/validar?usuario=${data.email}&clave=${data.password}`;
+
+    console.log("🔗 [DEBUG] loginPruebas URL:", loginUrl);
+
+    return this.http.get<any>(loginUrl).pipe(
+
+      tap(resp => {
+        console.log("✅ [DEBUG] Respuesta validar:", resp);
+      }),
+
+      map(resp => {
+
+        if (resp && resp.success === true) {
+
+          // Guardamos datos básicos del usuario
+          sessionStorage.setItem('usuario', JSON.stringify(resp.data));
+
+          // Simulamos sesión activa
+          sessionStorage.setItem('isLogged', 'true');
+
+          console.log("💾 Usuario guardado en sesión:", resp.data);
+
+          return resp.data;
+
+        } else {
+          throw new Error('Credenciales inválidas');
+        }
+      }),
+
+      catchError(error => {
+        console.error("❌ Error en loginPruebas:", error);
+        return throwError(() => error);
+      })
+    );
+  }
 }

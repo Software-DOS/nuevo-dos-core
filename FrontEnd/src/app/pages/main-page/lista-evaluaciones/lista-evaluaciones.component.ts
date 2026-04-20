@@ -291,20 +291,36 @@ export class ListaEvaluacionesComponent implements OnInit {
     });
   }
 
-  /**
-   * Mapear evaluaciones con datos mínimos de empleados
-   */
-  private mapearEvaluacionesConEmpleados(evaluaciones: Ievaluacion[], empleadosData: { [key: number]: iGTHEmpleado }): void {
-    // console.log('🔄 Mapeando evaluaciones con empleados...');
-    // console.log('📊 Total evaluaciones:', evaluaciones.length);
-    // console.log('👥 Empleados disponibles:', Object.keys(empleadosData).length);
-    
-    const empleadosMapeados: Empleado[] = evaluaciones.map(evaluacion => {
-      const empleado = empleadosData[evaluacion.idEmpleado];
 
-      // console.log("finales - id cada evaluacion mapear: ", empleado);
+
+
+
+
+  private mapearEvaluacionesConEmpleados(evaluaciones: Ievaluacion[], empleadosData: { [key: number]: iGTHEmpleado }): void {
+  
+    // ✅ Agrupar evaluaciones por empleado (quedarse con la última)
+    const evaluacionesPorEmpleado = new Map<number, Ievaluacion>();
+    
+    evaluaciones.forEach(evaluacion => {
+      const existente = evaluacionesPorEmpleado.get(evaluacion.idEmpleado);
       
-      // Si no se encuentra el empleado en el diccionario
+      if (!existente) {
+        evaluacionesPorEmpleado.set(evaluacion.idEmpleado, evaluacion);
+      } else {
+        // Quedarse con la más reciente por fecha
+        const fechaExistente = new Date(existente.fechaCreacion || '');
+        const fechaNueva = new Date(evaluacion.fechaCreacion || '');
+        if (fechaNueva > fechaExistente) {
+          evaluacionesPorEmpleado.set(evaluacion.idEmpleado, evaluacion);
+        }
+      }
+    });
+
+    // ✅ Ahora mapear usando el Map agrupado
+    const empleadosMapeados: Empleado[] = Array.from(evaluacionesPorEmpleado.values()).map(evaluacion => {
+    const empleado = empleadosData[evaluacion.idEmpleado];
+
+    // Si no se encuentra el empleado en el diccionario
       if (!empleado) {
         // console.warn(`⚠️ Empleado ${evaluacion.idEmpleado} no encontrado en datos`);
         
@@ -352,6 +368,75 @@ export class ListaEvaluacionesComponent implements OnInit {
       this.empleadosFiltrados = [];
     }
   }
+
+
+
+
+
+
+  /**
+   * Mapear evaluaciones con datos mínimos de empleados
+   */
+  // private mapearEvaluacionesConEmpleados(evaluaciones: Ievaluacion[], empleadosData: { [key: number]: iGTHEmpleado }): void {
+  //   // console.log('🔄 Mapeando evaluaciones con empleados...');
+  //   // console.log('📊 Total evaluaciones:', evaluaciones.length);
+  //   // console.log('👥 Empleados disponibles:', Object.keys(empleadosData).length);
+    
+  //   const empleadosMapeados: Empleado[] = evaluaciones.map(evaluacion => {
+  //     const empleado = empleadosData[evaluacion.idEmpleado];
+
+  //     // console.log("finales - id cada evaluacion mapear: ", empleado);
+      
+  //     // Si no se encuentra el empleado en el diccionario
+  //     if (!empleado) {
+  //       // console.warn(`⚠️ Empleado ${evaluacion.idEmpleado} no encontrado en datos`);
+        
+  //       // Intentar obtener nombre de la evaluación misma (si el backend lo incluye)
+  //       const nombreFallback = (evaluacion as any).nombreCompleto || 
+  //                           `${(evaluacion as any).nombreEmpleado || ''} ${(evaluacion as any).apellidoEmpleado || ''}`.trim() ||
+  //                           `Empleado ${evaluacion.idEmpleado}`;
+        
+  //       return {
+  //         id: evaluacion.idEmpleado,
+  //         nombre: nombreFallback,
+  //         sexo: (evaluacion as any).sexo || 'N/A',
+  //         area: (evaluacion as any).area || (evaluacion as any).nombreArea || 'N/A',
+  //         fechaInicio: this.formatearFecha(evaluacion.fechaCreacion || ''),
+  //         calificado: evaluacion.calificacionFinal ? 
+  //           `${evaluacion.calificacionFinal.toFixed(2)} / 4.0` : '- / 4.0',
+  //         photo: this.construirUrlFoto('', (evaluacion as any).sexo || ''),
+  //         estado: evaluacion.estado || 'PENDIENTE'
+  //       };
+  //     }
+
+  //     // Si SÍ se encuentra el empleado
+  //     const nombreCompleto = `${empleado.nombre || ''} ${empleado.apellido || ''}`.trim();
+      
+  //     return {
+  //       id: evaluacion.idEmpleado,
+  //       nombre: nombreCompleto || `Empleado ${evaluacion.idEmpleado}`,
+  //       sexo: empleado.sexo || 'N/A',
+  //       area: empleado.area || 'Sin área',
+  //       fechaInicio: this.formatearFecha(evaluacion.fechaCreacion || ''),
+  //       calificado: evaluacion.calificacionFinal ? 
+  //         `${evaluacion.calificacionFinal.toFixed(2)} / 4.0` : '- / 4.0',
+  //       photo: this.construirUrlFoto(empleado.fotoPerfilUrl || '', empleado.sexo || ''),
+  //       estado: evaluacion.estado || 'PENDIENTE'
+  //     };
+  //   });
+
+  //   if (empleadosMapeados.length > 0) {
+  //     this.empleados = empleadosMapeados;
+  //     this.empleadosFiltrados = [...this.empleados];
+  //     // console.log(`✅ ${this.empleados.length} evaluaciones cargadas correctamente`);
+  //   } else {
+  //     // console.error('❌ No se pudieron mapear las evaluaciones');
+  //     this.empleados = [];
+  //     this.empleadosFiltrados = [];
+  //   }
+  // }
+
+
 
 
   /**
@@ -501,6 +586,8 @@ export class ListaEvaluacionesComponent implements OnInit {
     });
   }
 
+
+
 //=======================    Funciones para ver y cargar la lista de evaluaciones   ============================
 
 // ========================================
@@ -605,7 +692,7 @@ private setDatosModalPorDefecto(): void {
 cargarEvaluacionesModal(empleadoId: number): void {
   // console.log('🔍 Cargando evaluaciones para empleado ID:', empleadoId);
   
-  const anio = 2025;
+  const anio = new Date().getFullYear(); //Año de evaluacion
 
   // Obtener evaluaciones del empleado seleccionado
   this.gthEvaluacionServcie
@@ -1137,7 +1224,7 @@ enviarRetroalimentacionModal(): void {
 guardarDatosEvaluacionModal(): void {
   // console.log('=== GUARDANDO DATOS DEL MODAL - Fase 4 → Fase 5 ===');
   
-  const anio = 2025;
+  const anio = new Date().getFullYear(); //Año de evaluacion
   
   // Obtener la evaluación actual
   this.gthEvaluacionServcie

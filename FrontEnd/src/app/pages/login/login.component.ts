@@ -53,8 +53,8 @@ export class LoginComponent implements OnInit {
   // ⭐ Función principal de login
   login(){
      this.formSubmitted=true;
-    //  console.log("🎯 [DEBUG] Login form submitted");
-    //  console.log("🎯 [DEBUG] Form validity:", this.f.valid);
+      console.log("🎯 [DEBUG] Login form submitted");
+      console.log("🎯 [DEBUG] Form validity:", this.f.valid);
      
       // ⭐ Validación del formulario
       if(this.f.invalid){
@@ -64,26 +64,34 @@ export class LoginComponent implements OnInit {
       
       // ⭐ Preparar datos para envío
       const data: Ilogin = {
-        email:this.f.controls['email'].value,
+        email:this.f.controls['user'].value,
         password:this.f.controls['password'].value
       }
       
+    
+      // const data: Ilogin = {
+      //   email: this.f.controls['user'].value.trim(), // Cambiado: 'user' en lugar de 'email'
+      //   password: this.f.controls['password'].value
+      // }
+      
+
+
       // console.log("📤 [DEBUG] Sending login data:", JSON.stringify(data)); 
       this.loading = true;
       
       // ⭐ Llamada al servicio de login
       this.loginService.login(data).subscribe({
           next: (resp:any) => {
-            //  console.log("✅ [DEBUG] Login successful, response:", resp);
+              console.log("✅ [DEBUG] Login successful, response:", resp);
              
               // ⭐ Verificación doble del token guardado
               const valor = sessionStorage.getItem('token');
-              // console.log("🔍 [DEBUG] Token from sessionStorage after login:", valor);
+               console.log("🔍 [DEBUG] Token from sessionStorage after login:", valor);
               
               if (typeof valor === 'string' && valor.trim() !== '') {
                 try {
                   var IdEmpleado = JSON.parse(atob(valor.split('.')[1]));
-                  // console.log("👤 [DEBUG] Decoded employee data:", IdEmpleado);
+                   console.log("👤 [DEBUG] Decoded employee data:", IdEmpleado);
                   
                   // ⭐ Verificar claims de email en diferentes formatos
                   const email = IdEmpleado['email'] || 
@@ -97,7 +105,7 @@ export class LoginComponent implements OnInit {
                     return;
                   }
                   
-                  // console.log("✅ [DEBUG] Email found in token:", email);
+                   console.log("✅ [DEBUG] Email found in token:", email);
                   
                   // ⭐ Usar NgZone para asegurar que la navegación funcione correctamente
                   this.ngZone.run(() => {
@@ -154,7 +162,7 @@ export class LoginComponent implements OnInit {
   }
 
 
-  // ========================================
+// ========================================
 // 🆕 NUEVO MÉTODO PARA ACTIVE DIRECTORY
 // ========================================
  loginAD() {
@@ -176,7 +184,7 @@ export class LoginComponent implements OnInit {
     
     this.loginService.loginAD(data).subscribe({
       next: (resp: any) => {
-        // console.log("✅ [DEBUG] Component AD Login successful, response:", resp);
+        console.log("✅ [DEBUG] NuevasPruebas Component AD Login successful, response:", resp);
         
         const valor = sessionStorage.getItem('token');
         
@@ -239,6 +247,48 @@ export class LoginComponent implements OnInit {
       }
     });
   }
+
+
+  // ⭐ Función login de pruebas en desarrollo - NO ELIMINAR (puede ser útil para futuras pruebas)
+  loginPruebas(){
+     this.formSubmitted=true;
+      console.log("🎯 [DEBUG] Login form submitted");
+      console.log("🎯 [DEBUG] Form validity:", this.f.valid);
+     
+      // ⭐ Validación del formulario
+      if(this.f.invalid){
+        console.log("❌ [DEBUG] Form is invalid, stopping login");
+        return;
+      }
+      
+      // ⭐ Preparar datos para envío
+      const data: Ilogin = {
+        email:this.f.controls['user'].value,
+        password:this.f.controls['password'].value
+      }
+      
+      // console.log("📤 [DEBUG] Sending login data:", JSON.stringify(data)); 
+      this.loading = true;
+
+      
+      // ⭐ Llamada al servicio de login
+      this.loginService.loginPruebas(data).subscribe({
+        next: (user) => {
+          console.log("🚀 Login exitoso:", user);
+
+          this.loading = false;
+          this.verLogin = false; // 👈 CLAVE
+          console.log('➡️ Navegando a /');
+          this.router.navigateByUrl('');
+        },
+        error: (err) => {
+          console.log("❌ Error en login:", err);
+          this.loading = false;              // 👈 CLAVE
+        }
+      });
+  }
+
+
 
 
   // ⭐ Funciones para cambio de contraseña

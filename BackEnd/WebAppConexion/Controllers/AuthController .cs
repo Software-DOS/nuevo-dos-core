@@ -177,9 +177,9 @@ namespace WebAppConexion.Controllers
             }
         }
 
-        // ========================================
+        // ================================
         // 🔑 MÉTODO GENERAR TOKEN
-        // ========================================
+        // ================================
         private string GenerarToken(List<Claim> claims)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -193,9 +193,9 @@ namespace WebAppConexion.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        // ========================================
+        // ===========================================================
         // MÉTODO GET - Para pruebas (sin validación de ActiveUser)
-        // ========================================
+        // ===========================================================
         [HttpGet("validar")]
         public async Task<IActionResult> Validar(string usuario, string clave)
         {

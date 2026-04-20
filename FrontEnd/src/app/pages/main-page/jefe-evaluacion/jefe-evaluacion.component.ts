@@ -1106,7 +1106,7 @@ inicializarObjetivosVacios(): void {
 
     // this.idEmpleadoActual = 3; // pruebas
     this.idEmpleadoActual = idEmpleado; // pruebas
-    const anio = 2025;
+    const anio = new Date().getFullYear(); //Año de evaluacion
 
     this.gthEvaluacionServcie
       .MostrarEvaluacionesPorEmpleadoyAnio(idEmpleado, anio)  //cambio
@@ -1218,7 +1218,7 @@ inicializarObjetivosVacios(): void {
   if (idEmpleado) {
     // this.idEmpleadoActual = 3; // pruebas
     this.idEmpleadoActual = idEmpleado; // pruebas
-    const anio = 2025;
+    const anio = new Date().getFullYear(); //Año de evaluacion
 
     // Obtenermos el id de la evaluacion
     this.gthEvaluacionServcie
@@ -1652,7 +1652,7 @@ obtenerDescripcionDesempeno(promedio: number): string {
     if (fase === 6) {
       // console.log('⏭️ Fase 6 detectada - Solo actualizando evaluación a fase 2');
       
-      const anio = 2025;
+      const anio = new Date().getFullYear(); //Año de evaluacion
       
       this.gthEvaluacionServcie
         .MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual!, anio)
@@ -1737,7 +1737,7 @@ obtenerDescripcionDesempeno(promedio: number): string {
     }
 
     // Si todas las validaciones pasan, continuar con el guardado...
-    const anio = 2025;
+    const anio = new Date().getFullYear(); //Año de evaluacion
 
     this.gthEvaluacionServcie
     .MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual, anio)
@@ -2130,7 +2130,7 @@ obtenerDescripcionDesempeno(promedio: number): string {
   cargarEvaluacionesColab(idEmpleado: number): void {
     if (idEmpleado) {
       this.idEmpleadoActual = idEmpleado;
-      const anio = 2025;
+      const anio = new Date().getFullYear(); //Año de evaluacion
 
       // Obtener el id de la evaluacion
       this.gthEvaluacionServcie
@@ -2553,7 +2553,7 @@ calcularPromediosColab(): void {
       }
     }
 
-    const anio = 2025;
+    const anio = new Date().getFullYear(); //Año de evaluacion
 
     this.gthEvaluacionServcie
       .MostrarEvaluacionesPorEmpleadoyAnio(idColaborador, anio)

@@ -17,7 +17,9 @@ export class HomeComponent implements OnInit {
   logoPlaceholder: string = 'assets/img/logo1.png'; // Imagen de respaldo
 
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) { 
+    console.log('🏠 HomeComponent cargado');
+  }
 
   ngOnInit(): void {
     // Home page initialization logic here

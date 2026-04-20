@@ -259,9 +259,9 @@ timelineSteps = [
                             fUNCIONES PARA CARGAR INFO DE COLABORADOR
 =========================================================================================*/
 
-cargarDatosEmpleado(): void {
+  cargarDatosEmpleado(): void {
 
-  // //console.log('Iniciando proceso de carga de informacion');
+    // //console.log('Iniciando proceso de carga de informacion');
     // Obtener ID del empleado del sessionStorage
     // const idEmpleado = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession(); //cambios finales
    
@@ -446,7 +446,7 @@ obtenerFaseActual(): void {
 
   // this.idEmpleadoActual = 2; // pruebas 
   this.idEmpleadoActual = idEmpleado;
-  const anio = 2025;
+  const anio = new Date().getFullYear(); //Año de evaluacion
 
   this.gthEvaluacionServcie
     .MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual, anio)
@@ -497,7 +497,7 @@ obtenerFaseActual(): void {
 
     if (idEmpleado) {
       this.idEmpleadoActual = idEmpleado;
-      const anio = 2025;
+      const anio = new Date().getFullYear(); //Año de evaluacion
       
       //console.log('📅 Año a buscar:', anio);
       //console.log('🔍 Llamando a MostrarEvaluacionesPorEmpleadoyAnio...');
@@ -959,7 +959,7 @@ obtenerFaseActual(): void {
     if (fase === 6) {
       //console.log('⏭️ Fase 6 detectada - Solo actualizando evaluación a fase 2');
       
-      const anio = 2025;
+      const anio = new Date().getFullYear();
       
       this.gthEvaluacionServcie
         .MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual!, anio)
@@ -1044,7 +1044,7 @@ obtenerFaseActual(): void {
     }
 
     // Si todas las validaciones pasan, continuar con el guardado...
-    const anio = 2025;
+    const anio = new Date().getFullYear();
 
     this.gthEvaluacionServcie
     .MostrarEvaluacionesPorEmpleadoyAnio(this.idEmpleadoActual, anio)

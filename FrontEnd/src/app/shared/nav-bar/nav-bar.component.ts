@@ -1,9 +1,12 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { MenuService } from 'src/app/services/menu.service';
+import { environment } from '../../../environments/environment';
 import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { iGTHEmpleado } from '../../interface/igth-empleado';
+
 
 @Component({
   selector: 'app-nav-bar',
@@ -16,20 +19,22 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
   public menu: any = [];
   public Imagen: string = ""; 
   
-  // ✅ CAMBIO: Ruta corregida sin espacios
-  IconoPerfil: string = 'assets/img/iconos/mycollection/png/028-hombre-2.png';
-  iconoPerfilPlaceholder: string = 'assets/img/iconos/mycollection/png/001-empleado-de-oficina.png';
+  // Rutas de imágenes
+  IconoPerfil: string = environment.urlImagenes + 'assets/img/iconos/iconos mycollection/png/028-hombre-2.png';
+  iconoPerfilPlaceholder: string = environment.urlImagenes + 'assets/img/iconos/iconos mycollection/png/001-empleado-de-oficina.png';
   
-  // ✅ NUEVO: Subject para manejar unsubscribe
+  // Subject para manejar unsubscribe
   private destroy$ = new Subject<void>();
   
-  // ✅ NUEVO: Flag para evitar múltiples cargas simultáneas
+  // Flags para evitar múltiples cargas
   private cargandoFoto: boolean = false;
-  
-  // ✅ NUEVO: Flag para verificar si ya se intentó cargar la foto
   private fotoIntentoCarga: boolean = false;
 
   dropdownAbierto = false;
+
+  IdEmpleadoActalSession: number | null = null;
+  fotoPerfilUrl: string | null = '';
+  nombreCompletoDisplayVar: string = ''; 
 
   constructor(
     private router: Router, 
@@ -41,9 +46,7 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
     // Inicializar con imagen por defecto
     this.Imagen = this.IconoPerfil;
     
-    // ════════════════════════════════════════════════════════════════════
-    // 🎨 CONFIGURACIÓN INICIAL DE PÁGINA
-    // ════════════════════════════════════════════════════════════════════
+    // Configuración inicial de página
     this.setPageDataAttribute();
     
     // Escuchar cambios de ruta
@@ -54,9 +57,7 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setPageDataAttribute();
     });
     
-    // ════════════════════════════════════════════════════════════════════
-    // 📸 ESCUCHAR CAMBIOS EN LA FOTO DE PERFIL (UNA SOLA VEZ)
-    // ════════════════════════════════════════════════════════════════════
+    // Escuchar cambios en la foto de perfil
     this.gthEmpleadoService.fotoPerfilCambiada$
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -69,9 +70,7 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     
-    // ════════════════════════════════════════════════════════════════════
-    // 🔐 OBTENER Y PROCESAR TOKEN
-    // ════════════════════════════════════════════════════════════════════
+    // Obtener y procesar token
     const token = sessionStorage.getItem('token');
     
     if (!token) {
@@ -92,24 +91,25 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
       
       this.usuario = tokenData['NombresApellidos'] || email || 'Usuario';
       
-      // ════════════════════════════════════════════════════════════════════
-      // 📸 CARGAR FOTO DE PERFIL (UNA SOLA VEZ)
-      // ════════════════════════════════════════════════════════════════════
+      //Ponemos el ID del empleado en esta variable para buscar su informacion despues
+      this.IdEmpleadoActalSession = idEmpleado;
+
+      // Cargar foto de perfil
       const idFromService = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
       const idParaCargar = idFromService || idEmpleado;
       
-      // ✅ CAMBIO: Solo cargar si no se ha intentado antes
       if (idParaCargar && !this.fotoIntentoCarga) {
         this.cargarFotoPerfilEmpleado(idParaCargar);
       }
       
-      // ════════════════════════════════════════════════════════════════════
-      // 📋 CARGAR MENÚ DEL EMPLEADO
-      // ════════════════════════════════════════════════════════════════════
+      // Cargar menú del empleado
       if (!idEmpleado) {
         console.error('NavBar: No se pudo obtener IdEmpleado del token');
         return;
       }
+
+      this.cargarDatosEmpleado();
+      console.log("id del nav bar: ", idEmpleado);
       
       this.menuService.cargarMenu(idEmpleado)
         .pipe(takeUntil(this.destroy$))
@@ -121,11 +121,15 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
             console.error('NavBar: Error al cargar menú:', err);
           }
         });
+
+      
       
     } catch (error) {
       console.error('NavBar: Error al procesar token:', error);
     }
   }
+
+  empleado: iGTHEmpleado | null = null;
 
   private setPageDataAttribute(): void {
     const currentUrl = this.router.url;
@@ -147,7 +151,7 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * ✅ OPTIMIZADO: Carga la foto de perfil solo una vez
+   * Carga la foto de perfil del empleado desde el backend
    */
   cargarFotoPerfilEmpleado(idEmpleado: number): void {
     // Evitar múltiples llamadas simultáneas
@@ -188,16 +192,117 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+
+  
+  construirUrlFoto(fotoPerfilUrl: string, sexo: string): string {
+    // Normalizar sexo
+    const sexoNormalizado = (sexo || '').toString().trim().toLowerCase();
+  
+    const defaultFemenino = 'assets/img/iconos/iconos mycollection/png/010-mujer-2.png';
+    const defaultMasculino = 'assets/img/iconos/iconos mycollection/png/028-hombre-2.png';
+    const defaultGenerico = 'assets/img/iconos/iconos mycollection/png/026-hombre-de-traje-y-corbata.png';
+  
+    // Determinar fallback según sexo
+    const fallback = sexoNormalizado === 'femenino' || sexoNormalizado === 'f'
+      ? defaultFemenino
+      : sexoNormalizado === 'masculino' || sexoNormalizado === 'm'
+        ? defaultMasculino
+        : defaultGenerico;
+  
+    // Si no hay URL, usar fallback directamente
+    if (!fotoPerfilUrl) return fallback;
+  
+    // Si es una URL completa (http/https), devolverla tal cual
+    if (fotoPerfilUrl.startsWith('http://') || fotoPerfilUrl.startsWith('https://')) {
+      return fotoPerfilUrl;
+    }
+  
+    // Si es una ruta relativa, construir con el backend
+    const baseUrl = environment.urlbackend.endsWith('/')
+      ? environment.urlImagenes.slice(0, -1)
+      : environment.urlImagenes;
+  
+    if (fotoPerfilUrl.startsWith('/')) {
+      return `${baseUrl}${fotoPerfilUrl}`;
+    }
+  
+    return `${baseUrl}/${fotoPerfilUrl}`;
+  }  
+
   /**
-   * ✅ NUEVO: Maneja errores de carga de imagen en el HTML
+   * Maneja errores de carga de imagen en el HTML
    */
-  onImagenPerfilError(event: any): void {
-    console.warn('NavBar: Error al cargar imagen, usando fallback');
-    // Evitar bucle infinito de errores
-    if (event.target.src !== this.iconoPerfilPlaceholder) {
-      event.target.src = this.iconoPerfilPlaceholder;
+  onImageError(event: Event, sexo: string) {
+    const img = event.target as HTMLImageElement;
+    img.src = this.construirUrlFoto('', sexo); // 👉 fuerza a usar fallback según sexo
+  }
+
+
+  cargarDatosEmpleado(): void {
+
+    const idEmpleado = this.IdEmpleadoActalSession;
+    
+
+    console.log('[Perfil] ID empleado desde sesión:', idEmpleado);
+
+    if (idEmpleado) {
+      this.buscarEmpleadoPorId(idEmpleado);
+    } else {
+      console.warn('[Perfil] No se encontró ID de empleado en sesión');
     }
   }
+
+  
+  /**
+   * Busca un empleado específico por ID
+   * @param idEmpleado - ID del empleado a buscar
+   */
+  buscarEmpleadoPorId(idEmpleado: number): void {
+
+  console.log('[Perfil] Buscando empleado por ID:', idEmpleado);
+
+  this.gthEmpleadoService.MostrarConParametros(1, idEmpleado).subscribe({
+    next: (empleado: any) => {
+
+      console.log('[Perfil] Respuesta completa del backend:', empleado);
+
+      const datosEmpleado = empleado?.$values?.[0];
+
+      console.log('[Perfil] Primer registro de empleado:', datosEmpleado);
+
+      if (datosEmpleado) {
+        this.empleado = datosEmpleado;
+        this.mapearDatosParaMostrar();
+      } else {
+        console.warn('[Perfil] No se encontró empleado con ese ID');
+      }
+    },
+    error: (error) => {
+      console.error('[Perfil] Error al buscar empleado:', error);
+    }
+  });
+}
+
+
+  private mapearDatosParaMostrar(): void {
+    if (this.empleado) {
+      const id = this.empleado.idEmpleado.toString();
+      const nombre = this.empleado.nombre ?? '';
+      const apellido = this.empleado.apellido ?? '';
+      const sexo = this.empleado.sexo;
+
+      this.nombreCompletoDisplayVar = `${nombre} ${apellido}`.trim();
+
+      // ✅ AQUÍ se asigna la imagen
+      this.fotoPerfilUrl = this.construirUrlFoto(id, sexo);
+
+      console.log('[Perfil] URL final de la foto:', this.fotoPerfilUrl);
+
+    }
+  }
+
+
+
 
   logout(): void {
     this.dropdownAbierto = false;
@@ -269,10 +374,8 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // ✅ IMPORTANTE: Limpiar subscripciones
     this.destroy$.next();
     this.destroy$.complete();
     document.removeEventListener('click', this.handleClickOutside);
   }
 }
-`

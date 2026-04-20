@@ -70,18 +70,31 @@
     <li class="nav-links">
       <div class="profile-dropdown" [class.show]="dropdownAbierto">
         <!-- ✅ CAMBIO: Agregar manejo de error -->
-        <img [src]="Imagen" 
-             alt="Perfil" 
-             class="profile-avatar"
-             (click)="toggleDropdown()"
-             (error)="onImagenPerfilError($event)">
+        <!-- <img [src]="Imagen || IconoPerfil" 
+          alt="Perfil" 
+          class="profile-avatar"
+          (click)="toggleDropdown()"
+          (error)="onImagenPerfilError($event)"> -->
+        
+          <img [src]="construirUrlFoto(this.empleado?.fotoPerfilUrl || '', this.empleado?.sexo || '')" 
+            class="profile-avatar" id="employeeImage"
+            [alt]="this.empleado?.nombre" 
+            (click)="toggleDropdown()" 
+            (error)="onImageError($event, this.empleado?.sexo || 'M')">
+
         
         <div class="dropdown-menu" id="profileMenu">
           <div class="dropdown-divider"></div>
+
+          <!-- Nombre del usuario -->
+          <label class="label-nombre-navbar">{{ nombreCompletoDisplayVar || 'Usuario' }}</label>
+
           <a href="#" (click)="logout(); $event.preventDefault()">
-            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            <i class="fas fa-sign-out-alt"></i>
+            Cerrar Sesión
           </a>
-        </div> 
+        </div>
+
       </div>
     </li>
   </ul>
