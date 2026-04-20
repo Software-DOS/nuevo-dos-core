@@ -2,9 +2,44 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+
+
+// environment.ts (desarrollo)
+// export const environment = {
+//   production: false,
+//   urlbackend: 'http://localhost:51888/',
+//   urlImagenes: 'http://localhost:58000/WebAppConexion'  // Nueva propiedad
+// };
+
+// environment.prod.ts (producción)
+// export const environment = {
+//   production: true,
+//   urlbackend: 'https://portaldeservicios.dos.com.ec/talentoHumano/assets/img/',  // Tu API
+//   urlImagenes: 'https://portaldeservicios.dos.com.ec/WebAppConexion/imagen/usuarios/'  // Imágenes
+// };
+
+
+
+
+// DESARROLLO
+// export const environment = {
+//   production: false,
+//   //urlApis: '/',
+//   urlApis: 'http://localhost:51888/',
+//   urlbackend: 'http://localhost:51888/',
+//   urlImagenes: 'http://localhost:58000/'  // Nueva propiedad
+//   //urlImagenes: 'http://localhost:51888/WebAppConexion/imagen/usuarios/'
+//   // urlImagenes: 'https://portaldeservicios.dos.com.ec/WebAppConexion/imagen/usuarios/'  // Imágenes
+// };
+
+// PRODUCCION
+// environment.prod.ts (producción)
 export const environment = {
-  production: false,
-  urlbackend:'http://localhost:51888/'
+  production: true,
+  urlApis: '/',
+  //urlApis: 'https://portaldeservicios.dos.com.ec/TalentoHumanoApis/',
+  urlbackend: 'https://portaldeservicios.dos.com.ec/TalentoHumanoApis/',  // Tu API
+  urlImagenes: 'https://portaldeservicios.dos.com.ec/WebAppConexion/imagen/usuarios/'  // Imágenes
 };
 
 /*

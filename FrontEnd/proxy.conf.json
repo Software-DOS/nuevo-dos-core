@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://portaldeservicios.dos.com.ec",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

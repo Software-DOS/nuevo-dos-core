@@ -37,6 +37,7 @@ namespace Conexion.AccesoDatos.Repository.Administracion
             cmd.Parameters.Add(new SqlParameter("@DEP_FECHANACIMIENTO", dependiente.DepFechaNacimiento ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@DEP_DISCAPACIDAD", dependiente.DepDiscapacidad ?? (object)DBNull.Value));
             cmd.Parameters.Add(new SqlParameter("@DEP_DOCUMENTOURL", dependiente.DepDocumentoUrl ?? (object)DBNull.Value));
+            cmd.Parameters.Add(new SqlParameter("@DEP_RELACION", dependiente.DepRelacion ?? (object)DBNull.Value));
 
             await sql.OpenAsync();
             var response = new List<Generica>();
@@ -80,13 +81,12 @@ namespace Conexion.AccesoDatos.Repository.Administracion
                                           : 0,
                     CedulaEmpleado = reader["CEDULA_EMPLEADO"]?.ToString(),
                     DepNombre = reader["DEP_NOMBRE"]?.ToString(),
-                    DepFechaNacimiento = reader["DEP_FECHANACIMIENTO"] != DBNull.Value
-                                               ? Convert.ToDateTime(reader["DEP_FECHANACIMIENTO"])
-                                               : (DateTime?)null,
+                    DepFechaNacimiento = reader["DEP_FECHANACIMIENTO"]?.ToString(),
                     DepDiscapacidad = reader["DEP_DISCAPACIDAD"] != DBNull.Value
                                         ? Convert.ToBoolean(reader["DEP_DISCAPACIDAD"])
                                         : (bool?)null,
-                    DepDocumentoUrl = reader["DEP_DOCUMENTOURL"]?.ToString()
+                    DepDocumentoUrl = reader["DEP_DOCUMENTOURL"]?.ToString(),
+                    DepRelacion = reader["DEP_RELACION"]?.ToString()
                 });
             }
             return list;

@@ -21,18 +21,20 @@ namespace WebAppConexion.Controllers
 
         /// <summary>
         /// Devuelve la lista de información profesional según los filtros proporcionados.
-        /// 1 = IdInfoProf, 2 = IdEmpleado, 0 = Todos.
+        /// 1 = IdInfoProf, 2 = IdEmpleado, 3 = CedulaEmpleado, 0 = Todos.
         /// </summary>
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<GTHInformacionProfesionalViewModel>>> Mostrar(
             [FromQuery] int tipo,
             [FromQuery] long? idInfoProf = null,
-            [FromQuery] long? idEmpleado = null)
+            [FromQuery] long? idEmpleado = null,
+            [FromQuery] string cedulaEmpleado = null)
         {
             var entidades = await _repository.Mostrar(
                 tipo,
                 idInfoProf.HasValue ? (int?)idInfoProf.Value : null,
-                idEmpleado.HasValue ? (int?)idEmpleado.Value : null
+                idEmpleado.HasValue ? (int?)idEmpleado.Value : null,
+                cedulaEmpleado
             );
 
             var modelos = entidades.Select(e => new GTHInformacionProfesionalViewModel
@@ -40,6 +42,7 @@ namespace WebAppConexion.Controllers
                 Tipo = tipo,
                 IdInfoProf = e.IdInfoProf,
                 IdEmpleado = e.IdEmpleado,
+                CedulaEmpleado = e.CedulaEmpleado,
                 DescripcionProfesional = e.DescripcionProfesional,
                 PerfilLinkedIn = e.PerfilLinkedIn,
                 FechaCreacion = e.FechaCreacion
@@ -60,12 +63,13 @@ namespace WebAppConexion.Controllers
             {
                 IdInfoProf = model.IdInfoProf,
                 IdEmpleado = model.IdEmpleado,
+                CedulaEmpleado = model.CedulaEmpleado,
                 DescripcionProfesional = model.DescripcionProfesional,
                 PerfilLinkedIn = model.PerfilLinkedIn,
                 FechaCreacion = model.FechaCreacion
             };
 
-            var resultado = await _repository.Gestionar(model.Tipo, entidad);
+            var resultado = await _repository.Gestionar(model.Tipo, entidad, model.CedulaEmpleado);
             return Ok(resultado.Select(r => new Generica
             {
                 valor1 = r.valor1,

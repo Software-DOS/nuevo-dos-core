@@ -5,8 +5,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { ListaEmpleadosComponent } from './lista-empleados.component';
 
 const routes: Routes = [
-  { path: '', component: ListaEmpleadosComponent}
+   { path: '', component: ListaEmpleadosComponent}
 ];
+
+// const routes: Routes = [
+//   { path: ':id', component: ListaEmpleadosComponent }
+// ];
+
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

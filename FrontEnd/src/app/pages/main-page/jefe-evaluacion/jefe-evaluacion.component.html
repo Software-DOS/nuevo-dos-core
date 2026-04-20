@@ -1,0 +1,1463 @@
+<main class="">
+  <!-- Tarjeta del Empleado -->
+  <div class="employe-card">
+    <h1 style="color: lightslategray">Evaluación de Desempeño 2025</h1>
+    <div class="employee-card2">
+      <!-- <img [src]="employee.avatar" alt="Foto del Empleado" class="employee-image"> -->
+      <div class="employee-image-container">
+        <img [src]="
+            construirUrlFoto(
+              this.empleado?.fotoPerfilUrl || '',
+              this.empleado?.sexo || ''
+            )
+          " class="employee-image" id="employeeImage" [alt]="this.empleado?.nombre"
+          (error)="onImageError($event, this.empleado?.sexo || 'M')" />
+      </div>
+      <div class="employee-personal-info">
+        <div class="info-field">
+          <i class="info-icon-titulo fas fa-user"></i>
+          <h4 class="info-label">
+            {{ nombreCompletoDisplay || "Nombre Completo" }}
+          </h4>
+        </div>
+
+        <div class="info-field">
+          <i class="info-icon far fa-envelope"></i>
+          <p class="info-value">
+            {{ correoElectronicoDisplay || "Correo Electrónico" }}
+          </p>
+        </div>
+
+        <div class="info-field">
+          <i class="info-icon far fa-gem"></i>
+          <p class="info-value">{{ posicionDisplay || "Posición" }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-card">
+    <div class="category-index2">
+      <ul>
+        <li>
+          <div class="category-link2" [class.selected]="activeSection === 'objetivo'" (click)="showSection('objetivo')"
+            (keydown)="onStepKeyDown($event, 'objetivo')">
+            Objetivo de Area
+          </div>
+        </li>
+        <!-- <li>
+          <div class="category-link2" [class.selected]="activeSection === 'hoja-ruta'"
+            (click)="showSection('hoja-ruta')">
+            Hoja de Ruta
+          </div>
+        </li> -->
+        <!-- <li>
+          <div
+            class="category-link2"
+            [class.selected]="activeSection === 'info-colaborador'"
+            (click)="showSection('info-colaborador')"
+          >
+            Información del Colaborador
+          </div>
+        </li>
+        <li>
+          <div
+            class="category-link2"
+            [class.selected]="activeSection === 'fechas-revision'"
+            (click)="showSection('fechas-revision')"
+          >
+            Fechas de Revisión
+          </div>
+        </li> -->
+        <li>
+          <div class="category-link2" [class.selected]="activeSection === 'EvaluacionColab'"
+            (click)="showSection('EvaluacionColab')">
+            Evaluación de Colaboradores
+          </div>
+        </li>
+
+      </ul>
+    </div>
+
+    <div class="content-area">
+      <!-- Objetivo de Area -->
+      <div id="objetivo" class="content-section" [class.active]="activeSection === 'objetivo'">
+        <!-- <h2>Objetivo de area</h2> -->
+        <div class="evaluation-form">
+          <h4 class="titulos-pequeños">Objetivo de Área</h4>
+          <!-- Objetivo Área -->
+          <div class="form-section">
+            <div class="section-title" style="display: flex; gap: 1rem">
+              <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena"
+                class="icono-normal" />
+              Objetivo Área - Jefe de Área
+            </div>
+            <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
+              <textarea [(ngModel)]="objetivoTexto" style="padding: 0.6rem; width: 100%"
+                placeholder="Ingrese aquí el objetivo de su área" rows="4">
+              </textarea>
+            </div>
+          </div>
+
+          <!-- Botones de Acción -->
+          <div style=" display: flex; justify-content: flex-end; margin-left: 2rem; margin-top: 1rem;">
+            <button class="save-btn" (click)="guardarObjetivoArea()">
+              Guardar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- -----------      --------------     Hoja de Ruta     -------------             ------------ -->
+
+       <!-- Hoja de Ruta -->
+    <div id="hoja-ruta" class="content-section" [class.active]="activeSection === 'hoja-ruta'">
+      <h2>Hoja de Ruta de Formulario</h2>
+      <!-- Timeline con eventos de click -->
+      <div class="timeline">
+        <div *ngFor="let step of timelineSteps" 
+          class="timeline-step"
+          [class.completed]="step.completed"
+          [class.active]="step.isActive"          
+          tabindex="0"> 
+          <!-- (click)="onStepClick(step)" -->
+
+          <div class="circle">
+            <!-- Si el step está completado y NO es el activo, mostrar check -->
+            <i *ngIf="step.completed && !step.isActive && step.icon" [class]="step.icon"></i>
+
+            <!-- Si el step está activo, mostrar el número -->
+            <span *ngIf="step.isActive">{{ step.number }}</span>
+
+            <!-- Si el step no está completado ni activo, mostrar el número -->
+            <span *ngIf="!step.completed && !step.isActive">{{ step.number }}</span>
+          </div>
+          
+          <div class="label">
+            <!-- Icono PNG a la izquierda del texto -->
+            <img [src]="step.pngIcon" alt="icono" class="step-icon">
+            <span class="step-text">{{ step.label }}</span>
+          </div>
+        </div>
+      </div>  
+
+    </div>     
+
+                                        <!--       ----------------- FORMULARIOS ---------------------------      -->
+
+    <!-- Formulario Captura de Resultados  1 -->
+    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 0">
+      <h4 class="titulos-pequeños">Captura de Resultados</h4>
+
+      <!-- Objetivo Área -->
+      <div class="form-section">
+        <div class="section-title" style="display: flex; gap: 1rem">
+          <img
+            src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png"
+            alt="reloj de arena"
+            class="icono-normal"
+          />
+          Objetivo de Área
+        </div>
+        <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
+          <span class="">{{ objetivoAreaDisplay || "Objetivo de Área" }}
+          </span >          
+        </div>
+      </div>
+
+      <!-- Objetivos -->
+      <div class="form-section" style="margin-right: 0;">
+        <div style="display: flex; justify-content: space-between; margin-left: 1rem;">
+          <div class="section-title" style="color: #064eb4">
+            <div class="" style="display: flex; gap: 0.2rem">
+              <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor"/>
+              Objetivos:
+            </div>
+          </div>
+          <div style="align-content: center">
+            <!-- <span class="titulos-pequeños-columna" style="margin-right: 4.7rem">Valor</span> -->
+            <span class="titulos-pequeños-columna" style="margin-right: 2.5rem">Fecha Registro</span>
+          </div>
+        </div>
+
+        <!-- FASE 0: Crear objetivos (Valor + Fecha límite) -->
+        <div class="form-section" *ngIf="faseEvaluacion === 0">
+          <div *ngFor="let objetivo of objetivosIndividuales; let i = index" class="form-row">
+            <span class="item-number">{{ i + 1 }}.</span>
+            <div [class]="i === 0 ? 'objetivo-container-area' : 'objetivo-container'">
+              <div class="input-wrapper-mobile">
+                <label class="label-mobile">Objetivo</label>
+                <input type="text" 
+                      class="text-input text-input-objetivo"
+                      [placeholder]="i === 0 ? 'Ingrese aquí el objetivo relacionado al Área' : 'Ingrese el objetivo'"
+                      [(ngModel)]="objetivo.titulo">
+              </div>
+              
+              <div class="input-wrapper-mobile">
+                <label class="label-mobile">Fecha Registro</label>
+                <input type="date" class="date-input date-input-objetivo-rev"                      
+                      [(ngModel)]="fechaRegObj"
+                      [disabled]="true">
+              </div>
+            </div>          
+          </div>
+        </div>
+
+        <!-- <div class="percentage-display">60%</div> -->
+      </div>
+
+      <!-- Competencias -->
+      <div class="form-section" style="margin-top: 3rem; margin-left: 2rem">
+        <div class="section-title purple">
+          <div class="" style="display: flex; gap: 0.2rem">
+            <img
+              src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png"
+              alt="icono obj"
+              class="icono-menor"
+            />
+            Competencias:
+          </div>
+        </div>
+
+        <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row" style="display: flex; gap: 10px;">  
+          <span class="item-number" style="flex-shrink: 0;">{{ i + 1 }}.</span>
+          
+          <div class="competencia-container">
+            <div style="flex: 1; min-width: 0;">
+              <div class="competencia-header">
+                <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
+                <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
+              </div>
+              <div class="competencia-body">
+                <p style="margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;">
+                  <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
+                </p>
+              </div>
+            </div>            
+            
+          </div>
+        </div>
+
+        <!-- <div class="percentage-display">40%</div> -->
+      </div>
+      <!-- Total -->  
+       
+      <div style="text-align: center;">
+        <button class="submit-btn" style="margin: 1rem auto 2rem auto" (click)="enviarAvance()">
+          Enviar
+        </button>
+      </div>
+      <div style="clear: both;"></div>
+      
+    </div>
+    <!-- fin Captura de Resultados -->
+
+
+    <!-- Formulario revisado  2 -->
+    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 6">
+      <h4 class="titulos-pequeños">Revisión Inicial</h4>
+        <!-- Objetivo Área -->
+        <div class="form-section">          
+          <div class="section-title" style="display: flex; gap: 1rem">
+            <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena" class="icono-normal">
+            Objetivo Área
+          </div>
+          <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
+            <span class="">{{ objetivoAreaDisplay || "Objetivo de Área" }}</span >          
+          </div>
+        </div>
+
+        <!-- Objetivos -->
+        <div class="form-section" style="margin-right: 0;" >
+          <div style="display:flex; justify-content: space-between; margin-left: 1rem;" >
+            <div class="section-title" style="color:#064eb4">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor">
+                  Objetivos: 
+              </div>                
+            </div>
+            <div style="align-content: center;">
+              <!-- <span class="titulos-pequeños-columna" style="margin-right: 3.2rem;">Valor</span> -->
+              <span class="titulos-pequeños-columna" style="margin-right: 2.5rem;">Peso</span>
+              <!-- <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha Registrada</span> -->
+            </div>              
+          </div>
+    
+          <div class="form-section" *ngIf="faseEvaluacion === 6">
+            <div *ngFor="let objetivo of objetivosIndividuales; let i = index" class="form-row">
+            <span class="item-number">{{ i + 1 }}.</span>
+            <div [class]="i === 0 ? 'objetivo-container-area' : 'objetivo-container'">
+              <div class="input-wrapper-mobile">
+                <label class="label-mobile">Objetivo</label>
+                <input type="text" 
+                      class="text-input text-input-objetivo"
+                      [placeholder]="i === 0 ? 'Ingrese aquí el objetivo relacionado al Área' : 'Ingrese el objetivo'"
+                      [(ngModel)]="objetivo.titulo"
+                      [disabled]="true">
+              </div>
+                
+                <!-- <div class="input-wrapper-mobile">
+                  <label class="label-mobile">Valor</label>
+                  <input type="number" class="number-input number-input-objetivo" 
+                        min="0" max="100"
+                        [(ngModel)]="objetivo.valoracionEmpleado">
+                </div> -->
+                
+                <div class="input-wrapper-mobile">
+                  <label class="label-mobile">Revisado</label>
+                  <input type="number" class="number-input number-input-objetivo" 
+                        min="0" max="100"
+                        [placeholder]="i === 0 ? '22%' : '12%'"
+                        [disabled]="true">
+                </div>
+                
+                <!-- <div class="input-wrapper-mobile">
+                  <label class="label-mobile">Fecha Registro</label>
+                  <input type="date" class="date-input date-input-objetivo-rev"
+                        [(ngModel)]="fechaRegObj"
+                        [disabled]="true">
+                </div> -->
+              </div>
+            </div>
+          </div>
+            <!-- <div class="percentage-display">60%</div> -->
+        </div>
+
+        <!-- Competencias -->
+        <div class="form-section" style="margin-top: 3rem; margin-left: 2rem">
+            <div class="section-title purple">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj" class="icono-menor">
+                Competencias: 
+              </div>
+            </div>
+
+            <!-- Mostrar estado de carga -->
+            <!-- <div *ngIf="loadingCompetencies" class="form-row">
+              <span class="text-input" style="background: #f0f0f0; border-color: #ccc; color: #666;">
+                Cargando competencias...
+              </span>
+            </div> -->
+
+            <!-- Mostrar competencias cargadas desde el backend -->            
+          
+          <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row" style="display: flex; gap: 10px;">  
+            <span class="item-number" style="flex-shrink: 0;">{{ i + 1 }}.</span>
+            
+            <div class="competencia-container">
+              <div style="flex: 1; min-width: 0;">
+                <div class="competencia-header">
+                  <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
+                  <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
+                </div>
+                <div class="competencia-body">
+                  <p style="margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;">
+                    <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Parte derecha: Inputs -->
+              <div style="display: flex;">
+                <!-- <div style="text-align: center;">
+                  <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Valor</label>
+                  <input type="number" class="number-input number-input-competencia" 
+                    min="0" max="100"
+                    [(ngModel)]="competencia.ValoracionEmpleado"
+                    (ngModelChange)="actualizarValorCompetenciaFija(i, $event)"
+                    placeholder="/100"
+                  />
+                </div> -->
+
+                <div style="text-align: center; margin-right: 0; margin-left: 10px;">
+                  <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Peso</label>
+                  <input type="number" class="number-input number-input-competencia" 
+                      min="0" max="100" 
+                      [placeholder]="'7.5%'"
+                      [disabled]="true">
+                </div>              
+                
+                <!-- <div style="margin-right: 0; margin-left: 10px; text-align: center;">
+                  <label style="display: block; font-size: 12px; color:  #707070; margin-bottom: 4px;">Fecha</label>
+                  <input
+                    type="date"
+                    class="date-input date-input-competencia"
+                    [(ngModel)]="competencia.FechaLimite"
+                    [disabled]="true"
+                  />
+                </div> -->
+              </div>
+            </div>
+          </div>
+              
+            <!-- <div class="percentage-display">40%</div> -->
+        </div>
+
+        <!-- Total -->
+        <!-- <div class="total-percentage">100%</div> -->
+          
+        <!-- Botón Enviar -->
+        <!-- <div>
+          <button class="submit-btn" style="margin-left: 2rem;">Enviar</button>
+          <button class="revision-btn">Revisar</button> -->
+        <!-- </div> -->
+        
+        <div style="text-align: center;">
+          <button class="submit-btn" style="margin: 1rem auto 2rem auto" (click)="enviarAvance()">
+            Continuar
+          </button>
+        </div>
+        <div style="clear: both;"></div>
+
+    </div><!-- fin Captura de datos -->
+
+
+    <!-- Formulario: Evaluación Intermedia  3 -->
+    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 2">
+      <h4 class="titulos-pequeños">Evaluación Intermedia</h4>
+        <!-- Objetivo Área -->
+        <div class="form-section">          
+          <div class="section-title" style="display:flex; gap:1rem;">
+            <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena" class="icono-normal">
+            Objetivo Área
+          </div>
+          <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
+            <span class="">{{ objetivoAreaDisplay || "Objetivo de Área" }}</span >          
+          </div>
+        </div>
+
+        <!-- Objetivos -->
+        <div class="form-section" style="margin-right: 0;">
+          <div style="display:flex; justify-content: space-between; margin-left: 1rem;">
+            <div class="section-title" style="color:#064eb4">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor">
+                Objetivos:
+              </div>
+            </div>
+            <div style="align-content: center;">
+              <span class="titulos-pequeños-columna" style="margin-right: 1rem;">Calificación</span>
+              <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha registro</span>
+            </div>
+          </div>
+
+          <!-- FASE 2: Calificación Empleado -->
+          <div class="form-section" *ngIf="faseEvaluacion === 2">
+            <div *ngFor="let objetivo of objetivosIndividuales; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>
+              
+              <!-- ✅ Clase diferente para el primer objetivo (área) -->
+              <div [class]="i === 0 ? 'objetivo-container-area' : 'objetivo-container'">
+                
+                <div class="input-wrapper-mobile">
+                  <label class="label-mobile">Objetivo</label>
+                  <input type="text" 
+                        class="text-input text-input-rev"
+                        [placeholder]="i === 0 ? 'Objetivo del Área' : 'Objetivo Individual'"
+                        [(ngModel)]="objetivo.titulo"
+                        [disabled]="true">
+                </div>
+                
+                <!-- ✅ SELECT con valores 1-4 en lugar de input numérico -->
+                <div class="input-wrapper-mobile">
+                  <label class="label-mobile">Calificación</label>
+                  <select class="number-input number-input-objetivo"
+                          [(ngModel)]="objetivo.calificacionEmpleado">
+                    <option value="" disabled selected>Seleccione</option>
+                    <option [value]="1">1 - Insatisfactorio</option>
+                    <option [value]="2">2 - Necesita Mejorar</option>
+                    <option [value]="3">3 - Satisfactorio</option>
+                    <option [value]="4">4 - Sobresaliente</option>
+                  </select>
+                </div>
+                
+                <!-- <div class="input-wrapper-mobile">
+                  <label class="label-mobile">Fecha Registro</label>
+                  <input type="date" 
+                        class="date-input date-input-rev"
+                        [disabled]="true">
+                </div> -->
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Competencias -->
+        <div class="form-section" style="margin-top: 3rem; margin-left: 2rem">
+          
+          <div class="section-title purple">
+            <div class="" style="display: flex; gap: 0.2rem">
+              <img
+                src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png"
+                alt="icono obj"
+                class="icono-menor"
+              />
+              Competencias:
+            </div>
+          </div>
+
+            <!-- Mostrar estado de carga -->
+            <div *ngIf="loadingCompetencies" class="form-row">
+              <span class="text-input" style="background: #f0f0f0; border-color: #ccc; color: #666;">
+                Cargando competencias...
+              </span>
+            </div>
+
+            <!-- Mostrar competencias cargadas desde el backend -->
+            <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>              
+
+              <div class="competencia-container">
+                <div style="flex: 1; min-width: 0;">
+                  <div class="competencia-header">
+                    <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
+                    <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
+                  </div>
+                  <div class="competencia-body">
+                    <p style="margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;">
+                      <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
+                    </p>
+                  </div>
+                </div> 
+
+                <!-- Parte derecha: Inputs -->
+                <div style="display: flex;">
+                  <div style="text-align: center;">
+                    <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Calificación</label>
+                    
+                    <!-- ✅ SELECT en lugar de input numérico -->
+                    <select class="number-input number-input-competencia"
+                            [(ngModel)]="competencia.CalificacionEmpleado">
+                      <option value="" disabled selected>Seleccione</option>
+                      <option [value]="1">1 - Insatisfactorio</option>
+                      <option [value]="2">2 - Necesita Mejorar</option>
+                      <option [value]="3">3 - Satisfactorio</option>
+                      <option [value]="4">4 - Sobresaliente</option>
+                    </select>
+                  </div>
+                  
+                  <!-- <div style="margin-right: 0; margin-left: 10px; text-align: center;">
+                    <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Fecha registro</label>
+                    <input type="date"
+                          class="date-input date-input-rev"
+                          [disabled]="true">
+                  </div> -->
+                </div>
+              </div>
+            </div>
+
+        </div>
+
+        <!-- Total -->
+        <!-- <div class="total-percentage">100%</div> -->
+          
+        <!-- Botón Enviar -->
+        <div style="text-align: center;">
+          <button class="submit-btn" style="margin: 1rem auto 2rem auto" (click)="enviarAvance()">
+            Enviar
+          </button>
+        </div>
+        <div style="clear: both;"></div>
+        
+    </div>
+
+
+    <!-- Formulario: Retroalimentación  4 -->
+    <div class="evaluation-form" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 5">
+      <h4 class="titulos-pequeños">Retroalimentación</h4>
+        <!-- Objetivo Área -->
+        <div class="form-section">          
+          <div class="section-title" style="display:flex; gap:1rem;">
+            <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena" class="icono-normal">
+            Objetivo Área
+          </div>
+          <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
+            <span class="">{{ objetivoAreaDisplay || "Objetivo de Área" }}</span >          
+          </div>
+        </div>
+
+        
+        <div class="form-section">
+          <div style="display:flex; justify-content: space-between; margin-left: 1rem;" >
+            <div class="section-title" style="color:#064eb4">
+              <div class="" style="display:flex; gap:0.2rem;">
+                <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj" class="icono-menor">
+                  Objetivos: 
+              </div>                
+            </div>
+            <div style="align-content: center;">
+              <span class="titulos-pequeños-columna" style="margin-right: 1rem;"> Mi Calificación</span>
+              <span class="titulos-pequeños-columna" style="margin-right: 0.5rem;">Calificación Jefe</span>
+              <!-- <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha estimada</span> -->
+            </div>              
+          </div>
+          
+          <!-- Objetivos -->
+          <div class="form-section">
+            <div *ngFor="let objetivo of objetivosIndividuales; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>
+              
+              <!-- ✅ Clase diferente para el primer objetivo (área) -->
+              <div [class]="i === 0 ? 'objetivo-container-area' : 'objetivo-container'">
+                <!-- Objetivo como label -->
+                <div style="flex: 1; min-width: 0; margin-right: 1rem;">
+                  <label class="label-mobile" style="margin-bottom: 4px;">Objetivo</label>
+                  <p class="objetivo-solo-texto">{{ objetivo.titulo }}</p>
+                </div>
+                
+                <!-- Calificaciones -->
+                <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
+                  <div class="input-wrapper-mobile">
+                    <label class="label-mobile">Mi Calificación</label>
+                    <input type="text"
+                          class="number-input calificacion-colaborador"
+                          style="width: 90px;"
+                          [value]="getNombreCalificacion(objetivo.calificacionEmpleado)"
+                          readonly>
+                  </div>
+                  
+                  <div class="input-wrapper-mobile">
+                    <label class="label-mobile">Calificación Jefe</label>
+                    <input type="text"
+                          class="number-input calificacion-jefe"
+                          style="width: 90px;"
+                          [value]="getNombreCalificacion(objetivo.calificacionFinal)"
+                          readonly>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            
+          </div>
+          <!-- Competencias -->
+          <div class="form-section" style="margin-top: 3rem;">
+  
+            <div class="section-title purple">
+              <div class="" style="display: flex; gap: 0.2rem">
+                <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png"
+                    alt="icono obj"
+                    class="icono-menor"/>
+                Competencias:
+              </div>
+            </div>
+
+            <!-- Mostrar competencias cargadas desde el backend -->
+            <div *ngFor="let competencia of nivelesCompetencias; let i = index" class="form-row">
+              <span class="item-number">{{ i + 1 }}.</span>
+
+              <div class="competencia-container">
+                <!-- Parte izquierda: Información de competencia -->
+                <div style="flex: 1; min-width: 0; margin-right: 1rem;">
+                  <div class="competencia-header">
+                    <span class="tipo-competencia">{{ competencia.tipoCompetencia }}</span>
+                    <span class="nombre-competencia">{{ competencia.nombreCompetencia }}</span>
+                  </div>
+                  <div class="competencia-body">
+                    <p style="margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;">
+                      <strong>Nivel {{ competencia.nivel }}</strong> - {{ competencia.descripcion }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Parte derecha: Calificaciones -->
+                <div style="display: flex; gap: 0.5rem; flex-shrink: 0; align-items: flex-start;">
+                  <!-- Calificación Colaborador -->
+                  <div style="text-align: center;">
+                    <label style="display: block; font-size: 11px; color: #707070; margin-bottom: 4px;">
+                      Mi Calificación
+                    </label>
+                    <input type="text"
+                          class="number-input calificacion-colaborador"
+                          style="width: 90px;"
+                          [value]="getNombreCalificacion(competencia.CalificacionEmpleado)"
+                          readonly>
+                  </div>
+
+                  <!-- Calificación Jefe -->
+                  <div style="text-align: center;">
+                    <label style="display: block; font-size: 11px; color: #434343; margin-bottom: 4px;">
+                      Calificación Jefe
+                    </label>
+                    <input type="text"
+                          class="number-input calificacion-jefe"
+                          style="width: 90px;"
+                          [value]="getNombreCalificacion(competencia.CalificacionFinal)"
+                          readonly>
+                  </div>
+
+                  
+                  <!-- Fecha (sin cambios) -->
+                  <!-- <div style="margin-right: 0; margin-left: 10px; text-align: center;">
+                    <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Fecha estimada</label>
+                    <input type="date"
+                          class="date-input date-input-rev"
+                          [(ngModel)]="competencia.FechaLimite"
+                          [disabled]="true">
+                  </div> -->
+                  
+                </div>
+              </div>
+            </div>
+            
+          </div>
+
+          <!-- Retroalimentación y Plan de acción -->
+          <div class="form-section">
+
+            <div class="section-title">
+              <div class="" style="display: flex; gap: 0.4rem">
+                <img
+                  src="assets/img/iconos/iconos mycollection/png/042-portapapeles.png"
+                  alt="icono obj"
+                  class="icono-menor"
+                />
+                Retroalimentación:
+              </div>
+            </div>
+              <div class="form-row" style="margin-left: 2rem;" >
+                <textarea class="text-input" rows="4" 
+                          placeholder="Retroalimentación del supervisor sobre el desempeño..."
+                          [(ngModel)]="retroalimentacion"
+                          [disabled]="true">
+                </textarea>
+              </div>
+
+              <div class="section-title " style="margin-top: 2rem;">
+                <div class="" style="display: flex; gap: 0.4rem">
+                  <img
+                    src="assets/img/iconos/iconos mycollection/png/024-objetivo.png"
+                    alt="icono obj"
+                    class="icono-menor"
+                  />
+                  Plan de Acción:
+                </div>
+              </div>
+              <div class="form-row" style="margin-left: 2rem;" >
+                <textarea class="text-input" rows="4" 
+                          placeholder="Plan de acción a llevar a cabo..."
+                          [(ngModel)]="planAccion"
+                          [disabled]="true">
+                </textarea>
+              </div>
+
+          </div>
+
+        </div>
+
+        <!-- Botón Enviar -->
+      <div style="text-align: center;">
+        <button class="submit-btn" style="margin: 1rem auto 2rem auto" (click)="avanzarCierreEvaluacion()">
+          Continuar
+        </button>
+      </div>
+      <div style="clear: both;"></div>
+
+      <!-- <div>
+        <button class="submit-btn" style="margin-right: 1rem" (click)="avanzarCierreEvaluacion()">
+          Continuar
+        </button>
+      </div> -->
+
+    </div>
+
+    
+    <!-- Formulario: Cierre  5 -->
+    <div class="evaluation-form-cierre" *ngIf="activeSection === 'hoja-ruta' && faseEvaluacion === 7">
+  
+  <div class="header">
+    <h2>Resultado de Evaluación de Desempeño</h2>
+    <div class="subtitle">Reporte Semestral 2025</div>
+  </div>
+  <div class="content"></div>
+  
+  <!-- INICIO DEL CÓDIGO DE RESULTADOS -->
+  <div class="cierre"> 
+
+    <div class="grid">
+        <!-- Tarjeta Objetivos -->
+        <div class="card card-objetivos">
+            <div class="card-title">Objetivos</div>
+            <div class="circular-progress">
+                <svg width="140" height="140">
+                    <circle class="bg-circle" cx="70" cy="70" r="50"></circle>
+                    <circle class="progress-circle" cx="70" cy="70" r="50" 
+                            stroke="#3b82f6"
+                            [attr.stroke-dasharray]="314.16" 
+                            [attr.stroke-dashoffset]="calcularDashOffset(promedioObjetivos, 4)"></circle>
+                </svg>
+                <div class="circle-text">{{ promedioObjetivos | number:'1.1-1' }}</div>
+                <div class="circle-subtext">de 4.0</div>
+            </div>
+            <span class="card-badge" [ngClass]="obtenerClaseBadge(promedioObjetivos)">
+              {{ obtenerNivelDesempeno(promedioObjetivos) }}
+            </span>
+        </div>
+        
+        <!-- Tarjeta Competencias -->
+        <div class="card card-competencias">
+            <div class="card-title">Competencias</div>
+            <div class="circular-progress">
+                <svg width="140" height="140">
+                    <circle class="bg-circle" cx="70" cy="70" r="50"></circle>
+                    <circle class="progress-circle" cx="70" cy="70" r="50" 
+                            stroke="#8b5cf6"
+                            [attr.stroke-dasharray]="314.16" 
+                            [attr.stroke-dashoffset]="calcularDashOffset(promedioCompetencias, 4)"></circle>
+                </svg>
+                <div class="circle-text">{{ promedioCompetencias | number:'1.1-1' }}</div>
+                <div class="circle-subtext">de 4.0</div>
+            </div>
+            <span class="card-badge" [ngClass]="obtenerClaseBadge(promedioCompetencias)">
+              {{ obtenerNivelDesempeno(promedioCompetencias) }}
+            </span>
+        </div>
+        
+        <!-- Tarjeta Calificación Final -->
+        <div class="card final-card">
+            <div class="final-header">
+                <span class="final-title">Calificación Final</span>
+                <span class="final-badge" [ngClass]="obtenerClaseBadge(calificacionFinal)">
+                  {{ obtenerNivelDesempeno(calificacionFinal) }}
+                </span>
+            </div>
+            <div class="final-content">
+                <div class="final-score">
+                    {{ calificacionFinal | number:'1.2-2' }} <span class="final-max">/ 4.0</span>
+                </div>
+                <div class="final-bar-container">
+                    <div class="bar-wrapper">
+                        <div class="bar-container">
+                            <div class="bar-fill" 
+                                [style.width.%]="(calificacionFinal / 4) * 100"></div>
+                        </div>
+                    </div>
+                    <div class="bar-label">{{ obtenerDescripcionDesempeno(calificacionFinal) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content"></div>
+
+    <!-- Retroalimentación -->
+    <div class="cierre-seccion">
+      <div class="cierre-header" style="display: flex; gap: 0.4rem">
+            <img
+              src="assets/img/iconos/iconos mycollection/png/042-portapapeles.png"
+              alt="icono obj"
+              class="icono-menor"
+            />
+            <h3>Retroalimentación:</h3>
+          </div>
+      <div class="cierre-texto" [innerHTML]="retroalimentacion || 'Sin retroalimentación'"></div>
+    </div>
+
+    <!-- Plan de Acción -->
+    <div class="cierre-seccion">
+      <div class="cierre-header" style="display: flex; gap: 0.4rem">
+          <img
+            src="assets/img/iconos/iconos mycollection/png/024-objetivo.png"
+            alt="icono obj"
+            class="icono-menor"
+          />
+          <h3>Plan de Acción:</h3>
+      </div>
+      <div class="cierre-texto" [innerHTML]="planAccion || 'Sin plan de acción'"></div>
+    </div>
+  </div>
+  
+</div>
+
+      <!-- -----------      --------------          -------------             ------------ -->
+
+      <!-- *************************************************************
+                          Evaluación de Colaboradores                        
+          *************************************************************-->
+      <!-- Timesteps -->
+      <div id="EvaluacionColab" class="content-section" [class.active]="activeSection === 'EvaluacionColab'">
+
+        <h2>Evaluación de Colaboradores</h2>
+
+
+        <!-- LISTA DE EVALUACIONES DE EMPLEADOS -->
+        <div>
+          <!-- Tabla a la derecha --> <!-- Console log BORRAR -->
+          <div class="cap-table">
+            <div class="cap-header">
+              <div class="empleado-row">Empleado</div>
+              <!-- <div>Area</div> -->
+              <div>Fecha Creación</div>
+              <div>Calificado</div>
+              <div>ESTADO</div>
+            </div>
+            <div class="cap-row" *ngFor="let empleado of empleadosFiltrados"
+              (click)="navigateToEvaluacion(empleado.id)">
+
+              <div class="empleado-info-column">
+                <div>
+                  <img [src]="construirUrlFoto(empleado.photo || '', empleado.sexo || '')" class="employee-photo"
+                    [alt]="empleado.nombre" (error)="onImageError($event, empleado.sexo)">
+                </div>
+                <span>{{ empleado.nombre }}</span>
+              </div>
+              <!-- <div [ngClass]="getAreaClass(empleado.area)" class="area-badge"> {{ empleado.area.toUpperCase() }}</div> -->
+              <!-- <div>{{ empleado.departamento }}</div> -->
+              <div>{{ empleado.fechaInicio }}</div>
+              <div>{{ empleado.calificado }}</div>
+              <div><span class="estado-badge" [ngClass]="{
+                              'pendiente': empleado.estado === 'PENDIENTE',
+                              'completada': empleado.estado === 'COMPLETADA', 
+                              'en-proceso': empleado.estado === 'EN PROCESO'
+                            }">
+                  {{ empleado.estado }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- -----------      --------------          -------------             ------------ -->
+     
+
+    </div>  
+
+
+  </div>
+
+<!-- Modal Evaluación de Empleado -->
+  <div class="modal fade" style="background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.7),    /* Más oscuro arriba */
+      rgba(0, 0, 0, 0.4)     /* Más claro abajo */
+    );" tabindex="-1" [ngClass]="{ show: showModal }"
+        [ngStyle]="{ display: showModal ? 'block' : 'none' }" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-resizable" role="document">
+          <div class="modal-content modal-evaluacion">
+            <div class="modal-header">
+              <!-- Tarjeta del Empleado -->
+              <div class="">
+                <h2 style="color: lightslategray;">Evaluación de Desempeño 2025</h2>
+                <div class="employee-card3">
+                  <!-- <img [src]="employee.avatar" alt="Foto del Empleado" class="employee-image"> -->
+                  <div class="employee-image-container">
+                    <img
+                      [src]="construirUrlFoto(this.empleadoModal?.fotoPerfilUrl || '', this.empleadoModal?.sexo || '')"
+                      class="employee-image-Modal" id="employee-image-Modal" [alt]="this.empleadoModal?.nombre"
+                      (error)="onImageError($event, this.empleadoModal?.sexo || 'M')">
+
+                  </div>
+                  <div class="employee-personal-info">
+                    <div class="info-field">
+                      <i class="info-icon-titulo fas fa-user"></i>
+                      <h4 class="info-label">{{nombreCompletoDisplayModal || 'Nombre Completo'}}</h4>
+                    </div>
+
+                    <div class="info-field">
+                      <i class="info-icon far fa-envelope"></i>
+                      <p class="info-value">{{correoElectronicoDisplayModal || 'Correo Electrónico'}}</p>
+                    </div>
+
+                    <div class="info-field">
+                      <i class="info-icon far fa-gem"></i>
+                      <p class="info-value">{{posicionDisplayModal || 'Posición'}}</p>
+                    </div>
+
+                  </div>
+
+                </div>              
+
+              </div>
+              <!-- Timeline con eventos de click -->
+                <div class="timeline">
+                  <div *ngFor="let step of timelineStepsColab" type="button" class="timeline-step"
+                    [class.completed]="step.completed" [class.active]="isTimelineStepActiveColab(step.sectionId)">
+                    <!-- (click)="onStepClickColab(step)" (keydown)="onStepKeyDownColab($event, step)" -->
+                    <div class="circle">
+                      <!-- Icono de check cuando está completado -->
+                      <i *ngIf="step.completed && step.icon" [class]="step.icon"></i>
+                      <!-- Número cuando no está completado -->
+                      <span *ngIf="!step.completed">{{ step.number }}</span>
+                    </div>
+
+                    <div class="label">
+                      <!-- Icono PNG a la izquierda del texto -->
+                      <img [src]="step.pngIcon" alt="icono" class="step-icon" />
+                      <span class="step-text">{{ step.label }}</span>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="modal-body">
+
+              <!-- Formulario revisado  2 -->
+              <div class="evaluation-form" *ngIf="isTimelineStepActiveColab('Revision-Inicial-colab')">
+                <h4 class="titulos-pequeños">Revisión Inicial</h4>
+                <!-- Objetivo Área -->
+                <div class="form-section">
+                  <div class="section-title" style="display: flex; gap: 1rem">
+                    <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena"
+                      class="icono-normal">
+                    Objetivo Área
+                  </div>
+                  <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
+                    <span class="">{{ objetivoAreaDisplay || "Objetivo de Área" }}</span>
+                  </div>
+                </div>
+
+                <!-- Objetivos -->
+                <div class="form-section" style="margin-right: 0;" *ngIf="faseEvaluacionColab === 1">
+                  <!-- Validamos que se muestre solo en la fase 1 -->
+                  <div style="display:flex; justify-content: space-between; margin-left: 1rem;">
+                    <div class="section-title" style="color:#064eb4">
+                      <div class="" style="display:flex; gap:0.2rem;">
+                        <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj"
+                          class="icono-menor">
+                        Objetivos:
+                      </div>
+                    </div>
+                    <div style="align-content: center;">
+                      <span class="titulos-pequeños-columna" style="margin-right: 1.8rem;">Pesos</span>
+                      <!-- <span class="titulos-pequeños-columna" style="margin-right: 3.3rem;">Revisado</span> -->
+                      <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha de Revisión</span>
+                    </div>
+                  </div>
+
+                  <!-- FASE 1: Ver + Reconsiderar (Valor Empleado + Valor Jefe + Fecha) -->
+                  <div class="form-section">
+                    <div *ngFor="let objetivoColab of objetivosIndividualesColab; let i = index" class="form-row">
+                      <span class="item-number">{{ i + 1 }}.</span>
+                      <div [class]="i === 0 ? 'objetivo-container-area' : 'objetivo-container'">
+                        <div class="input-wrapper-mobile">
+                          <label class="label-mobile">Objetivo</label>
+                          <input type="text" class="text-input text-input-objetivo"
+                            [placeholder]="i === 0 ? 'Ingrese aquí el objetivo relacionado al Área' : 'Ingrese el objetivo'"
+                            [(ngModel)]="objetivoColab.titulo">
+                        </div>
+
+                        <div class="input-wrapper-mobile">
+                          <label class="label-mobile">Peso</label>
+                          <input type="number" class="number-input number-input-objetivo-rev" min="1" max="4"
+                            [placeholder]="i === 0 ? '22%' : '12%'" [disabled]="true">
+                        </div>
+
+                        <div class="input-wrapper-mobile">
+                          <label class="label-mobile">Fecha de Revisión</label>
+                          <input type="date" class="date-input date-input-objetivo-rev" [(ngModel)]="fechaRegJefeColab"
+                            [disabled]="true">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div class="percentage-display">60%</div> -->
+                </div>
+
+                <!-- Competencias -->
+                <div class="form-section" style="margin-top: 3rem; margin-left: 2rem" *ngIf="faseEvaluacionColab === 1">
+                  <!-- Validamos que se muestre solo en la fase 1 -->
+                  <div class="section-title purple">
+                    <div class="" style="display:flex; gap:0.2rem;">
+                      <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj"
+                        class="icono-menor">
+                      Competencias:
+                    </div>
+                  </div>
+
+                  <!-- Mostrar competencias cargadas desde el backend -->
+
+                  <div *ngFor="let competenciaColab of nivelesCompetenciasColab; let i = index" class="form-row"
+                    style="display: flex; gap: 10px;">
+                    <span class="item-number" style="flex-shrink: 0;">{{ i + 1 }}.</span>
+
+                    <div class="competencia-container">
+                      <div style="flex: 1; min-width: 0;">
+                        <div class="competencia-header">
+                          <span class="tipo-competencia">{{ competenciaColab.tipoCompetencia }}</span>
+                          <span class="nombre-competencia">{{ competenciaColab.nombreCompetencia }}</span>
+                        </div>
+                        <div class="competencia-body">
+                          <p style="margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;">
+                            <strong>Nivel {{ competenciaColab.nivel }}</strong> - {{ competenciaColab.descripcion }}
+                          </p>
+                        </div>
+                      </div>
+
+                      <!-- Parte derecha: Inputs -->
+                      <div style="display: flex;">
+                        <!-- <div style="text-align: center;">
+                          <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Valor</label>
+                          <input type="number" class="number-input number-input-rev" 
+                            min="0" max="100"
+                            [(ngModel)]="competenciaColab.ValoracionEmpleado"
+                            (ngModelChange)="actualizarValorCompetenciaFija(i, $event)"
+                            placeholder="/100"
+                            [disabled]="true"
+                          />
+                        </div> -->
+
+                        <div style="text-align: center; margin-right: 0; margin-left: 10px;">
+                          <label
+                            style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Pesos</label>
+                          <input type="number" class="number-input number-input-competencia-rev" min="0" max="100"
+                            placeholder="7.5%" [disabled]="true">
+                        </div>
+
+                        <div style="margin-right: 0; margin-left: 10px; text-align: center;">
+                          <label style="display: block; font-size: 12px; color:  #707070; margin-bottom: 4px;">Fecha
+                            Registro</label>
+                          <input type="date" class="date-input date-input-competencia-rev"
+                            [(ngModel)]="competenciaColab.fechaRegJefe" [disabled]="true" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- <div class="percentage-display">40%</div> -->
+                </div>
+
+                <!-- Botónes -->
+                <div class="buttons-container" style="justify-content: center;" *ngIf="faseEvaluacionColab === 1">
+                  <!-- Validamos que se muestre solo en la fase 1 -->
+                  <ng-container *ngIf="faseEvaluacionColab === 1">
+                    <!-- <button class="revision-btn" (click)="guardarRevision()">Revisar</button> -->
+                    <button class="submit-btn" style="margin-left: 2rem; " (click)="enviarAvanceColab()">Aceptar</button>
+                  </ng-container>
+                </div>
+
+              </div><!-- fin Captura de datos -->
+
+              <!-- Retroalimentación Admin -->
+              <div class="evaluation-form" *ngIf="isTimelineStepActiveColab('Retroalimentacion-colab')">
+                <h4 class="titulos-pequeños">Evaluación Intermedia</h4>
+                <!-- Objetivo Área -->
+                <div class="form-section">
+                  <div class="section-title" style="display:flex; gap:1rem;">
+                    <img src="assets/img/iconos/iconos mycollection/png/018-diana-y-dardo.png" alt="reloj de arena"
+                      class="icono-normal">
+                    Objetivo Área
+                  </div>
+                  <div class="form-row" style="margin-left: 2rem; margin-right: 2rem">
+                    <span class="">{{ objetivoAreaDisplay || "Objetivo de Área" }}</span>
+                  </div>
+                </div>
+
+                <!-- Objetivos -->
+                <div class="form-section" style="margin-right: 0;" *ngIf="faseEvaluacionColab === 3">
+                  <div style="display:flex; justify-content: space-between; margin-left: 1rem;">
+                    <div class="section-title" style="color:#064eb4">
+                      <div class="" style="display:flex; gap:0.2rem;">
+                        <img src="assets/img/iconos/iconos mycollection/png/039-objetivo-1.png" alt="icono obj"
+                          class="icono-menor">
+                        Objetivos:
+                      </div>
+                    </div>
+                    <div style="align-content: center;">
+                      <span class="titulos-pequeños-columna" style="margin-right: 1rem;">Calificación Colaborador</span>
+                      <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Calificación Jefe</span>
+                      <span class="titulos-pequeños-columna" style="margin-right: 2rem;">Fecha estimada</span>
+                    </div>
+                  </div>
+
+                  <!-- FASE 3: Calificación del Jefe -->
+                  <div class="form-section">
+                    <div *ngFor="let objetivoColab of objetivosIndividualesColab; let i = index" class="form-row">
+                      <span class="item-number">{{ i + 1 }}.</span>
+
+                      <!-- ✅ Clase diferente para el primer objetivo (área) -->
+                      <div [class]="i === 0 ? 'objetivo-container-area' : 'objetivo-container'">
+
+                        <div class="input-wrapper-mobile">
+                          <label class="label-mobile">Objetivo</label>
+                          <input type="text" class="text-input text-input-rev"
+                            [placeholder]="i === 0 ? 'Objetivo del Área' : 'Objetivo Individual'"
+                            [(ngModel)]="objetivoColab.titulo" [disabled]="true">
+                        </div>
+
+                        <!-- ✅ Calificación Colaborador (solo lectura) -->
+                        <div class="input-wrapper-mobile">
+                          <label class="label-mobile">Calificación Colaborador</label>
+                          <select class="number-input number-input-rev" [(ngModel)]="objetivoColab.calificacionEmpleado"
+                            [disabled]="true">
+                            <option [value]="objetivoColab.calificacionEmpleado">
+                              {{ objetivoColab.calificacionEmpleado }} - {{
+                              getNombreCalificacion(objetivoColab.calificacionEmpleado) }}
+                            </option>
+                          </select>
+                        </div>
+
+                        <!-- ✅ Calificación Jefe (editable con select 1-4) -->
+                        <div class="input-wrapper-mobile">
+                          <label class="label-mobile">Calificación Jefe</label>
+                          <select class="number-input number-input-objetivo"
+                            [(ngModel)]="objetivoColab.calificacionFinal">
+                            <option value="" disabled selected>Seleccione</option>
+                            <option [value]="1">1 - Insatisfactorio</option>
+                            <option [value]="2">2 - Necesita Mejorar</option>
+                            <option [value]="3">3 - Satisfactorio</option>
+                            <option [value]="4">4 - Sobresaliente</option>
+                          </select>
+                        </div>
+
+                        <!-- <div class="input-wrapper-mobile">
+                        <label class="label-mobile">Fecha estimada</label>
+                        <input type="date" 
+                              class="date-input date-input-rev"
+                              [(ngModel)]="objetivoColab.fechaLimite"
+                              [disabled]="true">
+                      </div> -->
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Competencias -->
+                <div class="form-section" style="margin-top: 3rem; margin-left: 2rem" *ngIf="faseEvaluacionColab === 3">
+                  <!-- Validamos que se muestre solo en la fase 3 -->
+
+                  <div class="section-title purple">
+                    <div class="" style="display: flex; gap: 0.2rem">
+                      <img src="assets/img/iconos/iconos mycollection/png/012-clasificacion-1.png" alt="icono obj"
+                        class="icono-menor" />
+                      Competencias:
+                    </div>
+                  </div>
+
+                  <!-- Mostrar estado de carga -->
+                  <!-- <div *ngIf="loadingCompetencies" class="form-row">
+                    <span class="text-input" style="background: #f0f0f0; border-color: #ccc; color: #666;">
+                      Cargando competencias...
+                    </span>
+                  </div> -->
+
+                  <!-- Mostrar competencias cargadas desde el backend -->
+                  <div *ngFor="let competenciaColab of nivelesCompetenciasColab; let i = index" class="form-row"
+                    style="display: flex; gap: 10px;">
+                    <span class="item-number" style="flex-shrink: 0;">{{ i + 1 }}.</span>
+
+                    <div class="competencia-container">
+                      <div style="flex: 1; min-width: 0;">
+                        <div class="competencia-header">
+                          <span class="tipo-competencia">{{ competenciaColab.tipoCompetencia }}</span>
+                          <span class="nombre-competencia">{{ competenciaColab.nombreCompetencia }}</span>
+                        </div>
+                        <div class="competencia-body">
+                          <p style="margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;">
+                            <strong>Nivel {{ competenciaColab.nivel }}</strong> - {{ competenciaColab.descripcion }}
+                          </p>
+                        </div>
+                      </div>
+
+                      <!-- Parte derecha: Inputs -->
+                      <div style="display: flex;">
+
+                        <!-- ✅ Calificación Colaborador (solo lectura) -->
+                        <div style="text-align: center;">
+                          <label
+                            style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Calificación
+                            Colaborador</label>
+                          <select class="number-input number-input-rev"
+                            [(ngModel)]="competenciaColab.CalificacionEmpleado" [disabled]="true">
+                            <option *ngIf="!competenciaColab.CalificacionEmpleado" value="">Sin calificar</option>
+                            <option *ngIf="competenciaColab.CalificacionEmpleado"
+                              [value]="competenciaColab.CalificacionEmpleado">
+                              {{ competenciaColab.CalificacionEmpleado }} - {{
+                              getNombreCalificacion(competenciaColab.CalificacionEmpleado) }}
+                            </option>
+                          </select>
+                        </div>
+
+                        <!-- ✅ Calificación Jefe (editable con select 1-4) -->
+                        <div style="text-align: center; margin-right: 0; margin-left: 10px;">
+                          <label
+                            style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Calificación
+                            Jefe</label>
+                          <select class="number-input number-input-competencia"
+                            [(ngModel)]="competenciaColab.CalificacionFinal">
+                            <option value="" disabled selected>Seleccione</option>
+                            <option [value]="1">1 - Insatisfactorio</option>
+                            <option [value]="2">2 - Necesita Mejorar</option>
+                            <option [value]="3">3 - Satisfactorio</option>
+                            <option [value]="4">4 - Sobresaliente</option>
+                          </select>
+                        </div>
+
+                        <!-- Fecha (sin cambios) -->
+                        <!-- <div style="margin-right: 0; margin-left: 10px; text-align: center;">
+                          <label style="display: block; font-size: 12px; color: #707070; margin-bottom: 4px;">Fecha</label>
+                          <input type="date"
+                                class="date-input date-input-competencia"
+                                [(ngModel)]="competenciaColab.FechaLimite"
+                                [disabled]="true"/>
+                        </div> -->
+
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Retroalimentación y Plan de acción -->
+                <div class="form-section" *ngIf="faseEvaluacionColab === 3">
+
+                  <div class="section-title">
+                    <div class="" style="display: flex; gap: 0.4rem">
+                      <img src="assets/img/iconos/iconos mycollection/png/042-portapapeles.png" alt="icono obj"
+                        class="icono-menor" />
+                      Retroalimentación:
+                    </div>
+                  </div>
+                  <div class="form-row" style="margin-left: 2rem;">
+                    <textarea class="text-input" rows="4"
+                      placeholder="Retroalimentación del supervisor sobre el desempeño..."
+                      [(ngModel)]="retroalimentacionColab">
+                  </textarea>
+                  </div>
+
+                  <div class="section-title " style="margin-top: 2rem;">
+                    <div class="" style="display: flex; gap: 0.4rem">
+                      <img src="assets/img/iconos/iconos mycollection/png/024-objetivo.png" alt="icono obj"
+                        class="icono-menor" />
+                      Plan de Acción:
+                    </div>
+                  </div>
+                  <div class="form-row" style="margin-left: 2rem;">
+                    <textarea class="text-input" rows="4" placeholder="Plan de acción a llevar a cabo..."
+                      [(ngModel)]="planAccionColab">
+                    </textarea>
+                  </div>
+
+                </div>
+
+                <!-- Botónes -->
+                <div class="buttons-container" *ngIf="faseEvaluacionColab === 3">
+                  <!-- Validamos que se muestre solo en la fase 3 -->
+                  <!-- Botón para FASE 3 -->
+                  <button *ngIf="faseEvaluacionColab === 3" class="finalizar-btn" (click)="enviarRetroalimentacion()">
+                    Finalizar
+                  </button>
+                </div>
+
+              </div>
+              <!-- fin Retroalimentación Admin -->
+
+              <!-- Formulario: Cierre FASE 5 MODAL -->
+              <div class="evaluation-form-cierre" *ngIf="isTimelineStepActiveColab('Cierre-colab')">
+                
+                <div class="header">
+                  <h2>Resultado de Evaluación de Desempeño</h2>
+                  <div class="subtitle">Reporte Semestral 2025 • {{ empleadoModal?.area || 'Departamento' }}</div>
+                </div>
+                <div class="content"></div>
+  
+                <!-- INICIO DEL CÓDIGO DE CIERRE -->
+                <div class="cierre"> 
+
+                  <div class="grid">
+                    <!-- Tarjeta Objetivos -->
+                    <div class="card card-objetivos">
+                        <div class="card-title">Objetivos</div>
+                        <div class="circular-progress">
+                            <svg width="140" height="140">
+                                <circle class="bg-circle" cx="70" cy="70" r="50"></circle>
+                                <circle class="progress-circle" cx="70" cy="70" r="50" 
+                                        stroke="#3b82f6"
+                                        [attr.stroke-dasharray]="314.16" 
+                                        [attr.stroke-dashoffset]="calcularDashOffset(promedioObjetivosColab, 4)"></circle>
+                            </svg>
+                            <!-- ✅ CAMBIO: promedioObjetivosModal → promedioObjetivosColab -->
+                            <div class="circle-text">{{ promedioObjetivosColab | number:'1.2-2' }}</div>
+                            <div class="circle-subtext">de 4.0</div>
+                        </div>
+                        <span class="card-badge" [ngClass]="obtenerClaseBadge(promedioObjetivosColab)">
+                          {{ obtenerNivelDesempeno(promedioObjetivosColab) }}
+                        </span>
+                    </div>
+                    
+                    <!-- Tarjeta Competencias -->
+                    <div class="card card-competencias">
+                        <div class="card-title">Competencias</div>
+                        <div class="circular-progress">
+                            <svg width="140" height="140">
+                                <circle class="bg-circle" cx="70" cy="70" r="50"></circle>
+                                <circle class="progress-circle" cx="70" cy="70" r="50" 
+                                        stroke="#8b5cf6"
+                                        [attr.stroke-dasharray]="314.16" 
+                                        [attr.stroke-dashoffset]="calcularDashOffset(promedioCompetenciasColab, 4)"></circle>
+                            </svg>
+                            <!-- ✅ CAMBIO: promedioCompetenciasModal → promedioCompetenciasColab -->
+                            <div class="circle-text">{{ promedioCompetenciasColab | number:'1.2-2' }}</div>
+                            <div class="circle-subtext">de 4.0</div>
+                        </div>
+                        <span class="card-badge" [ngClass]="obtenerClaseBadge(promedioCompetenciasColab)">
+                          {{ obtenerNivelDesempeno(promedioCompetenciasColab) }}
+                        </span>
+                    </div>
+                    
+                    <!-- Tarjeta Calificación Final -->
+                    <div class="card final-card">
+                        <div class="final-header">
+                            <span class="final-title">Calificación Final</span>
+                            <span class="final-badge">{{ obtenerNivelDesempeno(calificacionFinalColab) }}</span>
+                        </div>
+                        <div class="final-content">
+                            <div class="final-score">
+                                <!-- ✅ CAMBIO: calificacionFinalModal → calificacionFinalColab -->
+                                {{ calificacionFinalColab | number:'1.2-2' }} <span class="final-max">/ 4.0</span>
+                            </div>
+                            <div class="final-bar-container">
+                                <div class="bar-wrapper">
+                                    <div class="bar-container">
+                                        <div class="bar-fill" 
+                                            [style.width.%]="(calificacionFinalColab / 4) * 100"></div>
+                                    </div>
+                                </div>
+                                <div class="bar-label">{{ obtenerDescripcionDesempeno(calificacionFinalColab) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+
+                  <div class="content"></div>
+
+                  <!-- Retroalimentación -->
+                  <div class="cierre-seccion">
+                    <div class="cierre-header" style="display: flex; gap: 0.4rem">
+                      <img src="assets/img/iconos/iconos mycollection/png/042-portapapeles.png"
+                          alt="icono obj" class="icono-menor" />
+                      <h3>Retroalimentación:</h3>
+                    </div>
+                    <!-- ✅ CAMBIO: retroalimentacionModal → retroalimentacionColab -->
+                    <div class="cierre-texto" [innerHTML]="retroalimentacionColab || 'Sin retroalimentación'"></div>
+                  </div>
+
+                  <!-- Plan de Acción -->
+                  <div class="cierre-seccion">
+                    <div class="cierre-header" style="display: flex; gap: 0.4rem">
+                      <img src="assets/img/iconos/iconos mycollection/png/024-objetivo.png"
+                          alt="icono obj" class="icono-menor" />
+                      <h3>Plan de Acción:</h3>
+                    </div>
+                    <!-- ✅ CAMBIO: planAccionModal → planAccionColab -->
+                    <div class="cierre-texto" [innerHTML]="planAccionColab || 'Sin plan de acción'"></div>
+                  </div>
+                </div>
+
+              </div>
+              <!-- fin Formulario: Cierre FASE 5 MODAL -->
+
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+</main>

@@ -1,31 +1,101 @@
 <!-- navbar.component.html -->
-<nav class="navbar" id="navbar">
+<!-- <nav class="navbar" id="navbar">
   <div class="logo">
-    <img src="assets/img/logo.png" alt="Logo DOS" class="logo-img">
-  </div>
-  <div class="nav-links">
+    <img src="assets/img/logo.png" alt="Logo DOS" class="logo-img" />
+  </div> -->
+
+  <!-- <li class="nav-links" *ngFor="let data of menu">
+    <a [routerLink]="[data.ruta]" class="nav-link">
+      <i class="{{ data.icono }}"></i>
+      <p>{{ data.titulo }}</p>
+    </a>
+  </li> -->
+
+
+   <!-- <div class="nav-links">
     <a href="#" class="fas fa-bell"></a>
     <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
     <a [routerLink]="['/lista-empleados']" routerLinkActive="active">Perfiles</a>
     <a [routerLink]="['/lista-capacitaciones']" routerLinkActive="active">Capacitaciones</a>
     <a [routerLink]="['/lista-evaluaciones']" routerLinkActive="active">Evaluaciones</a>
-    <a [routerLink]="['/empleado-cv']" routerLinkActive="active">Ver Mi Perfil</a>
+    <a [routerLink]="['/empleado-cv']" routerLinkActive="active">Ver Mi Perfil</a> 
 
     <div class="profile-dropdown" [class.show]="dropdownAbierto">
       <img
-        [src]="Imagen || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"
-        class="profile-avatar"
-        (click)="toggleDropdown()" />
-      <div
-        class="dropdown-menu"
-        id="profileMenu">
-        <a [routerLink]="['/lista-empleados']"><i class="fas fa-users"></i> Ver Perfiles</a>
-        <a [routerLink]="['/lista-capacitaciones']"><i class="fas fa-chalkboard-teacher"></i> Capacitaciones</a>
-        <a [routerLink]="['/lista-evaluaciones']"><i class="fas fa-clipboard-check"></i> Evaluaciones</a>
-        <a [routerLink]="['/empleado-cv']"><i class="fas fa-user-circle"></i> Ver Mi Perfil</a>
-        <div class="dropdown-divider"></div>
-        <a href="#" (click)="logout(); $event.preventDefault()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-      </div>
-    </div>
+      [src]="Imagen || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"
+      class="profile-avatar"
+      (click)="toggleDropdown()">
+    
+    <div 
+          class="dropdown-menu"
+          id="profileMenu">
+          <a [routerLink]="['/lista-empleados']"><i class="fas fa-users"></i> Ver Perfiles</a>
+          <a [routerLink]="['/lista-capacitaciones']"><i class="fas fa-chalkboard-teacher"></i> Capacitaciones</a>
+          <a [routerLink]="['/lista-evaluaciones']"><i class="fas fa-clipboard-check"></i> Evaluaciones</a>
+          <a [routerLink]="['/empleado-cv']"><i class="fas fa-user-circle"></i> Ver Mi Perfil</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" (click)="logout(); $event.preventDefault()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div> 
+    </div> 
+  </div>  -->
+
+<!-- </nav> -->
+
+
+
+
+<nav class="navbar" id="navbar">
+  <div class="logo">
+    <img src="assets/img/logo.png" alt="Logo DOS" class="logo-img" />
   </div>
+
+  <ul class="nav-links-container">
+    <!-- Notification bell -->
+    <li class="nav-links">
+      <a href="#" class="fas fa-bell"></a>
+    </li>
+    
+    <!-- Enlaces dinámicos -->
+    <li class="nav-links" *ngFor="let data of menu">
+      <a [routerLink]="[data.ruta]" 
+         class="nav-link"
+         routerLinkActive="active" 
+         [routerLinkActiveOptions]="{exact: data.ruta === '/'}">
+        <i class="{{ data.icono }}"></i>
+        <p>{{ data.titulo }}</p>
+      </a>
+    </li>
+    
+    <!-- Profile dropdown -->
+    <li class="nav-links">
+      <div class="profile-dropdown" [class.show]="dropdownAbierto">
+        <!-- ✅ CAMBIO: Agregar manejo de error -->
+        <!-- <img [src]="Imagen || IconoPerfil" 
+          alt="Perfil" 
+          class="profile-avatar"
+          (click)="toggleDropdown()"
+          (error)="onImagenPerfilError($event)"> -->
+        
+          <img [src]="construirUrlFoto(this.empleado?.fotoPerfilUrl || '', this.empleado?.sexo || '')" 
+            class="profile-avatar" id="employeeImage"
+            [alt]="this.empleado?.nombre" 
+            (click)="toggleDropdown()" 
+            (error)="onImageError($event, this.empleado?.sexo || 'M')">
+
+        
+        <div class="dropdown-menu" id="profileMenu">
+          <div class="dropdown-divider"></div>
+
+          <!-- Nombre del usuario -->
+          <label class="label-nombre-navbar">{{ nombreCompletoDisplayVar || 'Usuario' }}</label>
+
+          <a href="#" (click)="logout(); $event.preventDefault()">
+            <i class="fas fa-sign-out-alt"></i>
+            Cerrar Sesión
+          </a>
+        </div>
+
+      </div>
+    </li>
+  </ul>
 </nav>

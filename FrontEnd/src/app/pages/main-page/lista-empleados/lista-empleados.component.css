@@ -1,0 +1,196 @@
+.container-main {
+  max-width: none;
+}
+.cap-table {
+  padding: 0 10px;
+}
+
+/* ===== Tabla: Lista de Empleados ===== */
+#lista-empleados .cap-table {
+  box-shadow: #4ade80;
+  
+}
+
+#lista-empleados .cap-header,
+#lista-empleados .cap-row {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+#lista-empleados .cap-row:nth-child(even) {
+  /* background-color: var(--color-very-light-gray);  */
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+#lista-empleados .cap-row:hover {
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+  border-color: #06b6d4;
+}
+
+#lista-empleados .cap-header {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+#lista-empleados .cap-header > div,
+#lista-empleados .cap-row > div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Columna: Foto */
+#lista-empleados .cap-header > div:nth-child(1) {
+  flex: 0.7;
+}
+/* Columna: Foto - Datos */
+#lista-empleados .cap-row > div:nth-child(1) {
+  flex: 0.6;
+}
+
+/* Columna: Nombre (más énfasis) */
+#lista-empleados .cap-header > div:nth-child(2){
+  flex: 2;
+  font-weight: bold;
+  /* color: #2a2a2a; */
+}
+#lista-empleados .cap-row > div:nth-child(2) {
+  flex: 2;
+  font-weight: bold;
+  /* color: #2a2a2a; */
+}
+
+
+/* Columna: Cédula */
+#lista-empleados .cap-header > div:nth-child(3){
+  flex: 1.5;
+}
+/* Columna: Cédula - Datos */
+#lista-empleados .cap-row > div:nth-child(3) {
+  flex: 1.2;
+}
+
+/* Columna: Cargo */
+#lista-empleados .cap-header > div:nth-child(4),
+#lista-empleados .cap-row > div:nth-child(4) {
+  flex: 2;
+}
+
+/* Columna: Área */
+#lista-empleados .cap-header > div:nth-child(5) {
+  flex: 1.2;
+}
+/* Columna: Área Datos */
+#lista-empleados .cap-row > div:nth-child(5) {
+  flex: 2;
+}
+
+/* Columna: Certificaciones (menos espacio) */
+#lista-empleados .cap-header > div:nth-child(6){
+  flex: 0.8;
+  text-align: center;
+}
+/* Columna: Certificaciones Datos (menos espacio) */
+#lista-empleados .cap-row > div:nth-child(6) {
+  flex: 0.3;
+  text-align: center;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+/* Imagen del empleado - cuadrada con bordes redondeados */
+.employee-photo {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+
+
+
+/*    Estilos para la tabla de perfiles   */
+#lista-empleados .cap-header {
+  padding: 1rem 1.25rem;
+    text-align: center;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 3px solid #e2e8f0;
+    position: relative;
+}
+
+#lista-empleados .cap-header::after {
+  content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(135deg, #32d46d 0%, #02aecc 100%);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+.certifications-count {
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #4ade80 0%, #06b6d4 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 4px rgba(74, 222, 128, 0.3);
+}
+
+/*    Estilos para dar color a las etiquetas de AREA    */
+.area-badge {
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  border-radius: 999px;
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-align: center;
+  /* margin-left: 1rem;
+  margin-right: 2rem; */
+  max-width: fit-content;
+}
+
+.area-tecnologia {
+  background-color: #d6e4ff;
+  color: #1a237e;
+}
+
+.area-talento {
+  background-color: #fce4ec;
+  color: #880e4f;
+}
+
+.area-marketing {
+  background-color: #fff3cd;
+  color: #b37400;
+}
+
+.area-finanzas {
+  background-color: #d0f0d0;
+  color: #2e7d32;
+}
+
+.area-legal {
+  background-color: #ede7f6;
+  color: #512da8;
+}
+
+.area-calidad {
+  background-color: #e0f7fa;
+  color: #006064;
+}

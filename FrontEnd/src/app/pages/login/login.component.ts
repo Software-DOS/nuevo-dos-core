@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { FormBuilder,Validator, Validators } from '@angular/forms';
-import { functions } from 'src/app/helpers/functions';
+// import { functions } from 'src/app/helpers/functions';
 import { Ilogin } from 'src/app/interface/ilogin';
 import { LoginService } from 'src/app/services/login.service';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
@@ -16,22 +16,22 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
   // ⭐ Formulario reactivo para login
   public f = this.form.group({
-      email:['',[Validators.required,Validators.email]],
-      password:['',Validators.required]
+    user: ['', [Validators.required, Validators.minLength(3)]], // ✅ Cambiado
+    password: ['', Validators.required]
   });
 
-  // ⭐ Variables de estado del componente
-  formSubmitted=false;
-  verLogin=true;
-  cambiarClave=false;
-  nuevaClave=false;
+  // ⭐ Variables de estado del componente (sin cambios)
+  formSubmitted = false;
+  verLogin = true;
+  cambiarClave = false;
+  nuevaClave = false;
   loading = false;
   
-  // ⭐ Variables para funcionalidad de cambio de contraseña
-  public ClaveTemporal:any="";
-  public emailClave:string="";
-  public clave1:string="";
-  public clave2:string="";
+  // ⭐ Variables para funcionalidad de cambio de contraseña (sin cambios)
+  public ClaveTemporal: any = "";
+  public emailClave: string = "";
+  public clave1: string = "";
+  public clave2: string = "";
   public generica: any = [];
   public carga: any = [];
   
@@ -39,13 +39,13 @@ export class LoginComponent implements OnInit {
     private form: FormBuilder,
     private loginService: LoginService,
     private router: Router,
-    private ngZone: NgZone // ⭐ Necesario para navegación correcta
+    private ngZone: NgZone
   ) { }
 
   ngOnInit(): void {
-    // ⭐ Verificar si el usuario ya está autenticado
+    // Verificar si el usuario ya está autenticado
     if (this.loginService.isLoggedIn()) {
-      console.log("👤 [DEBUG] User already logged in, redirecting to home");
+      console.log("👤 [DEBUG] Verificar si el usuario ya está autenticado");
       this.router.navigateByUrl("/");
     }
   }
@@ -53,8 +53,8 @@ export class LoginComponent implements OnInit {
   // ⭐ Función principal de login
   login(){
      this.formSubmitted=true;
-     console.log("🎯 [DEBUG] Login form submitted");
-     console.log("🎯 [DEBUG] Form validity:", this.f.valid);
+      console.log("🎯 [DEBUG] Login form submitted");
+      console.log("🎯 [DEBUG] Form validity:", this.f.valid);
      
       // ⭐ Validación del formulario
       if(this.f.invalid){
@@ -64,26 +64,34 @@ export class LoginComponent implements OnInit {
       
       // ⭐ Preparar datos para envío
       const data: Ilogin = {
-        email:this.f.controls['email'].value,
+        email:this.f.controls['user'].value,
         password:this.f.controls['password'].value
       }
       
-      console.log("📤 [DEBUG] Sending login data:", JSON.stringify(data)); 
+    
+      // const data: Ilogin = {
+      //   email: this.f.controls['user'].value.trim(), // Cambiado: 'user' en lugar de 'email'
+      //   password: this.f.controls['password'].value
+      // }
+      
+
+
+      // console.log("📤 [DEBUG] Sending login data:", JSON.stringify(data)); 
       this.loading = true;
       
       // ⭐ Llamada al servicio de login
       this.loginService.login(data).subscribe({
           next: (resp:any) => {
-             console.log("✅ [DEBUG] Login successful, response:", resp);
+              console.log("✅ [DEBUG] Login successful, response:", resp);
              
               // ⭐ Verificación doble del token guardado
               const valor = sessionStorage.getItem('token');
-              console.log("🔍 [DEBUG] Token from sessionStorage after login:", valor);
+               console.log("🔍 [DEBUG] Token from sessionStorage after login:", valor);
               
               if (typeof valor === 'string' && valor.trim() !== '') {
                 try {
                   var IdEmpleado = JSON.parse(atob(valor.split('.')[1]));
-                  console.log("👤 [DEBUG] Decoded employee data:", IdEmpleado);
+                   console.log("👤 [DEBUG] Decoded employee data:", IdEmpleado);
                   
                   // ⭐ Verificar claims de email en diferentes formatos
                   const email = IdEmpleado['email'] || 
@@ -97,23 +105,23 @@ export class LoginComponent implements OnInit {
                     return;
                   }
                   
-                  console.log("✅ [DEBUG] Email found in token:", email);
+                   console.log("✅ [DEBUG] Email found in token:", email);
                   
                   // ⭐ Usar NgZone para asegurar que la navegación funcione correctamente
                   this.ngZone.run(() => {
-                    console.log("🔄 [DEBUG] Running navigation inside NgZone");
+                    // console.log("🔄 [DEBUG] Running navigation inside NgZone");
                     this.loading = false;
                     
-                    console.log("🚀 [DEBUG] Attempting navigation to home");
+                    // console.log("🚀 [DEBUG] Attempting navigation to home");
                     
                     // ⭐ Navegación con fallback en caso de fallo
                     this.router.navigate(['/']).then((success) => {
-                      console.log("✅ [DEBUG] Navigation success:", success);
+                      // console.log("✅ [DEBUG] Navigation success:", success);
                       if (success) {
                         // ⭐ Mostrar mensaje de éxito después de navegación exitosa
                         alerts.basicAlert("Éxito", "Login exitoso", "success");
                       } else {
-                        console.log("⚠️ [DEBUG] Navigation failed, trying alternative method");
+                        // console.log("⚠️ [DEBUG] Navigation failed, trying alternative method");
                         // ⭐ Fallback: recarga forzada de página
                         window.location.href = '/';
                       }
@@ -152,6 +160,136 @@ export class LoginComponent implements OnInit {
           }
       });
   }
+
+
+// ========================================
+// 🆕 NUEVO MÉTODO PARA ACTIVE DIRECTORY
+// ========================================
+ loginAD() {
+    this.formSubmitted = true;
+    console.log("🎯 [DEBUG] Component AD Login form submitted");
+    
+    if (this.f.invalid) {
+      console.log("❌ [DEBUG] Component Form is invalid");
+      return;
+    }    
+    
+    const data: Ilogin = {
+      email: this.f.controls['user'].value.trim(), // Cambiado: 'user' en lugar de 'email'
+      password: this.f.controls['password'].value
+    }
+    
+    // console.log("📤 [DEBUG] Sending AD login data");
+    this.loading = true;
+    
+    this.loginService.loginAD(data).subscribe({
+      next: (resp: any) => {
+        console.log("✅ [DEBUG] NuevasPruebas Component AD Login successful, response:", resp);
+        
+        const valor = sessionStorage.getItem('token');
+        
+        if (typeof valor === 'string' && valor.trim() !== '') {
+          try {
+            var tokenData = JSON.parse(atob(valor.split('.')[1]));
+            // console.log("👤 [DEBUG] Component login token:", tokenData);
+            
+            const email = tokenData['email'] || 
+                         tokenData['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ||
+                         tokenData['Email'];
+            
+            if (!email) {
+              alerts.error("Error al ingresar, comuniquese con el Administrador.");
+              this.loading = false;
+              return;
+            }
+            
+            const displayName = tokenData['Name'] || 
+                              tokenData['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ||
+                              email;
+            
+            this.ngZone.run(() => {
+              this.loading = false;
+              // 🔍 Redirigir a la página principal
+              this.router.navigate(['/']).then((success) => {
+                if (success) {
+                  alerts.basicAlert("Éxito", `Bienvenido ${displayName}`, "success");
+                } else {
+                  alerts.error("Error al ingresar, comuniquese con el Administrador.");
+                  window.location.href = '/';
+                }
+              }).catch(() => {
+                window.location.href = '/';
+              });
+            });
+            
+          } catch (tokenError) {
+            console.error("❌ Error:", tokenError);
+            alerts.error("Error al ingresar, comuniquese con el Administrador.");
+            this.loading = false;
+          }
+        } else {
+          alerts.basicAlert("Error", "No se recibió token", "error");
+          this.loading = false;
+        }
+      },
+      error: (err) => {
+        // console.error("❌ [DEBUG] AD Login failed:", err);
+        
+        if (err.status === 401) {
+          alerts.basicAlert("Error", "Usuario o contraseña incorrectos", "error");
+        } else if (err.status === 0) {
+          alerts.basicAlert("Error", "Error de conexión", "error");
+        } else {
+          alerts.info("Acceso denegado: el correo electrónico ingresado no está registrado en el Active Directory (AD). Contacta al administrador para más información.");
+        }
+        
+        this.loading = false;
+      }
+    });
+  }
+
+
+  // ⭐ Función login de pruebas en desarrollo - NO ELIMINAR (puede ser útil para futuras pruebas)
+  loginPruebas(){
+     this.formSubmitted=true;
+      console.log("🎯 [DEBUG] Login form submitted");
+      console.log("🎯 [DEBUG] Form validity:", this.f.valid);
+     
+      // ⭐ Validación del formulario
+      if(this.f.invalid){
+        console.log("❌ [DEBUG] Form is invalid, stopping login");
+        return;
+      }
+      
+      // ⭐ Preparar datos para envío
+      const data: Ilogin = {
+        email:this.f.controls['user'].value,
+        password:this.f.controls['password'].value
+      }
+      
+      // console.log("📤 [DEBUG] Sending login data:", JSON.stringify(data)); 
+      this.loading = true;
+
+      
+      // ⭐ Llamada al servicio de login
+      this.loginService.loginPruebas(data).subscribe({
+        next: (user) => {
+          console.log("🚀 Login exitoso:", user);
+
+          this.loading = false;
+          this.verLogin = false; // 👈 CLAVE
+          console.log('➡️ Navegando a /');
+          this.router.navigateByUrl('');
+        },
+        error: (err) => {
+          console.log("❌ Error en login:", err);
+          this.loading = false;              // 👈 CLAVE
+        }
+      });
+  }
+
+
+
 
   // ⭐ Funciones para cambio de contraseña
   CambiarClave(){
@@ -221,8 +359,4 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  // ⭐ Función helper para validación de campos
-  invalidField(field:string){
-    return functions.invalidField(field,this.f,this.formSubmitted);
-  }
 }

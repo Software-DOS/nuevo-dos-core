@@ -1,8 +1,12 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { Imenu } from 'src/app/interface/imenu';
 import { MenuService } from 'src/app/services/menu.service';
-import { filter } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { GthEmpleadoService } from 'src/app/services/gthempleado.service';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { iGTHEmpleado } from '../../interface/igth-empleado';
+
 
 @Component({
   selector: 'app-nav-bar',
@@ -11,54 +15,126 @@ import { filter } from 'rxjs/operators';
 })
 export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  public usuario:any="";
-  public menu:any=[];
-  public submenu:any=[];
-  public submenuFinal:any=[];
-  public cadena:string = "";
-  public Imagen:string = "";
+  public usuario: any = "";
+  public menu: any = [];
+  public Imagen: string = ""; 
   
-  constructor(private router: Router, private menuService: MenuService) { }
+  // Rutas de imágenes
+  IconoPerfil: string = environment.urlImagenes + 'assets/img/iconos/iconos mycollection/png/028-hombre-2.png';
+  iconoPerfilPlaceholder: string = environment.urlImagenes + 'assets/img/iconos/iconos mycollection/png/001-empleado-de-oficina.png';
+  
+  // Subject para manejar unsubscribe
+  private destroy$ = new Subject<void>();
+  
+  // Flags para evitar múltiples cargas
+  private cargandoFoto: boolean = false;
+  private fotoIntentoCarga: boolean = false;
+
+  dropdownAbierto = false;
+
+  IdEmpleadoActalSession: number | null = null;
+  fotoPerfilUrl: string | null = '';
+  nombreCompletoDisplayVar: string = ''; 
+
+  constructor(
+    private router: Router, 
+    private menuService: MenuService,
+    private gthEmpleadoService: GthEmpleadoService
+  ) { }
 
   ngOnInit(): void {
-    // Set initial page data attribute for colors
+    // Inicializar con imagen por defecto
+    this.Imagen = this.IconoPerfil;
+    
+    // Configuración inicial de página
     this.setPageDataAttribute();
     
-    // Listen to route changes to update page colors
+    // Escuchar cambios de ruta
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
+      filter(event => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
     ).subscribe(() => {
       this.setPageDataAttribute();
     });
-
-    const valor = sessionStorage.getItem('token');
-    if (typeof valor === 'string') {
-      var IdEmpleado =JSON.parse(atob(valor.split('.')[1]));
-      this.usuario = IdEmpleado['NombresApellidos'];
-      this.Imagen = "assets/img/" + IdEmpleado['Imagen'];
-      
-      this.menuService.cargarMenu(IdEmpleado['IdEmpleado']).subscribe(
-        (resp:any)=>{
-            this.menu=resp['$values'];
-            if (!localStorage.getItem('foo')) {
-              localStorage.setItem('foo', 'no reload')
-              location.reload()
-            } else {
-              localStorage.removeItem('foo')
-            }
+    
+    // Escuchar cambios en la foto de perfil
+    this.gthEmpleadoService.fotoPerfilCambiada$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (cambio) => {
+          console.log('NavBar: Foto actualizada desde observable');
+          this.Imagen = cambio.nuevaUrl || this.IconoPerfil;
         },
-        (err)=>{
-          console.log("err:",err);
+        error: (error) => {
+          console.error('NavBar: Error en observable de foto:', error);
         }
-      );
+      });
+    
+    // Obtener y procesar token
+    const token = sessionStorage.getItem('token');
+    
+    if (!token) {
+      console.warn('NavBar: No se encontró token en sessionStorage');
+      return;
+    }
+    
+    try {
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
+      
+      // Extraer datos del token
+      const email = tokenData['email'] || 
+                    tokenData['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ||
+                    tokenData['Email'];
+      
+      const idEmpleado = tokenData['IdEmpleado'] || 
+                        tokenData['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+      
+      this.usuario = tokenData['NombresApellidos'] || email || 'Usuario';
+      
+      //Ponemos el ID del empleado en esta variable para buscar su informacion despues
+      this.IdEmpleadoActalSession = idEmpleado;
+
+      // Cargar foto de perfil
+      const idFromService = this.gthEmpleadoService.obtenerIdGthEmpleadoDesdeSession();
+      const idParaCargar = idFromService || idEmpleado;
+      
+      if (idParaCargar && !this.fotoIntentoCarga) {
+        this.cargarFotoPerfilEmpleado(idParaCargar);
+      }
+      
+      // Cargar menú del empleado
+      if (!idEmpleado) {
+        console.error('NavBar: No se pudo obtener IdEmpleado del token');
+        return;
+      }
+
+      this.cargarDatosEmpleado();
+      console.log("id del nav bar: ", idEmpleado);
+      
+      this.menuService.cargarMenu(idEmpleado)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (resp: any) => {
+            this.menu = resp['$values'] || resp || [];
+          },
+          error: (err) => {
+            console.error('NavBar: Error al cargar menú:', err);
+          }
+        });
+
+      
+      
+    } catch (error) {
+      console.error('NavBar: Error al procesar token:', error);
     }
   }
+
+  empleado: iGTHEmpleado | null = null;
 
   private setPageDataAttribute(): void {
     const currentUrl = this.router.url;
     let pageType = 'dashboard';
     
-    // Map Angular routes to page types for colors
     if (currentUrl.includes('/lista-empleados') || currentUrl.includes('/admin-cv')) {
       pageType = 'profiles';
     } else if (currentUrl.includes('/empleado-cv')) {
@@ -71,89 +147,216 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
       pageType = 'dashboard';
     }
     
-    // Set the data-page attribute on body for CSS styling
     document.body.setAttribute('data-page', pageType);
   }
 
-  //Filtrar menus
-  findSubMenu(submenuFinal: any[],id:number): any[] {
-    return submenuFinal.filter(p => p.Imenu=id);
-  }
-  //cerrar sesion
-  logout(){
-      this.dropdownAbierto = false; // Close dropdown when logging out
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('token');
-      this.router.navigateByUrl("/login");
+  /**
+   * Carga la foto de perfil del empleado desde el backend
+   */
+  cargarFotoPerfilEmpleado(idEmpleado: number): void {
+    // Evitar múltiples llamadas simultáneas
+    if (this.cargandoFoto || this.fotoIntentoCarga) {
+      console.log('NavBar: Ya se está cargando o ya se intentó cargar la foto');
+      return;
+    }
+
+    if (!idEmpleado) {
+      console.warn('NavBar: No se proporcionó ID de empleado válido');
+      this.Imagen = this.IconoPerfil;
+      return;
+    }
+
+    this.cargandoFoto = true;
+    this.fotoIntentoCarga = true;
+
+    this.gthEmpleadoService.obtenerFotoPerfil(idEmpleado)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.cargandoFoto = false;
+
+          if (response && response.fotoPerfilUrl) {
+            const urlCompleta = this.gthEmpleadoService.construirUrlImagen(response.fotoPerfilUrl);
+            console.log('NavBar: Foto cargada exitosamente');
+            this.Imagen = urlCompleta;
+          } else {
+            console.log('NavBar: No hay foto de perfil, usando icono por defecto');
+            this.Imagen = this.IconoPerfil;
+          }
+        },
+        error: (error) => {
+          this.cargandoFoto = false;
+          console.error('NavBar: Error al cargar foto de perfil:', error);
+          this.Imagen = this.IconoPerfil;
+        }
+      });
   }
 
-  dropdownAbierto = false;
 
-  toggleDropdown() {
+  
+  construirUrlFoto(fotoPerfilUrl: string, sexo: string): string {
+    // Normalizar sexo
+    const sexoNormalizado = (sexo || '').toString().trim().toLowerCase();
+  
+    const defaultFemenino = 'assets/img/iconos/iconos mycollection/png/010-mujer-2.png';
+    const defaultMasculino = 'assets/img/iconos/iconos mycollection/png/028-hombre-2.png';
+    const defaultGenerico = 'assets/img/iconos/iconos mycollection/png/026-hombre-de-traje-y-corbata.png';
+  
+    // Determinar fallback según sexo
+    const fallback = sexoNormalizado === 'femenino' || sexoNormalizado === 'f'
+      ? defaultFemenino
+      : sexoNormalizado === 'masculino' || sexoNormalizado === 'm'
+        ? defaultMasculino
+        : defaultGenerico;
+  
+    // Si no hay URL, usar fallback directamente
+    if (!fotoPerfilUrl) return fallback;
+  
+    // Si es una URL completa (http/https), devolverla tal cual
+    if (fotoPerfilUrl.startsWith('http://') || fotoPerfilUrl.startsWith('https://')) {
+      return fotoPerfilUrl;
+    }
+  
+    // Si es una ruta relativa, construir con el backend
+    const baseUrl = environment.urlbackend.endsWith('/')
+      ? environment.urlImagenes.slice(0, -1)
+      : environment.urlImagenes;
+  
+    if (fotoPerfilUrl.startsWith('/')) {
+      return `${baseUrl}${fotoPerfilUrl}`;
+    }
+  
+    return `${baseUrl}/${fotoPerfilUrl}`;
+  }  
+
+  /**
+   * Maneja errores de carga de imagen en el HTML
+   */
+  onImageError(event: Event, sexo: string) {
+    const img = event.target as HTMLImageElement;
+    img.src = this.construirUrlFoto('', sexo); // 👉 fuerza a usar fallback según sexo
+  }
+
+
+  cargarDatosEmpleado(): void {
+
+    const idEmpleado = this.IdEmpleadoActalSession;
+    
+
+    console.log('[Perfil] ID empleado desde sesión:', idEmpleado);
+
+    if (idEmpleado) {
+      this.buscarEmpleadoPorId(idEmpleado);
+    } else {
+      console.warn('[Perfil] No se encontró ID de empleado en sesión');
+    }
+  }
+
+  
+  /**
+   * Busca un empleado específico por ID
+   * @param idEmpleado - ID del empleado a buscar
+   */
+  buscarEmpleadoPorId(idEmpleado: number): void {
+
+  console.log('[Perfil] Buscando empleado por ID:', idEmpleado);
+
+  this.gthEmpleadoService.MostrarConParametros(1, idEmpleado).subscribe({
+    next: (empleado: any) => {
+
+      console.log('[Perfil] Respuesta completa del backend:', empleado);
+
+      const datosEmpleado = empleado?.$values?.[0];
+
+      console.log('[Perfil] Primer registro de empleado:', datosEmpleado);
+
+      if (datosEmpleado) {
+        this.empleado = datosEmpleado;
+        this.mapearDatosParaMostrar();
+      } else {
+        console.warn('[Perfil] No se encontró empleado con ese ID');
+      }
+    },
+    error: (error) => {
+      console.error('[Perfil] Error al buscar empleado:', error);
+    }
+  });
+}
+
+
+  private mapearDatosParaMostrar(): void {
+    if (this.empleado) {
+      const id = this.empleado.idEmpleado.toString();
+      const nombre = this.empleado.nombre ?? '';
+      const apellido = this.empleado.apellido ?? '';
+      const sexo = this.empleado.sexo;
+
+      this.nombreCompletoDisplayVar = `${nombre} ${apellido}`.trim();
+
+      // ✅ AQUÍ se asigna la imagen
+      this.fotoPerfilUrl = this.construirUrlFoto(id, sexo);
+
+      console.log('[Perfil] URL final de la foto:', this.fotoPerfilUrl);
+
+    }
+  }
+
+
+
+
+  logout(): void {
+    this.dropdownAbierto = false;
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    this.router.navigateByUrl("/login");
+  }
+
+  toggleDropdown(): void {
     this.dropdownAbierto = !this.dropdownAbierto;
     
     if (this.dropdownAbierto) {
-      // Use setTimeout to ensure DOM is updated before positioning
       setTimeout(() => {
         this.adjustDropdownPosition();
       }, 10);
     }
   }
+
   private adjustDropdownPosition(): void {
     const dropdown = document.getElementById('profileMenu');
     const profileDropdown = dropdown?.parentElement;
     
     if (!dropdown || !profileDropdown) return;
 
-    // Reset positioning classes
     dropdown.classList.remove('dropdown-right', 'dropdown-left', 'dropdown-up');
-    
-    // Force a reflow to get accurate measurements
     dropdown.offsetHeight;
     
     const dropdownRect = dropdown.getBoundingClientRect();
-    const profileRect = profileDropdown.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    
-    const MARGIN = 10; // Safety margin from viewport edges
+    const MARGIN = 10;
 
-    // Check horizontal overflow (dropdown going off right edge)
     if (dropdownRect.right > viewportWidth - MARGIN) {
       dropdown.classList.add('dropdown-left');
     }
     
-    // Check if we need to position dropdown to the right instead
     if (dropdownRect.left < MARGIN && !dropdown.classList.contains('dropdown-left')) {
       dropdown.classList.add('dropdown-right');
     }
 
-    // Recheck vertical position after horizontal adjustments
     const updatedDropdownRect = dropdown.getBoundingClientRect();
     
-    // Check if dropdown goes below viewport (position above if needed)
     if (updatedDropdownRect.bottom > viewportHeight - MARGIN) {
       dropdown.classList.add('dropdown-up');
     }
     
-    // If positioning up would cause it to go above viewport, keep it down but adjust
     const finalRect = dropdown.getBoundingClientRect();
     if (finalRect.top < MARGIN && dropdown.classList.contains('dropdown-up')) {
       dropdown.classList.remove('dropdown-up');
-      // Reduce max-height to fit within remaining viewport height
-      const availableHeight = viewportHeight - profileRect.bottom - MARGIN;
+      const availableHeight = viewportHeight - dropdownRect.bottom - MARGIN;
       dropdown.style.maxHeight = `${Math.max(200, availableHeight)}px`;
     }
-
-    console.log('Dropdown positioned:', {
-      dropdownRect: updatedDropdownRect,
-      viewportWidth: viewportWidth,
-      viewportHeight: viewportHeight,
-      classes: dropdown.className
-    });
   }
 
-  // Close dropdown when clicking outside
   private handleClickOutside = (event: Event) => {
     const profileDropdown = document.querySelector('.profile-dropdown');
     if (profileDropdown && !profileDropdown.contains(event.target as Node)) {
@@ -171,6 +374,8 @@ export class NavBarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     document.removeEventListener('click', this.handleClickOutside);
   }
 }

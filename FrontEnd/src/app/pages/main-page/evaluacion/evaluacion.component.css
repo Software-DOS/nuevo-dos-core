@@ -1,0 +1,1375 @@
+
+.employe-card {
+    background-color: white;
+    border: 1px solid #989898; 
+    border-radius: 10px;
+    box-shadow: var(--shadow-xl);
+    padding: 1rem 1.5rem;
+    display: block;
+    color: #007bff;
+    margin: calc(50px + var(--space-12)) auto 1rem auto;
+    width: 98%;
+    gap: var(--space-12);
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-slow);
+}
+
+.employee-card2 { 
+    display: flex;
+    align-items: center;  
+    gap:2rem;
+}
+@media (max-width: 768px) {
+  .employee-card {
+    padding: 1.5rem;
+  }
+}
+/* ===== EFECTOS DE HOVER MEJORADOS ===== */
+.employee-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+
+.employee-image {
+    width: 150px;
+    height: 150px;
+    border-radius: var(--radius-full);
+    margin-left: 2rem;
+}
+
+.info-field {
+  display: flex;
+  align-items: center;
+  
+}
+.info-icon-titulo {
+  font-size: 24px; /* Aumenta el tamaño aquí */
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  color: #333; /* opcional */
+  justify-content: center;
+}
+.info-icon {
+  font-size: 18px;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+  color: #555; /* gris medio oscuro */
+  justify-content: center;
+}
+
+/*  Estilos para los iconos */
+.icono-normal {
+  width: 30px;
+  height: 30px;
+}
+.icono-menor {
+  width: 25px;
+  height: 25px;
+}
+
+
+/* ---  Seccion que contiene el menu y el area inferior  ---  */
+
+.main-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: var(--shadow-xl);
+  padding: 1.5rem 1.5rem;
+  margin: 1rem auto;
+  width: 98%;
+  display: block;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-slow);
+  border: 1px solid #d9dadc;
+  /* border: none; */
+}
+
+.main-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--page-gradient, var(--gradient-brand));
+}
+
+.main-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-2xl);
+} 
+
+
+
+/*Estilos para los botones del menu izquierdo */
+
+/* Contenedor principal de pestañas - Posicionado sobre el formulario */
+.category-index2 {
+  position: relative;
+  width: 100%;
+  height: fit-content;
+  margin-bottom: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+  z-index: 10;
+  
+  /* Forzar altura mínima si es necesario */
+  min-height: 60px !important;
+  /* Animación de entrada suave para las pestañas */
+  animation: fadeInDown 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Lista de pestañas - Diseño horizontal */
+.category-index2 ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  position: relative;
+  background: transparent;
+  border-radius: 0;
+  border-bottom: 2px solid #e9ecef;
+  overflow: hidden;
+  height: fit-content;
+  min-height: 60px;
+  align-items: stretch;
+  gap: 0.5rem;
+  /* color: #495057; */
+}
+
+/* Eliminar estilos de li */
+.category-index2 li {
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+}
+
+/* Links de categoría - Estilo moderno de pestañas */
+.category-link2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  text-align: center;
+  cursor: pointer;
+  color: #545a60;
+  font-weight: 600;
+  font-size: 15px;
+  background: #efefef;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2;
+  user-select: none;
+  text-decoration: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-right: 2px;
+  border-radius: 8px 8px 0 0;
+  width: 100%;
+  min-height: 56px;
+  flex-grow: 1;
+}
+
+/* Última pestaña sin margen derecho */
+.category-index2 li:last-child .category-link2 {
+  margin-right: 0;
+}
+
+/* Hover effect */
+.category-link2:hover {
+  color: #495057;
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Estado activo/seleccionado */
+.category-link2.selected {
+  color: #171d24;
+  background: #ffffff;
+  border-bottom: 3px solid #007bff;
+  box-shadow: 0 4px 16px rgba(0, 123, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Efecto de deslizamiento en el borde inferior */
+.category-index2 ul::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 50%;
+  height: 3px;
+  /* background: linear-gradient(45deg, #007bff, #0056b3); */
+  border-radius: 2px;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(0);
+  z-index: 3;
+}
+
+/* Mover indicador a la segunda pestaña */
+.category-index2:has(li:last-child .category-link2.selected) ul::after {
+  transform: translateX(calc(100% + 2px));
+}
+
+/* Efecto de pulsación en click */
+.category-link2:active {
+  transform: translateY(-1px);
+  transition: transform 0.1s ease;
+}
+
+/* Mejora de accesibilidad */
+.category-link2:focus {
+  outline: 2px solid #007bff;
+  outline-offset: -2px;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Efecto suave de brillo al hacer hover */
+.category-link2 {
+  position: relative;
+  overflow: hidden;
+}
+
+.category-link2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transition: left 0.5s ease;
+}
+
+.category-link2:hover::before {
+  left: 100%;
+}
+
+/* Micro-interacciones mejoradas */
+.category-link2:not(.selected):hover {
+  background: linear-gradient(135deg, #c9ebf357 0%, #e0ebf7 100%);
+}
+
+.category-link2.selected {
+  background: linear-gradient(135deg, #c9ebf357 0%, #e0ebf7 100%);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .category-link2 {
+    font-size: 14px;
+    padding: 14px 16px;
+  }
+  
+  .category-index2 ul::after {
+    height: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-link2 {
+    font-size: 13px;
+    padding: 12px 8px;
+  }
+}
+
+/* Asegurar que el contenedor tenga altura y no colapse */
+.category-index2::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+
+
+.category-index2 ul {
+  min-height: 60px !important;
+}
+
+.content-section {
+    margin-top: 2rem;
+    padding: 0;
+    margin-bottom: 0;
+    border: none;
+    box-shadow: none;
+}
+
+.titulos-pequeños {
+    color: #083176;
+}
+
+
+/* ========== Estilo para los iconos descargados ================= */
+
+/* Estilos mejorados para el timeline */
+.timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-radius: 8px;
+  margin-bottom: 0;
+}
+.timeline::before {
+    width: 0;
+}
+
+.timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  transition: all 0.3s ease;
+  border:none;
+}
+
+.timeline-step:hover {
+  transform: translateY(-2px);
+}
+
+.timeline-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 25px;
+  right: -50%;
+  width: 100%;
+  height: 3px;
+  /* background: linear-gradient(90deg, #e2e8f0 0%, #cbd5e1 100%); */
+  z-index: 1;
+  border-radius: 2px;
+  border:none;
+}
+.timeline-step .completed {
+  border: none;
+}
+
+.timeline-step.completed:not(:last-child)::after {
+  background: linear-gradient(90deg, #0dbe60 0%, #049e5b 100%);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+  border: none;
+}
+
+.circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 1.2rem;
+  transition: all 0.3s ease;
+  border: 3px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.timeline-step.completed .circle {
+  background: linear-gradient(135deg, #0cc17f 0%, #039f56 100%);
+  color: white;
+  animation: pulseCheck 0.6s ease-in-out;
+  box-shadow: 0 8px 25px rgba(13, 181, 91, 0.6); /* Sombra al rededor del circulo verde */
+}
+
+@keyframes pulseCheck {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.circle i {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  text-align: center;
+  max-width: 160px;
+  transition: all 0.3s ease;
+}
+
+.timeline-step.completed .label {
+  color: #018145;
+}
+
+.step-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: all 0.3s ease;
+}
+
+.timeline-step:hover .step-icon {
+  transform: scale(1.1);
+}
+
+.timeline-step.completed .step-icon {
+  filter: drop-shadow(0 2px 8px rgba(16, 185, 129, 0.3));
+}
+
+.step-text {
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+
+/* Estados adicionales */
+.timeline-step:not(.completed) .circle:hover {
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+  transform: scale(1.05);
+}
+
+/* Responsive mejorado */
+@media (max-width: 768px) {
+  .timeline {
+    flex-direction: column;
+    gap: 25px;
+    padding: 25px 15px;
+  }
+  
+  .timeline-step {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    max-width: none;
+  }
+  
+  .timeline-step:not(:last-child)::after {
+    display: none;
+  }
+  
+  .circle {
+    margin-bottom: 0;
+    margin-right: 15px;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .label {
+    flex-direction: row;
+    text-align: left;
+    max-width: none;
+    gap: 10px;
+  }
+  
+  .step-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .timeline {
+    padding: 20px 12px;
+  }
+  
+  .circle {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+  
+  .step-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .label {
+    font-size: 12px;
+  }
+}
+
+
+
+/*      ========    ÁREA DE CONTENIDO    =============      */
+
+.content-area {
+  padding: 0;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+/*      ========    Diseño para el Formulario inicial    =============      */
+.evaluation-form {
+   background: linear-gradient(135deg, #f8fafb 0%, #f1f5f9 100%);
+   border-radius: 16px;
+   padding: 30px;
+   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+   border: 1px solid #e2e8f0;
+   margin: 20px 0.5rem;
+}
+
+.form-section {
+   margin-bottom: 25px;
+   margin-left: 1rem;
+   margin-right: 0.5rem;
+}
+
+.section-title {
+   font-size: 16px;
+   font-weight: 600;
+   color: #374151;
+   margin-bottom: 15px;
+   border-bottom: 3px solid #3b82f6;
+   padding-bottom: 5px;
+   display: inline-block;
+}
+
+.section-title.purple {
+   color: #7c3aed;
+   border-bottom-color: #7c3aed;
+}
+
+.section-title.green {
+   color: #00554e;
+   border-bottom-color: #00a2bc;
+}
+
+.form-row {
+   display: flex;
+   align-items: center;
+   margin-bottom: 12px;
+   gap: 10px;
+   margin-left: 0;
+}
+
+.titulos-pequeños-columna {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3b3b3b;
+}
+
+.item-number {
+   font-weight: 600;
+   color: #6b7280;
+   min-width: 20px;
+}
+
+.objetivo-container {
+  background: #e7eff7;
+  border: 2px solid #002d7f80;
+  border-radius: 10px;
+  padding: 0.5rem;
+  flex: 1;
+  display: flex; 
+  gap: 10px;
+  /* align-items: flex-start; */
+  margin-bottom: 0.1rem;
+}
+
+.objetivo-container-area {
+  background: #f0e7f7;
+  border: 2px solid #0e007f80;
+  border-radius: 10px;
+  padding: 0.5rem;
+  flex: 1;
+  display: flex; 
+  gap: 10px;
+  /* align-items: flex-start; */
+  margin-bottom: 0.1rem;
+}
+/* Contenedor para las competencias */
+.competencia-container {
+  background: #faf5ff;
+  border: 2px solid #c084fc;
+  border-radius: 10px;
+  padding: 0.6rem;
+  flex: 1;
+  display: flex; 
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 0.1rem;
+}
+
+.objetivo-solo-texto {
+  margin: 0;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #1e293b;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  background: #f8f9fab5; /* Fondo claro */
+  border-radius: 6px; /* Bordes redondeados */
+  border: 1px solid #e9ecef; /* Borde sutil */
+}
+
+.text-input {
+   flex: 1;
+   padding: 5px 10px;
+   border: 2px solid #d1d5db;
+   border-radius: 8px;
+   font-size: 14px;
+   transition: all 0.3s ease;
+   background: white;
+}
+.number-input {
+  /* width: 80px; */
+  padding: 7px;
+  text-align: end;
+  font-weight:500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border-radius: 8px;  
+}
+.date-input {
+  padding: 4px;  
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+}
+
+.text-input-objetivo {
+  color: #0b1e3d;
+  background: white;  
+}
+.number-input-objetivo {  
+   border: 2px solid #6a8bbc;   
+   color: #0b1e3d;
+   background: white;   
+   text-align: center;
+}
+.date-input-objetivo {
+  border: 2px solid #8baad7;
+  color: #0b1e3d;
+  background: white;  
+}
+
+.number-input-competencia {
+   border: 2px solid #ae96d7;   
+   color: #39147a;
+   background: white;   
+   text-align: center;
+}
+.date-input-competencia {
+  border: 2px solid #ae96d7;
+  color: #39147a;
+  background: white;  
+}
+
+
+.text-input:focus {
+   outline: none;
+   border-color: #2276c5;
+   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.number-input:focus {
+   outline: none;
+   border-color: #187ddb;
+   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+.date-input:focus {
+   outline: none;
+   border-color: #187ddb;
+   background: white;
+}
+
+
+.number-input-rev {
+  border: 1px solid #a0aad1;
+  color: #121218;
+  background: #f8f8f8;
+}
+
+.text-input-rev {
+  border: 2px solid #a0aad1;  
+  color: #1b1b24;
+  background: #f6f6f6;
+}
+.date-input-rev {
+  border: 2px solid #a0aad1; 
+  color: #1b1b24;
+  background: #f8f8f8;
+}
+
+
+/* Asegura que los inputs de calificación no se encogen */
+.calificacion-colaborador,
+.calificacion-jefe {
+  text-align: center;
+  padding: 6px 4px !important;
+  width: 100px !important; /* Ancho fijo */
+  flex-shrink: 0; /* No se encoge */
+}
+
+/* Estilos para mostrar los input de las estrellas, la calificaion */
+.calificacion-colaborador {
+  background: #091942bf !important;
+  border: 1px solid #2b4e94 !important;
+}
+
+.calificacion-jefe {
+  background: #0a3f51d4 !important;
+  border: 1px solid #379983 !important;
+}
+
+
+/* Revisar o borrar */
+.percentage-display {
+  text-align: right;
+  font-size: 18px;
+  font-weight: 700;
+  color: #f17f00;
+  margin-right: 11.5rem;
+}
+
+.total-percentage {
+   text-align: right;
+   margin-top: 20px;
+   font-size: 24px;
+   font-weight: 700;
+   color: #dc2626;
+}
+
+.submit-btn {
+   background: linear-gradient(29deg, #00b5e1 0% 0%, #0090d1 80%);
+   color: white;
+   border: none;
+   padding: 10px 30px;
+   border-radius: 10px;
+   font-weight: 700;
+   font-size: 16px;
+   cursor: pointer;
+   transition: all 0.3s ease;
+   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+   margin-top: 20px;
+   float: right;
+   width: 12rem;
+}
+
+.submit-btn:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+
+/* Estilos para campos deshabilitados */
+input:disabled {
+  cursor: not-allowed;
+  /* opacity: 0.9; */
+}
+
+
+/*---------------------------------------------------------
+    Estilos para mostrar las competencias
+----------------------------------------------------------*/
+.competencia-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.tipo-competencia {
+  background: #3b82f6;
+  color: white;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+.nombre-competencia {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.competencia-body {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+
+/*----------------------  Estilos para la fase de Cierre  ------------------------ */
+
+/* ESTILOS PARA SECCIÓN DE CIERRE - ESTILO 1 MINIMALISTA */
+
+.evaluation-form-cierre {
+  background: linear-gradient(135deg, #f8fafb 0%, #f1f5f9 100%);  
+  border-radius: 16px;
+  padding: 0 0 30px 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  margin: 20px 0.5rem;
+}
+
+
+ /* Todos los estilos encapsulados en la clase .cierre */
+.cierre {
+    /* font-family: 'Segoe UI', system-ui, sans-serif; */
+    /* max-width: 1100px; */
+    padding: 0 30px;
+    margin: 0 auto;
+}
+
+.cierre .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+    gap: 25px;
+}
+
+.cierre .card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.cierre .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+
+.cierre .card-objetivos::before { 
+    background: #3b82f6; 
+}
+
+.cierre .card-competencias::before { 
+    background: #8b5cf6; 
+}
+
+
+.evaluation-form-cierre .header {
+  /* background: linear-gradient(135deg, #1e293b 0%, #334155 100%); */
+  /* background: linear-gradient(135deg, #0c2937 0%, #0f4560 100%);  */
+  background: linear-gradient(135deg, #9fbec42e 0%, #82889924 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 16px 16px 0 0; /* Superior izquierda, superior derecha, inferior derecha, inferior izquierda */
+  border-bottom: 4px solid #0ea5e9;
+}
+
+.evaluation-form-cierre .header h2 {
+  font-size: 30px;
+  font-weight: 600;
+  color: rgb(88 88 88);
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.evaluation-form-cierre .header .subtitle {
+  font-size: 16px;
+  opacity: 0.8;
+  /* font-family: var(--font-heading), sans-serif; */
+  color: rgb(32, 32, 31);
+}
+
+.evaluation-form-cierre .content { 
+  padding: 1rem 0;
+}
+
+/* Círculos de progreso */
+.cierre .circular-progress {
+    width: 140px;
+    height: 140px;
+    margin: 20px auto 25px;
+    position: relative;
+}
+
+.cierre .circular-progress svg {
+    transform: rotate(-90deg);
+}
+
+.cierre .circular-progress circle {
+    fill: none;
+    stroke-width: 10;
+}
+
+.cierre .bg-circle { 
+    stroke: #f0f0f0; 
+}
+
+.cierre .progress-circle { 
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease;
+}
+
+.cierre .circle-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.cierre .circle-subtext {
+    position: absolute;
+    top: 58%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+.cierre .card-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.cierre .card-badge {
+    display: block;
+    text-align: center;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 15px;
+}
+
+.cierre .badge-excepcional {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.cierre .badge-sobresaliente {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* Tarjeta final con barra */
+.cierre .final-card {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #13223a 0%, #013737 100%);
+    color: white;
+    padding: 40px;
+}
+
+.cierre .final-card::before { 
+    display: none; 
+}
+
+.cierre .final-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.cierre .final-title {
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cierre .final-badge {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #10b981;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cierre .final-content {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.cierre .final-score {
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.cierre .final-max {
+    font-size: 28px;
+    opacity: 0.7;
+}
+
+.cierre .final-bar-container {
+    flex: 1;
+}
+
+.cierre .bar-wrapper {
+    margin-bottom: 12px;
+}
+
+.cierre .bar-container {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.cierre .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 6px;
+    width: 88%;
+    transition: width 1.5s ease;
+}
+
+.cierre .bar-label {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-top: 8px;
+} 
+
+
+/*    ESTILOS PARA LA SECCION DE RETROALIMENTEACION Y PLAN DE ACCION  del  CIERE */
+.cierre-seccion {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.cierre-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.cierre-icono {
+  font-size: 24px;
+}
+
+.cierre-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.cierre-competencia-contenido-titulo {
+  display: block;  
+  width: fit-content; 
+}
+
+.cierre-competencia-titulo {
+  margin: 0 0 0 0;
+  padding: 5px 1rem;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #f3f3f3;
+  font-weight: 700;
+  background: linear-gradient(135deg, #8156f1 0%, #3f1ac0 100%);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+}
+
+
+/* Ocultar labels en desktop (por defecto) */
+.label-mobile {
+ display: none;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 3px;
+  font-weight: 500;
+}
+
+.input-wrapper-mobile {
+  display: contents; /* No afecta el layout en desktop */
+}
+
+/* === MEDIA QUERIES === */
+
+/* Tablets y dispositivos medianos (máximo 992px) */
+@media (max-width: 992px) {
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  /* OCULTAR títulos de columnas superiores */
+  .titulos-pequeños-columna {
+    display: none !important;
+  }
+  
+  /* MOSTRAR labels móviles */
+  .label-mobile {
+    display: block;
+    text-align: left;
+  }
+  
+  /* Contenedores de objetivos */
+  .objetivo-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  /* Contenedores de objetivo relacionado al AREA */
+  .objetivo-container-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  /* TODOS los wrappers: misma configuración */
+  .input-wrapper-mobile {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  /* Input de texto (objetivo) - mismo comportamiento que los demás */
+  /* .objetivo-container .input-wrapper-mobile:first-child {
+    flex: 0 0 100%;
+    width: 100%;
+  } */
+  
+  .text-input-objetivo,
+  .text-input-rev {
+    width: 100% !important;
+  }
+  
+  /* Anchos específicos para los inputs numéricos y de fecha */
+  .number-input-objetivo,
+  .number-input-rev {
+    width: 100px !important;
+  }
+  
+  .date-input-objetivo,
+  .date-input-rev {
+    width: 180px !important;
+  }
+  
+  /* Contenedores de competencias */
+  .competencia-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .competencia-container > div:last-child {
+    flex-direction: row;
+    gap: 10px;
+    width: auto;
+  }
+  
+  .competencia-container > div:last-child > div {
+    flex: 0 0 auto;
+  }
+  
+  .nombre-competencia {
+    font-size: 0.9rem;
+  }
+  
+  .competencia-body {
+    font-size: 0.8rem;
+  }
+}
+
+/* Tablets pequeñas (máximo 768px) */
+@media (max-width: 768px) {
+  .date-input {
+    min-width: auto;
+  }
+  
+  .percentage-display {
+    margin-right: 45%;
+  }
+
+   /* Los objetivos se apilan verticalmente */
+  .objetivo-container-area,
+  .objetivo-container {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  /* El contenedor del objetivo ocupa todo el ancho */
+  .objetivo-container-area > div:first-child,
+  .objetivo-container > div:first-child {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Las calificaciones se mantienen juntas pero más pequeñas */
+  .objetivo-container-area > div:last-child,
+  .objetivo-container > div:last-child {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  /* Labels más pequeños en móvil */
+  .label-mobile {
+    font-size: 11px !important;
+  }
+}
+
+/* Móviles (máximo 576px) */
+@media (max-width: 576px) {
+  .form-section {
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+  }
+  
+  .section-title {
+    font-size: 0.95rem;
+  }
+  
+  .item-number {
+    font-size: 0.9rem;
+  }
+  
+  /* ===== OBJETIVOS ===== */
+  .objetivo-container,
+  .objetivo-container-area {
+    flex-direction: column;
+    padding: 0.6rem;
+    gap: 8px;
+  }
+  
+  /* El contenedor de texto del objetivo */
+  .objetivo-container > div:first-child,
+  .objetivo-container-area > div:first-child {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Contenedor de calificaciones - se mantiene horizontal */
+  .objetivo-container > div:last-child,
+  .objetivo-container-area > div:last-child {
+    width: 100% !important;
+    flex-direction: row !important; /* FORZAR HORIZONTAL */
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .input-wrapper-mobile {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .text-input-objetivo,
+  .number-input-objetivo,
+  .date-input-objetivo {
+    width: 100% !important;
+    margin: 0;
+  }
+  
+  /* ===== COMPETENCIAS ===== */
+  .competencia-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .competencia-header {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .tipo-competencia {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+  }
+  
+  .nombre-competencia {
+    font-size: 0.85rem;
+  }
+  
+  .competencia-body {
+    font-size: 0.75rem;
+  }
+  
+  /* Contenedor de calificaciones en competencias - HORIZONTAL */
+  .competencia-container > div:last-child {
+    flex-direction: row !important; /* MANTENER HORIZONTAL */
+    gap: 0.5rem !important;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  /* Los divs individuales de cada calificación */
+  .competencia-container > div:last-child > div {
+    width: auto !important; /* Cambiar de 100% a auto */
+    text-align: center;
+    flex: 0 0 auto;
+  }
+  
+  /* ===== INPUTS DE CALIFICACIÓN ===== */
+  .calificacion-colaborador,
+  .calificacion-jefe {
+    width: 75px !important; /* Más pequeño en móvil */
+    font-size: 14px !important;
+    padding: 5px 6px !important;
+  }
+  
+  /* Labels de calificación más pequeños */
+  .competencia-container label,
+  .objetivo-container label,
+  .objetivo-container-area label {
+    font-size: 10px !important;
+  }
+  
+  .percentage-display {
+    margin-right: 0;
+    text-align: center;
+  }
+  
+  /* Botones */
+  .submit-btn {
+    width: 100%;
+    float: none;
+  }
+}
+

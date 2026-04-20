@@ -37,7 +37,8 @@ namespace WebAppConexion.Controllers
                 IdCelula = e.IdCelula,
                 Nombre = e.Nombre,
                 Descripcion = e.Descripcion,
-                Encargado = e.Encargado
+                Encargado = e.Encargado,
+                Objetivo = e.Objetivo
             });
 
             return Ok(modelos);
@@ -56,14 +57,16 @@ namespace WebAppConexion.Controllers
                 IdCelula = model.IdCelula,
                 Nombre = model.Nombre,
                 Descripcion = model.Descripcion,
-                Encargado = model.Encargado
+                Encargado = model.Encargado,
+                Objetivo = model.Objetivo
             };
 
             var resultado = await _repository.Gestionar(model.Tipo, entidad);
             return Ok(resultado.Select(r => new Generica
             {
                 valor1 = r.valor1,
-                valor2 = r.valor2
+                valor2 = r.valor2,
+                valor3 = r.valor3
             }));
         }
     }

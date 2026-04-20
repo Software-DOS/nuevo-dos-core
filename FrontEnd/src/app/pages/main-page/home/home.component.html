@@ -1,106 +1,52 @@
-<!-- Dashboard Content -->
-<div class="dashboard-container">
-  <h1 class="dashboard-title">Panel de Control</h1>
-  <p class="dashboard-subtitle">Gestiona todos los aspectos de recursos humanos desde un solo lugar</p>
-  
-  <!-- Stats Cards -->
-  <div class="dashboard-stats">
-    <div class="stat-card">
-      <div class="stat-number">127</div>
-      <div class="stat-label">Empleados Activos</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number">23</div>
-      <div class="stat-label">Evaluaciones Pendientes</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number">45</div>
-      <div class="stat-label">Capacitaciones en Curso</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number">8</div>
-      <div class="stat-label">Nuevos Aplicantes</div>
-    </div>
+<div class="construction-container">
+  <!-- Decoración Superior (Lazo) -->
+  <div class="top-decoration">
+    <div class="ribbon"></div>
   </div>
 
-  <!-- Main Dashboard Cards -->
-  <div class="dashboard-cards">
-    <div class="dashboard-card card-view">
-      <div class="card-icon">
-        <i class="fas fa-users"></i>
-      </div>
-      <h2>Ver Perfiles</h2>
-      <p>Explora y gestiona los perfiles completos de todos los empleados de la organización con herramientas avanzadas de búsqueda y filtrado</p>
-      <a [routerLink]="['/lista-empleados']" class="card-button">
-        Explorar Perfiles <i class="fas fa-arrow-right"></i>
-      </a>
+  <!-- Sección del Logo (PRINCIPAL) -->
+  <div class="logo-section">
+    <div class="logo-container">
+      <img [src]="logoEmpresa" 
+           alt="Logo Empresa" 
+           class="company-logo"
+           (error)="onImageError($event)">
     </div>
 
-    <div class="dashboard-card card-training">
-      <div class="card-icon">
-        <i class="fas fa-graduation-cap"></i>
-      </div>
-      <h2>Capacitaciones</h2>
-      <p>Gestiona el programa completo de desarrollo profesional, desde solicitudes hasta certificaciones completadas</p>
-      <a [routerLink]="['/lista-capacitaciones']" class="card-button">
-        Gestionar <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
+    <!-- Banner Informativo (BAJO EL LOGO) -->
+    <div class="construction-banner">
+      <div class="banner-content">
+        <!-- Animación de Trabajadores -->
+        <div class="workers-animation">
+          <div class="worker">🚧</div>
+        </div>
 
-    <div class="dashboard-card card-eval">
-      <div class="card-icon">
-        <i class="fas fa-chart-line"></i>
-      </div>
-      <h2>Evaluación</h2>
-      <p>Sistema integral de evaluación de desempeño con métricas personalizables y reportes detallados</p>
-      <a [routerLink]="['/lista-evaluaciones']" class="card-button">
-        Evaluar <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
+        <!-- Icono de Construcción -->
+        <div class="construction-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </div>
+        
+        <!-- Texto Informativo -->
+        <div class="banner-text">        
+          <span class="info-text">Bienvenido...!!!  •  Sitio en construcción  •  ¡Evaluación disponible!</span>
+          <span class="separator">•</span>
+          <span class="version-badge">v1.0</span>        
+        </div>
+        
+        <!-- Icono de Construcción -->
+        <div class="construction-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </div>
 
-    <div class="dashboard-card card-selection">
-      <div class="card-icon">
-        <i class="fas fa-user-check"></i>
+        <!-- Animación de Trabajadores -->
+        <div class="workers-animation">
+          <div class="worker">🚧</div>
+        </div>
       </div>
-      <h2>Selección de Personal</h2>
-      <p>Optimiza tu proceso de reclutamiento con herramientas inteligentes de filtrado y evaluación de candidatos</p>
-      <a href="#" class="card-button">
-        Ingresar <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-
-    <div class="dashboard-card card-clima">
-      <div class="card-icon">
-        <i class="fas fa-smile-beam"></i>
-      </div>
-      <h2>Clima Laboral</h2>
-      <p>Mide y mejora la satisfacción del equipo con encuestas avanzadas y análisis de tendencias</p>
-      <a [routerLink]="['/clima-laboral']" class="card-button">
-        Evaluar <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-  </div>
-
-  <!-- Quick Actions -->
-  <div class="quick-actions">
-    <h2>Acciones Rápidas</h2>
-    <div class="action-buttons">
-      <a href="#" class="action-btn">
-        <i class="fas fa-plus"></i>
-        <span>Añadir Empleado</span>
-      </a>
-      <a [routerLink]="['/lista-capacitaciones']" class="action-btn">
-        <i class="fas fa-calendar-plus"></i>
-        <span>Nueva Capacitación</span>
-      </a>
-      <a [routerLink]="['/lista-evaluaciones']" class="action-btn">
-        <i class="fas fa-clipboard-list"></i>
-        <span>Crear Evaluación</span>
-      </a>
-      <a href="#" class="action-btn">
-        <i class="fas fa-download"></i>
-        <span>Generar Reporte</span>
-      </a>
     </div>
   </div>
 </div>

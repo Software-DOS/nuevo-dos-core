@@ -3,29 +3,45 @@
     <div class="subcategory-link" [class.active]="activeTab === 'curso'" (click)="setActiveTab('curso')">En Curso</div>
     <div class="subcategory-link" [class.active]="activeTab === 'solicitadas'" (click)="setActiveTab('solicitadas')">Solicitadas</div>
     <div class="subcategory-link" [class.active]="activeTab === 'disponible'" (click)="setActiveTab('disponible')">Disponibles</div>
+    <div class="subcategory-link" [class.active]="activeTab === 'pendiente'" (click)="setActiveTab('pendiente')">Pendientes</div>
+    <div class="subcategory-link" [class.active]="activeTab === 'completadas'" (click)="setActiveTab('completadas')">Completadas</div>
   </div>
 
   <!-- EN CURSO -->
   <div id="curso" class="subcategory-section" [class.active]="activeTab === 'curso'">
-    <div class="cap-table">
+    <div class="alert alert-info" style="font-size: 0.9rem;">
+      <i class="fas fa-info-circle"></i>
+      <strong>Información:</strong> Aquí se muestran las capacitaciones que los empleados están realizando actualmente. 
+      Puedes monitorear el progreso de cada empleado y ver qué tan avanzados están en sus capacitaciones.
+    </div>
+
+    <div class="mb-3 text-right" *ngIf="!cargandoAsignaciones">
+    </div>
+    
+    <div *ngIf="cargandoAsignaciones" class="text-center p-3">
+      <i class="fas fa-spinner fa-spin"></i> Cargando asignaciones en curso...
+    </div>
+    <div *ngIf="!cargandoAsignaciones && asignacionesEnCurso.length > 0" class="cap-table">
       <div class="cap-header">
         <div class="empleado-row">Empleado</div>
         <div>Nombre</div>
         <div>Duración (h)</div>
         <div>Fecha Inicio</div>
         <div>Certificación</div>
-        <div>Progreso</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 10px;">Progreso</div>
       </div>
-      
-      <div class="cap-row" *ngFor="let capacitacion of capacitacionesEnCurso" (click)="openEmployeeTrainingsModal(capacitacion.empleado)">
+      <div class="cap-row" *ngFor="let asignacion of asignacionesEnCurso">
         <div class="empleado-info-column">
-          <img [src]="capacitacion.empleado.photo" [alt]="capacitacion.empleado.nombre" class="employee-photo">
-          <span>{{ capacitacion.empleado.nombre }}</span>
-        </div>          
-        <div>{{ capacitacion.nombre }}</div>
-        <div>{{ capacitacion.duracion }}</div>
-        <div>{{ capacitacion.fechaInicio }}</div>
-        <div>{{ capacitacion.certificacion }}</div>        <div class="progress-container">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+               [alt]="asignacion.empleado?.nombreCompleto"
+               class="employee-photo">
+          <span>{{ asignacion.empleado?.nombreCompleto || 'N/A' }}</span>
+        </div>
+        <div>{{ asignacion.capacitacion?.nombre || asignacion.capacitacion?.titulo || 'N/A' }}</div>
+        <div>{{ asignacion.capacitacion?.duracion || 'N/A' }}</div>
+        <div>{{ asignacion.fecha | date:'dd/MM/yyyy' }}</div>
+        <div>{{ asignacion.capacitacion?.titulo || asignacion.capacitacion?.nombre || 'N/A' }}</div>
+        <div class="progress-container">
           <svg width="70" height="40" viewBox="0 0 100 50">
             <defs>
               <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -33,26 +49,34 @@
                 <stop offset="100%" class="progreso" />
               </linearGradient>
             </defs>
-            <!-- Fondo del gauge -->
             <path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="#eee" stroke-width="8"/>
-            <!-- Progreso 70% - using exact same path as original -->
             <path d="M10 50 A40 40 0 0 1 75 21" fill="none" stroke="url(#grad)" stroke-width="8"/>
-            <!-- Texto encima del centro -->
-            <text x="50" y="35" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">{{ capacitacion.progreso }}%</text>
+            <text x="50" y="35" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">
+              {{ (asignacion.progreso !== null && asignacion.progreso !== undefined) ? asignacion.progreso : 0 }}%
+            </text>
           </svg>
         </div>
       </div>
+    </div>
+    <div *ngIf="!cargandoAsignaciones && asignacionesEnCurso.length === 0" class="text-center p-3">
+      <i class="fas fa-info-circle"></i> No hay asignaciones de capacitación en curso.
     </div>
   </div>
 
   <!-- DISPONIBLES -->
   <div id="disponible" class="subcategory-section" [class.active]="activeTab === 'disponible'">
+    <div class="alert alert-info" style="font-size: 0.9rem;">
+      <i class="fas fa-info-circle"></i>
+      <strong>Información:</strong> Catálogo de capacitaciones disponibles en la organización. 
+      Desde aquí puedes asignar capacitaciones a empleados específicos o agregar nuevas capacitaciones al sistema completando el formulario desplegable con el botón "Añadir Capacitación".
+    </div>
+
     <div class="cap-table">
       <div class="cap-header">
         <div>Nombre</div>
         <div>Duración (h)</div>
         <div>Certificación</div>
-        <div>Acciones</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 80px;">Acciones</div>
       </div>
 
       <!-- Capacitaciones estáticas -->
@@ -61,10 +85,13 @@
         <div>{{ capacitacion.duracion }}</div>
         <div>{{ capacitacion.certificacion }}</div>
         <div class="acciones-column">
+          <button class="btn-accion btn-asignar" (click)="abrirModalAsignar(capacitacion)" title="Asignar" style="margin-left: -12px; margin-right: 12px; background: #10b981; color: #fff; border: none; border-radius: 4px; padding: 6px 22px; font-size: 15px; min-width: 110px; display: inline-flex; align-items: center; gap: 7px; transition: background 0.2s; font-weight: 500;">
+            <i class="fas fa-user-plus"></i> Asignar
+          </button>
           <button class="btn-accion btn-editar" (click)="editarCapacitacion(capacitacion)" title="Editar">
             <i class="fas fa-edit"></i>
           </button>
-          <button class="btn-accion btn-eliminar" (click)="confirmarEliminacion(capacitacion)" *ngIf="!capacitacion.isStatic" title="Eliminar">
+          <button class="btn-accion btn-eliminar" (click)="confirmarEliminacion(capacitacion)" title="Eliminar">
             <i class="fas fa-trash"></i>
           </button>
         </div>
@@ -73,7 +100,7 @@
     
     <!-- Botón para mostrar formulario -->
     <div class="text-right mb-2">
-      <button id="mostrarFormularioBtn" class="nav-button" (click)="mostrarFormulario()" [style.display]="showFormButton ? 'inline-block' : 'none'">Añadir Capacitación</button>
+      <button id="mostrarFormularioBtn" class="nav-button" (click)="mostrarFormulario()" [style.display]="showFormButton && activeTab === 'disponible' ? 'inline-block' : 'none'">Añadir Capacitación</button>
     </div>
 
     <!-- Formulario emergente oculto inicialmente -->
@@ -110,7 +137,65 @@
 
   <!-- Solicitadas -->
   <div id="solicitadas" class="subcategory-section" [class.active]="activeTab === 'solicitadas'">
-    <div class="cap-table">      <div class="cap-header">
+    <div class="alert alert-warning" style="font-size: 0.9rem;">
+      <i class="fas fa-info-circle"></i>
+      <strong>Información:</strong> Solicitudes de capacitación enviadas por los empleados que requieren aprobación. 
+      Puedes revisar los detalles de cada solicitud y aprobar o rechazar según sea necesario dando clic en la solicitud a gestionar.
+    </div>
+
+    <!-- Mensaje de carga -->
+    <div *ngIf="cargandoSolicitudes" class="text-center p-3">
+      <i class="fas fa-spinner fa-spin"></i> Cargando solicitudes...
+    </div>
+
+    <!-- Mostrar datos reales del backend -->
+    <div *ngIf="!cargandoSolicitudes && solicitudesDetalladas.length > 0" class="cap-table">
+      <div class="cap-header">
+        <div class="acciones-header" style="text-align: center; padding-right: 10px;">Empleado</div>
+        <div>Departamento/Área</div>
+        <div>Capacitación Solicitada</div>
+        <div>Categoría</div>
+        <div>Duración (h)</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 30px;">Fecha Solicitud</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 60px;">Modalidad</div>
+        <div>Estado</div>
+      </div>
+
+      <div class="cap-row" *ngFor="let solicitud of solicitudesDetalladas" (click)="abrirModalSolicitud(solicitud)">
+        <div class="empleado-info-column">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" 
+               [alt]="solicitud.empleado?.nombreCompleto" 
+               class="employee-photo">
+          <div class="empleado-details">
+            <span class="empleado-nombre">{{ solicitud.empleado?.nombreCompleto || 'N/A' }}</span>
+            <small class="empleado-cedula">{{ solicitud.empleado?.cedula || 'N/A' }}</small>
+          </div>
+        </div>  
+        <div>{{ solicitud.empleado?.area || solicitud.empleado?.cargoActual || 'N/A' }}</div>
+        <div class="capacitacion-info">
+          <strong>{{ solicitud.capacitacion?.nombre || solicitud.capacitacion?.titulo || 'N/A' }}</strong>
+          <small *ngIf="solicitud.justificacion" class="justificacion-text">
+            {{ solicitud.justificacion }}
+          </small>
+        </div>
+        <div>{{ solicitud.capacitacion?.categoria || 'N/A' }}</div>
+        <div>{{ solicitud.capacitacion?.duracion || 'N/A' }}</div>
+        <div style="min-width: 120px;">{{ (solicitud.fechaSolicitud | date:'dd/MM/yyyy') || 'N/A' }}</div>
+        <div style="min-width: 120px; margin-left: 16px;">{{ solicitud.capacitacion?.modalidad || 'N/A' }}</div>
+        <div>
+          <span class="badge" [ngClass]="getEstadoColor(solicitud)">{{ getEstadoSolicitud(solicitud) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mensaje cuando no hay solicitudes -->
+    <div *ngIf="!cargandoSolicitudes && solicitudesDetalladas.length === 0" class="text-center p-3">
+      <i class="fas fa-info-circle"></i> No hay solicitudes de capacitación registradas.
+    </div>
+
+    <!-- Datos estáticos como respaldo (comentado para referencia) 
+    <div class="cap-table">
+      <div class="cap-header">
         <div>Empleado</div>
         <div>Departamento</div>
         <div>Nombre</div>
@@ -128,6 +213,114 @@
         <div>{{ capacitacion.duracion }}</div>
         <div>{{ capacitacion.certificacion }}</div>
       </div>
+    </div>
+    -->
+  </div>
+
+  <!-- PENDIENTES -->
+  <div id="pendiente" class="subcategory-section" [class.active]="activeTab === 'pendiente'">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+    </div>
+    
+    <div class="alert alert-warning" style="font-size: 0.9rem;">
+      <i class="fas fa-info-circle"></i>
+      <strong>Información:</strong> Estas capacitaciones han sido aprobadas para empleados específicos pero aún no han sido iniciadas. 
+      Aparecerán como "En Curso" cuando el empleado confirme el inicio de la capacitación.
+    </div>
+
+    <div *ngIf="cargandoAsignacionesPendientes" class="text-center p-3">
+      <i class="fas fa-spinner fa-spin"></i> Cargando asignaciones pendientes...
+    </div>
+
+    <div *ngIf="!cargandoAsignacionesPendientes && asignacionesPendientes.length > 0" class="cap-table">
+      <div class="cap-header">
+        <div class="empleado-row">Empleado</div>
+        <div>Nombre</div>
+        <div>Duración (h)</div>
+        <div>Fecha Asignación</div>
+        <div>Certificación</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 10px;">Estado</div>
+      </div>
+      <div class="cap-row" *ngFor="let asignacion of asignacionesPendientes">
+        <div class="empleado-info-column">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+               [alt]="asignacion.empleado?.nombreCompleto"
+               class="employee-photo">
+          <span>{{ asignacion.empleado?.nombreCompleto || 'N/A' }}</span>
+        </div>
+        <div>{{ asignacion.capacitacion?.nombre || asignacion.capacitacion?.titulo || 'N/A' }}</div>
+        <div>{{ asignacion.capacitacion?.duracion || 'N/A' }}</div>
+        <div>{{ asignacion.fecha | date:'dd/MM/yyyy' }}</div>
+        <div>{{ asignacion.capacitacion?.titulo || asignacion.capacitacion?.nombre || 'N/A' }}</div>
+        <div style="text-align: center;">
+          <span class="badge badge-warning" style="background-color: #ffc107; color: #212529; padding: 0.4em 0.8em; border-radius: 0.3rem; font-size: 0.85em; font-weight: 500;">
+            <i class="fas fa-clock"></i> Pendiente
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!cargandoAsignacionesPendientes && asignacionesPendientes.length === 0" class="text-center p-3" style="color: #6c757d;">
+      <i class="fas fa-check-circle" style="color: #28a745;"></i> No hay capacitaciones pendientes. Todos los empleados han iniciado sus capacitaciones asignadas.
+    </div>
+  </div>
+
+  <!-- COMPLETADAS -->
+  <div id="completadas" class="subcategory-section" [class.active]="activeTab === 'completadas'">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+    </div>
+    
+    <div class="alert alert-info" style="font-size: 0.9rem;">
+      <i class="fas fa-info-circle"></i>
+      <strong>Información:</strong> Aquí puedes ver todas las capacitaciones que han sido completadas por los empleados. 
+      Puedes visualizar los certificados subidos por cada empleado.
+    </div>
+
+    <div *ngIf="cargandoCompletadas" class="text-center p-3">
+      <i class="fas fa-spinner fa-spin"></i> Cargando capacitaciones completadas...
+    </div>
+
+    <div *ngIf="!cargandoCompletadas && capacitacionesCompletadas.length > 0" class="cap-table">
+      <div class="cap-header">
+        <div class="empleado-row">Empleado</div>
+        <div>Capacitación</div>
+        <div>Duración (h)</div>
+        <div>Fecha Completado</div>
+        <div>Certificación</div>
+        <div class="acciones-header" style="text-align: center; padding-right: 10px;">Certificado</div>
+      </div>
+      <div class="cap-row" *ngFor="let completada of capacitacionesCompletadas">
+        <div class="empleado-info-column">
+          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+               [alt]="completada.empleado?.nombreCompleto"
+               class="employee-photo">
+          <span>{{ completada.empleado?.nombreCompleto || 'N/A' }}</span>
+        </div>
+        <div>{{ completada.capacitacion?.nombre || completada.capacitacion?.titulo || 'N/A' }}</div>
+        <div>{{ completada.capacitacion?.duracion || 'N/A' }}</div>
+        <div>{{ completada.fecha | date:'dd/MM/yyyy' }}</div>
+        <div>{{ completada.capacitacion?.titulo || completada.capacitacion?.nombre || 'N/A' }}</div>
+        <div class="certificate-cell" style="text-align: center;">
+          <button *ngIf="completada.certificadoUrl" 
+                  class="cert-btn view" 
+                  (click)="verCertificado(completada.certificadoUrl)"
+                  title="Ver certificado">
+            <i class="fas fa-eye"></i>
+            <span>Ver</span>
+          </button>
+          <span *ngIf="!completada.certificadoUrl" 
+                class="text-muted small"
+                style="color: #6c757d; font-style: italic;">
+            Sin certificado
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!cargandoCompletadas && capacitacionesCompletadas.length === 0" class="text-center p-3" style="color: #6c757d;">
+      <i class="fas fa-medal" style="color: #ffc107; font-size: 2rem; margin-bottom: 1rem;"></i>
+      <p style="margin: 0; font-size: 1.1rem; font-weight: 500;">No hay capacitaciones completadas aún.</p>
+      <p style="margin: 0.5rem 0 0 0; color: #868e96;">Las capacitaciones aparecerán aquí cuando los empleados completen el 100% de progreso y suban sus certificados.</p>
     </div>
   </div>
 </main>
@@ -198,6 +391,166 @@
     
     <div class="modal-footer">
       <button class="nav-button gray" (click)="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Training Modal -->
+<div class="modal-overlay" [class.active]="showEditModal" (click)="closeEditModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Editar Capacitación</h3>
+      <button class="modal-close" (click)="closeEditModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form class="cv-form" (ngSubmit)="guardarEdicion()">
+        <div class="form-group">
+          <label for="editNombre">Nombre de la Capacitación *</label>
+          <input 
+            type="text" 
+            id="editNombre"
+            [(ngModel)]="nuevaCapacitacion.nombre" 
+            name="editNombre" 
+            required
+            placeholder="Ingresa el nombre de la capacitación">
+        </div>
+        
+        <div class="form-group">
+          <label for="editDuracion">Duración Estimada (horas) *</label>
+          <input 
+            type="number" 
+            id="editDuracion"
+            [(ngModel)]="nuevaCapacitacion.duracion" 
+            name="editDuracion" 
+            min="1" 
+            required
+            placeholder="Ingresa la duración en horas">
+        </div>
+        
+        <div class="form-group">
+          <label for="editCertificacion">Certificación Esperada</label>
+          <input 
+            type="text" 
+            id="editCertificacion"
+            [(ngModel)]="nuevaCapacitacion.certificacion" 
+            name="editCertificacion"
+            placeholder="Ingresa la certificación esperada">
+        </div>
+        
+        <div class="form-group">
+          <label for="editJustificacion">Justificación</label>
+          <textarea 
+            id="editJustificacion"
+            [(ngModel)]="nuevaCapacitacion.justificacion" 
+            name="editJustificacion" 
+            rows="4"
+            placeholder="Ingresa una justificación para la capacitación"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="editEnlace">Enlace a la Certificación</label>
+          <input 
+            type="url" 
+            id="editEnlace"
+            [(ngModel)]="nuevaCapacitacion.enlace" 
+            name="editEnlace"
+            placeholder="https://ejemplo.com/certificacion">
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="nav-button" (click)="guardarEdicion()">
+        <i class="fas fa-save"></i> Guardar Cambios
+      </button>
+      <button type="button" class="nav-button gray" (click)="cancelarEdicion()">
+        <i class="fas fa-times"></i> Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de asignación de empleados -->
+<div class="modal-overlay" [class.active]="showAssignModal" (click)="cerrarModalAsignar()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Asignar capacitación: {{ capacitacionParaAsignar?.nombre }}</h3>
+      <button class="modal-close" (click)="cerrarModalAsignar()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="cargandoEmpleadosGTH" class="text-center p-3">
+        <i class="fas fa-spinner fa-spin"></i> Cargando empleados...
+      </div>
+      <div class="empleados-lista-asignar" *ngIf="!cargandoEmpleadosGTH">
+        <div *ngFor="let emp of empleadosGTH" 
+             class="empleado-card-asignar"
+             [class.seleccionado]="empleadoSeleccionado?.idEmpleado === emp.idEmpleado"
+             (click)="seleccionarEmpleado(emp)">
+          <img [src]="emp.fotoPerfilUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" [alt]="emp.nombre + ' ' + emp.apellido" class="employee-photo-modal">
+          <div class="empleado-nombre-asignar">{{ emp.nombre }} {{ emp.apellido }}</div>
+          <button *ngIf="empleadoSeleccionado?.idEmpleado === emp.idEmpleado" class="nav-button green mt-2" (click)="confirmarAsignacion($event)">
+            <i class="fas fa-check"></i> Asignar a este empleado
+          </button>
+        </div>
+        <div *ngIf="empleadosGTH.length === 0" class="text-center p-3 text-muted">
+          No se encontraron empleados activos.
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="nav-button gray" (click)="cerrarModalAsignar()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal visual para justificación de solicitud -->
+<div class="modal-overlay" [class.active]="showSolicitudModal" (click)="cerrarModalSolicitud()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Justificación de la solicitud</h3>
+      <button class="modal-close" (click)="cerrarModalSolicitud()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="solicitudSeleccionada">
+        <div class="mb-2">
+          <strong>Empleado:</strong> {{ solicitudSeleccionada.empleado?.nombreCompleto }}<br>
+          <strong>Capacitación:</strong> {{ solicitudSeleccionada.capacitacion?.nombre || solicitudSeleccionada.capacitacion?.titulo }}<br>
+          <strong>Justificación:</strong>
+          <div class="justificacion-box">{{ solicitudSeleccionada.justificacion }}</div>
+        </div>
+        <div class="form-group">
+          <label for="respuestaJustificacion">Respuesta:</label>
+          <textarea id="respuestaJustificacion" [(ngModel)]="respuestaJustificacion" name="respuestaJustificacion" rows="3" class="form-control" placeholder="Escribe tu respuesta aquí..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <!-- Mostrar estado actual si ya fue respondida -->
+      <div *ngIf="solicitudSeleccionada && getEstadoSolicitud(solicitudSeleccionada) !== 'Solicitada'" class="alert" 
+           [ngClass]="getEstadoSolicitud(solicitudSeleccionada) === 'Aprobada' ? 'alert-success' : 'alert-danger'" 
+           style="margin-bottom: 1rem; width: 100%;">
+        <i class="fas" [class.fa-check-circle]="getEstadoSolicitud(solicitudSeleccionada) === 'Aprobada'" 
+           [class.fa-times-circle]="getEstadoSolicitud(solicitudSeleccionada) === 'Rechazada'"></i>
+        Esta solicitud ya fue <strong>{{ getEstadoSolicitud(solicitudSeleccionada) }}</strong> y no se puede modificar.
+      </div>
+      
+      <!-- Botones de acción - solo habilitados si no ha sido respondida -->
+      <button class="nav-button green" (click)="aprobarSolicitud()" 
+              [disabled]="!solicitudSeleccionada || getEstadoSolicitud(solicitudSeleccionada) !== 'Solicitada'">
+        Aprobar
+      </button>
+      <button class="nav-button red" (click)="rechazarSolicitud()"
+              [disabled]="!solicitudSeleccionada || getEstadoSolicitud(solicitudSeleccionada) !== 'Solicitada'">
+        Rechazar
+      </button>
+      <button class="nav-button gray" (click)="cerrarModalSolicitud()">Cerrar</button>
     </div>
   </div>
 </div>
